@@ -23,6 +23,13 @@ export class ThemeService {
     } else {
       html.classList.remove('dark');
     }
+    // Swap PrimeNG theme CSS
+    const themeLink = document.getElementById('theme-css') as HTMLLinkElement | null;
+    if (themeLink) {
+      themeLink.href = dark
+        ? 'assets/themes/lara-dark-violet/theme.css'
+        : 'assets/themes/lara-light-violet/theme.css';
+    }
   }
 
   private _loadPreference(): boolean {

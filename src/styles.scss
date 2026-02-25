@@ -21,6 +21,11 @@ body {
   color: #09090b;
 }
 
+.dark body {
+  background-color: #09090b;
+  color: #f4f4f5;
+}
+
 /* ===== Deep Purple SaaS Design System ===== */
 
 /* Glass panel — light: crisp white, dark: deep zinc */
@@ -155,6 +160,10 @@ body {
   letter-spacing: 0.13em;
   text-transform: uppercase;
   color: #71717a;
+}
+
+.dark .label-overline {
+  color: #a1a1aa;
 }
 
 /* ===== Button glow ===== */

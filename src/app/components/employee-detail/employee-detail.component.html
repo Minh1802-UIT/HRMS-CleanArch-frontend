@@ -1,4 +1,4 @@
-<div
+﻿<div
   class="flex overflow-hidden bg-gray-50 detail-layout"
   [class.h-screen]="!isDrawerMode"
   [class.h-full]="isDrawerMode"
@@ -15,7 +15,7 @@
       <div class="p-8 mx-auto w-full max-w-7xl">
         <!-- Header Card -->
         <div
-          class="flex justify-between items-center p-6 mb-6 bg-white rounded-xl border border-gray-200 shadow-sm"
+          class="flex justify-between items-center p-6 mb-6 bg-white dark:bg-zinc-800 rounded-xl border border-gray-200 dark:border-zinc-700 shadow-sm"
           >
           <div class="flex gap-6 items-center">
             <img
@@ -27,16 +27,16 @@
             "
               />
               <div>
-                <h1 class="text-3xl font-bold text-gray-900">
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-zinc-100">
                   {{ employee.fullName }}
                 </h1>
                 <div class="flex gap-3 items-center mt-1 text-gray-500">
                   <span class="px-2 py-0.5 font-mono text-sm bg-gray-100 rounded">{{
                     employee.employeeCode
                   }}</span>
-                  <span>•</span>
+                  <span>â€¢</span>
                   <span>{{ getDepartmentName(employee) }}</span>
-                  <span>•</span>
+                  <span>â€¢</span>
                   <span>{{ getPositionTitle(employee) }}</span>
                 </div>
                 <div class="mt-3">
@@ -106,37 +106,37 @@
               class="grid grid-cols-1 gap-6 md:grid-cols-2"
               >
               <!-- Contact -->
-              <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
+              <div class="p-6 bg-white dark:bg-zinc-800 rounded-lg border border-gray-200 dark:border-zinc-700 shadow-sm">
                 <h3 class="pb-2 mb-4 text-lg font-bold text-gray-800 border-b">
                   Contact Details
                 </h3>
                 <div class="space-y-4">
                   <div>
                     <label class="block text-xs text-gray-500 uppercase">Email</label>
-                    <div class="text-gray-900">{{ employee.email }}</div>
+                    <div class="text-gray-900 dark:text-zinc-100">{{ employee.email }}</div>
                   </div>
-                  <div class="text-gray-900">
+                  <div class="text-gray-900 dark:text-zinc-100">
                     {{ employee.personalInfo.phoneNumber }}
                   </div>
                   <div>
                     <label class="block text-xs text-gray-500 uppercase"
                       >Address</label
                       >
-                      <div class="text-gray-900">
+                      <div class="text-gray-900 dark:text-zinc-100">
                         {{ employee.personalInfo.address }}
                       </div>
                     </div>
                   </div>
                 </div>
                 <!-- Private -->
-                <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
+                <div class="p-6 bg-white dark:bg-zinc-800 rounded-lg border border-gray-200 dark:border-zinc-700 shadow-sm">
                   <h3 class="pb-2 mb-4 text-lg font-bold text-gray-800 border-b">
                     Identity
                   </h3>
                   <div class="space-y-4">
                     <div class="grid grid-cols-2 gap-4">
                       <div>
-                        <div class="text-gray-900">
+                        <div class="text-gray-900 dark:text-zinc-100">
                           {{ employee.personalInfo.dateOfBirth | date: "mediumDate" }}
                         </div>
                       </div>
@@ -144,7 +144,7 @@
                         <label class="block text-xs text-gray-500 uppercase"
                           >Gender</label
                           >
-                          <div class="text-gray-900">
+                          <div class="text-gray-900 dark:text-zinc-100">
                             {{ employee.personalInfo.gender }}
                           </div>
                         </div>
@@ -153,7 +153,7 @@
                         <label class="block text-xs text-gray-500 uppercase"
                           >Identity Card (ID)</label
                           >
-                          <div class="font-mono text-gray-900">
+                          <div class="font-mono text-gray-900 dark:text-zinc-100">
                             {{ employee.personalInfo.identityCard }}
                           </div>
                         </div>
@@ -161,7 +161,7 @@
                     </div>
                     <!-- Bank -->
                     <div
-                      class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm md:col-span-2"
+                      class="p-6 bg-white dark:bg-zinc-800 rounded-lg border border-gray-200 dark:border-zinc-700 shadow-sm md:col-span-2"
                       >
                       <h3 class="pb-2 mb-4 text-lg font-bold text-gray-800 border-b">
                         Banking Information
@@ -171,7 +171,7 @@
                           <label class="block text-xs text-gray-500 uppercase"
                             >Bank Name</label
                             >
-                            <div class="text-gray-900">
+                            <div class="text-gray-900 dark:text-zinc-100">
                               {{ employee.bankDetails?.bankName || "-" }}
                             </div>
                           </div>
@@ -179,7 +179,7 @@
                             <label class="block text-xs text-gray-500 uppercase"
                               >Account Number</label
                               >
-                              <div class="font-mono text-gray-900">
+                              <div class="font-mono text-gray-900 dark:text-zinc-100">
                                 {{ employee.bankDetails?.accountNumber || "-" }}
                               </div>
                             </div>
@@ -187,7 +187,7 @@
                               <label class="block text-xs text-gray-500 uppercase"
                                 >Account Holder</label
                                 >
-                                <div class="text-gray-900">
+                                <div class="text-gray-900 dark:text-zinc-100">
                                   {{ employee.bankDetails?.accountHolder || "-" }}
                                 </div>
                               </div>
@@ -236,7 +236,7 @@
                                       >
                                       <div class="mt-1 font-medium text-gray-800">
                                         {{ activeContract.startDate | date: "mediumDate" }}
-                                        <span class="mx-1 text-gray-400">→</span>
+                                        <span class="mx-1 text-gray-400">â†’</span>
                                         {{
                                         activeContract.endDate
                                         ? (activeContract.endDate | date: "mediumDate")
@@ -296,7 +296,7 @@
                                   }
                                   <!-- History List -->
                                   <div
-                                    class="overflow-hidden bg-white rounded-lg border border-gray-200 shadow-sm"
+                                    class="overflow-hidden bg-white dark:bg-zinc-800 rounded-lg border border-gray-200 dark:border-zinc-700 shadow-sm"
                                     >
                                     <table class="w-full text-sm text-left">
                                       <thead
@@ -357,7 +357,7 @@
                               <!-- TAB: Documents -->
                               @if (activeTab === 'documents') {
                                 <div
-                                  class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm"
+                                  class="p-6 bg-white dark:bg-zinc-800 rounded-lg border border-gray-200 dark:border-zinc-700 shadow-sm"
                                   >
                                   <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                                     <!-- Resume -->
@@ -456,7 +456,7 @@
                                 class="flex fixed inset-0 z-50 justify-center items-center backdrop-blur-sm bg-black/50"
                                 >
                                 <div
-                                  class="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
+                                  class="bg-white dark:bg-zinc-900 rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
                                   >
                                   <div
                                     class="flex justify-between items-center px-6 py-4 bg-gray-50 border-b border-gray-100"
@@ -466,7 +466,7 @@
                                       (click)="closeContractModal()"
                                       class="text-gray-400 hover:text-gray-600"
                                       >
-                                      ✕
+                                      âœ•
                                     </button>
                                   </div>
                                   <form
@@ -592,3 +592,5 @@
                                                               </div>
                                                             }
                                                           </div>
+
+

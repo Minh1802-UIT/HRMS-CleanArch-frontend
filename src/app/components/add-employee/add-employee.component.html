@@ -1,12 +1,12 @@
-<div
-  class="flex overflow-hidden relative flex-col h-full bg-white rounded-xl shadow-2xl"
+﻿<div
+  class="flex overflow-hidden relative flex-col h-full bg-white dark:bg-zinc-900 rounded-xl shadow-2xl"
   >
   <!-- Header -->
   <div
-    class="flex sticky top-0 z-20 justify-between items-center px-8 py-6 bg-white border-b border-gray-100"
+    class="flex sticky top-0 z-20 justify-between items-center px-8 py-6 bg-white dark:bg-zinc-900 border-b border-gray-100 dark:border-zinc-800"
     >
     <div>
-      <h2 class="text-2xl font-bold text-gray-900">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-zinc-100">
         {{ isEditMode ? "Edit Employee" : "Add New Employee" }}
       </h2>
       <p class="mt-1 text-sm text-gray-500">
@@ -35,7 +35,7 @@
   </div>
 
   <!-- Main Content Area -->
-  <div class="overflow-y-auto flex-1 bg-white">
+  <div class="overflow-y-auto flex-1 bg-white dark:bg-zinc-900">
     <!-- Success Screen -->
     @if (success) {
       <app-employee-form-success
@@ -95,12 +95,12 @@
   <!-- Global Footer Navigation -->
   @if (!success) {
     <div
-      class="flex sticky bottom-0 z-20 justify-between items-center px-8 py-6 bg-white border-t border-gray-100"
+      class="flex sticky bottom-0 z-20 justify-between items-center px-8 py-6 bg-white dark:bg-zinc-900 border-t border-gray-100 dark:border-zinc-800"
       >
       <button
         type="button"
         (click)="currentStep === 1 ? close.emit() : prevStep()"
-        class="flex gap-2 items-center px-6 py-2.5 text-sm font-semibold text-gray-700 bg-white rounded-lg border border-gray-300 transition-colors hover:bg-gray-50"
+        class="flex gap-2 items-center px-6 py-2.5 text-sm font-semibold text-gray-700 dark:text-zinc-300 bg-white dark:bg-zinc-800 rounded-lg border border-gray-300 dark:border-zinc-600 transition-colors hover:bg-gray-50 dark:hover:bg-zinc-700"
         >
         @if (currentStep > 1) {
           <span class="text-sm material-symbols-outlined"
@@ -144,3 +144,6 @@
           </div>
         }
       </div>
+
+
+
