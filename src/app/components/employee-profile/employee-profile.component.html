@@ -859,7 +859,9 @@
                     <div
                       class="flex justify-center items-center w-12 h-12 rounded-2xl bg-primary/10 text-primary"
                     >
-                      <span class="material-symbols-outlined">{{ getLeaveIcon(balance.type) }}</span>
+                      <span class="material-symbols-outlined">{{
+                        getLeaveIcon(balance.type)
+                      }}</span>
                     </div>
                     <div>
                       <p
@@ -980,28 +982,22 @@
     </main>
   }
 
-  <!-- Edit Employee Modal -->
+  <!-- Edit Employee Drawer -->
   @if (showEditModal) {
-    <div
-      class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md animate-in fade-in duration-300"
-    >
+    <div class="flex fixed inset-0 z-50 justify-end items-center">
       <div
-        class="w-full max-w-5xl max-h-[90vh] overflow-hidden bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-2xl relative animate-in zoom-in-95 duration-500 border border-white/20"
+        class="absolute inset-0 backdrop-blur-sm transition-opacity bg-zinc-900/50"
+        (click)="showEditModal = false"
+      ></div>
+      <div
+        class="overflow-hidden relative w-full max-w-4xl h-full bg-white border-l border-zinc-200 shadow-2xl dark:bg-zinc-900 dark:border-zinc-800"
       >
-        <button
-          (click)="showEditModal = false"
-          class="absolute top-8 right-8 z-[110] w-12 h-12 flex items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-600 hover:text-rose-500 transition-all shadow-sm"
-        >
-          <span class="text-2xl material-symbols-outlined">close</span>
-        </button>
-        <div class="overflow-y-auto max-h-[90vh] p-4 lg:p-8">
-          <app-add-employee
-            [employeeId]="employeeId"
-            [initialStep]="editStep"
-            (close)="showEditModal = false"
-            (employeeAdded)="onEmployeeUpdated()"
-          ></app-add-employee>
-        </div>
+        <app-add-employee
+          [employeeId]="employeeId"
+          [initialStep]="editStep"
+          (close)="showEditModal = false"
+          (employeeAdded)="onEmployeeUpdated()"
+        ></app-add-employee>
       </div>
     </div>
   }
