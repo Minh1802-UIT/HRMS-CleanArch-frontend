@@ -1,0 +1,282 @@
+<div
+  class="flex flex-col min-h-screen text-gray-900 bg-background-light dark:bg-background-dark font-body dark:text-gray-100"
+  >
+  <main class="flex-1 max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
+    <div class="flex flex-col items-center mb-10">
+      <h1 class="mb-2 text-3xl font-bold text-gray-900 dark:text-white">
+        Audit Logs
+      </h1>
+      <p class="text-gray-500 dark:text-gray-400">
+        Track and monitor all system activities
+      </p>
+    </div>
+
+    <!-- Filter Card -->
+    <div
+      class="p-5 mb-6 rounded-lg border border-gray-200 shadow-sm bg-surface-light dark:bg-surface-dark dark:border-gray-700"
+      >
+      <div
+        class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5"
+        >
+        <!-- Date Range -->
+        <div class="space-y-1">
+          <label
+            class="text-xs font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400"
+            >Start Date</label
+            >
+            <input
+              type="date"
+              [(ngModel)]="startDate"
+              (change)="onFilterChange()"
+              class="block px-3 py-2 w-full text-sm bg-gray-50 rounded-md border border-gray-300 dark:bg-gray-800 dark:border-gray-600 focus:ring-primary focus:border-primary dark:text-white"
+              />
+            </div>
+            <div class="space-y-1">
+              <label
+                class="text-xs font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400"
+                >End Date</label
+                >
+                <input
+                  type="date"
+                  [(ngModel)]="endDate"
+                  (change)="onFilterChange()"
+                  class="block px-3 py-2 w-full text-sm bg-gray-50 rounded-md border border-gray-300 dark:bg-gray-800 dark:border-gray-600 focus:ring-primary focus:border-primary dark:text-white"
+                  />
+                </div>
+
+                <!-- Action Type -->
+                <div class="space-y-1">
+                  <label
+                    class="text-xs font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400"
+                    >Action Type</label
+                    >
+                    <select
+                      [(ngModel)]="actionType"
+                      (change)="onFilterChange()"
+                      class="block px-3 py-2 w-full text-sm bg-gray-50 rounded-md border border-gray-300 dark:bg-gray-800 dark:border-gray-600 focus:ring-primary focus:border-primary dark:text-white"
+                      >
+                      <option value="">All Actions</option>
+                      @for (type of actionTypes; track trackByActionType($index, type)) {
+                        <option [value]="type">
+                          {{ type }}
+                        </option>
+                      }
+                    </select>
+                  </div>
+
+                  <!-- Search -->
+                  <div class="space-y-1 lg:col-span-2 xl:col-span-2">
+                    <label
+                      class="text-xs font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400"
+                      >Search</label
+                      >
+                      <div class="relative">
+                        <span
+                          class="flex absolute inset-y-0 left-0 items-center pl-3 text-gray-400 pointer-events-none"
+                          >
+                          <span class="text-sm material-symbols-outlined">search</span>
+                        </span>
+                        <input
+                          type="text"
+                          [(ngModel)]="searchTerm"
+                          (input)="onFilterChange()"
+                          placeholder="Search by user, table or activity..."
+                          class="block py-2 pr-3 pl-10 w-full text-sm bg-gray-50 rounded-md border border-gray-300 dark:bg-gray-800 dark:border-gray-600 focus:ring-primary focus:border-primary dark:text-white"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Table Section -->
+                  <div
+                    class="overflow-hidden rounded-lg border border-gray-200 shadow-sm bg-surface-light dark:bg-surface-dark dark:border-gray-700"
+                    >
+                    @if (loading) {
+                      <div class="flex justify-center items-center py-16">
+                        <div
+                          class="w-10 h-10 rounded-full border-t-2 border-b-2 animate-spin border-primary"
+                        ></div>
+                      </div>
+                    }
+
+                    @if (!loading) {
+                      <div class="overflow-x-auto">
+                        <table
+                          class="min-w-full text-sm divide-y divide-gray-200 dark:divide-gray-700"
+                          >
+                          <thead class="bg-gray-50 dark:bg-gray-800/50">
+                            <tr>
+                              <th
+                                scope="col"
+                                class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase dark:text-gray-400"
+                                >
+                                Timestamp
+                              </th>
+                              <th
+                                scope="col"
+                                class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase dark:text-gray-400"
+                                >
+                                User
+                              </th>
+                              <th
+                                scope="col"
+                                class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase dark:text-gray-400"
+                                >
+                                Action
+                              </th>
+                              <th
+                                scope="col"
+                                class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase dark:text-gray-400"
+                                >
+                                Target
+                              </th>
+                              <th
+                                scope="col"
+                                class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase dark:text-gray-400"
+                                >
+                                Details
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody
+                            class="divide-y divide-gray-200 bg-surface-light dark:bg-surface-dark dark:divide-gray-700"
+                            >
+                            @for (log of logs; track trackByLogId($index, log)) {
+                              <tr
+                                class="transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                                >
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                  <div class="text-sm font-medium text-gray-900 dark:text-white">
+                                    {{ log.createdAt | date: "short" }}
+                                  </div>
+                                  <div class="text-xs text-gray-400">
+                                    {{ log.createdAt | date: "HH:mm:ss.SSS" }}
+                                  </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                  <div class="flex gap-2 items-center">
+                                    <div
+                                      class="flex justify-center items-center w-8 h-8 text-xs font-bold uppercase rounded-full bg-primary/10 dark:bg-primary/20 text-primary"
+                                      >
+                                      {{ log.userName.substring(0, 2) }}
+                                    </div>
+                                    <div>
+                                      <div
+                                        class="text-sm font-bold text-gray-900 dark:text-white"
+                                        >
+                                        {{ log.userName }}
+                                      </div>
+                                      <div class="text-xs text-gray-400 font-mono">
+                                        {{ log.userId }}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                  <span
+                                    [ngClass]="getActionBadgeClass(log.action)"
+                                    class="px-2 py-0.5 text-xs font-bold border rounded-md shadow-sm"
+                                    >
+                                    {{ log.action }}
+                                  </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                  <div
+                                    class="text-sm font-medium text-gray-600 dark:text-gray-300"
+                                    >
+                                    {{ log.tableName }}
+                                  </div>
+                                  <div class="text-xs text-gray-400 font-mono">
+                                    ID: {{ log.recordId }}
+                                  </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                  <div
+                                    class="max-w-xs truncate text-[11px] text-gray-500 dark:text-gray-400"
+                                    [title]="log.newValues || ''"
+                                    >
+                                    {{ log.newValues || "No changes details" }}
+                                  </div>
+                                </td>
+                              </tr>
+                            }
+                            <!-- Empty State -->
+                            @if (logs.length === 0 && !loading) {
+                              <tr>
+                                <td
+                                  colspan="5"
+                                  class="py-12 text-center text-gray-500 dark:text-gray-400"
+                                  >
+                                  <div class="flex flex-col items-center">
+                                    <span
+                                      class="mb-2 text-4xl text-gray-300 material-symbols-outlined"
+                                      >description</span
+                                      >
+                                      <p class="text-lg font-medium">No audit logs found</p>
+                                      <p class="text-sm">Try adjusting your filters</p>
+                                    </div>
+                                  </td>
+                                </tr>
+                              }
+                            </tbody>
+                          </table>
+                        </div>
+                      }
+                    </div>
+
+                    <!-- Pagination -->
+                    <div
+                      class="flex flex-col justify-between items-center px-1 mt-6 sm:flex-row"
+                      >
+                      <div class="mb-4 text-sm text-gray-500 dark:text-gray-400 sm:mb-0">
+                        Showing
+                        <span class="font-medium text-gray-900 dark:text-white">{{
+                          (currentPage - 1) * pageSize + 1
+                        }}</span>
+                        to
+                        <span class="font-medium text-gray-900 dark:text-white">{{
+                          Math.min(currentPage * pageSize, totalItems)
+                        }}</span>
+                        of
+                        <span class="font-medium text-gray-900 dark:text-white">{{
+                          totalItems
+                        }}</span>
+                        results
+                      </div>
+                      <nav
+                        aria-label="Pagination"
+                        class="inline-flex relative z-0 -space-x-px rounded-md shadow-sm"
+                        >
+                        <button
+                          (click)="goToPage(currentPage - 1)"
+                          [disabled]="currentPage === 1"
+                          class="inline-flex relative items-center px-2 py-2 text-sm font-medium text-gray-500 rounded-l-md border border-gray-300 dark:border-gray-600 bg-surface-light dark:bg-surface-dark dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                          <span class="text-sm material-symbols-outlined">chevron_left</span>
+                        </button>
+                        @for (page of getPageNumbers(); track trackByPage($index, page)) {
+                          <button
+                            (click)="goToPage(page)"
+                            [class.bg-primary]="page === currentPage"
+                            [class.border-primary]="page === currentPage"
+                            [class.text-white]="page === currentPage"
+                            [class.bg-surface-light]="page !== currentPage"
+                            [class.dark:bg-surface-dark]="page !== currentPage"
+                            [class.text-gray-500]="page !== currentPage"
+                            class="inline-flex relative items-center px-4 py-2 text-sm font-medium border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800"
+                            >
+                            {{ page }}
+                          </button>
+                        }
+                        <button
+                          (click)="goToPage(currentPage + 1)"
+                          [disabled]="currentPage === totalPages"
+                          class="inline-flex relative items-center px-2 py-2 text-sm font-medium text-gray-500 rounded-r-md border border-gray-300 dark:border-gray-600 bg-surface-light dark:bg-surface-dark dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                          <span class="text-sm material-symbols-outlined">chevron_right</span>
+                        </button>
+                      </nav>
+                    </div>
+                  </main>
+                </div>

@@ -1,0 +1,206 @@
+<div
+  class="employee-directory bg-background-light dark:bg-background-dark min-h-screen font-body antialiased transition-colors duration-200"
+  >
+  <!-- Main Content -->
+  <main class="flex-1 max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
+    <div class="flex flex-col items-center mb-10">
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-6">
+        Employee Management
+      </h1>
+      <div
+        class="flex justify-center space-x-12 border-b border-gray-200 dark:border-gray-700 w-full max-w-2xl"
+        >
+        <a
+          routerLink="/employees"
+          class="pb-4 px-2 border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:border-gray-300 transition-all text-xs font-bold tracking-widest cursor-pointer uppercase"
+          >Team members</a
+          >
+          <a
+            routerLink="/directory"
+            class="pb-4 px-2 border-b-2 border-primary text-primary font-bold text-xs tracking-widest cursor-pointer uppercase transition-all"
+            >Directory</a
+            >
+            <a
+              routerLink="/org-chart"
+              class="pb-4 px-2 border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:border-gray-300 transition-all text-xs font-bold tracking-widest cursor-pointer uppercase"
+              >Org chart</a
+              >
+            </div>
+          </div>
+          <!-- Filters -->
+          <div
+            class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0"
+            >
+            <div
+              class="flex flex-col md:flex-row items-center w-full md:space-x-4 space-y-4 md:space-y-0"
+              >
+              <div class="relative w-full md:w-80">
+                <span
+                  class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+                  >
+                  <i class="pi pi-search text-gray-400"></i>
+                </span>
+                <input
+                  type="text"
+                  [(ngModel)]="searchTerm"
+                  (input)="onSearch()"
+                  class="block w-full pl-10 pr-3 py-2.5 bg-gray-100 dark:bg-gray-800 border-none rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary"
+                  placeholder="Search"
+                  />
+                </div>
+                <div class="relative w-full md:w-64">
+                  <select
+                    class="block w-full pl-4 pr-10 py-2.5 bg-gray-100 dark:bg-gray-800 border-none rounded-lg text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-primary appearance-none cursor-pointer"
+                    >
+                    <option>All Offices</option>
+                    <option>Axis Building</option>
+                    <option>Elevate Complex</option>
+                    <option>Innovate Tower</option>
+                  </select>
+                  <span
+                    class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none"
+                    >
+                    <i class="pi pi-chevron-down text-gray-500"></i>
+                  </span>
+                </div>
+                <div class="relative w-full md:w-64">
+                  <select
+                    class="block w-full pl-4 pr-10 py-2.5 bg-gray-100 dark:bg-gray-800 border-none rounded-lg text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-primary appearance-none cursor-pointer"
+                    >
+                    <option>All Departments</option>
+                    <option>Engineering</option>
+                    <option>Design</option>
+                    <option>Sales</option>
+                    <option>Marketing</option>
+                  </select>
+                  <span
+                    class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none"
+                    >
+                    <i class="pi pi-chevron-down text-gray-500"></i>
+                  </span>
+                </div>
+              </div>
+              <button
+                (click)="clearFilters()"
+                class="whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 hover:text-primary transition-colors font-medium"
+                >
+                Clear filters
+              </button>
+            </div>
+
+            <!-- Loading -->
+            @if (loading) {
+              <div class="flex items-center justify-center py-16">
+                <div
+                  class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary"
+                ></div>
+              </div>
+            }
+
+            <!-- Employee Cards Grid -->
+            @if (!loading) {
+              <div
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+                >
+                @for (employee of paginatedEmployees; track trackByEmployeeId(i, employee); let i = $index) {
+                  <div
+                    class="bg-surface-light dark:bg-surface-dark rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col items-center text-center"
+                    >
+                    <div
+                      class="w-24 h-24 rounded-full flex items-center justify-center mb-4 relative overflow-hidden"
+                      [ngClass]="getAvatarBgColor(i)"
+                      >
+                      <img
+                        [src]="employee.avatarUrl || 'assets/images/defaults/avatar-1.png'"
+                        [alt]="employee.fullName"
+                        class="w-20 h-20 rounded-full object-cover"
+            onerror="
+              this.src =
+                'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjZTVlN2ViIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0iIzljYTNhZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPj88L3RleHQ+PC9zdmc+'
+            "
+                        />
+                      </div>
+                      <h3 class="text-lg font-bold text-gray-900 dark:text-white">
+                        {{ employee.fullName }}
+                      </h3>
+                      <p class="text-gray-500 dark:text-gray-400 text-sm mb-4">
+                        {{ getPositionTitle(employee) }}
+                      </p>
+                      <div class="space-y-1 mb-6 w-full">
+                        <div
+                          class="flex items-center justify-center space-x-2 text-gray-600 dark:text-gray-300 text-sm"
+                          >
+                          <i class="pi pi-phone text-gray-400 text-sm"></i>
+                          <span>{{ getPhone(employee) }}</span>
+                        </div>
+                        <div
+                          class="flex items-center justify-center space-x-2 text-gray-600 dark:text-gray-300 text-sm"
+                          >
+                          <i class="pi pi-envelope text-gray-400 text-sm"></i>
+                          <span>{{ getEmail(employee) }}</span>
+                        </div>
+                      </div>
+                      <button
+                        [routerLink]="['/employees', employee.id]"
+                        class="w-full py-2 bg-orange-50 dark:bg-primary/20 text-primary font-semibold text-sm rounded-lg hover:bg-orange-100 dark:hover:bg-primary/30 transition-colors"
+                        >
+                        View profile
+                      </button>
+                    </div>
+                  }
+                  <!-- Empty State -->
+                  @if (paginatedEmployees.length === 0) {
+                    <div
+                      class="col-span-4 py-12 text-center text-gray-500 dark:text-gray-400"
+                      >
+                      <i class="pi pi-inbox text-4xl text-gray-300 mb-2"></i>
+                      <p class="text-lg font-medium">No employees found</p>
+                      <p class="text-sm">Try adjusting your search or filter criteria</p>
+                    </div>
+                  }
+                </div>
+              }
+
+              <!-- Pagination -->
+              @if (!loading && paginatedEmployees.length > 0) {
+                <div
+                  class="flex justify-end pt-6 pb-12"
+                  >
+                  <nav
+                    aria-label="Pagination"
+                    class="inline-flex rounded-md shadow-sm -space-x-px"
+                    >
+                    <button
+                      (click)="goToPage(currentPage - 1)"
+                      [disabled]="currentPage === 1"
+                      class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-transparent text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                      <i class="pi pi-chevron-left text-sm"></i>
+                    </button>
+                    @for (page of getPageNumbers(); track trackByPage($index, page)) {
+                      <button
+                        (click)="goToPage(page)"
+                        [class.bg-primary]="page === currentPage"
+                        [class.border-primary]="page === currentPage"
+                        [class.text-white]="page === currentPage"
+                        class="relative inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded"
+          [ngClass]="{
+            'text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-white':
+              page !== currentPage,
+          }"
+                        >
+                        {{ page }}
+                      </button>
+                    }
+                    <button
+                      (click)="goToPage(currentPage + 1)"
+                      [disabled]="currentPage === totalPages"
+                      class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-transparent text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                      <i class="pi pi-chevron-right text-sm"></i>
+                    </button>
+                  </nav>
+                </div>
+              }
+            </main>
+          </div>

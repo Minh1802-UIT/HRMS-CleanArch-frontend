@@ -1,0 +1,53 @@
+.audit-layout {
+  min-height: 100vh;
+}
+
+.main-content {
+  transition: margin-left 0.3s ease;
+}
+
+/* Spinner */
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #f0f2f5;
+  border-top: 3px solid #0066e6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Action Classes */
+.bg-purple-100 {
+  background-color: #f3e8ff;
+}
+.text-purple-700 {
+  color: #6b21a8;
+}
+.border-purple-200 {
+  border-color: #e9d5ff;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0 !important;
+    padding: 1rem;
+  }
+
+  .overflow-x-auto {
+    overflow-x: auto;
+  }
+
+  table {
+    min-width: 900px; /* Force scroll */
+  }
+}

@@ -1,0 +1,1208 @@
+@if (candidate) {
+  <div
+    class="flex overflow-hidden flex-col h-screen text-gray-800 bg-background-light dark:bg-background-dark font-body dark:text-gray-200"
+    >
+    <div class="flex overflow-hidden flex-col flex-1">
+      <!-- Breadcrumb & Actions Header -->
+      <header
+        class="z-10 px-6 py-4 bg-white border-b border-gray-200 shadow-sm transition-colors dark:bg-surface-dark dark:border-gray-700 shrink-0"
+        >
+        <div
+          class="flex flex-col gap-4 justify-between md:flex-row md:items-center"
+          >
+          <nav class="flex text-sm font-medium text-gray-500 dark:text-gray-400">
+            <ol class="flex items-center space-x-2">
+              <li>
+                <a
+                  routerLink="/recruitment"
+                  class="transition-colors hover:text-primary"
+                  >Recruitment</a
+                  >
+                </li>
+                <li>
+                  <span class="text-base align-middle material-symbols-outlined"
+                    >chevron_right</span
+                    >
+                  </li>
+                  <li>
+                    <a
+                      routerLink="/recruitment"
+                      [queryParams]="{ tab: 'candidates' }"
+                      class="transition-colors hover:text-primary"
+                      >Candidates</a
+                      >
+                    </li>
+                    <li>
+                      <span class="text-base align-middle material-symbols-outlined"
+                        >chevron_right</span
+                        >
+                      </li>
+                      <li
+                        aria-current="page"
+                        class="font-bold text-gray-900 dark:text-white"
+                        >
+                        {{ candidate.name }}
+                      </li>
+                    </ol>
+                  </nav>
+                  <div class="flex gap-3 items-center">
+                    <button
+                      (click)="reject()"
+                      class="flex gap-2 items-center px-4 py-2 text-sm font-bold text-red-600 bg-white rounded-lg border border-red-200 shadow-sm transition-all hover:border-red-400 dark:bg-gray-800/40 dark:border-red-900/50 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
+                      >
+                      <span class="text-lg material-symbols-outlined">close</span> Reject
+                    </button>
+                    <button
+                      (click)="email()"
+                      class="flex gap-2 items-center px-4 py-2 text-sm font-bold bg-white rounded-lg border border-blue-200 shadow-sm transition-all text-primary hover:border-blue-400 dark:bg-gray-800/40 dark:border-blue-900/50 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                      >
+                      <span class="text-lg material-symbols-outlined">mail</span> Email
+                    </button>
+                    <button
+                      (click)="moveToNextStage()"
+                      class="flex gap-2 items-center px-5 py-2 text-sm font-bold text-white rounded-lg shadow-md transition-all bg-brand-orange hover:bg-orange-600"
+                      >
+                      Move to next stage
+                      <span class="text-lg material-symbols-outlined">arrow_forward</span>
+                    </button>
+                  </div>
+                </div>
+              </header>
+              <!-- Scrollable Main Content -->
+              <main
+                class="overflow-y-auto flex-1 p-4 bg-gray-50 dark:bg-background-dark/30 md:p-6 lg:p-8 custom-scrollbar"
+                >
+                <div
+                  class="max-w-[1440px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-start px-6"
+                  >
+                  <!-- Left Sidebar: Profile Summary -->
+                  <div class="space-y-6 lg:col-span-3">
+                    <div
+                      class="flex flex-col items-center p-8 text-center bg-white rounded-2xl border border-gray-200 shadow-sm transition-all dark:bg-surface-dark dark:border-gray-700 hover:shadow-md"
+                      >
+                      <div class="relative mb-6">
+                        <img
+                          [src]="candidate.avatar"
+                          [alt]="candidate.name"
+                          class="object-cover w-32 h-32 rounded-full border-4 border-white shadow-xl dark:border-gray-700"
+                          />
+                          <div
+                            class="absolute right-1 bottom-1 w-6 h-6 bg-green-500 rounded-full border-4 border-white shadow-sm dark:border-gray-800"
+                          ></div>
+                        </div>
+                        <h2
+                          class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+                          >
+                          {{ candidate.name }}
+                        </h2>
+                        <span
+                          class="mt-1 text-sm font-bold tracking-wider text-gray-400 uppercase dark:text-gray-500"
+                          >{{ candidate.role }}</span
+                          >
+                          <div
+                            class="mt-4 px-4 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-xs font-bold rounded-full uppercase tracking-widest shadow-sm border border-blue-100 dark:border-blue-800/50"
+                            >
+                            {{ candidate.status }}
+                          </div>
+                          <div class="my-8 w-full h-px bg-gray-100 dark:bg-gray-700/50"></div>
+                          <div class="px-2 space-y-5 w-full">
+                            <div
+                              class="flex gap-4 items-center text-sm text-gray-600 dark:text-gray-300 group"
+                              >
+                              <div
+                                class="flex justify-center items-center w-9 h-9 bg-gray-50 rounded-xl shadow-inner transition-colors dark:bg-gray-800 shrink-0 group-hover:bg-primary/10"
+                                >
+                                <span
+                                  class="text-xl text-gray-400 transition-colors material-symbols-outlined group-hover:text-primary"
+                                  >call</span
+                                  >
+                                </div>
+                                <span class="font-medium truncate">{{ candidate.phone }}</span>
+                              </div>
+                              <div
+                                class="flex gap-4 items-center text-sm text-gray-600 dark:text-gray-300 group"
+                                >
+                                <div
+                                  class="flex justify-center items-center w-9 h-9 bg-gray-50 rounded-xl shadow-inner transition-colors dark:bg-gray-800 shrink-0 group-hover:bg-primary/10"
+                                  >
+                                  <span
+                                    class="text-xl text-gray-400 transition-colors material-symbols-outlined group-hover:text-primary"
+                                    >mail</span
+                                    >
+                                  </div>
+                                  <span class="truncate font-medium block max-w-[180px]">{{
+                                    candidate.email
+                                  }}</span>
+                                </div>
+                                <div
+                                  class="flex gap-4 items-center text-sm text-gray-600 dark:text-gray-300 group"
+                                  >
+                                  <div
+                                    class="flex justify-center items-center w-9 h-9 bg-gray-50 rounded-xl shadow-inner transition-colors dark:bg-gray-800 shrink-0 group-hover:bg-primary/10"
+                                    >
+                                    <span class="text-xl text-blue-600 material-symbols-outlined"
+                                      >link</span
+                                      >
+                                    </div>
+                                    <a
+                                      [href]="'https://' + candidate.linkedin"
+                                      target="_blank"
+                                      class="font-medium text-blue-600 truncate hover:underline"
+                                      >{{ candidate.linkedin }}</a
+                                      >
+                                    </div>
+                                  </div>
+                                  <div class="my-8 w-full h-px bg-gray-100 dark:bg-gray-700/50"></div>
+                                  <div class="flex flex-col gap-2 items-center w-full">
+                                    <span
+                                      class="text-xs text-gray-400 uppercase font-bold tracking-widest"
+                                      >Candidate Rating</span
+                                      >
+                                      <div class="flex gap-1 mt-1 text-yellow-400">
+                                        @for (star of getRatingStars(candidate.rating); track trackByIndex($index, star)) {
+                                          <span
+                                            class="material-symbols-outlined"
+                                            [class.fill-current]="star === 1"
+                                            >star</span
+                                            >
+                                          }
+                                        </div>
+                                        <span class="mt-1 text-xs font-bold text-gray-900 dark:text-white"
+                                          >{{ candidate.rating.toFixed(1) }}
+                                          <span class="font-medium text-gray-400">/ 5.0</span></span
+                                          >
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <!-- Center Content: Details & Tabs -->
+                                    <div class="lg:col-span-6 space-y-6 min-h-[800px]">
+                                      <div
+                                        class="flex overflow-hidden flex-col h-full bg-white rounded-2xl border border-gray-200 shadow-sm transition-all dark:bg-surface-dark dark:border-gray-700 hover:shadow-md"
+                                        >
+                                        <!-- Navigation Tabs -->
+                                        <div
+                                          class="flex justify-center items-center px-6 pt-2 space-x-12 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-transparent"
+                                          >
+                                          <button
+                                            (click)="onTabChange('overview')"
+                [ngClass]="
+                  activeTab === 'overview'
+                    ? 'border-brand-orange text-brand-orange'
+                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                "
+                                            class="px-2 pb-4 text-xs font-bold tracking-widest uppercase border-b-2 transition-all"
+                                            >
+                                            Profile Overview
+                                          </button>
+                                          <button
+                                            (click)="onTabChange('resume')"
+                [ngClass]="
+                  activeTab === 'resume'
+                    ? 'border-brand-orange text-brand-orange'
+                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                "
+                                            class="px-2 pb-4 text-xs font-bold tracking-widest uppercase border-b-2 transition-all"
+                                            >
+                                            Resume/CV
+                                          </button>
+                                          <button
+                                            (click)="onTabChange('notes')"
+                [ngClass]="
+                  activeTab === 'notes'
+                    ? 'border-brand-orange text-brand-orange'
+                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                "
+                                            class="px-2 pb-4 text-xs font-bold tracking-widest uppercase border-b-2 transition-all"
+                                            >
+                                            Interview Notes
+                                          </button>
+                                          <button
+                                            (click)="onTabChange('history')"
+                [ngClass]="
+                  activeTab === 'history'
+                    ? 'border-brand-orange text-brand-orange'
+                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                "
+                                            class="px-2 pb-4 text-xs font-bold tracking-widest uppercase border-b-2 transition-all"
+                                            >
+                                            History
+                                          </button>
+                                        </div>
+                                        <!-- Scrollable Tab Content -->
+                                        <div class="overflow-y-auto p-8 custom-scrollbar">
+                                          <!-- Overview Tab -->
+                                          @if (activeTab === 'overview') {
+                                            <div
+                                              class="space-y-10 animate-fade-in"
+                                              >
+                                              <section>
+                                                <h3
+                                                  class="flex gap-3 items-center mb-6 text-sm font-bold text-gray-900 dark:text-white"
+                                                  >
+                                                  <span
+                                                    class="w-1.5 h-6 rounded-full shadow-sm bg-brand-orange"
+                                                  ></span>
+                                                  BASIC INFORMATION
+                                                </h3>
+                                                <div
+                                                  class="grid grid-cols-1 gap-y-6 gap-x-12 p-6 text-sm rounded-2xl border border-gray-100 sm:grid-cols-2 bg-gray-50/50 dark:bg-gray-800/40 dark:border-gray-700/50"
+                                                  >
+                                                  <div>
+                                                    <p
+                                                      class="text-gray-400 dark:text-gray-500 text-xs font-bold uppercase tracking-widest mb-1.5"
+                                                      >
+                                                      Full Name
+                                                    </p>
+                                                    <p class="font-bold text-gray-900 dark:text-white">
+                                                      {{ candidate.fullName }}
+                                                    </p>
+                                                  </div>
+                                                  <div>
+                                                    <p
+                                                      class="text-gray-400 dark:text-gray-500 text-xs font-bold uppercase tracking-widest mb-1.5"
+                                                      >
+                                                      Gender
+                                                    </p>
+                                                    <p class="font-bold text-gray-900 dark:text-white">
+                                                      {{ candidate.gender }}
+                                                    </p>
+                                                  </div>
+                                                  <div>
+                                                    <p
+                                                      class="text-gray-400 dark:text-gray-500 text-xs font-bold uppercase tracking-widest mb-1.5"
+                                                      >
+                                                      Date of Birth
+                                                    </p>
+                                                    <p class="font-bold text-gray-900 dark:text-white">
+                                                      {{ candidate.dob }}
+                                                    </p>
+                                                  </div>
+                                                  <div>
+                                                    <p
+                                                      class="text-gray-400 dark:text-gray-500 text-xs font-bold uppercase tracking-widest mb-1.5"
+                                                      >
+                                                      Current Location
+                                                    </p>
+                                                    <p class="font-bold text-gray-900 dark:text-white">
+                                                      {{ candidate.address }}
+                                                    </p>
+                                                  </div>
+                                                </div>
+                                              </section>
+                                              <section>
+                                                <h3
+                                                  class="flex gap-3 items-center mb-8 text-sm font-bold text-gray-900 dark:text-white"
+                                                  >
+                                                  <span
+                                                    class="w-1.5 h-6 rounded-full shadow-sm bg-brand-orange"
+                                                  ></span>
+                                                  PROFESSIONAL EXPERIENCE
+                                                </h3>
+                                                <div
+                                                  class="relative pl-6 ml-2 space-y-10 border-l-2 border-gray-100 dark:border-gray-800/50"
+                                                  >
+                                                  @for (exp of candidate.experience; track trackByIndex($index, exp)) {
+                                                    <div
+                                                      class="relative group"
+                                                      >
+                                                      <div
+                                                        class="absolute -left-[31px] top-1 w-4 h-4 rounded-full border-4 border-white dark:border-surface-dark shadow-sm transition-all duration-300"
+                        [ngClass]="
+                          exp.isCurrent
+                            ? 'bg-brand-orange scale-110 shadow-lg shadow-orange-500/30'
+                            : 'bg-gray-300 dark:bg-gray-600 group-hover:bg-brand-orange/50'
+                        "
+                                                      ></div>
+                                                      <div
+                                                        class="flex flex-col gap-2 justify-between mb-2 sm:flex-row sm:items-center"
+                                                        >
+                                                        <div>
+                                                          <h4
+                                                            class="text-sm font-bold text-gray-900 dark:text-white"
+                                                            >
+                                                            {{ exp.role }}
+                                                          </h4>
+                                                          <p class="mt-1 text-xs font-bold text-brand-orange">
+                                                            {{ exp.company }}
+                                                          </p>
+                                                        </div>
+                                                        <span
+                                                          class="text-xs font-bold text-gray-400 bg-gray-50 dark:bg-gray-800 px-3 py-1 rounded-full border border-gray-100 dark:border-gray-700 tracking-wider w-fit"
+                                                          >
+                                                          {{ exp.period }}
+                                                        </span>
+                                                      </div>
+                                                      <p
+                                                        class="mt-3 text-sm font-medium leading-relaxed text-gray-500 dark:text-gray-400"
+                                                        >
+                                                        {{ exp.description }}
+                                                      </p>
+                                                    </div>
+                                                  }
+                                                </div>
+                                              </section>
+                                            </div>
+                                          }
+                                          <!-- Interview Notes Tab -->
+                                          @if (activeTab === 'notes') {
+                                            <div
+                                              class="space-y-6 duration-300 animate-fade-in"
+                                              >
+                                              <div class="flex justify-between items-center mb-4">
+                                                <h2 class="text-lg font-bold text-gray-900 dark:text-white">
+                                                  Interview Feedback
+                                                </h2>
+                                                <button
+                                                  class="flex gap-2 items-center px-4 py-2 text-sm font-bold text-white rounded-lg shadow-md transition bg-brand-orange hover:bg-orange-600 shadow-orange-500/20"
+                                                  >
+                                                  <span class="text-lg material-symbols-outlined">add</span>
+                                                  NEW NOTE
+                                                </button>
+                                              </div>
+                                              <!-- Note Feed -->
+                                              <div class="space-y-5">
+                                                @for (note of candidate.notes; track trackByIndex($index, note)) {
+                                                  <div
+                                                    class="relative p-6 bg-white rounded-2xl border border-gray-200 shadow-sm transition-shadow dark:bg-gray-800/40 dark:border-gray-700 group hover:shadow-md"
+                                                    >
+                                                    <div class="flex justify-between items-start mb-6">
+                                                      <div class="flex gap-4">
+                                                        <img
+                                                          [src]="note.authorAvatar"
+                                                          class="w-11 h-11 rounded-full border-2 border-white shadow-sm dark:border-gray-700"
+                                                          />
+                                                          <div>
+                                                            <h4
+                                                              class="text-sm font-bold text-gray-900 dark:text-white"
+                                                              >
+                                                              {{ note.author }},
+                                                              <span
+                                                                class="font-normal text-gray-500 uppercase text-xs tracking-widest block sm:inline ml-0 sm:ml-1"
+                                                                >{{ note.authorRole }}</span
+                                                                >
+                                                              </h4>
+                                                              <p
+                                                                class="text-xs font-bold text-gray-400 mt-1 uppercase tracking-wider"
+                                                                >
+                                                                {{ note.date }}
+                                                              </p>
+                                                            </div>
+                                                          </div>
+                                                          <div class="flex gap-4 items-center">
+                                                            <div
+                                                              class="flex gap-1.5 items-center px-3 py-1 rounded-lg border bg-yellow-400/10 border-yellow-400/20"
+                                                              >
+                                                              <span
+                                                                class="text-sm text-yellow-500 fill-current material-symbols-outlined"
+                                                                >star</span
+                                                                >
+                                                                <span
+                                                                  class="text-sm font-bold text-gray-900 dark:text-white"
+                                                                  >{{ note.rating }}</span
+                                                                  >
+                                                                  <span class="text-xs text-gray-400 font-bold"
+                                                                    >/5</span
+                                                                    >
+                                                                  </div>
+                                                                  <div
+                                                                    class="flex gap-1 opacity-0 transition-opacity group-hover:opacity-100"
+                                                                    >
+                                                                    <button
+                                                                      class="p-1.5 rounded-lg transition hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                                                                      >
+                                                                      <span class="text-lg material-symbols-outlined"
+                                                                        >edit</span
+                                                                        >
+                                                                      </button>
+                                                                      <button
+                                                                        class="p-1.5 rounded-lg transition hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                                                        >
+                                                                        <span class="text-lg material-symbols-outlined"
+                                                                          >delete</span
+                                                                          >
+                                                                        </button>
+                                                                      </div>
+                                                                    </div>
+                                                                  </div>
+                                                                  <div class="grid grid-cols-1 gap-4 mb-5 md:grid-cols-2">
+                                                                    <div
+                                                                      class="p-4 rounded-xl border border-green-100 transition-colors bg-green-50/50 dark:bg-green-900/10 dark:border-green-900/20 hover:border-green-300"
+                                                                      >
+                                                                      <p
+                                                                        class="text-xs font-bold text-green-700 dark:text-green-400 uppercase tracking-widest mb-2 flex items-center gap-2"
+                                                                        >
+                                                                        <span class="text-base material-symbols-outlined"
+                                                                          >thumb_up</span
+                                                                          >
+                                                                          Strengths
+                                                                        </p>
+                                                                        <p
+                                                                          class="text-xs font-medium leading-relaxed text-gray-700 dark:text-gray-300"
+                                                                          >
+                                                                          {{ note.strengths }}
+                                                                        </p>
+                                                                      </div>
+                                                                      <div
+                                                                        class="p-4 rounded-xl border border-red-100 transition-colors bg-red-50/50 dark:bg-red-900/10 dark:border-red-900/20 hover:border-red-300"
+                                                                        >
+                                                                        <p
+                                                                          class="text-xs font-bold text-red-700 dark:text-red-400 uppercase tracking-widest mb-2 flex items-center gap-2"
+                                                                          >
+                                                                          <span class="text-base material-symbols-outlined"
+                                                                            >thumb_down</span
+                                                                            >
+                                                                            Weaknesses
+                                                                          </p>
+                                                                          <p
+                                                                            class="text-xs font-medium leading-relaxed text-gray-700 dark:text-gray-300"
+                                                                            >
+                                                                            {{ note.weaknesses }}
+                                                                          </p>
+                                                                        </div>
+                                                                      </div>
+                                                                      <div
+                                                                        class="pt-4 border-t border-gray-100 dark:border-gray-700"
+                                                                        >
+                                                                        <p
+                                                                          class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5"
+                                                                          >
+                                                                          Overall Recommendation
+                                                                        </p>
+                                                                        <p
+                                                                          class="text-sm font-bold leading-tight text-gray-900 dark:text-white"
+                                                                          >
+                                                                          {{ note.recommendation }}
+                                                                        </p>
+                                                                      </div>
+                                                                    </div>
+                                                                  }
+                                                                </div>
+                                                                <!-- Add New Note Editor -->
+                                                                <div
+                                                                  class="pt-8 mt-6 border-t border-gray-200 dark:border-gray-700"
+                                                                  >
+                                                                  <h3
+                                                                    class="flex gap-2 items-center mb-5 text-sm font-bold text-gray-900 dark:text-white"
+                                                                    >
+                                                                    <span
+                                                                      class="w-1.5 h-6 rounded-full shadow-sm bg-brand-orange"
+                                                                    ></span>
+                                                                    ADD NEW NOTE
+                                                                  </h3>
+                                                                  <div
+                                                                    class="p-6 rounded-2xl border border-gray-200 bg-gray-50/50 dark:bg-gray-800/40 dark:border-gray-700"
+                                                                    >
+                                                                    <div class="flex gap-4">
+                                                                      <div
+                                                                        class="flex justify-center items-center w-11 h-11 bg-gray-200 rounded-full dark:bg-gray-700 shrink-0"
+                                                                        >
+                                                                        <span class="text-gray-500 material-symbols-outlined"
+                                                                          >person</span
+                                                                          >
+                                                                        </div>
+                                                                        <div class="flex-1">
+                                                                          <div
+                                                                            class="overflow-hidden bg-white rounded-xl border-2 border-gray-200 transition-all dark:border-gray-600 dark:bg-surface-dark focus-within:ring-4 focus-within:ring-brand-orange/10 focus-within:border-brand-orange"
+                                                                            >
+                                                                            <div
+                                                                              class="flex gap-1 items-center p-2 bg-gray-50 border-b border-gray-100 dark:border-gray-700 dark:bg-gray-800"
+                                                                              >
+                                                                              <button
+                                                                                class="p-2 text-gray-500 rounded-lg transition hover:bg-gray-200 dark:hover:bg-gray-700"
+                                                                                title="Bold"
+                                                                                >
+                                                                                <span class="text-lg material-symbols-outlined"
+                                                                                  >format_bold</span
+                                                                                  >
+                                                                                </button>
+                                                                                <button
+                                                                                  class="p-2 text-gray-500 rounded-lg transition hover:bg-gray-200 dark:hover:bg-gray-700"
+                                                                                  title="Italic"
+                                                                                  >
+                                                                                  <span class="text-lg material-symbols-outlined"
+                                                                                    >format_italic</span
+                                                                                    >
+                                                                                  </button>
+                                                                                  <div
+                                                                                    class="mx-2 w-px h-5 bg-gray-300 dark:bg-gray-600"
+                                                                                  ></div>
+                                                                                  <button
+                                                                                    class="p-2 text-gray-500 rounded-lg transition hover:bg-gray-200 dark:hover:bg-gray-700"
+                                                                                    title="Bullet List"
+                                                                                    >
+                                                                                    <span class="text-lg material-symbols-outlined"
+                                                                                      >format_list_bulleted</span
+                                                                                      >
+                                                                                    </button>
+                                                                                    <button
+                                                                                      class="p-2 text-gray-500 rounded-lg transition hover:bg-gray-200 dark:hover:bg-gray-700"
+                                                                                      title="Numbered List"
+                                                                                      >
+                                                                                      <span class="text-lg material-symbols-outlined"
+                                                                                        >format_list_numbered</span
+                                                                                        >
+                                                                                      </button>
+                                                                                    </div>
+                                                                                    <textarea
+                                                                                      class="p-4 w-full text-sm font-medium bg-transparent border-none resize-none focus:ring-0 dark:text-white"
+                                                                                      placeholder="Enter your detailed feedback, strengths, and weaknesses..."
+                                                                                      rows="5"
+                                                                                    ></textarea>
+                                                                                  </div>
+                                                                                  <div
+                                                                                    class="flex flex-col gap-4 justify-between items-center mt-5 sm:flex-row"
+                                                                                    >
+                                                                                    <div class="flex gap-3 items-center">
+                                                                                      <span
+                                                                                        class="text-xs font-bold tracking-widest text-gray-500 uppercase"
+                                                                                        >Rating:</span
+                                                                                        >
+                                                                                        <div
+                                                                                          class="flex text-gray-200 transition cursor-pointer dark:text-gray-700 hover:text-yellow-400"
+                                                                                          >
+                                                                                          <span class="text-xl material-symbols-outlined"
+                                                                                            >star</span
+                                                                                            >
+                                                                                            <span class="text-xl material-symbols-outlined"
+                                                                                              >star</span
+                                                                                              >
+                                                                                              <span class="text-xl material-symbols-outlined"
+                                                                                                >star</span
+                                                                                                >
+                                                                                                <span class="text-xl material-symbols-outlined"
+                                                                                                  >star</span
+                                                                                                  >
+                                                                                                  <span class="text-xl material-symbols-outlined"
+                                                                                                    >star</span
+                                                                                                    >
+                                                                                                  </div>
+                                                                                                </div>
+                                                                                                <button
+                                                                                                  class="w-full sm:w-auto px-8 py-2.5 text-xs font-bold text-white bg-gray-900 dark:bg-brand-orange hover:bg-gray-800 dark:hover:bg-orange-600 rounded-xl shadow-lg transition-all uppercase tracking-[0.15em]"
+                                                                                                  >
+                                                                                                  Submit Note
+                                                                                                </button>
+                                                                                              </div>
+                                                                                            </div>
+                                                                                          </div>
+                                                                                        </div>
+                                                                                      </div>
+                                                                                    </div>
+                                                                                  }
+                                                                                  <!-- Resume Tab -->
+                                                                                  @if (activeTab === 'resume') {
+                                                                                    <div
+                                                                                      class="flex flex-col h-full animate-fade-in"
+                                                                                      >
+                                                                                      <!-- Resume Header -->
+                                                                                      <div class="flex justify-between items-center mb-8">
+                                                                                        <div
+                                                                                          class="flex gap-4 items-center text-sm text-gray-600 dark:text-gray-400"
+                                                                                          >
+                                                                                          <div
+                                                                                            class="flex justify-center items-center w-10 h-10 bg-red-50 rounded-xl shadow-sm dark:bg-red-900/20"
+                                                                                            >
+                                                                                            <span
+                                                                                              class="text-2xl text-red-500 material-symbols-outlined"
+                                                                                              >picture_as_pdf</span
+                                                                                              >
+                                                                                            </div>
+                                                                                            <div class="flex flex-col">
+                                                                                              <span
+                                                                                                class="text-base font-bold leading-tight text-gray-900 dark:text-white"
+                                                                                                >Kyle_Resume_v2.pdf</span
+                                                                                                >
+                                                                                                <span
+                                                                                                  class="text-xs font-bold text-gray-400 uppercase tracking-widest mt-0.5"
+                                                                                                  >2.4 MB • PDF DOCUMENT</span
+                                                                                                  >
+                                                                                                </div>
+                                                                                              </div>
+                                                                                              <div class="flex gap-3">
+                                                                                                <button
+                                                                                                  class="px-4 py-2 text-xs font-bold uppercase tracking-widest text-brand-orange border-2 border-brand-orange/20 rounded-xl hover:bg-orange-50 dark:hover:bg-orange-900/10 transition flex items-center gap-2 group shadow-sm hover:shadow-md"
+                                                                                                  >
+                                                                                                  <span
+                                                                                                    class="text-base transition-transform material-symbols-outlined group-hover:-translate-y-0.5"
+                                                                                                    >download</span
+                                                                                                    >
+                                                                                                    Download CV
+                                                                                                  </button>
+                                                                                                  <button
+                                                                                                    class="px-4 py-2 text-xs font-bold uppercase tracking-widest text-gray-500 border-2 border-gray-100 dark:border-gray-700/50 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition flex items-center gap-2 group shadow-sm hover:shadow-md"
+                                                                                                    >
+                                                                                                    <span
+                                                                                                      class="text-base transition-transform material-symbols-outlined group-hover:rotate-12"
+                                                                                                      >print</span
+                                                                                                      >
+                                                                                                      Print
+                                                                                                    </button>
+                                                                                                  </div>
+                                                                                                </div>
+                                                                                                <div class="flex flex-col flex-1 gap-8">
+                                                                                                  <!-- Top Row: Insights & Activity side-by-side -->
+                                                                                                  <div class="grid grid-cols-1 gap-8 md:grid-cols-2 shrink-0">
+                                                                                                    <!-- Quick Insights Card -->
+                                                                                                    <div
+                                                                                                      class="p-8 rounded-3xl border border-blue-100 shadow-sm bg-blue-50/50 dark:bg-blue-900/10 dark:border-blue-900/20"
+                                                                                                      >
+                                                                                                      <div class="flex gap-4 items-center mb-8">
+                                                                                                        <div
+                                                                                                          class="flex justify-center items-center w-10 h-10 text-white bg-blue-600 rounded-xl shadow-lg shadow-blue-500/30"
+                                                                                                          >
+                                                                                                          <span class="text-xl material-symbols-outlined"
+                                                                                                            >auto_awesome</span
+                                                                                                            >
+                                                                                                          </div>
+                                                                                                          <div>
+                                                                                                            <h3
+                                                                                                              class="text-xs font-bold tracking-widest text-blue-900 uppercase dark:text-blue-100"
+                                                                                                              >
+                                                                                                              Quick Insights
+                                                                                                            </h3>
+                                                                                                            <p
+                                                                                                              class="text-[9px] font-bold text-blue-600/60 dark:text-blue-400/60 uppercase tracking-widest mt-1"
+                                                                                                              >
+                                                                                                              AI-Powered Analysis
+                                                                                                            </p>
+                                                                                                          </div>
+                                                                                                        </div>
+                                                                                                        <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
+                                                                                                          <div class="space-y-6">
+                                                                                                            <div>
+                                                                                                              <p
+                                                                                                                class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3"
+                                                                                                                >
+                                                                                                                Core Expertise
+                                                                                                              </p>
+                                                                                                              <div class="flex flex-wrap gap-2">
+                                                                                                                @for (skill of candidate.skills; track trackBySkill($index, skill)) {
+                                                                                                                  <span
+                                                                                                                    class="px-3 py-1.5 bg-white dark:bg-gray-800 border border-blue-200 dark:border-blue-900 text-xs font-bold text-blue-700 dark:text-blue-300 rounded-lg shadow-sm"
+                                                                                                                    >
+                                                                                                                    {{ skill }}
+                                                                                                                  </span>
+                                                                                                                }
+                                                                                                              </div>
+                                                                                                            </div>
+                                                                                                            <div>
+                                                                                                              <p
+                                                                                                                class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3"
+                                                                                                                >
+                                                                                                                Software Stack
+                                                                                                              </p>
+                                                                                                              <div class="flex flex-wrap gap-2">
+                                                                                                                @for (tool of candidate.tools; track trackByTool($index, tool)) {
+                                                                                                                  <span
+                                                                                                                    class="px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 text-xs font-bold text-gray-600 dark:text-gray-400 rounded-lg shadow-sm"
+                                                                                                                    >
+                                                                                                                    {{ tool }}
+                                                                                                                  </span>
+                                                                                                                }
+                                                                                                              </div>
+                                                                                                            </div>
+                                                                                                          </div>
+                                                                                                          <div class="lg:border-l lg:border-blue-200/30 lg:pl-8">
+                                                                                                            <p
+                                                                                                              class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-4"
+                                                                                                              >
+                                                                                                              Education Highlight
+                                                                                                            </p>
+                                                                                                            <div
+                                                                                                              class="p-4 bg-white rounded-2xl border border-blue-100 shadow-sm dark:bg-gray-800/80 dark:border-blue-900/50"
+                                                                                                              >
+                                                                                                              <p
+                                                                                                                class="text-sm font-bold leading-tight text-gray-900 dark:text-white"
+                                                                                                                >
+                                                                                                                {{ candidate.education[0].degree }}
+                                                                                                              </p>
+                                                                                                              <p
+                                                                                                                class="text-xs text-gray-500 font-bold mt-2 uppercase tracking-wide"
+                                                                                                                >
+                                                                                                                {{ candidate.education[0].school }}
+                                                                                                              </p>
+                                                                                                            </div>
+                                                                                                          </div>
+                                                                                                        </div>
+                                                                                                      </div>
+                                                                                                      <!-- Recent Activity Card -->
+                                                                                                      <div
+                                                                                                        class="p-8 h-full bg-white rounded-3xl border border-gray-100 transition-all dark:bg-surface-dark dark:border-gray-700 hover:shadow-md"
+                                                                                                        >
+                                                                                                        <h3
+                                                                                                          class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-[0.2em] mb-8 border-b border-gray-100 dark:border-gray-700 pb-4"
+                                                                                                          >
+                                                                                                          Recent Activity
+                                                                                                        </h3>
+                                                                                                        <div class="relative space-y-5">
+                                                                                                          <div
+                                                                                                            class="absolute top-1 bottom-1 left-1.5 w-0.5 bg-gray-50 rounded-full dark:bg-gray-700/50"
+                                                                                                          ></div>
+                                                                                                          @for (activity of candidate.activities; track trackByIndex($index, activity)) {
+                                                                                                            <div
+                                                                                                              class="flex relative z-10 gap-5 group"
+                                                                                                              >
+                                                                                                              <div
+                                                                                                                class="mt-1.5 w-3 h-3 rounded-full border-4 border-white shadow-sm transition-transform dark:border-surface-dark shrink-0"
+                                                                                                                [class.bg-green-500]="activity.color === 'green'"
+                                                                                                                [class.bg-blue-500]="activity.color === 'blue'"
+                                                                                                              ></div>
+                                                                                                              <div class="flex flex-1 gap-6 items-center">
+                                                                                                                <p
+                                                                                                                  class="flex-1 text-xs font-bold leading-tight text-gray-800 dark:text-white"
+                                                                                                                  >
+                                                                                                                  {{ activity.title }}
+                                                                                                                </p>
+                                                                                                                <p
+                                                                                                                  class="text-xs text-gray-400 font-bold uppercase tracking-tighter shrink-0"
+                                                                                                                  >
+                                                                                                                  {{ activity.date }}
+                                                                                                                </p>
+                                                                                                              </div>
+                                                                                                            </div>
+                                                                                                          }
+                                                                                                        </div>
+                                                                                                      </div>
+                                                                                                    </div>
+                                                                                                    <!-- Bottom Section: Full-width Resume Preview -->
+                                                                                                    <div
+                                                                                                      class="flex overflow-hidden relative flex-col flex-1 bg-gray-100 rounded-3xl border border-gray-200 shadow-inner dark:bg-gray-900/50 dark:border-gray-700 group min-h-[900px]"
+                                                                                                      >
+                                                                                                      <!-- Zoom Controls -->
+                                                                                                      <div
+                                                                                                        class="flex absolute top-6 right-6 z-20 flex-col gap-3 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                                                                                                        >
+                                                                                                        <button
+                                                                                                          class="flex justify-center items-center w-10 h-10 text-gray-600 bg-white rounded-xl border border-gray-100 shadow-xl transition-all dark:bg-gray-800 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 dark:border-gray-600 hover:scale-110 active:scale-95"
+                                                                                                          >
+                                                                                                          <span class="text-xl material-symbols-outlined"
+                                                                                                            >zoom_in</span
+                                                                                                            >
+                                                                                                          </button>
+                                                                                                          <button
+                                                                                                            class="flex justify-center items-center w-10 h-10 text-gray-600 bg-white rounded-xl border border-gray-100 shadow-xl transition-all dark:bg-gray-800 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 dark:border-gray-600 hover:scale-110 active:scale-95"
+                                                                                                            >
+                                                                                                            <span class="text-xl material-symbols-outlined"
+                                                                                                              >zoom_out</span
+                                                                                                              >
+                                                                                                            </button>
+                                                                                                          </div>
+                                                                                                          <!-- Scrollable Document View -->
+                                                                                                          <div
+                                                                                                            class="flex overflow-auto flex-1 justify-center p-6 md:p-12 bg-gray-50/50 dark:bg-gray-900/30 custom-scrollbar"
+                                                                                                            >
+                                                                                                            <!-- Stylized A4 Paper -->
+                                                                                                            <div
+                                                                                                              class="w-full bg-white shadow-2xl min-h-[1100px] max-w-[850px] p-12 md:p-20 text-[12px] text-gray-800 font-sans border border-gray-100 flex flex-col transition-all hover:shadow-[0_20px_50px_rgba(0,0,0,0.15)]"
+                                                                                                              >
+                                                                                                              <!-- Resume Card Header -->
+                                                                                                              <div
+                                                                                                                class="flex flex-col md:flex-row justify-between items-start border-b-[6px] border-gray-900 pb-12 mb-12 gap-8"
+                                                                                                                >
+                                                                                                                <div class="flex-1">
+                                                                                                                  <h1
+                                                                                                                    class="text-6xl font-bold tracking-tighter leading-none text-gray-900 uppercase"
+                                                                                                                    >
+                                                                                                                    {{ candidate.name }}
+                                                                                                                  </h1>
+                                                                                                                  <p
+                                                                                                                    class="mt-4 text-2xl font-bold tracking-widest uppercase text-brand-orange"
+                                                                                                                    >
+                                                                                                                    {{ candidate.role }}
+                                                                                                                  </p>
+                                                                                                                </div>
+                                                                                                                <div
+                                                                                                                  class="space-y-2 font-bold text-left text-gray-500 md:text-right shrink-0"
+                                                                                                                  >
+                                                                                                                  <p
+                                                                                                                    class="flex gap-3 items-center md:justify-end text-[11px] uppercase tracking-wider"
+                                                                                                                    >
+                                                                                                                    <span
+                                                                                                                      class="text-lg text-gray-400 material-symbols-outlined"
+                                                                                                                      >mail</span
+                                                                                                                      >
+                                                                                                                      {{ candidate.email }}
+                                                                                                                    </p>
+                                                                                                                    <p
+                                                                                                                      class="flex gap-3 items-center md:justify-end text-[11px] uppercase tracking-wider"
+                                                                                                                      >
+                                                                                                                      <span
+                                                                                                                        class="text-lg text-gray-400 material-symbols-outlined"
+                                                                                                                        >call</span
+                                                                                                                        >
+                                                                                                                        {{ candidate.phone }}
+                                                                                                                      </p>
+                                                                                                                      <p
+                                                                                                                        class="flex gap-3 items-center md:justify-end text-[11px] uppercase tracking-wider"
+                                                                                                                        >
+                                                                                                                        <span
+                                                                                                                          class="text-lg text-gray-400 material-symbols-outlined"
+                                                                                                                          >location_on</span
+                                                                                                                          >
+                                                                                                                          {{ candidate.address }}
+                                                                                                                        </p>
+                                                                                                                      </div>
+                                                                                                                    </div>
+                                                                                                                    <!-- Resume Body Grid -->
+                                                                                                                    <div class="grid grid-cols-1 gap-16 md:grid-cols-3">
+                                                                                                                      <!-- Main Body -->
+                                                                                                                      <div class="space-y-12 md:col-span-2">
+                                                                                                                        <section>
+                                                                                                                          <h3
+                                                                                                                            class="pb-2 mb-6 text-xs font-bold tracking-[0.3em] text-gray-900 uppercase border-b-2 border-gray-900/10"
+                                                                                                                            >
+                                                                                                                            Experience
+                                                                                                                          </h3>
+                                                                                                                          <div class="space-y-8">
+                                                                                                                            @for (exp of candidate.experience; track trackByIndex($index, exp)) {
+                                                                                                                              <div>
+                                                                                                                                <div
+                                                                                                                                  class="flex justify-between items-baseline mb-2"
+                                                                                                                                  >
+                                                                                                                                  <h4
+                                                                                                                                    class="text-base font-bold text-gray-900"
+                                                                                                                                    >
+                                                                                                                                    {{ exp.role }}
+                                                                                                                                  </h4>
+                                                                                                                                  <span
+                                                                                                                                    class="text-gray-400 font-bold uppercase text-xs tracking-widest bg-gray-50 px-2 py-0.5 rounded"
+                                                                                                                                    >{{ exp.period }}</span
+                                                                                                                                    >
+                                                                                                                                  </div>
+                                                                                                                                  <p
+                                                                                                                                    class="mb-3 text-sm font-bold tracking-wide text-brand-orange"
+                                                                                                                                    >
+                                                                                                                                    {{ exp.company }}
+                                                                                                                                  </p>
+                                                                                                                                  <p
+                                                                                                                                    class="font-medium leading-relaxed text-justify text-gray-600"
+                                                                                                                                    >
+                                                                                                                                    {{ exp.description }}
+                                                                                                                                  </p>
+                                                                                                                                </div>
+                                                                                                                              }
+                                                                                                                            </div>
+                                                                                                                          </section>
+                                                                                                                          <section>
+                                                                                                                            <h3
+                                                                                                                              class="pb-2 mb-6 text-xs font-bold tracking-[0.3em] text-gray-900 uppercase border-b-2 border-gray-900/10"
+                                                                                                                              >
+                                                                                                                              Education
+                                                                                                                            </h3>
+                                                                                                                            <div class="space-y-8">
+                                                                                                                              @for (edu of candidate.education; track trackByIndex($index, edu)) {
+                                                                                                                                <div>
+                                                                                                                                  <div
+                                                                                                                                    class="flex justify-between items-baseline mb-2"
+                                                                                                                                    >
+                                                                                                                                    <h4
+                                                                                                                                      class="text-base font-bold text-gray-900"
+                                                                                                                                      >
+                                                                                                                                      {{ edu.degree }}
+                                                                                                                                    </h4>
+                                                                                                                                    <span
+                                                                                                                                      class="text-gray-400 font-bold uppercase text-xs tracking-widest bg-gray-50 px-2 py-0.5 rounded"
+                                                                                                                                      >{{ edu.period }}</span
+                                                                                                                                      >
+                                                                                                                                    </div>
+                                                                                                                                    <p
+                                                                                                                                      class="font-bold tracking-wide text-gray-500"
+                                                                                                                                      >
+                                                                                                                                      {{ edu.school }}
+                                                                                                                                    </p>
+                                                                                                                                  </div>
+                                                                                                                                }
+                                                                                                                              </div>
+                                                                                                                            </section>
+                                                                                                                          </div>
+                                                                                                                          <!-- Sidebar of Resume -->
+                                                                                                                          <div class="space-y-12">
+                                                                                                                            <section>
+                                                                                                                              <h3
+                                                                                                                                class="pb-2 mb-6 text-xs font-bold tracking-[0.3em] text-gray-900 uppercase border-b-2 border-gray-900/10"
+                                                                                                                                >
+                                                                                                                                Skills
+                                                                                                                              </h3>
+                                                                                                                              <div class="space-y-6">
+                                                                                                                                <div>
+                                                                                                                                  <p
+                                                                                                                                    class="font-bold text-[9px] text-gray-400 uppercase tracking-[0.2em] mb-4"
+                                                                                                                                    >
+                                                                                                                                    Core Design
+                                                                                                                                  </p>
+                                                                                                                                  <div class="flex flex-wrap gap-2">
+                                                                                                                                    @for (skill of candidate.skills; track trackBySkill($index, skill)) {
+                                                                                                                                      <span
+                                                                                                                                        class="px-3 py-1.5 font-bold text-xs text-gray-700 bg-gray-50 rounded-lg border border-gray-200/50 uppercase tracking-widest"
+                                                                                                                                        >
+                                                                                                                                        {{ skill }}
+                                                                                                                                      </span>
+                                                                                                                                    }
+                                                                                                                                  </div>
+                                                                                                                                </div>
+                                                                                                                                <div class="pt-4">
+                                                                                                                                  <p
+                                                                                                                                    class="font-bold text-[9px] text-gray-400 uppercase tracking-[0.2em] mb-4"
+                                                                                                                                    >
+                                                                                                                                    Technical Stack
+                                                                                                                                  </p>
+                                                                                                                                  <div class="flex flex-wrap gap-2">
+                                                                                                                                    @for (tool of candidate.tools; track trackByTool($index, tool)) {
+                                                                                                                                      <span
+                                                                                                                                        class="px-3 py-1.5 font-bold text-xs text-gray-700 bg-gray-50 rounded-lg border border-gray-200/50 uppercase tracking-widest"
+                                                                                                                                        >
+                                                                                                                                        {{ tool }}
+                                                                                                                                      </span>
+                                                                                                                                    }
+                                                                                                                                  </div>
+                                                                                                                                </div>
+                                                                                                                              </div>
+                                                                                                                            </section>
+                                                                                                                            <section>
+                                                                                                                              <h3
+                                                                                                                                class="pb-2 mb-6 text-xs font-bold tracking-[0.3em] text-gray-900 uppercase border-b-2 border-gray-900/10"
+                                                                                                                                >
+                                                                                                                                Languages
+                                                                                                                              </h3>
+                                                                                                                              <ul
+                                                                                                                                class="space-y-3 font-bold text-gray-600 text-[11px] uppercase tracking-widest"
+                                                                                                                                >
+                                                                                                                                <li class="flex gap-3 items-center">
+                                                                                                                                  <span
+                                                                                                                                    class="w-1.5 h-1.5 rounded-full bg-brand-orange"
+                                                                                                                                  ></span>
+                                                                                                                                  English (Native)
+                                                                                                                                </li>
+                                                                                                                                <li class="flex gap-3 items-center opacity-60">
+                                                                                                                                  <span
+                                                                                                                                    class="w-1.5 h-1.5 bg-gray-400 rounded-full"
+                                                                                                                                  ></span>
+                                                                                                                                  Spanish (Conversational)
+                                                                                                                                </li>
+                                                                                                                              </ul>
+                                                                                                                            </section>
+                                                                                                                          </div>
+                                                                                                                        </div>
+                                                                                                                      </div>
+                                                                                                                    </div>
+                                                                                                                  </div>
+                                                                                                                </div>
+                                                                                                              </div>
+                                                                                                            }
+                                                                                                            <!-- History Tab -->
+                                                                                                            @if (activeTab === 'history') {
+                                                                                                              <div
+                                                                                                                class="duration-300 animate-fade-in"
+                                                                                                                >
+                                                                                                                <div class="relative py-4 pl-8 space-y-12">
+                                                                                                                  <!-- Timeline vertical line -->
+                                                                                                                  <div
+                                                                                                                    class="absolute top-2 left-3.5 bottom-4 w-0.5 bg-gray-100 dark:bg-gray-700"
+                                                                                                                  ></div>
+                                                                                                                  @for (activity of candidate.activities; track trackByIndex($index, activity)) {
+                                                                                                                    <div
+                                                                                                                      class="relative group"
+                                                                                                                      >
+                                                                                                                      <!-- Timeline Dot/Icon -->
+                                                                                                                      <div
+                                                                                                                        class="absolute -left-[32px] top-1 w-9 h-9 rounded-full flex items-center justify-center border-4 border-white dark:border-surface-dark z-10 shadow-sm transition-transform group-hover:scale-110"
+                      [ngClass]="{
+                        'bg-blue-50 text-blue-600': activity.type === 'mail',
+                        'bg-orange-50 text-brand-orange':
+                          activity.type === 'status',
+                        'bg-purple-50 text-purple-600':
+                          activity.type === 'comment',
+                        'bg-yellow-50 text-yellow-600':
+                          activity.type === 'rating',
+                        'bg-green-50 text-green-600':
+                          activity.type === 'upload',
+                      }"
+                                                                                                                        >
+                                                                                                                        <span
+                                                                                                                          class="text-sm font-bold material-symbols-outlined"
+                                                                                                                          >{{ activity.icon }}</span
+                                                                                                                          >
+                                                                                                                        </div>
+                                                                                                                        <div
+                                                                                                                          class="flex flex-col gap-2 p-4 -mt-2 -ml-2 rounded-2xl transition duration-150 hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                                                                                                                          >
+                                                                                                                          <div class="flex justify-between items-start">
+                                                                                                                            <div class="flex flex-col">
+                                                                                                                              <p
+                                                                                                                                class="text-sm font-bold text-gray-900 dark:text-white"
+                                                                                                                                >
+                                                                                                                                {{ activity.title }}
+                                                                                                                              </p>
+                                                                                                                              @if (activity.author) {
+                                                                                                                                <p
+                                                                                                                                  class="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1"
+                                                                                                                                  >
+                                                                                                                                  BY
+                                                                                                                                  <span class="text-gray-900 dark:text-gray-200">{{
+                                                                                                                                    activity.author
+                                                                                                                                  }}</span>
+                                                                                                                                </p>
+                                                                                                                              }
+                                                                                                                            </div>
+                                                                                                                            <div class="text-right shrink-0">
+                                                                                                                              <p
+                                                                                                                                class="text-xs font-bold text-gray-400 uppercase tracking-tighter"
+                                                                                                                                >
+                                                                                                                                {{ activity.date }}
+                                                                                                                              </p>
+                                                                                                                              @if (activity.time) {
+                                                                                                                                <p
+                                                                                                                                  class="text-[9px] font-bold text-gray-300 uppercase tracking-tighter"
+                                                                                                                                  >
+                                                                                                                                  {{ activity.time }}
+                                                                                                                                </p>
+                                                                                                                              }
+                                                                                                                            </div>
+                                                                                                                          </div>
+                                                                                                                          <!-- Activity Content -->
+                                                                                                                          @if (activity.type === 'comment') {
+                                                                                                                            <div
+                                                                                                                              class="p-4 text-sm italic font-medium text-gray-600 rounded-xl border border-gray-100 bg-gray-50/50 dark:bg-gray-900/50 dark:border-gray-700/50 dark:text-gray-300"
+                                                                                                                              >
+                                                                                                                              {{ activity.content }}
+                                                                                                                            </div>
+                                                                                                                          }
+                                                                                                                          @if (activity.type !== 'comment' && activity.content) {
+                                                                                                                            <p
+                                                                                                                              class="text-sm leading-relaxed text-gray-600 dark:text-gray-300"
+                                                                                                                              >
+                                                                                                                              {{ activity.content }}
+                                                                                                                            </p>
+                                                                                                                          }
+                                                                                                                          <!-- Action Links -->
+                                                                                                                          @if (activity.type === 'mail') {
+                                                                                                                            <div class="mt-2">
+                                                                                                                              <a
+                                                                                                                                href="javascript:void(0)"
+                                                                                                                                class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary hover:text-blue-700 transition"
+                                                                                                                                >
+                                                                                                                                <span class="text-sm material-symbols-outlined"
+                                                                                                                                  >visibility</span
+                                                                                                                                  >
+                                                                                                                                  View Email
+                                                                                                                                </a>
+                                                                                                                              </div>
+                                                                                                                            }
+                                                                                                                          </div>
+                                                                                                                        </div>
+                                                                                                                      }
+                                                                                                                    </div>
+                                                                                                                  </div>
+                                                                                                                }
+                                                                                                              </div>
+                                                                                                            </div>
+                                                                                                          </div>
+                                                                                                          <!-- Right Sidebar: Recruitment Progress -->
+                                                                                                          <div class="space-y-6 lg:col-span-3">
+                                                                                                            <div
+                                                                                                              class="bg-white dark:bg-surface-dark rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-8 transition-all hover:shadow-md h-full min-h-[500px]"
+                                                                                                              >
+                                                                                                              <h3
+                                                                                                                class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-[0.2em] mb-10"
+                                                                                                                >
+                                                                                                                Recruitment Progress
+                                                                                                              </h3>
+                                                                                                              <div class="relative space-y-2">
+                                                                                                                <div
+                                                                                                                  class="absolute left-[15px] top-2 bottom-6 w-0.5 bg-gray-100 dark:bg-gray-700/50 rounded-full"
+                                                                                                                ></div>
+                                                                                                                @for (event of candidate.timeline; track trackByIndex($index, event)) {
+                                                                                                                  <div
+                                                                                                                    class="flex relative gap-6 pb-12 last:pb-0 group"
+                                                                                                                    >
+                                                                                                                    <div
+                                                                                                                      class="flex relative z-10 justify-center items-center w-8 h-8 rounded-full shadow-lg transition-all duration-300 shrink-0 group-hover:scale-110"
+                  [ngClass]="{
+                    'bg-green-500 text-white': event.status === 'completed',
+                    'bg-white dark:bg-surface-dark border-4 border-brand-orange ring ring-orange-100 dark:ring-orange-900/20':
+                      event.status === 'current',
+                    'bg-white dark:bg-surface-dark border-2 border-gray-200 dark:border-gray-700':
+                      event.status === 'pending',
+                  }"
+                                                                                                                      >
+                                                                                                                      @if (event.status === 'completed') {
+                                                                                                                        <span
+                                                                                                                          class="text-sm font-bold material-symbols-outlined"
+                                                                                                                          >check</span
+                                                                                                                          >
+                                                                                                                      }
+                                                                                                                      @if (event.status === 'current') {
+                                                                                                                        <div
+                                                                                                                          class="w-2.5 h-2.5 rounded-full animate-pulse bg-brand-orange"
+                                                                                                                        ></div>
+                                                                                                                      }
+                                                                                                                    </div>
+                                                                                                                    <div class="pt-0.5">
+                                                                                                                      <h4
+                                                                                                                        class="text-sm font-bold tracking-tight"
+                    [ngClass]="
+                      event.status === 'current'
+                        ? 'text-brand-orange'
+                        : 'text-gray-900 dark:text-white'
+                    "
+                                                                                                                        >
+                                                                                                                        {{ event.stage }}
+                                                                                                                      </h4>
+                                                                                                                      <p
+                                                                                                                        class="text-xs font-bold mt-1 uppercase tracking-widest transition-colors duration-300"
+                    [ngClass]="
+                      event.status === 'current'
+                        ? 'text-orange-400'
+                        : 'text-gray-400'
+                    "
+                                                                                                                        >
+                                                                                                                        {{ event.date }}
+                                                                                                                      </p>
+                                                                                                                    </div>
+                                                                                                                  </div>
+                                                                                                                }
+                                                                                                              </div>
+                                                                                                              <!-- Documents Section -->
+                                                                                                              <div
+                                                                                                                class="pt-10 mt-12 border-t border-gray-100 dark:border-gray-700/50"
+                                                                                                                >
+                                                                                                                <h4
+                                                                                                                  class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-6"
+                                                                                                                  >
+                                                                                                                  ATTACHED DOCUMENTS
+                                                                                                                </h4>
+                                                                                                                <div class="space-y-4">
+                                                                                                                  @for (doc of candidate.documents; track trackByIndex($index, doc)) {
+                                                                                                                    <div
+                                                                                                                      class="flex gap-4 items-center p-4 bg-gray-50 rounded-2xl border border-gray-100 transition-all cursor-pointer group dark:bg-gray-800/40 dark:border-gray-700/50 hover:border-brand-orange/40 hover:bg-white dark:hover:bg-gray-800 hover:shadow-sm"
+                                                                                                                      >
+                                                                                                                      <div
+                                                                                                                        class="flex justify-center items-center w-12 h-12 text-red-600 bg-red-100 rounded-xl shadow-sm transition-transform dark:bg-red-900/20 shrink-0 group-hover:scale-110"
+                                                                                                                        >
+                                                                                                                        <span class="text-2xl material-symbols-outlined"
+                                                                                                                          >picture_as_pdf</span
+                                                                                                                          >
+                                                                                                                        </div>
+                                                                                                                        <div class="overflow-hidden">
+                                                                                                                          <p
+                                                                                                                            class="text-sm font-bold text-gray-800 truncate transition-colors dark:text-white group-hover:text-brand-orange"
+                                                                                                                            >
+                                                                                                                            {{ doc.name }}
+                                                                                                                          </p>
+                                                                                                                          <p
+                                                                                                                            class="text-xs font-bold text-gray-400 mt-1 uppercase tracking-widest"
+                                                                                                                            >
+                                                                                                                            {{ doc.size }} • {{ doc.type }} Document
+                                                                                                                          </p>
+                                                                                                                        </div>
+                                                                                                                      </div>
+                                                                                                                    }
+                                                                                                                  </div>
+                                                                                                                </div>
+                                                                                                              </div>
+                                                                                                            </div>
+                                                                                                          </div>
+                                                                                                        </main>
+                                                                                                      </div>
+                                                                                                    </div>
+                                                                                                  }

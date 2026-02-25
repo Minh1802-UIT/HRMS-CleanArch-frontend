@@ -1,0 +1,555 @@
+<div
+  class="font-sans text-slate-600 bg-background-light dark:bg-background-dark dark:text-slate-300 transition-colors duration-300"
+  >
+  <!-- Top Banner -->
+  <div
+    class="bg-surface-light dark:bg-slate-800 py-2 text-center text-xs sm:text-sm font-medium border-b border-orange-100 dark:border-slate-700"
+    >
+    <p
+      class="flex items-center justify-center gap-2 text-slate-700 dark:text-slate-200"
+      >
+      <span class="material-icons-round text-primary text-base text-orange-500"
+        >rocket_launch</span
+        >
+        Magnetize your HR with personalized workflows. Tailor checklists to your
+        processes.
+        <span class="hidden sm:inline">Click for a seamless HR journey! ✨</span>
+      </p>
+    </div>
+
+    <!-- Navbar -->
+    <nav
+      class="sticky top-0 z-50 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md border-b border-slate-100 dark:border-slate-800"
+      >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-20">
+          <div
+            class="flex-shrink-0 flex items-center gap-2 cursor-pointer"
+            routerLink="/"
+            >
+            <div class="relative w-8 h-8">
+              <div
+                class="absolute inset-0 bg-brand-blue rounded-full opacity-20"
+              ></div>
+              <i
+                class="pi pi-infinity text-brand-blue dark:text-white text-3xl absolute -top-1 -left-1"
+              ></i>
+            </div>
+            <span
+              class="font-display font-bold text-2xl text-slate-900 dark:text-white tracking-tight"
+              >HRMagnet</span
+              >
+            </div>
+
+            <div class="hidden md:flex space-x-8 items-center">
+              <a
+                class="text-slate-600 dark:text-slate-300 hover:text-primary font-medium transition-colors"
+                href="#"
+                >Product</a
+                >
+                <a
+                  class="text-slate-600 dark:text-slate-300 hover:text-primary font-medium transition-colors group flex items-center gap-1"
+                  href="#"
+                  >
+                  Resources <i class="pi pi-chevron-down text-xs"></i>
+                </a>
+                <a
+                  class="text-slate-600 dark:text-slate-300 hover:text-primary font-medium transition-colors group flex items-center gap-1"
+                  href="#"
+                  >
+                  Features <i class="pi pi-chevron-down text-xs"></i>
+                </a>
+                <a
+                  class="text-slate-600 dark:text-slate-300 hover:text-primary font-medium transition-colors"
+                  href="#"
+                  >Benefits</a
+                  >
+                  <a
+                    class="text-slate-600 dark:text-slate-300 hover:text-primary font-medium transition-colors"
+                    href="#"
+                    >Pricing</a
+                    >
+                  </div>
+
+                  <div class="hidden md:flex items-center space-x-4">
+                    <a
+                      class="text-brand-blue dark:text-white font-bold hover:underline"
+                      routerLink="/login"
+                      >Sign in</a
+                      >
+                      <a
+                        class="bg-brand-blue hover:bg-blue-900 text-white px-5 py-2.5 rounded-full font-bold transition-all shadow-lg shadow-blue-900/20 transform hover:-translate-y-0.5"
+                        routerLink="/login"
+                        >
+                        Start for Free
+                      </a>
+                    </div>
+
+                    <div class="md:hidden flex items-center">
+                      <button
+                        (click)="toggleMenu()"
+                        class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white focus:outline-none"
+                        >
+                        <i class="pi pi-bars text-3xl"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Mobile Menu -->
+                @if (isMenuOpen) {
+                  <div
+                    class="md:hidden bg-white dark:bg-slate-900 border-b border-slate-100 p-4 space-y-4"
+                    >
+                    <a
+                      class="block text-slate-600 dark:text-slate-300 hover:text-primary font-medium"
+                      href="#"
+                      >Product</a
+                      >
+                      <a
+                        class="block text-slate-600 dark:text-slate-300 hover:text-primary font-medium"
+                        href="#"
+                        >Resources</a
+                        >
+                        <a
+                          class="block text-slate-600 dark:text-slate-300 hover:text-primary font-medium"
+                          href="#"
+                          >Features</a
+                          >
+                          <a
+                            class="block text-slate-600 dark:text-slate-300 hover:text-primary font-medium"
+                            href="#"
+                            >Pricing</a
+                            >
+                            <hr class="border-slate-100" />
+                            <div class="flex flex-col gap-4">
+                              <a
+                                class="text-brand-blue dark:text-white font-bold text-center"
+                                routerLink="/login"
+                                >Sign in</a
+                                >
+                                <a
+                                  class="bg-brand-blue text-white px-5 py-2.5 rounded-full font-bold text-center"
+                                  routerLink="/login"
+                                  >Start for Free</a
+                                  >
+                                </div>
+                              </div>
+                            }
+                          </nav>
+
+                          <!-- Hero Section -->
+                          <section class="relative pt-12 pb-20 lg:pt-20 lg:pb-28 overflow-hidden">
+                            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                              <div class="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+                                <div class="max-w-2xl">
+                                  <h1
+                                    class="font-display text-5xl lg:text-6xl font-extrabold text-slate-900 dark:text-white leading-tight mb-6"
+                                    >
+                                    Magnetize <br />
+                                    Your Workplace <br />
+                                    <span class="text-brand-blue dark:text-blue-400"
+                                      >Management Solution</span
+                                      >
+                                    </h1>
+                                    <p
+                                      class="text-lg text-slate-600 dark:text-slate-400 mb-8 leading-relaxed max-w-lg"
+                                      >
+                                      Unlock efficiency with Magnet, your all-in-one workplace management
+                                      platform. Simplify HR tasks and elevate employee experience. Ready
+                                      to transform your workplace?
+                                    </p>
+                                    <div class="flex flex-col sm:flex-row gap-4">
+                                      <a
+                                        class="bg-primary hover:bg-orange-600 text-white px-8 py-3.5 rounded-lg font-bold text-center transition-all shadow-lg shadow-orange-500/30 transform hover:-translate-y-1"
+                                        routerLink="/login"
+                                        >
+                                        Get started today
+                                      </a>
+                                      <a
+                                        class="bg-surface-light dark:bg-slate-800 text-primary border border-orange-200 dark:border-slate-600 px-8 py-3.5 rounded-lg font-bold text-center hover:bg-orange-50 dark:hover:bg-slate-700 transition-all font-bold"
+                                        href="#"
+                                        >
+                                        Book a demo
+                                      </a>
+                                    </div>
+                                  </div>
+
+                                  <div class="relative h-[500px] w-full hidden lg:block">
+                                    <div
+                                      class="absolute top-10 right-10 w-64 h-64 bg-brand-blue rounded-full opacity-10 dark:opacity-30"
+                                    ></div>
+                                    <div
+                                      class="absolute bottom-0 right-20 w-80 h-80 bg-primary/10 rounded-tl-[100px] rounded-bl-[40px] z-0"
+                                    ></div>
+                                    <div class="absolute right-10 bottom-10 z-20">
+                                      <img
+                                        alt="Professional HR"
+                                        class="w-72 h-[420px] object-cover rounded-2xl shadow-2xl relative z-20 mask-image-b-gradient"
+                                        src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=800"
+                                        />
+                                      </div>
+
+                                      <!-- Flying Avatar 1 -->
+                                      <div
+                                        class="absolute top-0 left-20 z-10 animate-bounce"
+                                        style="animation-duration: 3s"
+                                        >
+                                        <div class="relative">
+                                          <div
+                                            class="absolute inset-0 bg-green-100 rounded-full transform scale-110"
+                                          ></div>
+                                          <img
+                                            alt="HR Manager"
+                                            class="w-24 h-24 rounded-full object-cover border-4 border-white dark:border-slate-800 shadow-lg relative z-10"
+                                            src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=200"
+                                            />
+                                            <div
+                                              class="absolute -right-4 top-0 bg-white dark:bg-slate-700 px-3 py-1 rounded-full shadow-md flex items-center gap-1 z-20 border border-slate-100 dark:border-slate-600"
+                                              >
+                                              <span class="text-xs font-bold text-slate-800 dark:text-white"
+                                                >HR Head</span
+                                                >
+                                                <span class="text-yellow-400 text-xs">★</span>
+                                              </div>
+                                            </div>
+                                          </div>
+
+                                          <!-- Status Card -->
+                                          <div
+                                            class="absolute bottom-20 left-0 z-30 transform hover:scale-105 transition-transform duration-300"
+                                            >
+                                            <div
+                                              class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-2xl border border-slate-100 dark:border-slate-700 w-72"
+                                              >
+                                              <div class="flex items-center justify-between mb-4">
+                                                <div class="flex items-center gap-2">
+                                                  <div
+                                                    class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-600 overflow-hidden"
+                                                    >
+                                                    <img
+                                                      alt="User"
+                                                      src="https://ui-avatars.com/api/?name=JS&background=random"
+                                                      />
+                                                    </div>
+                                                    <div>
+                                                      <div
+                                                        class="h-2 w-20 bg-slate-200 dark:bg-slate-600 rounded mb-1"
+                                                      ></div>
+                                                      <div
+                                                        class="h-1.5 w-12 bg-slate-100 dark:bg-slate-700 rounded"
+                                                      ></div>
+                                                    </div>
+                                                  </div>
+                                                  <span
+                                                    class="text-green-500 text-xs font-bold bg-green-50 dark:bg-green-900/30 px-2 py-0.5 rounded"
+                                                    >Active</span
+                                                    >
+                                                  </div>
+                                                  <div class="space-y-2">
+                                                    <div
+                                                      class="h-2 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden"
+                                                      >
+                                                      <div class="h-full bg-primary w-3/4 rounded-full"></div>
+                                                    </div>
+                                                    <div class="flex justify-between text-xs text-slate-400">
+                                                      <span>Onboarding Progress</span>
+                                                      <span>75%</span>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </section>
+
+                                      <!-- Partners -->
+                                      <section
+                                        class="py-10 bg-slate-50 dark:bg-slate-900 border-y border-slate-100 dark:border-slate-800"
+                                        >
+                                        <div class="max-w-7xl mx-auto px-4 text-center">
+                                          <h3 class="text-lg font-bold text-brand-blue dark:text-blue-300 mb-8">
+                                            Trust built on 2000+ global partnerships.
+                                          </h3>
+                                          <div
+                                            class="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-60 grayscale dark:invert dark:opacity-40"
+                                            >
+                                            <div class="flex items-center gap-2 text-xl font-bold font-display">
+                                              <i class="pi pi-briefcase"></i> Apex Fusion
+                                            </div>
+                                            <div class="flex items-center gap-2 text-xl font-bold font-display">
+                                              <i class="pi pi-globe"></i> Nexura
+                                            </div>
+                                            <div class="flex items-center gap-2 text-xl font-bold font-display">
+                                              <i class="pi pi-shield"></i> Virtuoso
+                                            </div>
+                                            <div class="flex items-center gap-2 text-xl font-bold font-display">
+                                              <i class="pi pi-bolt"></i> Quantum
+                                            </div>
+                                            <div class="flex items-center gap-2 text-xl font-bold font-display">
+                                              <i class="pi pi-star"></i> Pinnacle
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </section>
+
+                                      <!-- Features -->
+                                      <section class="py-20 lg:py-28 bg-background-light dark:bg-background-dark">
+                                        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                                          <div class="text-center mb-16">
+                                            <h2
+                                              class="font-display text-3xl md:text-4xl font-bold text-brand-blue dark:text-white mb-4"
+                                              >
+                                              Key Features
+                                            </h2>
+                                            <div class="w-20 h-1.5 bg-primary mx-auto rounded-full"></div>
+                                          </div>
+                                          <div class="grid md:grid-cols-3 gap-10">
+                                            <div
+                                              class="flex flex-col items-center text-center group hover:bg-slate-50 dark:hover:bg-slate-800 p-6 rounded-2xl transition-colors duration-300"
+                                              >
+                                              <div
+                                                class="w-16 h-16 bg-orange-100 dark:bg-orange-900/30 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300"
+                                                >
+                                                <i class="pi pi-user-plus text-primary text-3xl"></i>
+                                              </div>
+                                              <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">
+                                                Candidate Tracking
+                                              </h3>
+                                              <p class="text-slate-500 dark:text-slate-400 leading-relaxed">
+                                                Effortlessly manage your hiring process with real-time candidate
+                                                tracking. Streamline applications and feedback.
+                                              </p>
+                                            </div>
+                                            <div
+                                              class="flex flex-col items-center text-center group hover:bg-slate-50 dark:hover:bg-slate-800 p-6 rounded-2xl transition-colors duration-300"
+                                              >
+                                              <div
+                                                class="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300"
+                                                >
+                                                <i class="pi pi-chart-bar text-blue-600 text-3xl"></i>
+                                              </div>
+                                              <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">
+                                                Analytics Dashboard
+                                              </h3>
+                                              <p class="text-slate-500 dark:text-slate-400 leading-relaxed">
+                                                Make data-driven decisions fast. Foster professional growth with our
+                                                performance analytics dashboard.
+                                              </p>
+                                            </div>
+                                            <div
+                                              class="flex flex-col items-center text-center group hover:bg-slate-50 dark:hover:bg-slate-800 p-6 rounded-2xl transition-colors duration-300"
+                                              >
+                                              <div
+                                                class="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300"
+                                                >
+                                                <i class="pi pi-users text-green-600 text-3xl"></i>
+                                              </div>
+                                              <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">
+                                                Employee Management
+                                              </h3>
+                                              <p class="text-slate-500 dark:text-slate-400 leading-relaxed">
+                                                Simplify HR tasks with efficient employee information management
+                                                through our centralized database.
+                                              </p>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </section>
+
+                                      <!-- Testimonials -->
+                                      <section class="py-16 px-4">
+                                        <div class="max-w-6xl mx-auto">
+                                          <h2
+                                            class="font-display text-3xl md:text-4xl font-bold text-brand-blue dark:text-white text-center mb-12"
+                                            >
+                                            What Our Clients Say
+                                          </h2>
+                                          <div
+                                            class="bg-surface-light dark:bg-slate-800 rounded-3xl overflow-hidden shadow-xl border border-orange-100 dark:border-slate-700"
+                                            >
+                                            <div class="grid md:grid-cols-2">
+                                              <div
+                                                class="relative bg-white dark:bg-slate-900 h-80 md:h-auto overflow-hidden flex items-end justify-center"
+                                                >
+                                                <div
+                                                  class="absolute bottom-0 left-0 w-full h-full bg-cyan-100 dark:bg-cyan-900/20"
+                                                ></div>
+                                                <div
+                                                  class="absolute bottom-0 left-0 w-48 h-48 bg-brand-blue rounded-tr-full"
+                                                ></div>
+                                                <div
+                                                  class="absolute top-0 right-0 w-32 h-64 bg-primary rounded-bl-full opacity-90"
+                                                ></div>
+                                                <img
+                                                  alt="Happy Client"
+                                                  class="relative z-10 h-5/6 object-contain drop-shadow-xl transform translate-y-2"
+                                                  src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=600"
+                                                  />
+                                                </div>
+                                                <div class="p-8 md:p-12 lg:p-16 flex flex-col justify-center">
+                                                  <i
+                                                    class="pi pi-megaphone text-primary text-5xl mb-6 opacity-30"
+                                                  ></i>
+                                                  <blockquote
+                                                    class="text-xl md:text-2xl font-medium text-slate-800 dark:text-slate-200 leading-relaxed mb-8"
+                                                    >
+                                                    "Since using HRMagnet, our HR processes have become more efficient
+                                                    and organized. It's a game-changer!"
+                                                  </blockquote>
+                                                  <div class="flex items-center justify-between">
+                                                    <div>
+                                                      <div class="font-bold text-brand-blue dark:text-white text-lg">
+                                                        John Anderson
+                                                      </div>
+                                                      <div class="text-slate-500 dark:text-slate-400 text-sm">
+                                                        Apex Solutions
+                                                      </div>
+                                                    </div>
+                                                    <div class="flex gap-3">
+                                                      <button
+                                                        class="w-10 h-10 rounded-full border border-primary text-primary hover:bg-primary hover:text-white transition-colors flex items-center justify-center"
+                                                        >
+                                                        <i class="pi pi-arrow-left"></i>
+                                                      </button>
+                                                      <button
+                                                        class="w-10 h-10 rounded-full bg-primary text-white shadow-lg shadow-orange-500/30 hover:bg-orange-600 transition-colors flex items-center justify-center"
+                                                        >
+                                                        <i class="pi pi-arrow-right"></i>
+                                                      </button>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </section>
+
+                                        <!-- CTA Section -->
+                                        <section class="py-20 bg-white dark:bg-background-dark overflow-hidden">
+                                          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                                            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                                              <div class="order-2 lg:order-1">
+                                                <h2
+                                                  class="font-display text-4xl font-bold text-brand-blue dark:text-white mb-6"
+                                                  >
+                                                  Let's grow together
+                                                </h2>
+                                                <p class="text-slate-600 dark:text-slate-400 mb-8 max-w-lg">
+                                                  Discover the complete capabilities of our platform with a
+                                                  complimentary 15-day trial. Manage job postings, attract candidates,
+                                                  and facilitate employee onboarding, all within a single, integrated
+                                                  space.
+                                                </p>
+                                                <div class="flex flex-col sm:flex-row gap-4">
+                                                  <a
+                                                    class="bg-primary hover:bg-orange-600 text-white px-8 py-3.5 rounded-lg font-bold text-center transition-all shadow-lg shadow-orange-500/30"
+                                                    routerLink="/login"
+                                                    >
+                                                    Get started today
+                                                  </a>
+                                                  <a
+                                                    class="bg-orange-50 dark:bg-slate-800 text-primary border border-orange-200 dark:border-slate-600 px-8 py-3.5 rounded-lg font-bold text-center hover:bg-orange-100 dark:hover:bg-slate-700 transition-all font-bold"
+                                                    href="#"
+                                                    >
+                                                    Book a demo
+                                                  </a>
+                                                </div>
+                                              </div>
+                                              <div class="order-1 lg:order-2 relative flex justify-end">
+                                                <div class="relative w-full max-w-md aspect-square">
+                                                  <div
+                                                    class="absolute inset-0 bg-surface-light dark:bg-slate-800 rounded-tl-[100px] rounded-br-[100px] rounded-tr-[40px] rounded-bl-[40px]"
+                                                  ></div>
+                                                  <div
+                                                    class="absolute bottom-0 right-0 w-2/3 h-2/3 bg-brand-blue rounded-tl-full opacity-90"
+                                                  ></div>
+                                                  <img
+                                                    alt="Growth"
+                                                    class="absolute bottom-0 left-10 w-3/4 h-auto object-contain rounded-b-3xl"
+                                                    src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=600"
+                                                    />
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </section>
+
+                                          <!-- Footer -->
+                                          <footer
+                                            class="bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 pt-16 pb-8"
+                                            >
+                                            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                                              <div class="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
+                                                <div class="col-span-2 md:col-span-2">
+                                                  <div class="flex items-center gap-2 mb-4">
+                                                    <div class="relative w-8 h-8">
+                                                      <i
+                                                        class="pi pi-infinity text-brand-blue dark:text-white text-3xl"
+                                                      ></i>
+                                                    </div>
+                                                    <span
+                                                      class="font-display font-bold text-2xl text-slate-900 dark:text-white"
+                                                      >HRMagnet</span
+                                                      >
+                                                    </div>
+                                                    <p class="text-sm text-slate-500 dark:text-slate-400 mb-6 max-w-xs">
+                                                      Your partner in simplifying HR processes and boosting workplace
+                                                      productivity.
+                                                    </p>
+                                                  </div>
+
+                                                  <div>
+                                                    <h4 class="font-bold text-slate-900 dark:text-white mb-4">Product</h4>
+                                                    <ul class="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+                                                      <li><a class="hover:text-primary" href="#">Features</a></li>
+                                                      <li><a class="hover:text-primary" href="#">Pricing</a></li>
+                                                    </ul>
+                                                  </div>
+
+                                                  <div>
+                                                    <h4 class="font-bold text-slate-900 dark:text-white mb-4">
+                                                      Resources
+                                                    </h4>
+                                                    <ul class="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+                                                      <li><a class="hover:text-primary" href="#">Blog</a></li>
+                                                      <li><a class="hover:text-primary" href="#">User guides</a></li>
+                                                      <li><a class="hover:text-primary" href="#">Webinars</a></li>
+                                                    </ul>
+                                                  </div>
+
+                                                  <div>
+                                                    <h4 class="font-bold text-slate-900 dark:text-white mb-4">Company</h4>
+                                                    <ul class="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+                                                      <li><a class="hover:text-primary" href="#">About</a></li>
+                                                      <li><a class="hover:text-primary" href="#">Join us</a></li>
+                                                    </ul>
+                                                  </div>
+                                                </div>
+
+                                                <div
+                                                  class="border-t border-slate-200 dark:border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-slate-400 gap-4"
+                                                  >
+                                                  <div class="flex flex-wrap gap-4 justify-center md:justify-start">
+                                                    <span>© 2024 HRMagnet, Inc.</span>
+                                                    <a class="hover:text-slate-600 dark:hover:text-slate-300" href="#"
+                                                      >Privacy</a
+                                                      >
+                                                      <a class="hover:text-slate-600 dark:hover:text-slate-300" href="#"
+                                                        >Terms</a
+                                                        >
+                                                        <a class="hover:text-slate-600 dark:hover:text-slate-300" href="#"
+                                                          >Sitemap</a
+                                                          >
+                                                        </div>
+                                                        <div
+                                                          class="bg-slate-200 dark:bg-slate-800 px-3 py-1 rounded flex items-center gap-2 cursor-pointer"
+                                                          >
+                                                          <span>English</span>
+                                                          <i class="pi pi-chevron-down text-xs"></i>
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                  </footer>
+                                                </div>

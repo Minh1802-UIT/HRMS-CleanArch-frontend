@@ -1,0 +1,594 @@
+<div
+  class="flex overflow-hidden bg-gray-50 detail-layout"
+  [class.h-screen]="!isDrawerMode"
+  [class.h-full]="isDrawerMode"
+  >
+  <div class="flex overflow-y-auto flex-col flex-1 h-full">
+    <!-- Loading -->
+    @if (loading) {
+      <div class="flex justify-center items-center h-full">
+        <div class="text-xl text-gray-500">Loading Profile...</div>
+      </div>
+    }
+
+    @if (!loading && employee) {
+      <div class="p-8 mx-auto w-full max-w-7xl">
+        <!-- Header Card -->
+        <div
+          class="flex justify-between items-center p-6 mb-6 bg-white rounded-xl border border-gray-200 shadow-sm"
+          >
+          <div class="flex gap-6 items-center">
+            <img
+              [src]="getAvatarUrl()"
+              class="object-cover w-24 h-24 rounded-full border-4 border-gray-50"
+            onerror="
+              this.src =
+                'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgZmlsbD0iI2U1ZTdlYiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5Y2EzYWYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4='
+            "
+              />
+              <div>
+                <h1 class="text-3xl font-bold text-gray-900">
+                  {{ employee.fullName }}
+                </h1>
+                <div class="flex gap-3 items-center mt-1 text-gray-500">
+                  <span class="px-2 py-0.5 font-mono text-sm bg-gray-100 rounded">{{
+                    employee.employeeCode
+                  }}</span>
+                  <span>•</span>
+                  <span>{{ getDepartmentName(employee) }}</span>
+                  <span>•</span>
+                  <span>{{ getPositionTitle(employee) }}</span>
+                </div>
+                <div class="mt-3">
+                  <span
+                [ngClass]="{
+                  'bg-green-100 text-green-700':
+                    getStatus(employee) === 'Active',
+                  'bg-yellow-100 text-yellow-700':
+                    getStatus(employee) === 'Probation',
+                  'bg-red-100 text-red-700':
+                    getStatus(employee) === 'Terminated' ||
+                    getStatus(employee) === 'Resigned',
+                }"
+                    class="px-3 py-1 text-xs font-bold tracking-wide uppercase rounded-full"
+                    >
+                    {{ getStatus(employee) }}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="mb-1 text-sm text-gray-500">Date Joined</div>
+              <div class="font-medium text-gray-800">
+                {{ employee.jobDetails?.joinDate | date: "mediumDate" }}
+              </div>
+              <button
+                (click)="initializeLeave()"
+                [disabled]="initializingLeave"
+                class="px-3 py-1 mt-3 text-xs font-bold text-blue-700 bg-blue-50 rounded border border-blue-200 hover:bg-blue-100 disabled:opacity-50"
+                >
+                {{
+                initializingLeave ? "Initializing..." : "Initialize Leave 2026"
+                }}
+              </button>
+            </div>
+          </div>
+          <!-- Tabs Navigation -->
+          <div class="flex mb-6 space-x-8 border-b border-gray-200">
+            <button
+              (click)="activeTab = 'personal'"
+              [class.border-blue-600]="activeTab === 'personal'"
+              [class.text-blue-600]="activeTab === 'personal'"
+              class="pb-4 text-sm font-medium text-gray-500 border-b-2 border-transparent transition-colors hover:text-gray-700"
+              >
+              Personal Info
+            </button>
+            <button
+              (click)="activeTab = 'contracts'"
+              [class.border-blue-600]="activeTab === 'contracts'"
+              [class.text-blue-600]="activeTab === 'contracts'"
+              class="pb-4 text-sm font-medium text-gray-500 border-b-2 border-transparent transition-colors hover:text-gray-700"
+              >
+              Contracts & Salary
+            </button>
+            <button
+              (click)="activeTab = 'documents'"
+              [class.border-blue-600]="activeTab === 'documents'"
+              [class.text-blue-600]="activeTab === 'documents'"
+              class="pb-4 text-sm font-medium text-gray-500 border-b-2 border-transparent transition-colors hover:text-gray-700"
+              >
+              Documents
+            </button>
+          </div>
+          <!-- TAB: Personal Info -->
+          @if (activeTab === 'personal') {
+            <div
+              class="grid grid-cols-1 gap-6 md:grid-cols-2"
+              >
+              <!-- Contact -->
+              <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
+                <h3 class="pb-2 mb-4 text-lg font-bold text-gray-800 border-b">
+                  Contact Details
+                </h3>
+                <div class="space-y-4">
+                  <div>
+                    <label class="block text-xs text-gray-500 uppercase">Email</label>
+                    <div class="text-gray-900">{{ employee.email }}</div>
+                  </div>
+                  <div class="text-gray-900">
+                    {{ employee.personalInfo.phoneNumber }}
+                  </div>
+                  <div>
+                    <label class="block text-xs text-gray-500 uppercase"
+                      >Address</label
+                      >
+                      <div class="text-gray-900">
+                        {{ employee.personalInfo.address }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Private -->
+                <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
+                  <h3 class="pb-2 mb-4 text-lg font-bold text-gray-800 border-b">
+                    Identity
+                  </h3>
+                  <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                      <div>
+                        <div class="text-gray-900">
+                          {{ employee.personalInfo.dateOfBirth | date: "mediumDate" }}
+                        </div>
+                      </div>
+                      <div>
+                        <label class="block text-xs text-gray-500 uppercase"
+                          >Gender</label
+                          >
+                          <div class="text-gray-900">
+                            {{ employee.personalInfo.gender }}
+                          </div>
+                        </div>
+                      </div>
+                      <div>
+                        <label class="block text-xs text-gray-500 uppercase"
+                          >Identity Card (ID)</label
+                          >
+                          <div class="font-mono text-gray-900">
+                            {{ employee.personalInfo.identityCard }}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Bank -->
+                    <div
+                      class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm md:col-span-2"
+                      >
+                      <h3 class="pb-2 mb-4 text-lg font-bold text-gray-800 border-b">
+                        Banking Information
+                      </h3>
+                      <div class="grid grid-cols-3 gap-6">
+                        <div>
+                          <label class="block text-xs text-gray-500 uppercase"
+                            >Bank Name</label
+                            >
+                            <div class="text-gray-900">
+                              {{ employee.bankDetails?.bankName || "-" }}
+                            </div>
+                          </div>
+                          <div>
+                            <label class="block text-xs text-gray-500 uppercase"
+                              >Account Number</label
+                              >
+                              <div class="font-mono text-gray-900">
+                                {{ employee.bankDetails?.accountNumber || "-" }}
+                              </div>
+                            </div>
+                            <div>
+                              <label class="block text-xs text-gray-500 uppercase"
+                                >Account Holder</label
+                                >
+                                <div class="text-gray-900">
+                                  {{ employee.bankDetails?.accountHolder || "-" }}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      }
+                      <!-- TAB: Contracts -->
+                      @if (activeTab === 'contracts') {
+                        <div class="space-y-6">
+                          <!-- Actions -->
+                          <div class="flex justify-between items-center">
+                            <h2 class="text-xl font-bold text-gray-800">Contract History</h2>
+                            <button
+                              (click)="openContractModal()"
+                              class="px-4 py-2 font-medium text-white bg-blue-600 rounded-lg shadow-sm transition-colors hover:bg-blue-700"
+                              >
+                              Renew / New Contract
+                            </button>
+                          </div>
+                          <!-- Active Contract Highlight -->
+                          @if (activeContract) {
+                            <div
+                              class="overflow-hidden relative p-6 bg-gradient-to-br from-blue-50 to-white rounded-xl border border-blue-200 shadow-sm"
+                              >
+                              <div
+                                class="absolute top-0 right-0 px-3 py-1 text-xs font-bold text-white bg-blue-600 rounded-bl-lg"
+                                >
+                                CURRENT ACTIVE
+                              </div>
+                              <div class="grid grid-cols-1 gap-8 md:grid-cols-4">
+                                <div>
+                                  <span class="block text-xs tracking-wide text-gray-500 uppercase"
+                                    >Contract Code</span
+                                    >
+                                    <span class="font-mono text-lg font-bold text-gray-800">{{
+                                      activeContract.contractCode
+                                    }}</span>
+                                    <div class="mt-2 text-sm font-medium text-blue-700">
+                                      {{ activeContract.type }}
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <span class="block text-xs tracking-wide text-gray-500 uppercase"
+                                      >Duration</span
+                                      >
+                                      <div class="mt-1 font-medium text-gray-800">
+                                        {{ activeContract.startDate | date: "mediumDate" }}
+                                        <span class="mx-1 text-gray-400">→</span>
+                                        {{
+                                        activeContract.endDate
+                                        ? (activeContract.endDate | date: "mediumDate")
+                                        : "Indefinite"
+                                        }}
+                                      </div>
+                                    </div>
+                                    <div>
+                                      <span class="block text-xs tracking-wide text-gray-500 uppercase"
+                                        >Basic Salary</span
+                                        >
+                                        <div class="mt-1 text-xl font-bold text-green-700">
+                                          {{
+                                          activeContract.salary.basicSalary
+                                          | currency: "USD" : "symbol" : "1.0-0"
+                                          }}
+                                        </div>
+                                      </div>
+                                      <div class="flex flex-col justify-center">
+                                        <button
+                                          (click)="terminateContract(activeContract)"
+                                          class="px-4 py-2 text-sm font-medium text-center text-red-600 bg-red-50 rounded border border-red-200 transition-colors hover:bg-red-100"
+                                          >
+                                          Terminate Contract
+                                        </button>
+                                      </div>
+                                    </div>
+                                    <!-- Allowances Dropdown/Grid -->
+                                    <div
+                                      class="grid grid-cols-3 gap-4 pt-6 mt-6 border-t border-blue-100"
+                                      >
+                                      <div>
+                                        <span class="block text-xs text-gray-500"
+                                          >Transport Allowance</span
+                                          >
+                                          <span class="font-medium text-gray-700">{{
+                                            activeContract.salary.transportAllowance
+                                            | currency: "USD" : "symbol" : "1.0-0"
+                                          }}</span>
+                                        </div>
+                                        <div>
+                                          <span class="block text-xs text-gray-500">Lunch Allowance</span>
+                                          <span class="font-medium text-gray-700">{{
+                                            activeContract.salary.lunchAllowance
+                                            | currency: "USD" : "symbol" : "1.0-0"
+                                          }}</span>
+                                        </div>
+                                        <div>
+                                          <span class="block text-xs text-gray-500">Other Allowance</span>
+                                          <span class="font-medium text-gray-700">{{
+                                            activeContract.salary.otherAllowance
+                                            | currency: "USD" : "symbol" : "1.0-0"
+                                          }}</span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  }
+                                  <!-- History List -->
+                                  <div
+                                    class="overflow-hidden bg-white rounded-lg border border-gray-200 shadow-sm"
+                                    >
+                                    <table class="w-full text-sm text-left">
+                                      <thead
+                                        class="font-medium text-gray-500 bg-gray-50 border-b border-gray-200"
+                                        >
+                                        <tr>
+                                          <th class="px-6 py-3">Code</th>
+                                          <th class="px-6 py-3">Type</th>
+                                          <th class="px-6 py-3">Start Date</th>
+                                          <th class="px-6 py-3">End Date</th>
+                                          <th class="px-6 py-3">Status</th>
+                                          <th class="px-6 py-3 text-right">Basic Salary</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody class="divide-y divide-gray-100">
+                                        @for (c of contracts; track trackByIndex($index, c)) {
+                                          <tr
+                                            [class.bg-blue-50]="c.status === 'Active'"
+                                            >
+                                            <td class="px-6 py-4 font-mono">{{ c.contractCode }}</td>
+                                            <td class="px-6 py-4">{{ c.type }}</td>
+                                            <td class="px-6 py-4 text-gray-600">
+                                              {{ c.startDate | date: "mediumDate" }}
+                                            </td>
+                                            <td class="px-6 py-4 text-gray-600">
+                                              {{ c.endDate ? (c.endDate | date: "mediumDate") : "-" }}
+                                            </td>
+                                            <td class="px-6 py-4">
+                                              <span
+                                                [class.bg-green-100]="c.status === 'Active'"
+                                                [class.text-green-700]="c.status === 'Active'"
+                                                [class.bg-gray-100]="c.status !== 'Active'"
+                                                [class.text-gray-600]="c.status !== 'Active'"
+                                                class="px-2 py-0.5 text-xs font-bold uppercase rounded"
+                                                >
+                                                {{ c.status }}
+                                              </span>
+                                            </td>
+                                            <td class="px-6 py-4 font-medium text-right">
+                                              {{
+                                              c.salary.basicSalary | currency: "USD" : "symbol" : "1.0-0"
+                                              }}
+                                            </td>
+                                          </tr>
+                                        }
+                                        @if (contracts.length === 0) {
+                                          <tr>
+                                            <td colspan="6" class="px-6 py-8 text-center text-gray-400">
+                                              No contracts found.
+                                            </td>
+                                          </tr>
+                                        }
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </div>
+                              }
+                              <!-- TAB: Documents -->
+                              @if (activeTab === 'documents') {
+                                <div
+                                  class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm"
+                                  >
+                                  <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                                    <!-- Resume -->
+                                    <div
+                                      class="flex gap-4 items-start p-4 rounded-lg border border-gray-200 transition-shadow hover:shadow-md"
+                                      >
+                                      <div class="p-3 text-2xl text-red-500 bg-red-50 rounded">
+                                        <i class="fas fa-file-pdf"></i>
+                                      </div>
+                                      <div class="flex-1 min-w-0">
+                                        <h4 class="font-medium text-gray-800 truncate">Resume / CV</h4>
+                                        <p class="mt-1 text-xs text-gray-500">
+                                          {{ getDocName(employee.jobDetails?.resumeUrl) }}
+                                        </p>
+                                        <div class="flex gap-2 mt-2">
+                                          @if (employee.jobDetails?.resumeUrl) {
+                                            <button
+                                              (click)="downloadDoc(employee.jobDetails!.resumeUrl!)"
+                                              class="text-xs font-medium text-blue-600 hover:underline"
+                                              >
+                                              View File
+                                            </button>
+                                          }
+                                          <button
+                                            (click)="resumeInput.click()"
+                                            class="text-xs font-medium text-gray-500 hover:text-blue-600"
+                                            >
+                                            {{ employee.jobDetails?.resumeUrl ? "Change" : "Upload" }}
+                                          </button>
+                                        </div>
+                                        <input
+                                          #resumeInput
+                                          type="file"
+                                          class="hidden"
+                                          (change)="onDocSelected($event, 'resume')"
+                                          accept=".pdf,.doc,.docx"
+                                          />
+                                        </div>
+                                        @if (isUploadingDoc && resumeInput.value) {
+                                          <div
+                                            class="animate-spin"
+                                            >
+                                            <i class="fas fa-spinner"></i>
+                                          </div>
+                                        }
+                                      </div>
+                                      <!-- Contract Document -->
+                                      <div
+                                        class="flex gap-4 items-start p-4 rounded-lg border border-gray-200 transition-shadow hover:shadow-md"
+                                        >
+                                        <div class="p-3 text-2xl text-blue-500 bg-blue-50 rounded">
+                                          <i class="fas fa-file-contract"></i>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                          <h4 class="font-medium text-gray-800 truncate">
+                                            Signed Contract
+                                          </h4>
+                                          <p class="mt-1 text-xs text-gray-500">
+                                            {{ getDocName(employee.jobDetails?.contractUrl) }}
+                                          </p>
+                                          <div class="flex gap-2 mt-2">
+                                            @if (employee.jobDetails?.contractUrl) {
+                                              <button
+                                                (click)="downloadDoc(employee.jobDetails!.contractUrl!)"
+                                                class="text-xs font-medium text-blue-600 hover:underline"
+                                                >
+                                                View File
+                                              </button>
+                                            }
+                                            <button
+                                              (click)="contractInput.click()"
+                                              class="text-xs font-medium text-gray-500 hover:text-blue-600"
+                                              >
+                                              {{ employee.jobDetails?.contractUrl ? "Change" : "Upload" }}
+                                            </button>
+                                          </div>
+                                          <input
+                                            #contractInput
+                                            type="file"
+                                            class="hidden"
+                                            (change)="onDocSelected($event, 'contract')"
+                                            accept=".pdf"
+                                            />
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  }
+                                </div>
+                              }
+                            </div>
+
+                            <!-- Contract Modal -->
+                            @if (isContractModalOpen) {
+                              <div
+                                class="flex fixed inset-0 z-50 justify-center items-center backdrop-blur-sm bg-black/50"
+                                >
+                                <div
+                                  class="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
+                                  >
+                                  <div
+                                    class="flex justify-between items-center px-6 py-4 bg-gray-50 border-b border-gray-100"
+                                    >
+                                    <h3 class="text-lg font-bold text-gray-800">New Contract / Renewal</h3>
+                                    <button
+                                      (click)="closeContractModal()"
+                                      class="text-gray-400 hover:text-gray-600"
+                                      >
+                                      ✕
+                                    </button>
+                                  </div>
+                                  <form
+                                    [formGroup]="contractForm"
+                                    (ngSubmit)="saveContract()"
+                                    class="p-6 space-y-6"
+                                    >
+                                    <div class="grid grid-cols-2 gap-6">
+                                      <div>
+                                        <label class="block mb-1 text-sm font-medium text-gray-700"
+                                          >Contract Code</label
+                                          >
+                                          <input
+                                            formControlName="contractCode"
+                                            class="px-3 py-2 w-full bg-gray-50 rounded-md border outline-none focus:ring-blue-500"
+                                            readonly
+                                            />
+                                          </div>
+                                          <div>
+                                            <label class="block mb-1 text-sm font-medium text-gray-700"
+                                              >Type</label
+                                              >
+                                              <select
+                                                formControlName="type"
+                                                class="px-3 py-2 w-full rounded-md border outline-none focus:ring-blue-500"
+                                                >
+                                                <option value="Fixed-Term">Fixed-Term (Defined End Date)</option>
+                                                <option value="Indefinite">Indefinite (No End Date)</option>
+                                              </select>
+                                            </div>
+                                          </div>
+                                          <div class="grid grid-cols-2 gap-6">
+                                            <div>
+                                              <label class="block mb-1 text-sm font-medium text-gray-700"
+                                                >Start Date</label
+                                                >
+                                                <input
+                                                  type="date"
+                                                  formControlName="startDate"
+                                                  class="px-3 py-2 w-full rounded-md border outline-none focus:ring-blue-500"
+                                                  />
+                                                </div>
+                                                <div>
+                                                  <label class="block mb-1 text-sm font-medium text-gray-700"
+                                                    >End Date (Optional)</label
+                                                    >
+                                                    <input
+                                                      type="date"
+                                                      formControlName="endDate"
+                                                      class="px-3 py-2 w-full rounded-md border outline-none focus:ring-blue-500"
+                                                      />
+                                                    </div>
+                                                  </div>
+                                                  <div class="pt-4 border-t border-gray-100">
+                                                    <h4 class="mb-4 font-medium text-gray-800">Compensation Package</h4>
+                                                    <div class="grid grid-cols-2 gap-4">
+                                                      <div class="col-span-2">
+                                                        <label class="block mb-1 text-sm font-medium text-gray-700"
+                                                          >Basic Salary <span class="text-red-500">*</span></label
+                                                          >
+                                                          <div class="relative">
+                                                            <span
+                                                              class="absolute top-2 left-3 text-gray-500 pointer-events-none"
+                                                              >$</span
+                                                              >
+                                                              <input
+                                                                type="number"
+                                                                formControlName="basicSalary"
+                                                                class="py-2 pr-3 pl-7 w-full font-bold text-gray-800 rounded-md border outline-none focus:ring-blue-500"
+                                                                />
+                                                              </div>
+                                                            </div>
+                                                            <div>
+                                                              <label class="block mb-1 text-sm font-medium text-gray-700"
+                                                                >Transport Allowance</label
+                                                                >
+                                                                <input
+                                                                  type="number"
+                                                                  formControlName="transportAllowance"
+                                                                  class="px-3 py-2 w-full rounded-md border outline-none focus:ring-blue-500"
+                                                                  />
+                                                                </div>
+                                                                <div>
+                                                                  <label class="block mb-1 text-sm font-medium text-gray-700"
+                                                                    >Lunch Allowance</label
+                                                                    >
+                                                                    <input
+                                                                      type="number"
+                                                                      formControlName="lunchAllowance"
+                                                                      class="px-3 py-2 w-full rounded-md border outline-none focus:ring-blue-500"
+                                                                      />
+                                                                    </div>
+                                                                    <div>
+                                                                      <label class="block mb-1 text-sm font-medium text-gray-700"
+                                                                        >Other Allowance</label
+                                                                        >
+                                                                        <input
+                                                                          type="number"
+                                                                          formControlName="otherAllowance"
+                                                                          class="px-3 py-2 w-full rounded-md border outline-none focus:ring-blue-500"
+                                                                          />
+                                                                        </div>
+                                                                      </div>
+                                                                    </div>
+                                                                    <div class="flex gap-3 justify-end pt-4">
+                                                                      <button
+                                                                        type="button"
+                                                                        (click)="closeContractModal()"
+                                                                        class="px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100"
+                                                                        >
+                                                                        Cancel
+                                                                      </button>
+                                                                      <button
+                                                                        type="submit"
+                                                                        [disabled]="contractForm.invalid"
+                                                                        class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
+                                                                        >
+                                                                        Save Contract
+                                                                      </button>
+                                                                    </div>
+                                                                  </form>
+                                                                </div>
+                                                              </div>
+                                                            }
+                                                          </div>

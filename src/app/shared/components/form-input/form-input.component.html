@@ -1,0 +1,21 @@
+<div [formGroup]="formGroup">
+  <label class="block mb-1 text-sm font-medium text-gray-700">
+    {{ label }}
+    @if (required) {
+      <span class="text-red-500">*</span>
+    }
+  </label>
+
+  <input
+    [formControlName]="controlName"
+    [type]="type"
+    [placeholder]="placeholder"
+    class="w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
+    />
+
+    @if (showError) {
+      <small class="block mt-1 text-xs text-red-600">
+        {{ errorMessage }}
+      </small>
+    }
+  </div>

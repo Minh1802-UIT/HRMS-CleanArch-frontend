@@ -1,0 +1,241 @@
+<div class="min-h-screen bg-slate-50 p-6">
+  <!-- Page Header -->
+  <div
+    class="flex flex-col gap-4 mb-6 sm:flex-row sm:items-center sm:justify-between"
+  >
+    <div>
+      <h1 class="text-2xl font-bold text-slate-800">Annual PIT Tax Report</h1>
+      <p class="text-sm text-slate-500 mt-1">
+        Personal Income Tax summary by employee
+      </p>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <!-- Year Selector -->
+      <select
+        [(ngModel)]="selectedYear"
+        (ngModelChange)="loadReport()"
+        class="px-3 py-2 text-sm border border-slate-300 rounded-lg bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-orange-500"
+      >
+        @for (yr of yearOptions; track yr) {
+          <option [value]="yr">{{ yr }}</option>
+        }
+      </select>
+
+      <!-- Export CSV -->
+      <button
+        (click)="exportCsv()"
+        [disabled]="!report || loading"
+        class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[#F4623A] rounded-lg hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      >
+        <span class="material-symbols-outlined text-base">download</span>
+        Export CSV
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  @if (loading) {
+    <div class="flex items-center justify-center py-20">
+      <div
+        class="w-8 h-8 border-4 border-[#F4623A] border-t-transparent rounded-full animate-spin"
+      ></div>
+      <span class="ml-3 text-slate-500">Loading report…</span>
+    </div>
+  }
+
+  <!-- Error -->
+  @if (errorMessage) {
+    <div
+      class="flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700"
+    >
+      <span class="material-symbols-outlined">error</span>
+      <span class="text-sm">{{ errorMessage }}</span>
+    </div>
+  }
+
+  <!-- Report Content -->
+  @if (report && !loading) {
+    <!-- Company Summary Cards -->
+    <div class="grid grid-cols-2 gap-4 mb-6 lg:grid-cols-4">
+      <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+        <p class="text-xs text-slate-500 uppercase tracking-wide">
+          Total Employees
+        </p>
+        <p class="text-2xl font-bold text-slate-800 mt-1">
+          {{ report.employees.length }}
+        </p>
+      </div>
+      <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+        <p class="text-xs text-slate-500 uppercase tracking-wide">
+          Company Gross
+        </p>
+        <p class="text-lg font-bold text-orange-600 mt-1">
+          {{ formatCurrency(report.companyTotalGross) }}
+        </p>
+      </div>
+      <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+        <p class="text-xs text-slate-500 uppercase tracking-wide">Total PIT</p>
+        <p class="text-lg font-bold text-red-500 mt-1">
+          {{ formatCurrency(report.companyTotalPIT) }}
+        </p>
+      </div>
+      <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+        <p class="text-xs text-slate-500 uppercase tracking-wide">
+          Company Net
+        </p>
+        <p class="text-lg font-bold text-green-600 mt-1">
+          {{ formatCurrency(report.companyTotalNet) }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Employee Table -->
+    @if (report.employees.length === 0) {
+      <div
+        class="flex flex-col items-center justify-center py-16 text-slate-400"
+      >
+        <span class="material-symbols-outlined text-5xl mb-3">description</span>
+        <p class="text-base">No payroll data found for {{ report.year }}.</p>
+      </div>
+    }
+
+    @if (report.employees.length > 0) {
+      <div
+        class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden"
+      >
+        <table class="w-full text-sm">
+          <thead class="bg-slate-50 border-b border-slate-200">
+            <tr>
+              <th class="w-8 px-4 py-3"></th>
+              <th
+                class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide"
+              >
+                Employee
+              </th>
+              <th
+                class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wide"
+              >
+                Total Gross
+              </th>
+              <th
+                class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wide"
+              >
+                SI + HI + UI
+              </th>
+              <th
+                class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wide"
+              >
+                Total PIT
+              </th>
+              <th
+                class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wide"
+              >
+                Net Income
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (emp of report.employees; track emp.employeeId) {
+              <!-- Employee summary row -->
+              <tr
+                class="border-b border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors"
+                (click)="toggleExpand(emp)"
+              >
+                <td class="px-4 py-3 text-slate-400">
+                  <span
+                    class="material-symbols-outlined text-base transition-transform"
+                    [class.rotate-90]="emp.expanded"
+                  >
+                    chevron_right
+                  </span>
+                </td>
+                <td class="px-4 py-3">
+                  <div class="font-medium text-slate-800">
+                    {{ emp.employeeName }}
+                  </div>
+                  <div class="text-xs text-slate-400">
+                    {{ emp.employeeCode }}
+                  </div>
+                </td>
+                <td class="px-4 py-3 text-right font-medium text-slate-700">
+                  {{ formatCurrency(emp.totalGrossIncome) }}
+                </td>
+                <td class="px-4 py-3 text-right text-slate-600">
+                  {{
+                    formatCurrency(
+                      emp.totalSocialInsurance +
+                        emp.totalHealthInsurance +
+                        emp.totalUnemploymentInsurance
+                    )
+                  }}
+                </td>
+                <td class="px-4 py-3 text-right text-red-500 font-medium">
+                  {{ formatCurrency(emp.totalPersonalIncomeTax) }}
+                </td>
+                <td class="px-4 py-3 text-right text-green-600 font-semibold">
+                  {{ formatCurrency(emp.totalNetSalary) }}
+                </td>
+              </tr>
+
+              <!-- Monthly breakdown sub-rows -->
+              @if (emp.expanded) {
+                @for (m of emp.monthlySummaries; track m.month) {
+                  <tr class="bg-orange-50/40 border-b border-orange-100/60">
+                    <td class="px-4 py-2"></td>
+                    <td class="px-4 py-2 pl-8 text-xs text-slate-500">
+                      {{ m.month }}
+                    </td>
+                    <td class="px-4 py-2 text-right text-xs text-slate-600">
+                      {{ formatCurrency(m.grossIncome) }}
+                    </td>
+                    <td class="px-4 py-2 text-right text-xs text-slate-500">
+                      {{
+                        formatCurrency(
+                          m.socialInsurance +
+                            m.healthInsurance +
+                            m.unemploymentInsurance
+                        )
+                      }}
+                    </td>
+                    <td class="px-4 py-2 text-right text-xs text-red-400">
+                      {{ formatCurrency(m.personalIncomeTax) }}
+                    </td>
+                    <td class="px-4 py-2 text-right text-xs text-green-500">
+                      {{ formatCurrency(m.finalNetSalary) }}
+                    </td>
+                  </tr>
+                }
+              }
+            }
+          </tbody>
+          <!-- Company total footer -->
+          <tfoot class="bg-slate-100 border-t-2 border-slate-300">
+            <tr>
+              <td
+                colspan="2"
+                class="px-4 py-3 text-sm font-bold text-slate-700"
+              >
+                Company Total
+              </td>
+              <td
+                class="px-4 py-3 text-right text-sm font-bold text-orange-600"
+              >
+                {{ formatCurrency(report.companyTotalGross) }}
+              </td>
+              <td class="px-4 py-3 text-right text-sm font-bold text-slate-600">
+                {{ formatCurrency(report.companyTotalInsurance) }}
+              </td>
+              <td class="px-4 py-3 text-right text-sm font-bold text-red-500">
+                {{ formatCurrency(report.companyTotalPIT) }}
+              </td>
+              <td class="px-4 py-3 text-right text-sm font-bold text-green-600">
+                {{ formatCurrency(report.companyTotalNet) }}
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    }
+  }
+</div>

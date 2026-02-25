@@ -1,0 +1,376 @@
+<div
+  class="flex flex-col min-h-screen transition-colors duration-200 bg-background-light dark:bg-background-dark font-body"
+  >
+  <!-- Main Content -->
+  <main class="flex-1 max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
+    <!-- Header -->
+    <div
+      class="flex flex-col gap-4 justify-between items-start mb-8 sm:flex-row sm:items-center"
+      >
+      <div>
+        <h1
+          class="text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl"
+          >
+          Positions
+        </h1>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          Manage organizational hierarchy and job titles
+        </p>
+      </div>
+      <button
+        (click)="openAddModal()"
+        class="inline-flex items-center px-4 py-2 text-sm font-medium text-white rounded-md border border-transparent shadow-sm transition-colors bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+        >
+        <span class="mr-2 text-xl material-symbols-outlined">add_circle</span>
+        Add Position
+      </button>
+    </div>
+
+    <!-- Content Card -->
+    <div
+      class="overflow-hidden bg-white rounded-lg border border-gray-200 shadow-sm dark:bg-gray-800 dark:border-gray-700"
+      >
+      <!-- Toolbar -->
+      <div
+        class="flex flex-col gap-4 justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 sm:flex-row"
+        >
+        <!-- Filter Controls -->
+        <div class="relative w-full sm:w-64">
+          <select
+            [(ngModel)]="selectedDepartmentId"
+            (change)="onDepartmentChange()"
+            class="block py-2 pr-10 pl-3 w-full text-base rounded-md border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            >
+            <option value="">All Departments</option>
+            @for (dept of departments; track trackByDeptId($index, dept)) {
+              <option [value]="dept.id">
+                {{ dept.name }} ({{ dept.code }})
+              </option>
+            }
+          </select>
+        </div>
+
+        <div class="flex gap-4 items-center">
+          <!-- Zoom Controls (Tree Mode Only) -->
+          @if (viewMode === 'tree') {
+            <div
+              class="flex pr-4 space-x-1 border-r border-gray-200 dark:border-gray-600"
+              >
+              <button
+                (click)="zoomOut()"
+                class="flex justify-center items-center w-8 h-8 text-gray-600 bg-gray-100 rounded transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                title="Zoom Out"
+                >
+                <span class="text-lg material-symbols-outlined">remove</span>
+              </button>
+              <span
+                class="flex justify-center items-center w-10 font-mono text-xs text-gray-500"
+                >{{ zoomLevel * 100 | number: "1.0-0" }}%</span
+                >
+                <button
+                  (click)="zoomIn()"
+                  class="flex justify-center items-center w-8 h-8 text-gray-600 bg-gray-100 rounded transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                  title="Zoom In"
+                  >
+                  <span class="text-lg material-symbols-outlined">add</span>
+                </button>
+              </div>
+            }
+
+            <div class="inline-flex p-1 bg-gray-100 rounded-lg dark:bg-gray-700">
+              <button
+                (click)="setViewMode('list')"
+                [class.bg-white]="viewMode === 'list'"
+                [class.shadow-sm]="viewMode === 'list'"
+                [class.text-primary]="viewMode === 'list'"
+                class="flex gap-2 items-center px-3 py-1.5 text-sm font-medium text-gray-500 rounded-md transition-all dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                >
+                <span class="text-lg material-symbols-outlined">view_list</span>
+                List
+              </button>
+              <button
+                (click)="setViewMode('tree')"
+                [class.bg-white]="viewMode === 'tree'"
+                [class.shadow-sm]="viewMode === 'tree'"
+                [class.text-primary]="viewMode === 'tree'"
+                class="flex gap-2 items-center px-3 py-1.5 text-sm font-medium text-gray-500 rounded-md transition-all dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                >
+                <span class="text-lg material-symbols-outlined"
+                  >account_tree</span
+                  >
+                  Tree
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Loading State -->
+          @if (loading) {
+            <div class="flex justify-center items-center p-12">
+              <div
+                class="w-10 h-10 rounded-full border-t-2 border-b-2 animate-spin border-primary"
+              ></div>
+            </div>
+          }
+
+          <!-- Empty State -->
+          @if (!loading && positions.length === 0) {
+            <div class="p-16 text-center">
+              <div
+                class="inline-flex justify-center items-center mb-6 w-16 h-16 bg-gray-100 rounded-full dark:bg-gray-700"
+                >
+                <span class="text-4xl text-gray-400 material-symbols-outlined"
+                  >work_off</span
+                  >
+                </div>
+                <h3 class="mb-2 text-xl font-bold text-gray-900 dark:text-white">
+                  No positions found
+                </h3>
+                <p class="mx-auto mb-8 max-w-sm text-gray-500 dark:text-gray-400">
+                  Try clearing filters or add a new position.
+                </p>
+                <button
+                  (click)="openAddModal()"
+                  class="inline-flex items-center text-sm font-bold text-primary hover:text-primary-dark"
+                  >
+                  <span class="mr-1 material-symbols-outlined">add</span>
+                  Create New Position
+                </button>
+              </div>
+            }
+
+            <!-- LIST VIEW -->
+            @if (!loading && positions.length > 0 && viewMode === 'list') {
+              <div
+                class="overflow-x-auto"
+                >
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                  <thead class="bg-gray-50 dark:bg-gray-700/50">
+                    <tr>
+                      <th
+                        scope="col"
+                        class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase dark:text-gray-400"
+                        >
+                        Title
+                      </th>
+                      <th
+                        scope="col"
+                        class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase dark:text-gray-400"
+                        >
+                        Code
+                      </th>
+                      <!--
+                      <th
+                        scope="col"
+                        class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase dark:text-gray-400"
+                        >
+                        Department
+                      </th>
+                      -->
+                      <th
+                        scope="col"
+                        class="px-6 py-4 text-xs font-semibold tracking-wider text-right text-gray-500 uppercase dark:text-gray-400"
+                        >
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody
+                    class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700"
+                    >
+                    @for (pos of positions; track trackByPosId($index, pos)) {
+                      <tr
+                        class="transition-colors hover:bg-gray-50 dark:hover:bg-gray-700/50 group"
+                        >
+                        <td class="px-6 py-4 whitespace-nowrap">
+                          <div
+                            class="flex gap-2 items-center"
+                            [style.padding-left.px]="(pos.level || 0) * 32"
+                            >
+                            @if (pos.level && pos.level > 0) {
+                              <div
+                                class="-mt-3 mr-1 w-6 h-6 rounded-bl-lg border-b-2 border-l-2 border-gray-300 dark:border-gray-600"
+                              ></div>
+                            }
+                            <div class="flex items-center">
+                              <span
+                                class="mr-2 text-xl text-gray-400 material-symbols-outlined"
+                                >{{
+                                pos.level === 0
+                                ? "folder_shared"
+                                : "subdirectory_arrow_right"
+                                }}</span
+                                >
+                                <span
+                                  class="text-sm font-medium text-gray-900 dark:text-white"
+                                  >{{ pos.title }}</span
+                                  >
+                                </div>
+                              </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                              <span
+                                class="inline-flex items-center px-2.5 py-0.5 font-mono text-xs font-medium text-gray-800 bg-gray-100 rounded-full dark:bg-gray-700 dark:text-gray-300"
+                                >
+                                {{ pos.code }}
+                              </span>
+                            </td>
+                            <!--
+                            <td
+                              class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-400"
+                              >
+                              {{ pos.departmentId || "-" }}
+                            </td>
+                            -->
+                            <td
+                              class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap"
+                              >
+                              <div
+                                class="flex gap-2 justify-end opacity-0 transition-opacity group-hover:opacity-100"
+                                >
+                                <button
+                                  (click)="openEditModal(pos)"
+                                  class="p-1 text-indigo-600 rounded hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20"
+                                  title="Edit"
+                                  >
+                                  <span class="text-xl material-symbols-outlined">edit</span>
+                                </button>
+                                <button
+                                  (click)="deletePosition(pos)"
+                                  class="p-1 text-red-600 rounded hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                  title="Delete"
+                                  >
+                                  <span class="material-symbols-outlined">delete</span>
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                }
+
+                <!-- TREE VIEW -->
+                @if (!loading && treeData.length > 0 && viewMode === 'tree') {
+                  <div
+                    class="overflow-auto bg-gray-50/50 dark:bg-gray-900/50 h-[calc(100vh-250px)]"
+                    >
+                    <div
+                      class="flex justify-center p-10 min-w-max transition-transform duration-200 origin-top"
+                      [style.transform]="'scale(' + zoomLevel + ')'"
+                      >
+                      <!-- Compact Gap -->
+                      <div class="flex gap-4">
+                        @for (root of treeData; track trackByIndex($index, root)) {
+                          <ng-container
+                            *ngTemplateOutlet="positionRef; context: { $implicit: root }"
+                          ></ng-container>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+            </main>
+          </div>
+
+          <!-- Recursive Template for Tree View (COMPACT) -->
+          <ng-template #positionRef let-node>
+            <div class="flex relative flex-col items-center">
+              <!-- Node Card (COMPACT SIZE) -->
+              <div
+                class="relative z-10 p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:shadow-md transition-all text-center min-w-[140px] max-w-[160px] group"
+                >
+                <!-- Connector to parent -->
+
+                <div
+                  class="flex justify-center items-center mx-auto mb-1 w-8 h-8 rounded-full bg-primary/10 text-primary"
+                  >
+                  <span class="text-lg material-symbols-outlined">work</span>
+                </div>
+                <h4
+                  class="px-1 text-xs font-bold text-gray-900 truncate dark:text-white"
+                  title="{{ node.title }}"
+                  >
+                  {{ node.title }}
+                </h4>
+                <span
+                  class="text-xs font-mono bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-1.5 py-0.5 rounded mt-0.5 inline-block"
+                  >{{ node.code }}</span
+                  >
+
+                  <!-- Actions Overlay -->
+                  <div
+                    class="absolute inset-0 bg-black/5 dark:bg-white/5 backdrop-blur-[1px] rounded-lg flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                    <button
+                      (click)="openEditModal(node)"
+                      class="p-1.5 text-indigo-600 bg-white rounded-full shadow dark:bg-gray-800 hover:text-indigo-700"
+                      >
+                      <span class="text-base material-symbols-outlined">edit</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Children Connectors -->
+                @if (node.children && node.children.length > 0) {
+                  <div
+                    class="flex flex-col items-center"
+                    >
+                    <!-- Vertical Line Down -->
+                    <div class="w-px h-6 bg-gray-300 dark:bg-gray-600"></div>
+                    <!-- Children Container -->
+                    <div class="flex relative gap-4 pt-6">
+                      <!-- Horizontal bar connecting children -->
+                      @if (node.children.length > 1) {
+                        <div
+                          class="absolute top-0 right-1/2 left-1/2 h-px bg-gray-300 dark:bg-gray-600"
+                          [style.left]="'calc(' + 100 / (node.children.length * 2) + '% + 1px)'"
+          [style.right]="
+            'calc(' + 100 / (node.children.length * 2) + '% + 1px)'
+          "
+                        ></div>
+                      }
+                      <!-- Vertical lines up to bar for each child -->
+                      @for (
+                        child of node.children; track trackByIndex($index,
+                        child); let first = $first; let last = $last) {
+                        <div
+                          class="flex relative flex-col items-center"
+                          >
+                          <!-- Top connector for child -->
+                          @if (node.children.length > 1) {
+                            <div
+                              class="absolute -top-6 w-px h-6 bg-gray-300 dark:bg-gray-600"
+                            ></div>
+                          }
+                          <ng-container
+                            *ngTemplateOutlet="positionRef; context: { $implicit: child }"
+                          ></ng-container>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            </ng-template>
+
+            <!-- Modal Container -->
+            @if (showModal) {
+              <div
+                class="flex fixed inset-0 z-50 justify-center items-center p-4 backdrop-blur-sm transition-all bg-black/50"
+                (click)="closeModal()"
+                >
+                <div
+                  class="overflow-hidden w-full max-w-lg bg-white rounded-xl shadow-2xl transition-all transform scale-100 dark:bg-gray-800"
+                  (click)="$event.stopPropagation()"
+                  >
+                  <app-position-form
+                    [positionId]="selectedPositionId"
+                    (close)="closeModal()"
+                    (saved)="onSaved()"
+                  ></app-position-form>
+                </div>
+              </div>
+            }

@@ -1,0 +1,14 @@
+/* Scrollbar custom for the detail view */
+.detail-layout ::-webkit-scrollbar {
+  width: 8px;
+}
+.detail-layout ::-webkit-scrollbar-track {
+  background: transparent;
+}
+.detail-layout ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+.detail-layout ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

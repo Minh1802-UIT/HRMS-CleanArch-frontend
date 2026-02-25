@@ -1,0 +1,438 @@
+<main class="p-8 max-w-[1440px] mx-auto">
+  <div
+    class="flex flex-col gap-6 justify-between mb-8 lg:flex-row lg:items-center"
+    >
+    <div class="flex gap-12 items-center">
+      <h1 class="text-2xl font-bold text-slate-800 dark:text-white">
+        Leave Approvals
+      </h1>
+      <div
+        class="flex gap-8 items-center border-b border-slate-200 lg:border-none"
+        >
+        <button
+          (click)="activeFilter = 'Pending'"
+          [class.text-blue-700]="activeFilter === 'Pending'"
+          [class.border-b-2]="activeFilter === 'Pending'"
+          [class.border-blue-700]="activeFilter === 'Pending'"
+          [class.text-slate-600]="activeFilter !== 'Pending'"
+          class="px-2 pb-4 text-sm font-semibold transition-colors"
+          >
+          Pending ({{ pendingCount }})
+        </button>
+        <button
+          (click)="activeFilter = 'Approved'"
+          [class.text-blue-700]="activeFilter === 'Approved'"
+          [class.border-b-2]="activeFilter === 'Approved'"
+          [class.border-blue-700]="activeFilter === 'Approved'"
+          [class.text-slate-600]="activeFilter !== 'Approved'"
+          class="px-2 pb-4 text-sm font-semibold transition-colors"
+          >
+          Approved ({{ approvedCount }})
+        </button>
+        <button
+          (click)="activeFilter = 'Rejected'"
+          [class.text-blue-700]="activeFilter === 'Rejected'"
+          [class.border-b-2]="activeFilter === 'Rejected'"
+          [class.border-blue-700]="activeFilter === 'Rejected'"
+          [class.text-slate-600]="activeFilter !== 'Rejected'"
+          class="px-2 pb-4 text-sm font-semibold transition-colors"
+          >
+          Rejected ({{ rejectedCount }})
+        </button>
+      </div>
+    </div>
+    <div class="flex flex-wrap gap-3 items-center">
+      <button
+        class="flex gap-2 items-center px-4 py-2 text-sm font-semibold rounded-lg border-2 transition-colors border-primary text-primary hover:bg-primary/5"
+        >
+        <i class="text-lg pi pi-download"></i>
+        Download Report
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters Row -->
+  <div
+    class="flex flex-wrap gap-4 items-center p-4 mb-6 bg-white rounded-xl border shadow-sm dark:bg-gray-800 border-slate-200 dark:border-gray-700"
+    >
+    <div class="flex-1 min-w-[240px] relative">
+      <span
+        class="absolute top-2.5 left-3 text-xl material-symbols-outlined text-slate-500"
+        >search</span
+        >
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          class="py-2 pr-4 pl-10 w-full text-sm rounded-lg bg-slate-50 dark:bg-gray-700 border-slate-200 dark:border-gray-600 focus:ring-primary focus:border-primary dark:text-white"
+          placeholder="Search employee or code..."
+          />
+        </div>
+        <div class="flex flex-wrap gap-3 items-center lg:flex-nowrap">
+          <select
+            [(ngModel)]="selectedDepartment"
+            class="py-2 pr-10 pl-3 text-sm rounded-lg bg-slate-50 dark:bg-gray-700 border-slate-200 dark:border-gray-600 focus:ring-primary focus:border-primary dark:text-white"
+            >
+            @for (dept of departments; track trackByValue($index, dept)) {
+              <option [value]="dept">
+                {{ dept }}
+              </option>
+            }
+          </select>
+          <select
+            [(ngModel)]="selectedLeaveType"
+            class="py-2 pr-10 pl-3 text-sm rounded-lg bg-slate-50 dark:bg-gray-700 border-slate-200 dark:border-gray-600 focus:ring-primary focus:border-primary dark:text-white"
+            >
+            @for (type of leaveTypes; track trackByValue($index, type)) {
+              <option [value]="type">
+                {{ type }}
+              </option>
+            }
+          </select>
+          <div class="relative">
+            <span
+              class="absolute top-2.5 left-3 text-sm material-symbols-outlined text-slate-500"
+              >calendar_today</span
+              >
+              <input
+                type="text"
+                [(ngModel)]="dateRange"
+                placeholder="Date Range"
+                class="py-2 pr-4 pl-10 text-sm rounded-lg bg-slate-50 dark:bg-gray-700 border-slate-200 dark:border-gray-600 focus:ring-primary focus:border-primary dark:text-white"
+                />
+              </div>
+              <button
+        (click)="
+          searchTerm = '';
+          selectedDepartment = 'All Departments';
+          selectedLeaveType = 'Leave Type';
+          dateRange = ''
+        "
+                class="px-4 py-2 text-sm font-medium text-white rounded-lg bg-slate-800 dark:bg-slate-600 hover:bg-slate-700"
+                >
+                Reset
+              </button>
+            </div>
+          </div>
+
+          <!-- Skeleton / Loader -->
+          @if (loading) {
+            <div class="flex justify-center p-12">
+              <div class="flex flex-col items-center">
+                <div
+                  class="mb-4 w-12 h-12 rounded-full border-b-2 animate-spin border-primary"
+                ></div>
+                <p class="font-medium text-slate-600">Loading requests...</p>
+              </div>
+            </div>
+          }
+
+          <!-- Data Table -->
+          @if (!loading) {
+            <div
+              class="overflow-hidden bg-white rounded-xl border shadow-sm dark:bg-gray-800 border-slate-200 dark:border-gray-700"
+              >
+              <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                  <thead>
+                    <tr
+                      class="bg-slate-50 dark:bg-gray-700/50 border-b border-slate-200 dark:border-gray-600 text-[11px] font-bold text-slate-600 dark:text-gray-400 uppercase tracking-wider"
+                      >
+                      <th class="px-6 py-4 w-10">
+                        <input
+                          type="checkbox"
+                          class="rounded border-slate-300 dark:bg-gray-600 text-primary focus:ring-primary"
+                          />
+                        </th>
+                        <th class="px-4 py-4">Employee</th>
+                        <th class="px-4 py-4">Leave Type</th>
+                        <th class="px-4 py-4">Duration</th>
+                        <th class="px-4 py-4">Balance</th>
+                        <th class="px-4 py-4">Reason</th>
+                        <th class="px-4 py-4 text-center">Attachment</th>
+                        <th class="px-4 py-4 text-right">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 dark:divide-gray-700">
+                      @for (req of filteredRequests; track trackByRequestId($index, req)) {
+                        <tr
+                          class="transition-colors hover:bg-slate-50/50 dark:hover:bg-gray-700/30"
+                          >
+                          <td class="px-6 py-4">
+                            <input
+                              type="checkbox"
+                              class="rounded border-slate-300 dark:bg-gray-600 text-primary focus:ring-primary"
+                              />
+                            </td>
+                            <td class="px-4 py-4">
+                              <div class="flex gap-3 items-center">
+                                <img
+                                  [src]="req.avatarUrl || 'assets/images/defaults/avatar-1.png'"
+                                  alt="Avatar"
+                                  class="w-9 h-9 rounded-full border border-slate-100 dark:border-gray-600"
+                                  />
+                                  <div>
+                                    <p
+                                      class="text-sm font-semibold text-slate-800 dark:text-white"
+                                      >
+                                      {{ req.employeeName }}
+                                    </p>
+                                    <p class="text-xs text-slate-600">{{ req.employeeCode }}</p>
+                                  </div>
+                                </div>
+                              </td>
+                              <td class="px-4 py-4">
+                                <span
+                                  class="inline-flex items-center px-2.5 py-0.5 text-xs font-medium rounded-full"
+                                  [ngClass]="getTypeClass(req.type)"
+                                  >
+                                  {{ req.type }}
+                                </span>
+                              </td>
+                              <td class="px-4 py-4">
+                                <div
+                                  class="text-sm font-medium text-slate-700 dark:text-gray-300"
+                                  >
+                                  {{ req.startDate | date: "MMM dd" }} -
+                                  {{ req.endDate | date: "MMM dd" }}
+                                </div>
+                                <div class="text-xs text-slate-600">{{ req.days }} days</div>
+                              </td>
+                              <td class="px-4 py-4">
+                                <div class="flex gap-2 items-center">
+                                  <div
+                                    class="overflow-hidden w-16 h-1.5 rounded-full bg-slate-100 dark:bg-gray-600"
+                                    >
+                                    <div
+                                      class="bg-blue-600 h-full w-[65%]"
+                                      [style.width.%]="65"
+                                    ></div>
+                                  </div>
+                                  <span
+                                    class="text-xs font-semibold text-slate-700 dark:text-gray-300"
+                                    >Shared</span
+                                    >
+                                  </div>
+                                </td>
+                                <td class="px-4 py-4">
+                                  <div class="max-w-[200px]">
+                                    <p class="text-xs truncate text-slate-600 dark:text-gray-400">
+                                      {{ req.reason }}
+                                    </p>
+                                    <button
+                                      class="text-xs font-bold text-primary uppercase hover:underline"
+                                      >
+                                      View more
+                                    </button>
+                                  </div>
+                                </td>
+                                <td class="px-4 py-4 text-center">
+                                  <span
+                                    class="cursor-pointer material-symbols-outlined text-slate-500 hover:text-slate-600"
+                                    >description</span
+                                    >
+                                  </td>
+                                  <td class="px-4 py-4">
+                                    @if (req.status === 'Pending') {
+                                      <div
+                                        class="flex gap-2 justify-end items-center"
+                                        >
+                                        <button
+                                          (click)="approve(req)"
+                                          [disabled]="processingId === req.id"
+                                          class="flex justify-center items-center p-2 text-white bg-emerald-500 rounded-lg shadow-sm transition-all hover:bg-emerald-600 disabled:opacity-50"
+                                          >
+                                          @if (processingId !== req.id) {
+                                            <span
+                                              class="text-lg font-bold material-symbols-outlined"
+                                              >check</span
+                                              >
+                                          }
+                                          @if (processingId === req.id) {
+                                            <i
+                                              class="text-lg pi pi-spin pi-spinner"
+                                            ></i>
+                                          }
+                                        </button>
+                                        <button
+                                          (click)="reject(req)"
+                                          [disabled]="processingId === req.id"
+                                          class="flex justify-center items-center p-2 text-red-500 rounded-lg border border-red-200 transition-all hover:bg-red-50 dark:hover:bg-red-900/20 disabled:opacity-50"
+                                          >
+                                          @if (processingId !== req.id) {
+                                            <span
+                                              class="text-lg font-bold material-symbols-outlined"
+                                              >close</span
+                                              >
+                                            }
+                                            @if (processingId === req.id) {
+                                              <i
+                                                class="text-lg pi pi-spin pi-spinner"
+                                              ></i>
+                                            }
+                                          </button>
+                                        </div>
+                                      }
+                                      @if (req.status !== 'Pending') {
+                                        <div
+                                          class="flex justify-end text-xs italic text-slate-500"
+                                          >
+                                          {{ req.status }}
+                                        </div>
+                                      }
+                                    </td>
+                                  </tr>
+                                }
+                                @if (filteredRequests.length === 0) {
+                                  <tr>
+                                    <td colspan="8" class="py-12 text-center text-slate-600">
+                                      No leave requests found for the selected filters.
+                                    </td>
+                                  </tr>
+                                }
+                              </tbody>
+                            </table>
+                          </div>
+                          <!-- Pagination Footer -->
+                          <div
+                            class="flex justify-between items-center px-6 py-4 border-t bg-slate-50 dark:bg-gray-700/50 border-slate-200 dark:border-gray-600"
+                            >
+                            <p class="text-sm font-medium text-slate-600 dark:text-gray-400">
+                              Show <span class="text-slate-700 dark:text-white">1</span> to
+                              <span class="text-slate-700 dark:text-white">{{
+                                filteredRequests.length
+                              }}</span>
+                              of
+                              <span class="text-slate-700 dark:text-white">{{
+                                filteredRequests.length
+                              }}</span>
+                              results
+                            </p>
+                            <div class="flex gap-2 items-center">
+                              <button
+                                class="flex justify-center items-center w-8 h-8 bg-white rounded-lg border cursor-not-allowed border-slate-200 dark:border-gray-600 dark:bg-gray-800 text-slate-500"
+                                >
+                                <span class="text-lg material-symbols-outlined">chevron_left</span>
+                              </button>
+                              <button
+                                class="flex justify-center items-center w-8 h-8 text-sm font-semibold text-white rounded-lg bg-navy-dark"
+                                >
+                                1
+                              </button>
+                              <button
+                                class="flex justify-center items-center w-8 h-8 bg-white rounded-lg border cursor-not-allowed border-slate-200 dark:border-gray-600 dark:bg-gray-800 text-slate-500"
+                                >
+                                <span class="text-lg material-symbols-outlined">chevron_right</span>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      }
+
+                      <!-- Reject Modal -->
+                      @if (showRejectModal) {
+                        <div
+                          class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4"
+                          >
+                          <div
+                            class="overflow-hidden w-full max-w-lg bg-white rounded-2xl shadow-2xl duration-200 dark:bg-gray-800 animate-in fade-in zoom-in"
+                            >
+                            <div
+                              class="flex sticky top-0 justify-between items-center px-6 py-4 bg-white border-b border-slate-100 dark:border-gray-700 dark:bg-gray-800"
+                              >
+                              <h2 class="text-xl font-bold text-slate-900 dark:text-white">
+                                Reject Leave Request
+                              </h2>
+                              <button
+                                (click)="closeRejectModal()"
+                                class="transition-colors text-slate-500 hover:text-slate-600"
+                                >
+                                <span class="material-symbols-outlined">close</span>
+                              </button>
+                            </div>
+                            <div class="p-6">
+                              <div
+                                class="p-4 mb-6 rounded-xl border bg-slate-50 dark:bg-gray-700 border-slate-100 dark:border-gray-600"
+                                >
+                                <div class="flex gap-3 items-start">
+                                  <span class="text-amber-500 material-symbols-outlined">info</span>
+                                  @if (selectedRequest) {
+                                    <div>
+                                      <p class="text-sm font-medium text-slate-800 dark:text-gray-200">
+                                        Rejecting {{ selectedRequest.type }}
+                                      </p>
+                                      <p class="mt-0.5 text-xs text-slate-600 dark:text-gray-400">
+                                        For {{ selectedRequest.employeeName }},
+                                        {{ selectedRequest.startDate | date: "MMM dd" }} -
+                                        {{ selectedRequest.endDate | date: "MMM dd" }}
+                                      </p>
+                                    </div>
+                                  }
+                                </div>
+                              </div>
+                              <div class="mb-6">
+                                <label
+                                  class="block mb-2 text-sm font-semibold text-slate-700 dark:text-gray-300"
+                                  >Reason for Rejection *</label
+                                  >
+                                  <textarea
+                                    [(ngModel)]="rejectionReason"
+                                    class="px-4 py-3 w-full text-sm rounded-xl border-slate-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-red-500 focus:border-red-500 placeholder:text-slate-500"
+                                    placeholder="Please provide a reason for rejecting this request..."
+                                    rows="4"
+                                  ></textarea>
+                                </div>
+                                <div>
+                                  <p
+                                    class="mb-3 text-xs font-bold tracking-wider uppercase text-slate-500"
+                                    >
+                                    Quick Options
+                                  </p>
+                                  <div class="flex flex-wrap gap-2">
+                                    <button
+                                      (click)="addQuickReason('Inadequate staffing')"
+                                      class="px-3 py-1.5 text-xs font-medium rounded-full border transition-all border-slate-200 dark:border-gray-600 text-slate-600 dark:text-gray-400 hover:border-red-200 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600"
+                                      >
+                                      Inadequate staffing
+                                    </button>
+                                    <button
+                                      (click)="addQuickReason('Peak workload period')"
+                                      class="px-3 py-1.5 text-xs font-medium rounded-full border transition-all border-slate-200 dark:border-gray-600 text-slate-600 dark:text-gray-400 hover:border-red-200 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600"
+                                      >
+                                      Peak workload period
+                                    </button>
+                                    <button
+                                      (click)="addQuickReason('Missing information')"
+                                      class="px-3 py-1.5 text-xs font-medium rounded-full border transition-all border-slate-200 dark:border-gray-600 text-slate-600 dark:text-gray-400 hover:border-red-200 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600"
+                                      >
+                                      Missing information
+                                    </button>
+                                    <button
+                                      (click)="addQuickReason('Incorrect dates')"
+                                      class="px-3 py-1.5 text-xs font-medium rounded-full border transition-all border-slate-200 dark:border-gray-600 text-slate-600 dark:text-gray-400 hover:border-red-200 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600"
+                                      >
+                                      Incorrect dates
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                              <div
+                                class="flex justify-between items-center px-6 py-4 border-t bg-slate-50 dark:bg-gray-700 border-slate-100 dark:border-gray-600"
+                                >
+                                <button
+                                  (click)="closeRejectModal()"
+                                  class="px-5 py-2.5 text-sm font-semibold rounded-lg transition-colors text-slate-600 dark:text-gray-400 hover:bg-slate-200 dark:hover:bg-gray-600"
+                                  >
+                                  Cancel
+                                </button>
+                                <button
+                                  (click)="confirmRejection()"
+                                  [disabled]="!rejectionReason.trim()"
+                                  class="px-6 py-2.5 text-sm font-bold text-white bg-red-600 rounded-lg shadow-lg transition-all hover:bg-red-700 shadow-red-200 dark:shadow-none disabled:opacity-50"
+                                  >
+                                  Confirm Rejection
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        }
+                      </main>

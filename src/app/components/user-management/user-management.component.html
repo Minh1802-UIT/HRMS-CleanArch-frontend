@@ -1,0 +1,381 @@
+<div
+  class="flex flex-col min-h-screen text-gray-900 transition-colors duration-200 user-management-layout bg-background-light dark:bg-background-dark font-body dark:text-gray-100"
+  >
+  <!-- Main Content -->
+  <main class="flex-1 max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
+    <div class="flex flex-col items-center mb-10">
+      <h1 class="mb-2 text-3xl font-bold text-gray-900 dark:text-white">
+        User Management
+      </h1>
+      <p class="text-gray-500 dark:text-gray-400">
+        Manage system access and roles
+      </p>
+    </div>
+
+    <!-- Filter Card -->
+    <div
+      class="p-5 mb-6 rounded-lg border border-gray-200 shadow-sm bg-surface-light dark:bg-surface-dark dark:border-gray-700"
+      >
+      <!-- Action Buttons -->
+      <div
+        class="flex flex-col justify-end mb-6 space-y-3 sm:flex-row sm:space-y-0 sm:space-x-3"
+        >
+        <button
+          class="inline-flex justify-center items-center px-4 py-2 text-sm font-medium text-white rounded-md border border-transparent shadow-sm transition-colors bg-primary hover:bg-orange-600"
+          >
+          <span class="mr-2 text-sm material-symbols-outlined">person_add</span>
+          Invite User
+        </button>
+      </div>
+
+      <!-- Filters Row -->
+      <div
+        class="flex flex-col gap-4 justify-between xl:flex-row xl:items-center"
+        >
+        <div
+          class="flex flex-col flex-1 gap-4 items-start w-full md:flex-row md:items-center"
+          >
+          <!-- Search Input -->
+          <div class="relative w-full md:w-96">
+            <div
+              class="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none"
+              >
+              <span class="text-sm text-gray-400 material-symbols-outlined"
+                >search</span
+                >
+              </div>
+              <input
+                type="text"
+                [(ngModel)]="searchTerm"
+                (input)="onSearch()"
+                class="block py-2 pr-3 pl-10 w-full leading-5 placeholder-gray-500 text-gray-900 bg-gray-50 rounded-md border border-gray-300 transition-colors dark:border-gray-600 dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm"
+                placeholder="Search users by name, email or username..."
+                />
+              </div>
+            </div>
+            <div class="text-sm font-medium text-gray-500 dark:text-gray-400">
+              Showing {{ (currentPage - 1) * pageSize + 1 }} -
+              {{ Math.min(currentPage * pageSize, totalItems) }} of
+              {{ totalItems }} users
+            </div>
+          </div>
+        </div>
+
+        <!-- User Table -->
+        <div
+          class="overflow-hidden rounded-lg border border-gray-200 shadow-sm bg-surface-light dark:bg-surface-dark dark:border-gray-700"
+          >
+          <!-- Loading State -->
+          @if (loading) {
+            <div class="flex justify-center items-center py-16">
+              <div
+                class="w-10 h-10 rounded-full border-t-2 border-b-2 animate-spin border-primary"
+              ></div>
+            </div>
+          }
+
+          @if (!loading) {
+            <div class="overflow-x-auto">
+              <table
+                class="min-w-full text-sm divide-y divide-gray-200 dark:divide-gray-700"
+                >
+                <thead class="bg-gray-50 dark:bg-gray-800/50">
+                  <tr>
+                    <th
+                      scope="col"
+                      class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase dark:text-gray-400"
+                      >
+                      User
+                    </th>
+                    <th
+                      scope="col"
+                      class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase dark:text-gray-400"
+                      >
+                      Email
+                    </th>
+                    <th
+                      scope="col"
+                      class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase dark:text-gray-400"
+                      >
+                      Current Roles
+                    </th>
+                    <th
+                      scope="col"
+                      class="px-6 py-4 text-xs font-semibold tracking-wider text-right text-gray-500 uppercase dark:text-gray-400"
+                      >
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody
+                  class="divide-y divide-gray-200 bg-surface-light dark:bg-surface-dark dark:divide-gray-700"
+                  >
+                  @for (user of filteredUsers; track trackByUser($index, user)) {
+                    <tr
+                      class="transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50 group"
+                      >
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex gap-3 items-center">
+                          <div class="flex-shrink-0 w-10 h-10">
+                            <img
+                      [src]="
+                        user.avatar || 'assets/images/defaults/avatar-1.png'
+                      "
+                              class="object-cover w-10 h-10 rounded-full border border-gray-100 dark:border-gray-700"
+                      onerror="
+                        this.src =
+                          'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjZTVlN2ViIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzljYTNhZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPj88L3RleHQ+PC9zdmc+'
+                      "
+                              />
+                            </div>
+                            <div>
+                              <div
+                                class="text-sm font-bold text-gray-900 dark:text-white"
+                                >
+                                {{ user.username }}
+                              </div>
+                              <div class="text-xs text-gray-400 font-mono">
+                                ID: {{ user.id }}
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                          <div class="text-sm text-gray-600 dark:text-gray-300">
+                            {{ user.email }}
+                          </div>
+                        </td>
+                        <td class="px-6 py-4">
+                          <div class="flex flex-wrap gap-2">
+                            @for (role of user.roles; track trackByRole($index, role)) {
+                              <span
+                                [ngClass]="getRoleBadgeClass(role)"
+                                class="px-2 py-0.5 text-xs font-bold border rounded-md shadow-sm"
+                                >
+                                {{ role }}
+                              </span>
+                            }
+                            @if (!user.roles?.length) {
+                              <span
+                                class="text-xs italic text-gray-400"
+                                >No roles</span
+                                >
+                            }
+                          </div>
+                        </td>
+                        <td class="px-6 py-4 text-right whitespace-nowrap">
+                          <button
+                            (click)="openRoleDrawer(user)"
+                            class="inline-flex items-center px-3 py-1.5 text-xs font-medium bg-orange-50 rounded-lg border border-orange-200 opacity-0 transition-colors text-primary dark:bg-orange-900/20 dark:border-orange-800 hover:bg-orange-100 dark:hover:bg-orange-900/40 group-hover:opacity-100 focus:opacity-100"
+                            >
+                            <span class="mr-1.5 text-sm material-symbols-outlined"
+                              >security</span
+                              >
+                              Manage Roles
+                            </button>
+                          </td>
+                        </tr>
+                      }
+                      <!-- Empty State -->
+                      @if (filteredUsers.length === 0 && !loading) {
+                        <tr>
+                          <td
+                            colspan="4"
+                            class="py-12 text-center text-gray-500 dark:text-gray-400"
+                            >
+                            <div class="flex flex-col items-center">
+                              <span
+                                class="mb-2 text-4xl text-gray-300 material-symbols-outlined"
+                                >person_off</span
+                                >
+                                <p class="text-lg font-medium">No users found</p>
+                                <p class="text-sm">Try adjusting your search criteria</p>
+                              </div>
+                            </td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                }
+              </div>
+
+              <!-- Pagination -->
+              <div
+                class="flex flex-col justify-between items-center px-1 mt-6 sm:flex-row"
+                >
+                <div class="mb-4 text-sm text-gray-500 dark:text-gray-400 sm:mb-0">
+                  Showing
+                  <span class="font-medium text-gray-900 dark:text-white">{{
+                    (currentPage - 1) * pageSize + 1
+                  }}</span>
+                  to
+                  <span class="font-medium text-gray-900 dark:text-white">{{
+                    Math.min(currentPage * pageSize, totalItems)
+                  }}</span>
+                  of
+                  <span class="font-medium text-gray-900 dark:text-white">{{
+                    totalItems
+                  }}</span>
+                  results
+                </div>
+                <nav
+                  aria-label="Pagination"
+                  class="inline-flex relative z-0 -space-x-px rounded-md shadow-sm"
+                  >
+                  <button
+                    (click)="goToPage(currentPage - 1)"
+                    [disabled]="currentPage === 1"
+                    class="inline-flex relative items-center px-2 py-2 text-sm font-medium text-gray-500 rounded-l-md border border-gray-300 dark:border-gray-600 bg-surface-light dark:bg-surface-dark dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                    <span class="text-sm material-symbols-outlined">chevron_left</span>
+                  </button>
+                  @for (page of getPageNumbers(); track trackByPage($index, page)) {
+                    <button
+                      (click)="goToPage(page)"
+                      [class.bg-primary]="page === currentPage"
+                      [class.border-primary]="page === currentPage"
+                      [class.text-white]="page === currentPage"
+                      class="inline-flex relative items-center px-4 py-2 text-sm font-medium border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800"
+          [ngClass]="{
+            'bg-surface-light dark:bg-surface-dark text-gray-500 dark:text-gray-400':
+              page !== currentPage,
+          }"
+                      >
+                      {{ page }}
+                    </button>
+                  }
+                  <button
+                    (click)="goToPage(currentPage + 1)"
+                    [disabled]="currentPage === totalPages"
+                    class="inline-flex relative items-center px-2 py-2 text-sm font-medium text-gray-500 rounded-r-md border border-gray-300 dark:border-gray-600 bg-surface-light dark:bg-surface-dark dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                    <span class="text-sm material-symbols-outlined">chevron_right</span>
+                  </button>
+                </nav>
+              </div>
+            </main>
+
+            <!-- Role Management Drawer Overlay -->
+            @if (isDrawerOpen) {
+              <div
+                class="fixed inset-0 z-40 backdrop-blur-sm transition-opacity bg-gray-900/40"
+                (click)="closeDrawer()"
+              ></div>
+            }
+
+            <!-- Drawer Content -->
+            <div
+              class="flex fixed top-0 right-0 z-50 flex-col w-full max-w-md h-full bg-white border-l border-gray-200 shadow-2xl transition-transform duration-300 ease-in-out transform dark:bg-gray-900 dark:border-gray-700"
+              [class.translate-x-full]="!isDrawerOpen"
+              [class.translate-x-0]="isDrawerOpen"
+              >
+              <div
+                class="flex justify-between items-center p-6 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50"
+                >
+                <div>
+                  <h2 class="text-lg font-bold text-gray-900 dark:text-white">
+                    Has Access To
+                  </h2>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">
+                    Manage user roles and permissions
+                  </p>
+                </div>
+                <button
+                  (click)="closeDrawer()"
+                  class="p-2 text-gray-400 transition-colors hover:text-gray-600 dark:hover:text-gray-200"
+                  >
+                  <span class="font-bold material-symbols-outlined">close</span>
+                </button>
+              </div>
+
+              @if (selectedUser) {
+                <div class="overflow-y-auto flex-1 p-6">
+                  <div
+                    class="flex gap-4 items-center p-4 mb-8 rounded-xl border bg-primary/5 dark:bg-primary/10 border-primary/10 dark:border-primary/20"
+                    >
+                    <div
+                      class="flex justify-center items-center w-12 h-12 text-lg font-bold rounded-full bg-primary/10 dark:bg-primary/20 text-primary"
+                      >
+                      {{ selectedUser.username.substring(0, 2).toUpperCase() }}
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-gray-900 dark:text-white">
+                        {{ selectedUser.username }}
+                      </h3>
+                      <p class="text-xs text-gray-500 dark:text-gray-400">
+                        {{ selectedUser.email }}
+                      </p>
+                    </div>
+                  </div>
+                  <h3
+                    class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4"
+                    >
+                    Select Roles
+                  </h3>
+                  <div class="space-y-3">
+                    @for (role of availableRoles; track trackByRole($index, role)) {
+                      <div
+                        (click)="toggleRole(role)"
+                        class="flex items-center p-4 rounded-xl border transition-all cursor-pointer group hover:bg-gray-50 dark:hover:bg-gray-800/50"
+          [ngClass]="{
+            'border-primary bg-primary-50 dark:bg-primary-900\/10':
+              selectedRoles[role],
+            'border-gray-200 dark:border-gray-700': !selectedRoles[role],
+          }"
+                        >
+                        <div
+                          class="flex justify-center items-center mr-4 w-6 h-6 rounded-md border transition-all"
+                          [class.bg-primary]="selectedRoles[role]"
+                          [class.border-primary]="selectedRoles[role]"
+                          [class.border-gray-300]="!selectedRoles[role]"
+                          [class.dark:border-gray-600]="!selectedRoles[role]"
+                          >
+                          @if (selectedRoles[role]) {
+                            <span
+                              class="text-sm text-white material-symbols-outlined"
+                              >check</span
+                              >
+                            }
+                          </div>
+                          <div class="flex-1">
+                            <span class="text-sm font-semibold text-gray-900 dark:text-white">{{
+                              role
+                            }}</span>
+                          </div>
+                          <span
+                            [ngClass]="getRoleBadgeClass(role)"
+                            class="w-2.5 h-2.5 rounded-full border border-white shadow-sm dark:border-gray-800"
+                          ></span>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+
+                <div
+                  class="p-6 border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50"
+                  >
+                  <div class="flex gap-3">
+                    <button
+                      (click)="closeDrawer()"
+                      class="flex-1 py-3 font-semibold text-gray-700 bg-white rounded-xl border border-gray-300 shadow-sm transition-all dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      >
+                      Cancel
+                    </button>
+                    <button
+                      (click)="saveRoles()"
+                      [disabled]="saving"
+                      class="flex flex-1 justify-center items-center py-3 font-semibold text-white rounded-xl shadow-md transition-all bg-primary hover:bg-orange-600 active:scale-95 disabled:opacity-50"
+                      >
+                      @if (saving) {
+                        <span
+                          class="mr-2 w-5 h-5 rounded-full border-2 animate-spin border-white/30 border-t-white"
+                        ></span>
+                      }
+                      <span>{{ saving ? "Saving..." : "Save Changes" }}</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>

@@ -1,0 +1,1010 @@
+<div
+  class="min-h-screen transition-colors duration-500 bg-slate-50 dark:bg-slate-950"
+>
+  <!-- Profile Header & Tab Navigation -->
+  <div
+    class="sticky top-0 z-40 bg-white border-b transition-all dark:bg-slate-900 border-slate-200 dark:border-slate-800"
+  >
+    <div class="max-w-[1600px] mx-auto px-6 lg:px-10 pt-8">
+      <!-- Top Action Bar -->
+      <div class="flex justify-between items-center mb-8">
+        <div class="flex gap-4 items-center">
+          <button
+            (click)="goBack()"
+            class="flex justify-center items-center w-10 h-10 rounded-xl transition-all bg-slate-50 dark:bg-slate-800 text-slate-600 hover:text-primary"
+          >
+            <span class="material-symbols-outlined">arrow_back</span>
+          </button>
+          <div class="h-8 w-[1px] bg-slate-200 dark:bg-slate-700 mx-2"></div>
+          <p
+            class="hidden text-sm font-bold tracking-widest uppercase text-slate-500 md:block"
+          >
+            Employee Profile
+          </p>
+        </div>
+
+        @if (canEdit) {
+          <div class="flex gap-3 items-center">
+            <button
+              (click)="openEditModal(1)"
+              class="flex gap-2 items-center px-5 py-2.5 text-sm font-bold bg-white rounded-xl border shadow-sm transition-all dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700"
+            >
+              <span class="text-lg material-symbols-outlined">edit</span>
+              Manage Details
+            </button>
+            <button
+              (click)="deleteEmployee()"
+              class="flex justify-center items-center w-10 h-10 text-rose-500 bg-rose-50 rounded-xl transition-all dark:bg-rose-900/20 hover:bg-rose-100 dark:hover:bg-rose-900/40"
+            >
+              <span class="material-symbols-outlined">delete</span>
+            </button>
+          </div>
+        }
+      </div>
+
+      <!-- Essential Profile Info -->
+      <div
+        class="flex flex-col gap-8 items-center mb-10 md:flex-row md:items-start"
+      >
+        <div class="relative group">
+          <div
+            class="absolute -inset-1 bg-gradient-to-tr to-purple-500 rounded-3xl opacity-25 blur transition duration-1000 from-primary group-hover:opacity-50 group-hover:duration-200"
+          ></div>
+          <img
+            [src]="getAvatarUrl(employee?.avatarUrl)"
+            class="object-cover relative w-32 h-32 rounded-3xl ring-4 ring-white md:w-40 md:h-40 dark:ring-slate-900 shadow-premium"
+            onerror="this.src = 'assets/images/defaults/avatar-1.png'"
+          />
+          <div
+            class="absolute -right-2 -bottom-2 p-2 text-white bg-emerald-500 rounded-xl ring-4 ring-white shadow-lg dark:ring-slate-900"
+          >
+            <span class="text-sm material-symbols-outlined">verified</span>
+          </div>
+        </div>
+
+        <div class="flex-1 space-y-4 text-center md:text-left">
+          <div>
+            <div
+              class="flex gap-3 justify-center items-center mb-1 md:justify-start"
+            >
+              <h1
+                class="text-3xl font-extrabold tracking-tight md:text-4xl text-slate-900 dark:text-white"
+              >
+                {{ employee?.fullName }}
+              </h1>
+              <span
+                class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-500 text-xs font-bold uppercase tracking-widest"
+                >{{ employee?.employeeCode }}</span
+              >
+            </div>
+            <div
+              class="flex flex-wrap gap-6 justify-center items-center md:justify-start"
+            >
+              <div
+                class="flex gap-2 items-center text-slate-600 dark:text-slate-500"
+              >
+                <span class="text-lg opacity-50 material-symbols-outlined"
+                  >work</span
+                >
+                <span class="text-sm font-bold tracking-tight">{{
+                  getPositionTitle()
+                }}</span>
+              </div>
+              <div
+                class="flex gap-2 items-center text-slate-600 dark:text-slate-500"
+              >
+                <span class="text-lg opacity-50 material-symbols-outlined"
+                  >corporate_fare</span
+                >
+                <span class="text-sm font-bold tracking-tight">{{
+                  getDepartmentName()
+                }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="flex flex-wrap gap-3 justify-center items-center md:justify-start"
+          >
+            <span
+              class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest"
+              [ngClass]="
+                getStatus() === 'Active'
+                  ? 'bg-emerald-100 text-emerald-700'
+                  : 'bg-slate-100 text-slate-600'
+              "
+            >
+              ● {{ getStatus() }}
+            </span>
+            <span
+              class="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest"
+            >
+              {{ getEmploymentType() }}
+            </span>
+            <span
+              class="px-3 py-1 rounded-full bg-purple-100 text-purple-700 text-xs font-bold uppercase tracking-widest"
+            >
+              {{ contracts.length > 0 ? "Contracted" : "Uncontracted" }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Navigation -->
+      <nav class="flex gap-8 border-b-0">
+        @for (
+          tab of ["Overview", "Personal", "Career", "Financial", "Time Off"];
+          track trackByIndex($index, tab)
+        ) {
+          <button
+            (click)="setActiveTab(tab.toLowerCase().replace(' ', ''))"
+            class="relative py-4 text-sm font-bold tracking-widest uppercase transition-all group"
+            [ngClass]="
+              activeTab === tab.toLowerCase().replace(' ', '')
+                ? 'text-primary'
+                : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+            "
+          >
+            {{ tab }}
+            <span
+              class="absolute bottom-0 left-0 w-full h-1 rounded-t-full transition-all duration-300 origin-left scale-x-0 bg-primary group-hover:scale-x-100"
+              [ngClass]="{
+                'scale-x-100': activeTab === tab.toLowerCase().replace(' ', ''),
+              }"
+            ></span>
+          </button>
+        }
+      </nav>
+    </div>
+  </div>
+
+  <!-- Tab Content -->
+  @if (!loading && employee) {
+    <main class="max-w-[1600px] mx-auto p-6 lg:p-10">
+      <div class="max-w-[1600px] mx-auto transition-all duration-500">
+        <!-- TAB: OVERVIEW -->
+        @if (activeTab === "overview") {
+          <div
+            class="space-y-10 duration-700 animate-in fade-in slide-in-from-bottom-5"
+          >
+            <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+              <!-- Summary Stats -->
+              <div class="grid grid-cols-1 gap-6 lg:col-span-2 md:grid-cols-2">
+                <!-- Latest Payroll Card -->
+                <div
+                  class="overflow-hidden relative p-8 rounded-3xl glass-panel shadow-soft group"
+                >
+                  <div
+                    class="absolute -top-4 -right-4 w-32 h-32 rounded-full transition-transform duration-700 bg-primary/5 group-hover:scale-150"
+                  ></div>
+                  <div
+                    class="flex relative z-10 flex-col justify-between h-full"
+                  >
+                    <div class="flex justify-between items-start">
+                      <span
+                        class="flex justify-center items-center p-3 rounded-2xl bg-primary/10 text-primary"
+                      >
+                        <span class="material-symbols-outlined">payments</span>
+                      </span>
+                      <span
+                        class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold uppercase tracking-widest"
+                        >Calculated</span
+                      >
+                    </div>
+                    <div class="mt-8">
+                      <p
+                        class="text-xs font-bold tracking-widest uppercase text-slate-500"
+                      >
+                        Last Monthly Net Pay
+                      </p>
+                      <h2
+                        class="mt-2 text-4xl font-bold text-slate-900 dark:text-white"
+                      >
+                        {{ latestPayroll?.finalNetSalary | currency }}
+                      </h2>
+                    </div>
+                    <button
+                      class="mt-8 w-full py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl text-xs font-bold uppercase tracking-widest shadow-lg hover:scale-[1.02] transition-all"
+                    >
+                      View Full Payslip
+                    </button>
+                  </div>
+                </div>
+                <!-- Leave Balance Overview -->
+                <div
+                  class="overflow-hidden relative p-8 rounded-3xl glass-panel shadow-soft group"
+                >
+                  <div
+                    class="absolute -top-4 -right-4 w-32 h-32 rounded-full transition-transform duration-700 bg-purple-500/5 group-hover:scale-150"
+                  ></div>
+                  <div class="relative z-10">
+                    <div class="flex justify-between items-start mb-8">
+                      <span
+                        class="flex justify-center items-center p-3 text-purple-600 bg-purple-100 rounded-2xl"
+                      >
+                        <span class="material-symbols-outlined"
+                          >event_available</span
+                        >
+                      </span>
+                    </div>
+                    <div class="space-y-6">
+                      @for (
+                        balance of leaveBalances | slice: 0 : 2;
+                        track trackByIndex($index, balance)
+                      ) {
+                        <div
+                          class="flex justify-between items-center p-4 rounded-2xl border bg-slate-50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-800"
+                        >
+                          <div>
+                            <p
+                              class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1"
+                            >
+                              {{ balance.type }}
+                            </p>
+                            <p
+                              class="text-lg font-bold text-slate-900 dark:text-white"
+                            >
+                              {{ balance.days }} Days Left
+                            </p>
+                          </div>
+                          <div
+                            class="flex justify-center items-center w-10 h-10 rounded-full border-2 border-slate-200 dark:border-slate-700"
+                          >
+                            <span
+                              class="text-sm material-symbols-outlined text-slate-300"
+                              >info</span
+                            >
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Quick Info Cards -->
+              <div class="space-y-6">
+                <div class="p-8 rounded-3xl glass-panel shadow-soft">
+                  <h3
+                    class="mb-6 text-sm font-bold tracking-widest uppercase text-slate-900 dark:text-white"
+                  >
+                    Contact Channels
+                  </h3>
+                  <div class="space-y-4">
+                    <div
+                      class="flex gap-4 items-center p-4 rounded-2xl border bg-slate-50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-800"
+                    >
+                      <span
+                        class="flex justify-center items-center w-10 h-10 text-blue-600 bg-blue-100 rounded-xl"
+                      >
+                        <span class="text-lg material-symbols-outlined"
+                          >mail</span
+                        >
+                      </span>
+                      <div class="flex-1 min-w-0">
+                        <p
+                          class="text-xs font-bold text-slate-500 uppercase tracking-widest"
+                        >
+                          Professional
+                        </p>
+                        <p
+                          class="text-sm font-bold truncate text-slate-900 dark:text-white"
+                        >
+                          {{ employee.email }}
+                        </p>
+                      </div>
+                    </div>
+                    <div
+                      class="flex gap-4 items-center p-4 rounded-2xl border bg-slate-50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-800"
+                    >
+                      <span
+                        class="flex justify-center items-center w-10 h-10 text-emerald-600 bg-emerald-100 rounded-xl"
+                      >
+                        <span class="text-lg material-symbols-outlined"
+                          >call</span
+                        >
+                      </span>
+                      <div class="flex-1 min-w-0">
+                        <p
+                          class="text-xs font-bold text-slate-500 uppercase tracking-widest"
+                        >
+                          Mobile
+                        </p>
+                        <p
+                          class="text-sm font-bold truncate text-slate-900 dark:text-white"
+                        >
+                          {{
+                            employee.personalInfo.phoneNumber || "No phone set"
+                          }}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Career Progress Summary -->
+            <div class="p-8 rounded-3xl glass-panel shadow-soft">
+              <div class="flex justify-between items-center mb-8">
+                <h3
+                  class="text-lg font-bold tracking-tight uppercase text-slate-900 dark:text-white"
+                >
+                  Recent Leave History
+                </h3>
+                <button
+                  (click)="setActiveTab('timeoff')"
+                  class="text-xs font-bold tracking-widest uppercase text-primary hover:underline"
+                >
+                  View All Requests
+                </button>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                  <thead>
+                    <tr
+                      class="text-xs font-bold text-slate-500 uppercase tracking-widest border-b border-slate-100 dark:border-slate-800"
+                    >
+                      <th class="py-4">Type</th>
+                      <th class="py-4">Period</th>
+                      <th class="py-4">Duration</th>
+                      <th class="py-4 text-right">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-50 dark:divide-slate-900">
+                    @for (
+                      req of leaveRequests | slice: 0 : 3;
+                      track trackByIndex($index, req)
+                    ) {
+                      <tr>
+                        <td
+                          class="py-5 text-sm font-bold text-slate-700 dark:text-slate-300"
+                        >
+                          {{ req.leaveType }}
+                        </td>
+                        <td class="py-5 text-sm text-slate-600">
+                          {{ req.dateFrom }} - {{ req.dateTo }}
+                        </td>
+                        <td
+                          class="py-5 text-sm font-bold text-slate-900 dark:text-white"
+                        >
+                          {{ req.duration }}
+                        </td>
+                        <td class="py-5 text-right">
+                          <span
+                            class="px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-tighter"
+                            [ngClass]="{
+                              'bg-emerald-100 text-emerald-700':
+                                req.status === 'Approved',
+                              'bg-amber-100 text-amber-700':
+                                req.status === 'Pending',
+                              'bg-rose-100 text-rose-700':
+                                req.status === 'Rejected',
+                            }"
+                          >
+                            {{ req.status }}
+                          </span>
+                        </td>
+                      </tr>
+                    }
+                    @if (leaveRequests.length === 0) {
+                      <tr>
+                        <td
+                          colspan="4"
+                          class="py-10 text-sm italic font-bold tracking-widest text-center uppercase text-slate-500"
+                        >
+                          No recent leave activity
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        }
+        <!-- TAB: PERSONAL -->
+        @if (activeTab === "personal") {
+          <div
+            class="space-y-8 duration-700 animate-in fade-in slide-in-from-bottom-5"
+          >
+            <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
+              <!-- Basic Personal Card -->
+              <div class="p-10 rounded-3xl glass-panel shadow-soft">
+                <div class="flex gap-3 items-center mb-10">
+                  <span
+                    class="flex justify-center items-center p-3 text-indigo-600 bg-indigo-50 rounded-2xl"
+                  >
+                    <span class="material-symbols-outlined">person</span>
+                  </span>
+                  <h3
+                    class="text-xl font-bold tracking-tight text-slate-900 dark:text-white"
+                  >
+                    Personal Identity
+                  </h3>
+                </div>
+                <div class="grid grid-cols-2 gap-y-8 gap-x-12">
+                  <div>
+                    <p
+                      class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 leading-tight"
+                    >
+                      Gender
+                    </p>
+                    <p
+                      class="text-sm font-bold text-slate-700 dark:text-slate-200"
+                    >
+                      {{ employee.personalInfo.gender || "-" }}
+                    </p>
+                  </div>
+                  <div>
+                    <p
+                      class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 leading-tight"
+                    >
+                      Marital Status
+                    </p>
+                    <p
+                      class="text-sm font-bold text-slate-700 dark:text-slate-200"
+                    >
+                      {{ employee.personalInfo.maritalStatus || "-" }}
+                    </p>
+                  </div>
+                  <div>
+                    <p
+                      class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 leading-tight"
+                    >
+                      Date of Birth
+                    </p>
+                    <p
+                      class="text-sm font-bold text-slate-700 dark:text-slate-200"
+                    >
+                      {{ formatDate(employee.personalInfo.dateOfBirth) }}
+                    </p>
+                  </div>
+                  <div>
+                    <p
+                      class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 leading-tight"
+                    >
+                      Nationality
+                    </p>
+                    <p
+                      class="text-sm font-bold text-slate-700 dark:text-slate-200"
+                    >
+                      {{ employee.personalInfo.nationality || "-" }}
+                    </p>
+                  </div>
+                  <div class="col-span-2">
+                    <p
+                      class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 leading-tight"
+                    >
+                      Identity Card / Passport
+                    </p>
+                    <p
+                      class="text-sm font-bold tracking-wider text-slate-700 dark:text-slate-200"
+                    >
+                      {{ employee.personalInfo.identityCard || "-" }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <!-- Contact & Address Card -->
+              <div class="p-10 rounded-3xl glass-panel shadow-soft">
+                <div class="flex gap-3 items-center mb-10">
+                  <span
+                    class="flex justify-center items-center p-3 text-emerald-600 bg-emerald-50 rounded-2xl"
+                  >
+                    <span class="material-symbols-outlined">location_on</span>
+                  </span>
+                  <h3
+                    class="text-xl font-bold tracking-tight text-slate-900 dark:text-white"
+                  >
+                    Contact & Location
+                  </h3>
+                </div>
+                <div class="grid grid-cols-2 gap-y-8 gap-x-12">
+                  <div class="col-span-2">
+                    <p
+                      class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 leading-tight"
+                    >
+                      Residential Address
+                    </p>
+                    <p
+                      class="text-sm font-bold leading-relaxed text-slate-700 dark:text-slate-200"
+                    >
+                      {{ employee.personalInfo.address || "-" }}
+                    </p>
+                  </div>
+                  <div>
+                    <p
+                      class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 leading-tight"
+                    >
+                      City / Province
+                    </p>
+                    <p
+                      class="text-sm font-bold text-slate-700 dark:text-slate-200"
+                    >
+                      {{ employee.personalInfo.city || "-" }}
+                    </p>
+                  </div>
+                  <div>
+                    <p
+                      class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 leading-tight"
+                    >
+                      Postal Code
+                    </p>
+                    <p
+                      class="text-sm font-bold text-slate-700 dark:text-slate-200"
+                    >
+                      {{ employee.personalInfo.postalCode || "-" }}
+                    </p>
+                  </div>
+                  <div>
+                    <p
+                      class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 leading-tight"
+                    >
+                      Country
+                    </p>
+                    <p
+                      class="text-sm font-bold text-slate-700 dark:text-slate-200"
+                    >
+                      {{ employee.personalInfo.country || "-" }}
+                    </p>
+                  </div>
+                  <div>
+                    <p
+                      class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 leading-tight"
+                    >
+                      Hometown
+                    </p>
+                    <p
+                      class="text-sm font-bold text-slate-700 dark:text-slate-200"
+                    >
+                      {{ employee.personalInfo.hometown || "-" }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+        <!-- TAB: CAREER -->
+        @if (activeTab === "career") {
+          <div
+            class="space-y-8 duration-700 animate-in fade-in slide-in-from-bottom-5"
+          >
+            <div
+              class="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-8 items-start"
+            >
+              <!-- Job Details -->
+              <div class="p-10 rounded-3xl glass-panel shadow-soft">
+                <div class="flex gap-3 items-center mb-10">
+                  <span
+                    class="flex justify-center items-center p-3 text-blue-600 bg-blue-50 rounded-2xl"
+                  >
+                    <span class="material-symbols-outlined">work</span>
+                  </span>
+                  <h3
+                    class="text-xl font-bold tracking-tight text-slate-900 dark:text-white"
+                  >
+                    Employment Architecture
+                  </h3>
+                </div>
+                <div class="grid grid-cols-2 gap-y-10 gap-x-12">
+                  <div>
+                    <p
+                      class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 leading-tight"
+                    >
+                      Professional Role
+                    </p>
+                    <p
+                      class="text-sm font-bold text-slate-700 dark:text-slate-200"
+                    >
+                      {{ getPositionTitle() }}
+                    </p>
+                  </div>
+                  <div>
+                    <p
+                      class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 leading-tight"
+                    >
+                      Department Business Unit
+                    </p>
+                    <p
+                      class="text-sm font-bold text-slate-700 dark:text-slate-200"
+                    >
+                      {{ getDepartmentName() }}
+                    </p>
+                  </div>
+                  <div>
+                    <p
+                      class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 leading-tight"
+                    >
+                      Joining Date
+                    </p>
+                    <p
+                      class="text-sm font-bold text-slate-700 dark:text-slate-200"
+                    >
+                      {{ formatDate(employee.jobDetails?.joinDate) }}
+                    </p>
+                  </div>
+                  <div>
+                    <p
+                      class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 leading-tight"
+                    >
+                      Probation End Date
+                    </p>
+                    <p
+                      class="text-sm font-bold text-slate-700 dark:text-slate-200"
+                    >
+                      {{ formatDate(employee.jobDetails?.probationEndDate) }}
+                    </p>
+                  </div>
+                  <div>
+                    <p
+                      class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 leading-tight"
+                    >
+                      Reporting Manager
+                    </p>
+                    <div class="flex gap-2 items-center mt-1">
+                      <div
+                        class="w-6 h-6 rounded-lg bg-primary text-white flex items-center justify-center text-xs font-bold uppercase"
+                      >
+                        M
+                      </div>
+                      <p
+                        class="text-sm font-bold text-slate-900 dark:text-white"
+                      >
+                        {{
+                          employee.jobDetails?.managerId
+                            ? "Direct Line Manager"
+                            : "Self-Reporting"
+                        }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Contracts Component Integration -->
+              <div class="p-10 rounded-3xl glass-panel shadow-soft">
+                <div class="flex justify-between items-center mb-10">
+                  <div class="flex gap-3 items-center">
+                    <span
+                      class="flex justify-center items-center p-3 text-amber-600 bg-amber-50 rounded-2xl"
+                    >
+                      <span class="material-symbols-outlined">description</span>
+                    </span>
+                    <h3
+                      class="text-xl font-bold tracking-tight text-slate-900 dark:text-white"
+                    >
+                      Legal Contracts
+                    </h3>
+                  </div>
+                </div>
+                <app-contract-management
+                  [employeeId]="employee.id"
+                ></app-contract-management>
+              </div>
+            </div>
+          </div>
+        }
+        <!-- TAB: FINANCIAL -->
+        @if (activeTab === "financial") {
+          <div
+            class="space-y-8 duration-700 animate-in fade-in slide-in-from-bottom-5"
+          >
+            <div
+              class="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-8 items-start"
+            >
+              <!-- Bank & Tax Info -->
+              <div class="p-10 rounded-3xl glass-panel shadow-soft">
+                <div class="flex gap-3 items-center mb-10">
+                  <span
+                    class="flex justify-center items-center p-3 text-emerald-600 bg-emerald-50 rounded-2xl"
+                  >
+                    <span class="material-symbols-outlined"
+                      >account_balance</span
+                    >
+                  </span>
+                  <h3
+                    class="text-xl font-bold tracking-tight text-slate-900 dark:text-white"
+                  >
+                    Financial Profile
+                  </h3>
+                </div>
+                <div class="grid grid-cols-2 gap-y-10 gap-x-12">
+                  <div class="col-span-2">
+                    <p
+                      class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 leading-tight"
+                    >
+                      Bank Institution
+                    </p>
+                    <p
+                      class="text-sm font-bold tracking-tight uppercase text-slate-900 dark:text-white"
+                    >
+                      {{ employee.bankDetails?.bankName || "-" }}
+                    </p>
+                  </div>
+                  <div>
+                    <p
+                      class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 leading-tight"
+                    >
+                      Account Number
+                    </p>
+                    <p
+                      class="text-sm font-bold tracking-widest text-slate-700 dark:text-slate-200"
+                    >
+                      {{ employee.bankDetails?.accountNumber || "-" }}
+                    </p>
+                  </div>
+                  <div>
+                    <p
+                      class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 leading-tight"
+                    >
+                      Account Holder
+                    </p>
+                    <p
+                      class="text-sm font-bold text-slate-700 dark:text-slate-200"
+                    >
+                      {{
+                        employee.bankDetails?.accountHolder || employee.fullName
+                      }}
+                    </p>
+                  </div>
+                  <div>
+                    <p
+                      class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 leading-tight"
+                    >
+                      Tax Code
+                    </p>
+                    <p
+                      class="text-sm font-bold text-slate-700 dark:text-slate-200"
+                    >
+                      {{ employee.bankDetails?.taxCode || "-" }}
+                    </p>
+                  </div>
+                  <div>
+                    <p
+                      class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 leading-tight"
+                    >
+                      Insurance Code
+                    </p>
+                    <p
+                      class="text-sm font-bold text-slate-700 dark:text-slate-200"
+                    >
+                      {{ employee.bankDetails?.insuranceCode || "-" }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <!-- Payroll History Overview -->
+              <div
+                class="overflow-hidden relative p-10 text-white rounded-3xl border-0 glass-panel shadow-soft bg-slate-900"
+              >
+                <div
+                  class="absolute -right-20 -bottom-20 w-80 h-80 rounded-full blur-3xl bg-primary/20"
+                ></div>
+                <div class="relative z-10">
+                  <div class="flex justify-between items-center mb-10">
+                    <h3 class="text-xl font-bold tracking-tight uppercase">
+                      Active Payroll Summary
+                    </h3>
+                    <span
+                      class="px-3 py-1 bg-white/10 rounded-xl text-xs font-bold uppercase tracking-widest border border-white/10"
+                      >{{ latestPayroll?.month }}</span
+                    >
+                  </div>
+                  <div class="space-y-6">
+                    <div
+                      class="flex justify-between items-center pb-4 border-b border-white/10"
+                    >
+                      <span class="text-sm font-bold text-slate-500"
+                        >Standard Base Salary</span
+                      >
+                      <span class="text-sm font-bold">{{
+                        latestPayroll?.baseSalary | currency
+                      }}</span>
+                    </div>
+                    <div
+                      class="flex justify-between items-center pb-4 border-b border-white/10"
+                    >
+                      <span class="text-sm font-bold text-slate-500"
+                        >Accumulated Allowances</span
+                      >
+                      <span class="text-sm font-bold text-emerald-400"
+                        >+ {{ latestPayroll?.allowances | currency }}</span
+                      >
+                    </div>
+                    <div
+                      class="flex justify-between items-center pb-4 border-b border-white/10"
+                    >
+                      <span class="text-sm font-bold text-slate-500"
+                        >Statutory Deductions</span
+                      >
+                      <span class="text-sm font-bold text-rose-400"
+                        >- {{ totalStatutoryDeductions | currency }}</span
+                      >
+                    </div>
+                    <div class="pt-6">
+                      <p
+                        class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2"
+                      >
+                        Monthly Net Take-Home
+                      </p>
+                      <h2
+                        class="text-5xl font-bold tracking-tighter text-white"
+                      >
+                        {{ latestPayroll?.finalNetSalary | currency }}
+                      </h2>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+        <!-- TAB: TIME OFF -->
+        @if (activeTab === "timeoff") {
+          <div
+            class="space-y-10 duration-700 animate-in fade-in slide-in-from-bottom-5"
+          >
+            <!-- Premium Leave Balances -->
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+              @for (
+                balance of leaveBalances;
+                track trackByIndex($index, balance)
+              ) {
+                <div
+                  class="overflow-hidden relative p-6 rounded-3xl glass-panel shadow-soft group"
+                >
+                  <div
+                    class="absolute -right-2 -bottom-2 w-16 h-16 rounded-full transition-transform duration-500 bg-primary/5 group-hover:scale-150"
+                  ></div>
+                  <div class="flex relative z-10 gap-4 items-center">
+                    <div
+                      class="flex justify-center items-center w-12 h-12 rounded-2xl bg-primary/10 text-primary"
+                    >
+                      <span class="material-symbols-outlined">{{
+                        getLeaveIcon(balance.type).replace("pi-", "")
+                      }}</span>
+                    </div>
+                    <div>
+                      <p
+                        class="text-xs font-bold text-slate-500 uppercase tracking-widest leading-none mb-1"
+                      >
+                        {{ balance.type }}
+                      </p>
+                      <p
+                        class="text-xl font-bold text-slate-900 dark:text-white"
+                      >
+                        {{ balance.days }}
+                        <span class="text-xs uppercase text-slate-500"
+                          >Days</span
+                        >
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+            <!-- Leave History Table -->
+            <div class="overflow-hidden rounded-3xl glass-panel shadow-soft">
+              <div
+                class="flex justify-between items-center p-8 border-b border-slate-50 dark:border-slate-800"
+              >
+                <h3
+                  class="text-lg font-bold tracking-tight uppercase text-slate-900 dark:text-white"
+                >
+                  Leave Request History
+                </h3>
+                <div class="flex gap-3">
+                  <button
+                    class="flex justify-center items-center w-10 h-10 rounded-xl transition-all bg-slate-50 dark:bg-slate-800 text-slate-600 hover:text-primary"
+                  >
+                    <span class="text-lg material-symbols-outlined"
+                      >filter_list</span
+                    >
+                  </button>
+                </div>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                  <thead>
+                    <tr
+                      class="text-xs font-bold text-slate-500 uppercase tracking-widest bg-slate-50/50 dark:bg-slate-800/50"
+                    >
+                      <th class="px-8 py-4">Status</th>
+                      <th class="px-8 py-4">Leave Type</th>
+                      <th class="px-8 py-4">Start Date</th>
+                      <th class="px-8 py-4">End Date</th>
+                      <th class="px-8 py-4">Duration</th>
+                      <th class="px-8 py-4 text-right">Reason</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-50 dark:divide-slate-900">
+                    @for (
+                      request of leaveRequests;
+                      track trackByIndex($index, request)
+                    ) {
+                      <tr
+                        class="transition-all group hover:bg-slate-50/50 dark:hover:bg-slate-900/30"
+                      >
+                        <td class="px-8 py-5">
+                          <span
+                            class="px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-tighter"
+                            [ngClass]="{
+                              'bg-emerald-100 text-emerald-700':
+                                request.status === 'Approved',
+                              'bg-amber-100 text-amber-700':
+                                request.status === 'Pending',
+                              'bg-rose-100 text-rose-700':
+                                request.status === 'Rejected',
+                            }"
+                          >
+                            {{ request.status }}
+                          </span>
+                        </td>
+                        <td
+                          class="px-8 py-5 text-sm font-bold text-slate-700 dark:text-slate-300"
+                        >
+                          {{ request.leaveType }}
+                        </td>
+                        <td class="px-8 py-5 text-sm text-slate-600">
+                          {{ request.dateFrom }}
+                        </td>
+                        <td class="px-8 py-5 text-sm text-slate-600">
+                          {{ request.dateTo }}
+                        </td>
+                        <td
+                          class="px-8 py-5 text-sm font-bold text-slate-900 dark:text-white"
+                        >
+                          {{ request.duration }}
+                        </td>
+                        <td
+                          class="px-8 py-5 text-sm italic font-medium text-right text-slate-500"
+                        >
+                          Standard Request
+                        </td>
+                      </tr>
+                    }
+                    @if (leaveRequests.length === 0) {
+                      <tr>
+                        <td
+                          colspan="6"
+                          class="px-8 py-20 text-sm italic font-bold tracking-widest text-center uppercase text-slate-500"
+                        >
+                          No leave history found for this employee
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </main>
+  }
+
+  <!-- Edit Employee Modal -->
+  @if (showEditModal) {
+    <div
+      class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md animate-in fade-in duration-300"
+    >
+      <div
+        class="w-full max-w-5xl max-h-[90vh] overflow-hidden bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-2xl relative animate-in zoom-in-95 duration-500 border border-white/20"
+      >
+        <button
+          (click)="showEditModal = false"
+          class="absolute top-8 right-8 z-[110] w-12 h-12 flex items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-600 hover:text-rose-500 transition-all shadow-sm"
+        >
+          <span class="text-2xl material-symbols-outlined">close</span>
+        </button>
+        <div class="overflow-y-auto max-h-[90vh] p-4 lg:p-8">
+          <app-add-employee
+            [employeeId]="employeeId"
+            [initialStep]="editStep"
+            (close)="showEditModal = false"
+            (employeeAdded)="onEmployeeUpdated()"
+          ></app-add-employee>
+        </div>
+      </div>
+    </div>
+  }
+</div>

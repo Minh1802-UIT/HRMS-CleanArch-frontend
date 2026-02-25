@@ -1,0 +1,25 @@
+<p-card [styleClass]="'summary-card h-full border-' + colorScheme">
+  <div class="flex justify-between items-start">
+    <div class="flex-1">
+      <p class="mb-1 text-sm font-medium text-gray-600">{{ title }}</p>
+      <h3 class="mb-2 text-3xl font-bold text-gray-800">{{ value }}</h3>
+
+      @if (trend) {
+        <div class="flex gap-1 items-center">
+          <span
+            [class.text-green-600]="trend.isPositive"
+            [class.text-red-600]="!trend.isPositive"
+            class="text-sm font-medium"
+            >
+            {{ trend.isPositive ? "↑" : "↓" }} {{ trend.value }}%
+          </span>
+          <span class="text-xs text-gray-500">vs last month</span>
+        </div>
+      }
+    </div>
+
+    <div class="icon-container" [ngClass]="'bg-' + colorScheme">
+      <span class="text-3xl">{{ icon }}</span>
+    </div>
+  </div>
+</p-card>

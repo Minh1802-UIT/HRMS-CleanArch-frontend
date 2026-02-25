@@ -1,0 +1,328 @@
+<main class="p-4 lg:p-8 max-w-[1600px] mx-auto">
+  <!-- Header -->
+  <div
+    class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4"
+    >
+    <div>
+      <h1
+        class="text-2xl font-extrabold text-slate-800 dark:text-white tracking-tight"
+        >
+        Leave Request Portal
+      </h1>
+      <p class="text-slate-500 text-sm mt-1">
+        Manage your leave applications and track your remaining balance with
+        high clarity.
+      </p>
+    </div>
+    <div class="flex items-center gap-3">
+      <button
+        (click)="loadHistory(); loadBalances()"
+        class="p-2 bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-lg shadow-sm hover:bg-slate-50 transition-colors"
+        title="Refresh Data"
+        >
+        <span
+          class="material-symbols-outlined text-slate-600 dark:text-gray-400"
+          >refresh</span
+          >
+        </button>
+      </div>
+    </div>
+
+    <div class="flex flex-col lg:flex-row gap-8 split-layout">
+      <!-- Left Column: Leave Form & Balances -->
+      <div class="w-full lg:w-[400px] space-y-6 form-section">
+        <!-- Balances Card -->
+        <div
+          class="bg-gradient-to-br from-navy-dark to-slate-900 rounded-2xl p-6 text-white shadow-xl overflow-hidden relative group"
+          >
+          <div
+            class="absolute -right-8 -top-8 w-32 h-32 bg-white/10 rounded-full blur-2xl group-hover:scale-125 transition-transform duration-500"
+          ></div>
+          <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined text-orange-400"
+              >account_balance_wallet</span
+              >
+              Leave Balances
+            </h3>
+            <div class="space-y-4">
+              @for (type of leaveTypes; track trackByLeaveTypeId($index, type)) {
+                <div
+                  class="bg-white/5 rounded-xl p-3 border border-white/10 hover:bg-white/10 transition-colors"
+                  >
+                  <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm font-bold text-slate-100">{{
+                      type.name
+                    }}</span>
+                    <span class="text-sm font-bold"
+                      >{{ balances[type.id] || 0 }} Days</span
+                      >
+                    </div>
+                    <div class="w-full bg-white/10 rounded-full h-1.5 overflow-hidden">
+                      <div
+                        class="bg-orange-400 h-full"
+                        [style.width.%]="(balances[type.id] / 20) * 100"
+                      ></div>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Request Form Card -->
+            <div
+              class="bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-2xl shadow-sm p-6 sticky top-8"
+              >
+              <h3
+                class="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2"
+                >
+                <span class="material-symbols-outlined text-blue-600"
+                  >edit_document</span
+                  >
+                  Submit New Request
+                </h3>
+
+                <form (ngSubmit)="onSubmit()" #leaveForm="ngForm" class="space-y-5">
+                  <!-- Leave Type -->
+                  <div>
+                    <label
+                      class="block text-sm font-bold text-slate-700 dark:text-gray-300 mb-2"
+                      >Leave Type *</label
+                      >
+                      <div class="grid grid-cols-2 gap-2">
+                        @for (type of leaveTypes; track trackByLeaveTypeId($index, type)) {
+                          <button
+                            type="button"
+                            (click)="selectedTypeId = type.id"
+                            [class.active]="selectedTypeId === type.id"
+                            class="type-btn text-left px-3 py-2 rounded-xl border text-xs transition-all flex flex-col gap-1"
+                            >
+                            <span>{{ type.name }}</span>
+                            <span class="text-xs opacity-70"
+                              >{{ balances[type.id] || 0 }} Left</span
+                              >
+                            </button>
+                          }
+                        </div>
+                      </div>
+
+                      <!-- Dates Row -->
+                      <div class="grid grid-cols-2 gap-4">
+                        <div>
+                          <label
+                            class="block text-sm font-bold text-slate-700 dark:text-gray-300 mb-2"
+                            >Start Date *</label
+                            >
+                            <input
+                              type="date"
+                              [(ngModel)]="startDate"
+                              name="startDate"
+                              required
+                              class="w-full px-4 py-2 bg-slate-50 dark:bg-gray-700 border border-slate-200 dark:border-gray-600 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 transition-all dark:text-white"
+                              />
+                            </div>
+                            <div>
+                              <label
+                                class="block text-sm font-bold text-slate-700 dark:text-gray-300 mb-2"
+                                >End Date *</label
+                                >
+                                <input
+                                  type="date"
+                                  [(ngModel)]="endDate"
+                                  name="endDate"
+                                  required
+                                  class="w-full px-4 py-2 bg-slate-50 dark:bg-gray-700 border border-slate-200 dark:border-gray-600 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 transition-all dark:text-white"
+                                  />
+                                </div>
+                              </div>
+
+                              <!-- Reason -->
+                              <div>
+                                <label
+                                  class="block text-sm font-bold text-slate-900 dark:text-gray-100 mb-2"
+                                  >Reason *</label
+                                  >
+                                  <textarea
+                                    [(ngModel)]="reason"
+                                    name="reason"
+                                    rows="3"
+                                    required
+                                    placeholder="Briefly explain your reason for leave..."
+                                    class="w-full px-4 py-3 bg-slate-50 dark:bg-gray-700 border border-slate-200 dark:border-gray-600 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 transition-all dark:text-white resize-none"
+                                  ></textarea>
+                                </div>
+
+                                <!-- Submit Button -->
+                                <button
+                                  type="submit"
+                                  [disabled]="submitting"
+                                  class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-200 dark:shadow-none transition-all flex items-center justify-center gap-2 group disabled:opacity-50"
+                                  >
+                                  @if (!submitting) {
+                                    <span
+                                      class="material-symbols-outlined text-xl group-hover:translate-x-1 transition-transform"
+                                      >send</span
+                                      >
+                                  }
+                                  @if (submitting) {
+                                    <div class="spinner-small"></div>
+                                  }
+                                  {{ submitting ? "Submitting..." : "Send Request" }}
+                                </button>
+                              </form>
+                            </div>
+                          </div>
+
+                          <!-- Right Column: Leave History -->
+                          <div class="flex-1 space-y-6 history-section">
+                            <div
+                              class="bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-2xl shadow-sm overflow-hidden min-h-[600px]"
+                              >
+                              <div
+                                class="px-6 py-4 border-b border-slate-100 dark:border-gray-700 flex items-center justify-between bg-slate-50/50 dark:bg-gray-700/50"
+                                >
+                                <h3 class="text-lg font-bold text-slate-800 dark:text-white">
+                                  Request History
+                                </h3>
+                                <span
+                                  class="text-xs font-semibold px-2 py-1 bg-white dark:bg-gray-600 rounded-lg text-slate-500 dark:text-gray-400 border border-slate-200 dark:border-gray-700"
+                                  >
+                                  {{ history.length }} Total Requests
+                                </span>
+                              </div>
+
+                              <!-- History Content -->
+                              <div class="p-6">
+                                <!-- Loading State -->
+                                @if (loading) {
+                                  <div
+                                    class="flex flex-col items-center justify-center py-20"
+                                    >
+                                    <div class="spinner mb-4"></div>
+                                    <p class="text-slate-500 text-sm font-medium animate-pulse">
+                                      Fetching records...
+                                    </p>
+                                  </div>
+                                }
+
+                                <!-- Empty State -->
+                                @if (!loading && history.length === 0) {
+                                  <div
+                                    class="flex flex-col items-center justify-center py-20 text-center"
+                                    >
+                                    <div
+                                      class="w-16 h-16 bg-slate-50 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4"
+                                      >
+                                      <span class="material-symbols-outlined text-3xl text-slate-300"
+                                        >event_busy</span
+                                        >
+                                      </div>
+                                      <h4 class="text-slate-800 dark:text-white font-bold">
+                                        No History Found
+                                      </h4>
+                                      <p class="text-slate-500 text-sm max-w-[250px] mt-1">
+                                        You haven't submitted any leave requests yet.
+                                      </p>
+                                    </div>
+                                  }
+
+                                  <!-- List -->
+                                  @if (!loading && history.length > 0) {
+                                    <div class="space-y-4">
+                                      @for (item of history; track trackByIndex($index, item)) {
+                                        <div
+                                          class="group border border-slate-100 dark:border-gray-700 rounded-2xl p-4 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-slate-50/50 dark:hover:bg-blue-900/10 transition-all relative overflow-hidden"
+                                          >
+                                          <!-- Left accent color based on status -->
+                                          <div
+                                            class="absolute left-0 top-0 bottom-0 w-1.5"
+                [ngClass]="{
+                  'bg-amber-400': item.status === 'Pending',
+                  'bg-green-500': item.status === 'Approved',
+                  'bg-red-500': item.status === 'Rejected',
+                }"
+                                          ></div>
+                                          <div
+                                            class="flex flex-col md:flex-row md:items-center justify-between gap-4"
+                                            >
+                                            <div class="flex items-start gap-4">
+                                              <div
+                                                class="w-12 h-12 rounded-xl bg-white dark:bg-gray-700 border border-slate-100 dark:border-gray-600 flex flex-col items-center justify-center shadow-sm"
+                                                >
+                                                <span
+                                                  class="text-xs font-bold text-slate-400 uppercase leading-none"
+                                                  >{{ item.startDate | date: "MMM" }}</span
+                                                  >
+                                                  <span
+                                                    class="text-lg font-extrabold text-slate-800 dark:text-white leading-none"
+                                                    >{{ item.startDate | date: "dd" }}</span
+                                                    >
+                                                  </div>
+                                                  <div>
+                                                    <div class="flex items-center gap-2 mb-1">
+                                                      <span
+                                                        class="text-sm font-bold text-slate-800 dark:text-white"
+                                                        >{{ item.type }}</span
+                                                        >
+                                                        <span
+                                                          class="text-xs font-bold px-1.5 py-0.5 rounded-md uppercase tracking-wider shadow-sm"
+                                                          [ngClass]="getStatusClass(item.status)"
+                                                          >
+                                                          {{ item.status }}
+                                                        </span>
+                                                      </div>
+                                                      <p
+                                                        class="text-xs font-medium text-slate-500 flex items-center gap-1"
+                                                        >
+                                                        <span class="material-symbols-outlined text-sm"
+                                                          >calendar_month</span
+                                                          >
+                                                          {{ formatDate(item.startDate) }} -
+                                                          {{ formatDate(item.endDate) }}
+                                                          <span class="mx-1">•</span>
+                                                          <span class="text-blue-600 dark:text-blue-400 font-bold"
+                                                            >{{ item.days }} Days</span
+                                                            >
+                                                          </p>
+                                                          <p
+                                                            class="text-xs text-slate-600 dark:text-gray-400 mt-2 line-clamp-1 italic"
+                                                            >
+                                                            "{{ item.reason }}"
+                                                          </p>
+                                                        </div>
+                                                      </div>
+                                                      <div class="flex items-center md:flex-col md:items-end gap-2">
+                                                        <span class="text-xs font-bold text-slate-400"
+                                                          >Request Date:
+                                                          {{ item.requestDate | date: "MMM dd, yyyy" }}</span
+                                                          >
+                                                          <div class="flex items-center gap-2">
+                                                            <button
+                                                              class="p-2 hover:bg-white dark:hover:bg-gray-600 rounded-lg text-slate-400 hover:text-blue-600 transition-colors shadow-sm bg-slate-50 dark:bg-gray-700 border border-slate-100 dark:border-gray-600"
+                                                              title="View Details"
+                                                              >
+                                                              <span class="material-symbols-outlined text-lg"
+                                                                >visibility</span
+                                                                >
+                                                              </button>
+                                                              @if (item.status === 'Pending') {
+                                                                <button
+                                                                  class="p-2 hover:bg-white dark:hover:bg-gray-600 rounded-lg text-slate-400 hover:text-red-600 transition-colors shadow-sm bg-slate-50 dark:bg-gray-700 border border-slate-100 dark:border-gray-600"
+                                                                  title="Cancel Request"
+                                                                  >
+                                                                  <span class="material-symbols-outlined text-lg font-bold"
+                                                                    >close</span
+                                                                    >
+                                                                  </button>
+                                                                }
+                                                              </div>
+                                                            </div>
+                                                          </div>
+                                                        </div>
+                                                      }
+                                                    </div>
+                                                  }
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </main>

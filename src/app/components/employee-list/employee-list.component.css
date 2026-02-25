@@ -1,0 +1,219 @@
+.employee-list-layout {
+  min-height: 100vh;
+}
+
+.main-content {
+  transition: margin-left 0.3s ease;
+}
+
+/* Search Bar */
+.search-bar {
+  position: relative;
+}
+
+.search-input {
+  width: 300px;
+  padding-left: 2.5rem;
+}
+
+.search-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.125rem;
+}
+
+/* Add Button */
+.add-button {
+  box-shadow: 0 2px 4px rgba(0, 102, 230, 0.2);
+}
+
+.add-button:hover {
+  box-shadow: 0 4px 6px rgba(0, 102, 230, 0.3);
+}
+
+/* Table Container */
+.table-container {
+  position: relative;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #f0f2f5;
+  border-top: 3px solid #0066e6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Table Styles */
+.employee-table {
+  border-collapse: collapse;
+}
+
+.table-header {
+  background-color: #fafafa;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.table-header th {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.table-row {
+  border-bottom: 1px solid #e5e7eb;
+  transition: background-color 0.2s ease;
+}
+
+.table-row:hover {
+  background-color: #f9fafb;
+}
+
+/* Zebra Striping */
+.even-row {
+  background-color: #fafafa;
+}
+
+.even-row:hover {
+  background-color: #f3f4f6;
+}
+
+/* Avatar */
+.avatar {
+  border: 2px solid #e5e7eb;
+}
+
+/* Department Badge */
+.department-badge {
+  display: inline-block;
+  font-weight: 500;
+}
+
+/* Status Badges */
+.status-badge {
+  display: inline-block;
+}
+
+.status-active {
+  background-color: #def7ec;
+  color: #03543f;
+}
+
+.status-resigned {
+  background-color: #fde8e8;
+  color: #9b1c1c;
+}
+
+/* Action Buttons */
+.actions {
+  white-space: nowrap;
+}
+
+.action-btn {
+  font-size: 1.25rem;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+}
+
+.action-btn:active {
+  transform: scale(0.95);
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Pagination */
+.pagination-btn {
+  background: white;
+  color: #374151;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  min-width: 40px;
+}
+
+.pagination-btn.active {
+  background-color: #0066e6;
+  border-color: #0066e6;
+  color: white;
+}
+
+.pagination-btn:not(.active):not(:disabled):hover {
+  background-color: #f3f4f6;
+  border-color: #0066e6;
+  color: #0066e6;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0 !important;
+    padding: 1rem;
+  }
+
+  .header-section {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start !important;
+  }
+
+  .actions-section {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .search-input {
+    width: 100%;
+  }
+
+  .add-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .table-container {
+    overflow-x: auto;
+  }
+
+  .employee-table {
+    min-width: 800px;
+  }
+
+  .pagination-container {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}

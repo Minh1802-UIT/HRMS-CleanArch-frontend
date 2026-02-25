@@ -1,0 +1,107 @@
+@if (isVisible) {
+  <div
+    class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+    >
+    <div
+      class="overflow-hidden w-full max-w-lg bg-white rounded-2xl shadow-2xl dark:bg-gray-800 animate-fade-in-up"
+      >
+      <!-- Header -->
+      <div
+        class="flex justify-between items-center p-6 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50"
+        >
+        <div>
+          <h3 class="text-xl font-bold text-gray-900 dark:text-white">
+            Attendance Simulator
+          </h3>
+          <p class="text-xs font-medium text-gray-400">
+            Clock in/out for employees to test system logic
+          </p>
+        </div>
+        <button
+          (click)="closeModal()"
+          class="text-gray-400 transition-colors hover:text-gray-600 dark:hover:text-white"
+          >
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="p-8">
+        <!-- Digital Clock -->
+        <div class="flex flex-col items-center mb-8">
+          <div
+            class="px-6 py-3 bg-gray-900 rounded-xl border-2 border-gray-800 shadow-inner"
+            >
+            <span class="font-mono text-4xl font-bold text-primary">{{
+              currentTime | date: "HH:mm:ss"
+            }}</span>
+          </div>
+          <p
+            class="mt-2 text-xs font-bold tracking-widest text-gray-400 uppercase"
+            >
+            {{ currentTime | date: "EEEE, MMMM dd" }}
+          </p>
+        </div>
+        <!-- User Identification (Self-Service) -->
+        <div
+          class="flex flex-col items-center justify-center space-y-3 py-4 bg-blue-50/50 dark:bg-blue-900/10 rounded-xl border border-blue-100 dark:border-blue-800"
+          >
+          <div class="relative">
+            <img
+              [src]="restrictedAvatar || 'assets/images/defaults/avatar-1.png'"
+              class="w-16 h-16 rounded-full border-2 border-white shadow-md object-cover"
+              onerror="this.src = 'assets/images/defaults/avatar-1.png'"
+              />
+              <div
+                class="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-white rounded-full"
+              ></div>
+            </div>
+            <div class="text-center">
+              <p
+                class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1"
+                >
+                Checking in as
+              </p>
+              <h3 class="text-lg font-bold text-gray-900 dark:text-white">
+                {{ restrictedEmployeeName }}
+              </h3>
+              <p class="text-xs text-blue-600 font-mono mt-1">
+                {{ selectedEmployeeId }}
+              </p>
+            </div>
+          </div>
+          <!-- Actions -->
+          <div class="grid grid-cols-2 gap-4 mt-8">
+            <button
+              (click)="simulateCheckIn()"
+              [disabled]="!selectedEmployeeId"
+              class="flex gap-2 justify-center items-center py-3 font-bold text-white bg-green-500 rounded-xl shadow-lg transition-all hover:bg-green-600 shadow-green-500/20 disabled:opacity-50"
+              >
+              <span class="text-xl material-symbols-outlined">login</span>
+              Check-In
+            </button>
+            <button
+              (click)="simulateCheckOut()"
+              [disabled]="!selectedEmployeeId"
+              class="flex gap-2 justify-center items-center py-3 font-bold text-white bg-orange-500 rounded-xl shadow-lg transition-all hover:bg-orange-600 shadow-orange-500/20 disabled:opacity-50"
+              >
+              <span class="text-xl material-symbols-outlined">logout</span>
+              Check-Out
+            </button>
+          </div>
+          <!-- Feedback Message -->
+          @if (simulatorMessage) {
+            <div
+              class="p-4 mt-6 text-sm font-medium rounded-xl animate-pulse"
+        [ngClass]="{
+          'bg-green-50 text-green-700 border border-green-100':
+            simulatorStatus === 'success',
+          'bg-red-50 text-red-700 border border-red-100':
+            simulatorStatus === 'error',
+        }"
+              >
+              {{ simulatorMessage }}
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }

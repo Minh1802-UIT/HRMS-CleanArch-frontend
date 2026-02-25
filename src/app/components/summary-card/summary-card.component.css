@@ -1,0 +1,71 @@
+/* Target the PrimeNG Card component itself */
+:host ::ng-deep .p-card {
+  height: 100%;
+  border-radius: 0.5rem; /* rounded-lg */
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+  transition: all 0.3s ease;
+  border: 1px solid transparent; /* Prepare for border color override */
+  border-left-width: 4px;
+}
+
+:host ::ng-deep .p-card .p-card-body {
+  padding: 1.5rem; /* p-6 */
+  height: 100%;
+}
+
+:host ::ng-deep .p-card .p-card-content {
+  padding: 0;
+  height: 100%;
+}
+
+/* Hover Effect */
+:host ::ng-deep .p-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-lg */
+}
+
+/* Color Schemes - Targeting the card border directly */
+:host ::ng-deep .border-blue .p-card {
+  border-left-color: #0066e6;
+}
+
+:host ::ng-deep .border-green .p-card {
+  border-left-color: #52c41a;
+}
+
+:host ::ng-deep .border-orange .p-card {
+  border-left-color: #fa8c16;
+}
+
+:host ::ng-deep .border-purple .p-card {
+  border-left-color: #722ed1;
+}
+
+/* Icon Containers */
+.icon-container {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.1;
+}
+
+/* Icon Backgrounds (kept same as before) */
+.bg-blue {
+  background-color: #0066e6;
+}
+.bg-green {
+  background-color: #52c41a;
+}
+.bg-orange {
+  background-color: #fa8c16;
+}
+.bg-purple {
+  background-color: #722ed1;
+}

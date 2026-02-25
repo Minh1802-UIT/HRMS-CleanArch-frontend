@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cmd /c \"dir /s /b src\\\\app\\\\components\")",
+      "Bash(findstr:*)",
+      "Bash(npx ng build:*)",
+      "Bash(git stash:*)"
+    ]
+  }
+}

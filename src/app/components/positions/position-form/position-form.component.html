@@ -1,0 +1,103 @@
+<div class="flex flex-col h-full bg-white dark:bg-gray-800">
+  <!-- Header -->
+  <div
+    class="flex justify-between items-center px-6 py-4 border-b border-gray-100 dark:border-gray-700"
+  >
+    <h3 class="text-lg font-bold text-gray-800 dark:text-white">
+      {{ isEditing ? "Edit Position" : "New Position" }}
+    </h3>
+    <button
+      (click)="onCancel()"
+      class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+    >
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </div>
+
+  <!-- Body -->
+  <div class="overflow-y-auto flex-1 p-6">
+    <form [formGroup]="form" class="space-y-6">
+      <app-form-input
+        [formGroup]="form"
+        controlName="title"
+        label="Position Title"
+        placeholder="e.g. Senior Software Engineer"
+        [required]="true"
+      ></app-form-input>
+
+      <app-form-input
+        [formGroup]="form"
+        controlName="code"
+        label="Position Code"
+        placeholder="e.g. DEV-SEN-01"
+        [required]="true"
+      ></app-form-input>
+
+      <!-- Department Selection -->
+      <app-form-select
+        [formGroup]="form"
+        controlName="departmentId"
+        label="Department"
+        [options]="departments"
+        optionValue="id"
+        optionLabel="name"
+        placeholder="Select Department"
+      ></app-form-select>
+
+      <!-- Parent Position Selection -->
+      <app-form-select
+        [formGroup]="form"
+        controlName="parentId"
+        label="Parent Position (Reports To)"
+        [options]="positions"
+        optionValue="id"
+        optionLabel="title"
+        placeholder="None (Top Level)"
+      ></app-form-select>
+
+      <div
+        class="grid grid-cols-1 gap-4 md:grid-cols-2"
+        formGroupName="salaryRange"
+      >
+        <app-form-input
+          [formGroup]="$any(form.get('salaryRange'))"
+          controlName="min"
+          label="Min Salary"
+          type="number"
+        ></app-form-input>
+        <app-form-input
+          [formGroup]="$any(form.get('salaryRange'))"
+          controlName="max"
+          label="Max Salary"
+          type="number"
+        ></app-form-input>
+      </div>
+
+      <app-form-input
+        [formGroup]="form"
+        controlName="description"
+        label="Description"
+        placeholder="Job description..."
+      ></app-form-input>
+    </form>
+  </div>
+
+  <!-- Footer -->
+  <div
+    class="flex gap-3 justify-end px-6 py-4 bg-gray-50 border-t border-gray-100 dark:border-gray-700 dark:bg-gray-700/30"
+  >
+    <button
+      (click)="onCancel()"
+      class="px-4 py-2 text-sm font-bold text-gray-600 bg-white rounded-lg border border-gray-300 hover:bg-gray-50"
+    >
+      Cancel
+    </button>
+    <button
+      (click)="onSave()"
+      [disabled]="form.invalid || submitting"
+      class="px-4 py-2 text-sm font-bold text-white rounded-lg shadow-sm bg-primary hover:bg-primary-dark disabled:opacity-50"
+    >
+      {{ submitting ? "Saving..." : "Save Position" }}
+    </button>
+  </div>
+</div>

@@ -1,0 +1,23 @@
+/* Custom styles if needed, mostly using Tailwind utility classes */
+.bg-corporate-blue-900\/40 {
+  background-color: rgba(30, 58, 138, 0.4);
+}
+
+.focus\:ring-corporate-blue-500:focus {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(
+    59 130 246 / var(--tw-ring-opacity)
+  ); /* Using blue-500 as corporate blue logic */
+}
+
+.text-corporate-blue-600 {
+  color: #0066e6;
+}
+
+.bg-corporate-blue-600 {
+  background-color: #0066e6;
+}
+
+.hover\:bg-corporate-blue-700:hover {
+  background-color: #0052b8;
+}

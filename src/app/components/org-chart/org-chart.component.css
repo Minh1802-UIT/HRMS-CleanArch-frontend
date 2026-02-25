@@ -1,0 +1,12 @@
+.org-chart {
+  /* Hide scrollbar for cleaner look */
+}
+
+.org-chart::-webkit-scrollbar {
+  display: none;
+}
+
+.org-chart {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

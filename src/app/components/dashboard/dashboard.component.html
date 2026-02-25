@@ -1,0 +1,527 @@
+<div
+  class="min-h-screen transition-colors duration-500 bg-slate-50 dark:bg-slate-950"
+  >
+  <main class="max-w-[1600px] mx-auto p-6 lg:p-10 space-y-10">
+    <!-- Header Section -->
+    <header
+      class="flex flex-col gap-6 justify-between md:flex-row md:items-end"
+      >
+      <div class="space-y-1">
+        <h1
+          class="flex gap-3 items-center text-3xl font-extrabold tracking-tight lg:text-4xl text-slate-900 dark:text-white"
+          >
+          Hi, {{ userDisplayName }} <span class="animate-bounce">👋</span>
+        </h1>
+        <p class="font-medium text-slate-500 dark:text-slate-400">
+          Here's what's happening in your organization today.
+        </p>
+      </div>
+      <div class="flex gap-3">
+        <button
+          class="flex gap-2 items-center px-4 py-2 text-sm font-bold bg-white rounded-xl border shadow-sm transition-all dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
+          >
+          <span class="text-lg material-symbols-outlined">calendar_today</span>
+          Feb 23, 2026
+        </button>
+        <button
+          class="flex gap-2 items-center px-4 py-2 text-sm font-bold text-white rounded-xl shadow-lg transition-all bg-primary shadow-primary/30 hover:bg-primary-dark"
+          >
+          <span class="text-lg material-symbols-outlined">add</span>
+          Quick Action
+        </button>
+      </div>
+    </header>
+
+    <!-- Stats Grid -->
+    <section
+      class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"
+      *appHasRole="['Admin', 'HR']"
+      >
+      <!-- Skeleton Cards -->
+      @if (isLoading) {
+        @for (i of [1, 2, 3, 4]; track trackByIndex($index, i)) {
+          <div
+            class="p-6 rounded-3xl glass-panel shadow-soft"
+            >
+            <div class="flex justify-between items-start">
+              <div class="space-y-4 w-full">
+                <div class="skeleton-avatar bg-slate-200 dark:bg-slate-800"></div>
+                <div class="space-y-2">
+                  <div class="w-24 skeleton-text"></div>
+                  <div class="w-16 skeleton-title"></div>
+                </div>
+              </div>
+              <div class="w-12 h-6 rounded-full skeleton"></div>
+            </div>
+          </div>
+        }
+      }
+
+      <!-- Real Cards -->
+      @if (!isLoading) {
+        @for (card of summaryCards; track trackByIndex(i, card); let i = $index) {
+          <div
+            class="overflow-hidden relative p-6 rounded-3xl transition-all glass-panel shadow-soft hover:shadow-premium group animate-fade-in-up"
+            [style.animation-delay]="i * 100 + 'ms'"
+            >
+            <div
+              class="absolute -top-4 -right-4 w-24 h-24 rounded-full transition-transform duration-700 bg-primary/5 group-hover:scale-150"
+            ></div>
+            <div class="flex relative z-10 justify-between items-start">
+              <div class="space-y-4">
+                <span
+                  class="flex justify-center items-center p-2.5 rounded-2xl shadow-inner bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 w-fit"
+                  >
+                  <span class="material-symbols-outlined">{{ card.icon }}</span>
+                </span>
+                <div>
+                  <p
+                    class="text-sm font-bold tracking-widest uppercase text-slate-500 dark:text-slate-400"
+                    >
+                    {{ card.title }}
+                  </p>
+                  <h2
+                    class="mt-1 text-3xl font-extrabold text-slate-900 dark:text-white"
+                    >
+                    {{ card.value }}
+                  </h2>
+                </div>
+              </div>
+              @if (card.trend) {
+                <div
+                  class="flex gap-1.5 items-center px-2.5 py-1 text-xs font-bold rounded-full shadow-sm"
+              [ngClass]="
+                card.trend.isPositive
+                  ? 'bg-emerald-100 text-emerald-700'
+                  : 'bg-rose-100 text-rose-700'
+              "
+                  >
+                  <span class="text-sm material-symbols-outlined">{{
+                    card.trend.isPositive ? "trending_up" : "trending_down"
+                  }}</span>
+                  {{ card.trend.value }}%
+                </div>
+              }
+            </div>
+          </div>
+        }
+      }
+    </section>
+
+    <!-- Analytics Row -->
+    <section
+      class="grid grid-cols-1 gap-8 lg:grid-cols-3"
+      *appHasRole="['Admin', 'HR']"
+      >
+      <!-- Attendance Trend -->
+      <div class="p-8 rounded-3xl lg:col-span-2 glass-panel shadow-soft">
+        <div class="flex justify-between items-center mb-10">
+          <div class="space-y-2">
+            <h3
+              class="text-lg font-extrabold tracking-tight uppercase text-slate-900 dark:text-white"
+              >
+              Attendance Consistency
+            </h3>
+            @if (isLoading) {
+              <div class="w-32 h-4 rounded-lg skeleton"></div>
+            }
+            @if (!isLoading) {
+              <p
+                class="text-xs font-bold tracking-widest uppercase text-slate-400"
+                >
+                Average rate: 94.2%
+              </p>
+            }
+          </div>
+          <div class="flex p-1 rounded-xl bg-slate-100 dark:bg-slate-800">
+            <button
+              class="px-4 py-1.5 text-xs font-bold bg-white rounded-lg shadow-sm transition-all dark:bg-slate-700 text-slate-900 dark:text-white"
+              >
+              Week
+            </button>
+            <button
+              class="px-4 py-1.5 text-xs font-bold rounded-lg text-slate-500 hover:text-slate-700"
+              >
+              Month
+            </button>
+          </div>
+        </div>
+
+        @if (isLoading) {
+          <div class="h-[300px] flex items-end gap-4 px-4 pb-4">
+            @for (h of [40, 70, 55, 90, 65, 80, 45]; track trackByIndex($index, h)) {
+              <div
+                [style.height.%]="h"
+                class="flex-1 rounded-t-xl opacity-60 skeleton"
+              ></div>
+            }
+          </div>
+        }
+
+        @if (!isLoading) {
+          <div class="h-[300px] animate-fade-in-up stagger-1">
+            <p-chart
+              type="line"
+              [data]="chartData"
+              [options]="chartOptions"
+            ></p-chart>
+          </div>
+        }
+      </div>
+
+      <!-- Staff Distribution -->
+      <div class="p-8 rounded-3xl glass-panel shadow-soft">
+        <h3
+          class="mb-8 text-lg font-extrabold tracking-tight uppercase text-slate-900 dark:text-white"
+          >
+          Staff Distribution
+        </h3>
+
+        @if (isLoading) {
+          <div
+            class="h-[300px] flex items-center justify-center"
+            >
+            <div
+              class="w-48 h-48 rounded-full border-[20px] border-slate-100 dark:border-slate-800 animate-pulse relative"
+              >
+              <div
+                class="absolute inset-4 rounded-full border-[10px] border-slate-50 dark:border-slate-900 opacity-50"
+              ></div>
+            </div>
+          </div>
+        }
+
+        @if (!isLoading) {
+          <div
+            class="h-[300px] flex items-center justify-center relative animate-fade-in-up stagger-2"
+            >
+            <p-chart
+              type="doughnut"
+              [data]="distributionData"
+              [options]="distributionOptions"
+            ></p-chart>
+            <div class="absolute text-center pointer-events-none">
+              <p class="text-2xl font-extrabold text-slate-900 dark:text-white">
+                {{ getTotalEmployees() }}
+              </p>
+              <p
+                class="text-xs font-bold tracking-widest uppercase text-slate-400"
+                >
+                Total
+              </p>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Operational Row -->
+    <section
+      class="grid grid-cols-1 gap-8 xl:grid-cols-3"
+      *appHasRole="['Admin', 'HR']"
+      >
+      <!-- Recruitment Funnel -->
+      <div class="flex flex-col p-8 rounded-3xl glass-panel shadow-soft">
+        <div class="flex justify-between items-center mb-8">
+          <h3
+            class="text-lg font-extrabold tracking-tight uppercase text-slate-900 dark:text-white"
+            >
+            Recruitment Funnel
+          </h3>
+          <span
+            class="flex justify-center items-center p-2 rounded-xl bg-accent/10 text-accent"
+            >
+            <span class="material-symbols-outlined">filter_list</span>
+          </span>
+        </div>
+
+        @if (isLoading) {
+          <div class="flex-1 min-h-[300px] flex flex-col gap-4">
+            @for (w of [90, 75, 40, 25]; track trackByIndex($index, w)) {
+              <div
+                class="h-8 rounded-lg skeleton"
+                [style.width.%]="w"
+              ></div>
+            }
+          </div>
+        }
+
+        @if (!isLoading) {
+          <div
+            class="flex-1 min-h-[300px] animate-fade-in-up stagger-1"
+            >
+            <p-chart
+              type="bar"
+              [data]="funnelData"
+              [options]="funnelOptions"
+            ></p-chart>
+          </div>
+        }
+      </div>
+
+      <!-- Today's Schedule (Interviews) -->
+      <div class="p-8 rounded-3xl glass-panel shadow-soft">
+        <div class="flex justify-between items-center mb-8">
+          <h3
+            class="text-lg font-bold tracking-tight uppercase text-slate-900 dark:text-white"
+            >
+            Today's Interviews
+          </h3>
+          @if (isLoading) {
+            <div class="w-16 h-4 rounded-full skeleton"></div>
+          }
+          @if (!isLoading) {
+            <span
+              class="text-xs font-bold tracking-widest uppercase text-slate-400"
+              >{{ todayInterviews.length }} Slots</span
+              >
+            }
+          </div>
+
+          @if (isLoading) {
+            <div class="space-y-4">
+              @for (i of [1, 2, 3]; track trackByIndex($index, i)) {
+                <div
+                  class="flex gap-4 items-center p-4 rounded-2xl border bg-slate-50/50 dark:bg-slate-900/50 border-slate-100 dark:border-slate-800"
+                  >
+                  <div
+                    class="pr-4 space-y-2 w-12 border-r border-slate-200 dark:border-slate-700"
+                    >
+                    <div class="w-8 h-3 skeleton"></div>
+                    <div class="w-10 h-2 skeleton"></div>
+                  </div>
+                  <div class="flex-1 space-y-2">
+                    <div class="w-32 h-4 skeleton"></div>
+                    <div class="w-16 h-2 skeleton"></div>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+
+          @if (!isLoading) {
+            <div
+              class="space-y-4 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar animate-fade-in-up stagger-2"
+              >
+              @for (interview of todayInterviews; track trackByInterviewId($index, interview)) {
+                <div
+                  class="flex gap-4 items-center p-4 rounded-2xl border transition-all bg-slate-50/50 dark:bg-slate-900/50 border-slate-100 dark:border-slate-800 group hover:border-primary/30"
+                  >
+                  <div
+                    class="pr-4 w-12 text-center border-r border-slate-200 dark:border-slate-700"
+                    >
+                    <p class="text-sm font-bold text-slate-900 dark:text-white">
+                      {{ interview.time }}
+                    </p>
+                    <p class="text-xs font-bold text-slate-400">
+                      {{ interview.duration }}
+                    </p>
+                  </div>
+                  <div class="flex-1">
+                    <p class="text-sm font-bold text-slate-900 dark:text-white">
+                      {{ interview.candidateName }}
+                    </p>
+                    <div class="flex gap-4 items-center mt-1">
+                      <span
+                        class="flex gap-1 items-center text-xs font-bold tracking-tighter uppercase text-primary"
+                        >
+                        <span class="text-xs material-symbols-outlined"
+                          >videocam</span
+                          >
+                          Online
+                        </span>
+                      </div>
+                    </div>
+                    <button
+                      class="p-2 rounded-xl shadow-sm opacity-0 transition-all hover:bg-white dark:hover:bg-slate-800 group-hover:opacity-100 text-slate-400 hover:text-primary"
+                      >
+                      <span class="material-symbols-outlined">arrow_forward</span>
+                    </button>
+                  </div>
+                }
+                @if (todayInterviews.length === 0) {
+                  <div class="py-12 text-center">
+                    <span
+                      class="mb-2 text-4xl material-symbols-outlined text-slate-200 dark:text-slate-800"
+                      >event_busy</span
+                      >
+                      <p
+                        class="text-sm font-bold tracking-widest uppercase text-slate-400"
+                        >
+                        No scheduled interviews
+                      </p>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Who's on Leave -->
+            <div class="p-8 rounded-3xl glass-panel shadow-soft">
+              <div class="flex justify-between items-center mb-8">
+                <h3
+                  class="text-lg font-extrabold tracking-tight uppercase text-slate-900 dark:text-white"
+                  >
+                  On Leave Today
+                </h3>
+                @if (isLoading) {
+                  <div class="w-24 h-4 rounded-full skeleton"></div>
+                }
+                @if (!isLoading) {
+                  <span
+                    class="px-2.5 py-1 text-xs font-bold tracking-widest text-rose-600 uppercase bg-rose-50 rounded-full dark:bg-rose-900/20"
+                    >{{ whoIsOnLeave.length }} Members</span
+                    >
+                  }
+                </div>
+
+                @if (isLoading) {
+                  <div class="flex flex-wrap gap-4">
+                    @for (i of [1, 2, 3, 4, 5]; track trackByIndex($index, i)) {
+                      <div
+                        class="skeleton-avatar bg-slate-200 dark:bg-slate-800"
+                      ></div>
+                    }
+                  </div>
+                }
+
+                @if (!isLoading) {
+                  <div
+                    class="flex flex-wrap gap-4 animate-fade-in-up stagger-3"
+                    >
+                    @for (leave of whoIsOnLeave; track trackByLeaveId($index, leave)) {
+                      <div class="relative group">
+                        <img
+                          [src]="leave.avatarUrl || 'assets/images/defaults/avatar-1.png'"
+                          class="object-cover w-12 h-12 rounded-2xl ring-2 ring-white shadow-sm transition-all dark:ring-slate-800 group-hover:ring-rose-500"
+                          />
+                          <div
+                            class="absolute -right-1 -bottom-1 w-4 h-4 bg-rose-500 rounded-full border-2 border-white dark:border-slate-800"
+                          ></div>
+                          <div
+                            class="absolute bottom-full left-1/2 z-50 px-2 py-1 mb-2 text-xs text-white whitespace-nowrap rounded opacity-0 transition-all -translate-x-1/2 pointer-events-none bg-slate-900 group-hover:opacity-100"
+                            >
+                            {{ leave.employeeName }}
+                          </div>
+                        </div>
+                      }
+                      @if (whoIsOnLeave.length === 0) {
+                        <div
+                          class="py-12 w-full text-center"
+                          >
+                          <p
+                            class="text-sm font-bold tracking-widest uppercase text-slate-400"
+                            >
+                            Full attendance today! 🚀
+                          </p>
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+              </section>
+
+              <!-- Recent Activity & Audit Logs -->
+              <section
+                class="overflow-hidden rounded-3xl glass-panel shadow-soft"
+                *appHasRole="['Admin']"
+                >
+                <div
+                  class="flex justify-between items-center p-8 border-b border-slate-100 dark:border-slate-800"
+                  >
+                  <h3
+                    class="text-lg font-extrabold tracking-tight uppercase text-slate-900 dark:text-white"
+                    >
+                    Security & Audit Logs
+                  </h3>
+                  <button
+                    class="text-xs font-bold tracking-widest uppercase text-primary hover:underline"
+                    >
+                    Full Report
+                  </button>
+                </div>
+                <div class="overflow-x-auto">
+                  <table class="w-full text-left">
+                    <thead class="bg-slate-50/50 dark:bg-slate-900/50">
+                      <tr
+                        class="text-xs font-bold tracking-widest uppercase text-slate-400"
+                        >
+                        <th class="px-8 py-4">Action</th>
+                        <th class="px-8 py-4">Context</th>
+                        <th class="px-8 py-4">User</th>
+                        <th class="px-8 py-4 text-right">Timestamp</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-50 dark:divide-slate-900">
+                      @for (log of auditLogs; track trackByLogId($index, log)) {
+                        <tr
+                          class="transition-all group hover:bg-slate-50 dark:hover:bg-slate-900/30"
+                          >
+                          <td class="px-8 py-5">
+                            <span
+                              class="px-2.5 py-1 text-xs font-bold tracking-tighter uppercase rounded-lg"
+                  [ngClass]="{
+                    'bg-blue-100 text-blue-700': log.action === 'CREATE',
+                    'bg-amber-100 text-amber-700': log.action === 'UPDATE',
+                    'bg-rose-100 text-rose-700': log.action === 'DELETE',
+                  }"
+                              >
+                              {{ log.action }}
+                            </span>
+                          </td>
+                          <td
+                            class="px-8 py-5 text-sm font-bold text-slate-700 dark:text-slate-300"
+                            >
+                            {{ log.tableName }}
+                          </td>
+                          <td class="px-8 py-5 text-sm text-slate-500">
+                            {{ log.userName }}
+                          </td>
+                          <td class="px-8 py-5 text-sm text-right text-slate-400">
+                            {{ log.createdAt | date: "MMM dd, HH:mm" }}
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+
+              <!-- Fallback if not Admin/HR -->
+              <div
+                *appHasRole="['Employee']"
+                class="glass-panel p-20 rounded-[3rem] text-center space-y-8 shadow-premium"
+                >
+                <div
+                  class="flex justify-center items-center mx-auto w-32 h-32 rounded-full ring-8 bg-primary/10 ring-primary/5"
+                  >
+                  <span class="text-6xl material-symbols-outlined text-primary"
+                    >analytics</span
+                    >
+                  </div>
+                  <div class="space-y-2">
+                    <h2
+                      class="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white"
+                      >
+                      Employee Insights
+                    </h2>
+                    <p class="mx-auto max-w-lg font-medium text-slate-500">
+                      Coming soon: personalized productivity metrics, team availability, and
+                      upcoming goal tracking.
+                    </p>
+                  </div>
+                  <div class="flex gap-4 justify-center">
+                    <button
+                      class="px-8 py-3 font-bold text-white rounded-2xl shadow-lg transition-all bg-slate-900 dark:bg-white dark:text-slate-900 hover:scale-105"
+                      >
+                      My Profile
+                    </button>
+                    <button
+                      class="px-8 py-3 font-bold bg-white rounded-2xl border shadow-sm transition-all dark:bg-slate-900 text-slate-900 dark:text-white border-slate-200 dark:border-slate-800 hover:scale-105"
+                      >
+                      Request Time Off
+                    </button>
+                  </div>
+                </div>
+              </main>
+            </div>
