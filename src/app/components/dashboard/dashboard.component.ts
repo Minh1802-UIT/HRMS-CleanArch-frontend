@@ -201,7 +201,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           maintainAspectRatio: false,
           aspectRatio: 0.6,
           layout: {
-              padding: { top: 8, right: 24, bottom: 8, left: 0 }
+              padding: { top: 4, right: 16, bottom: 4, left: 0 }
           },
           plugins: {
               legend: {
@@ -231,9 +231,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
               y: {
                   border: { display: false },
                   min: 0,
+                  max: 1,
                   ticks: {
                       color: textColorSecondary,
-                      font: { size: 11 }
+                      font: { size: 11 },
+                      stepSize: 0.1
                   },
                   grid: {
                       color: surfaceBorder
