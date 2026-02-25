@@ -48,6 +48,15 @@ desktop.ini
 # Accidentally created OS special files
 nul
 
+# Internal dev notes (not for repo)
+COMPONENTS.md
+LOGIC_REVIEW.md
+MEMORY_LEAK_FIX_SUMMARY.md
+PROJECT_STATUS_REPORT.md
+SERVICES.md
+TESTING_CHECKLIST.md
+build_error.log
+
 # Test results
 /test-results
 *.lcov
