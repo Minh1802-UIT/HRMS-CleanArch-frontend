@@ -176,7 +176,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           maintainAspectRatio: false,
           aspectRatio: 0.6,
           layout: {
-              padding: { top: 8, right: 16, bottom: 0, left: 0 }
+              padding: { top: 8, right: 4, bottom: 4, left: 0 }
           },
           plugins: {
               legend: {
