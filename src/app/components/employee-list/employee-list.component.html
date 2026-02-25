@@ -1,62 +1,49 @@
-<div
-  class="flex flex-col min-h-screen text-gray-900 transition-colors duration-200 employee-list-layout bg-background-light dark:bg-background-dark font-body dark:text-gray-100"
->
-  <!-- Main Content -->
-  <main class="flex-1 max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
+<div class="p-6 max-w-[1600px] mx-auto">
     <!-- Page Header -->
-    <div
-      class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4"
-    >
+    <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
       <div>
-        <h1
-          class="text-2xl font-extrabold text-slate-800 dark:text-white tracking-tight"
-        >
+        <p class="label-overline text-violet-500 mb-1">Workforce</p>
+        <h1 class="text-2xl font-black tracking-tight text-zinc-900 dark:text-white">
           Employee Management
         </h1>
-        <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">
+        <p class="text-zinc-500 dark:text-zinc-400 text-sm mt-1">
           Manage your team members, view profiles, and track employment details.
         </p>
       </div>
       <button
         (click)="onAddEmployee()"
-        class="flex gap-2 items-center px-4 py-2.5 text-sm font-bold text-white rounded-xl shadow-lg transition-all bg-primary shadow-primary/30 hover:bg-orange-600 whitespace-nowrap"
+        class="flex gap-2 items-center px-5 py-2.5 text-sm font-bold text-white rounded-xl shadow-lg transition-all bg-violet-600 hover:bg-violet-500 shadow-violet-600/25 btn-glow whitespace-nowrap"
       >
         <span class="text-lg material-symbols-outlined">add_circle</span>
         Add Employee
       </button>
     </div>
     <!-- Sub-navigation tabs -->
-    <div
-      class="flex space-x-8 mb-8 border-b border-slate-200 dark:border-slate-700"
-    >
+    <div class="flex space-x-6 mb-8 border-b border-zinc-200 dark:border-zinc-800">
       <a
         routerLink="/employees"
-        class="px-1 pb-3 text-xs font-bold tracking-widest uppercase border-b-2 transition-all cursor-pointer border-primary text-primary"
+        class="px-1 pb-3 text-xs font-bold tracking-widest uppercase border-b-2 transition-all cursor-pointer border-violet-600 text-violet-600"
         >Team Members</a
       >
       <a
         routerLink="/directory"
-        class="px-1 pb-3 text-xs font-bold tracking-widest uppercase border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:border-slate-300 transition-all cursor-pointer"
+        class="px-1 pb-3 text-xs font-bold tracking-widest uppercase border-b-2 border-transparent text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 hover:border-zinc-300 transition-all cursor-pointer"
         >Directory</a
       >
       <a
         routerLink="/org-chart"
-        class="px-1 pb-3 text-xs font-bold tracking-widest uppercase border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:border-slate-300 transition-all cursor-pointer"
+        class="px-1 pb-3 text-xs font-bold tracking-widest uppercase border-b-2 border-transparent text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 hover:border-zinc-300 transition-all cursor-pointer"
         >Org Chart</a
       >
     </div>
 
     <!-- Filter Card -->
-    <div
-      class="p-5 mb-6 rounded-lg border border-gray-200 shadow-sm bg-surface-light dark:bg-surface-dark dark:border-gray-700"
-    >
+    <div class="p-5 mb-6 rounded-2xl glass-panel elevated-card">
       <!-- Action Buttons -->
-      <div
-        class="flex flex-col justify-end mb-6 space-y-3 sm:flex-row sm:space-y-0 sm:space-x-3"
-      >
+      <div class="flex flex-col justify-end mb-5 space-y-3 sm:flex-row sm:space-y-0 sm:space-x-3">
         <button
           (click)="exportEmployeesCsv()"
-          class="inline-flex justify-center items-center px-4 py-2 text-sm font-medium bg-transparent rounded-md border transition-colors border-primary text-primary hover:bg-orange-50 dark:hover:bg-opacity-10"
+          class="inline-flex justify-center items-center px-4 py-2 text-sm font-semibold bg-transparent rounded-lg border transition-colors border-violet-500 text-violet-600 hover:bg-violet-50 dark:hover:bg-violet-900/20"
         >
           <span class="mr-2 text-sm material-symbols-outlined">download</span>
           Export CSV
@@ -72,53 +59,39 @@
         >
           <!-- Search Input -->
           <div class="relative w-full md:w-64">
-            <div
-              class="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none"
-            >
-              <span class="text-sm text-gray-400 material-symbols-outlined"
-                >search</span
-              >
+            <div class="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
+              <span class="text-sm text-zinc-400 material-symbols-outlined">search</span>
             </div>
             <input
               type="text"
               [(ngModel)]="searchTerm"
               (input)="onSearch()"
-              class="block py-2 pr-3 pl-10 w-full leading-5 placeholder-gray-500 text-gray-900 bg-gray-50 rounded-md border border-gray-300 transition-colors dark:border-gray-600 dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm"
+              class="block py-2 pr-3 pl-10 w-full text-sm placeholder-zinc-400 text-zinc-900 bg-zinc-50 rounded-lg border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500"
               placeholder="Search employees..."
             />
           </div>
-          <div
-            class="hidden mx-2 w-px h-8 bg-gray-200 md:block dark:bg-gray-700"
-          ></div>
+          <div class="hidden mx-2 w-px h-8 bg-zinc-200 md:block dark:bg-zinc-700"></div>
           <!-- Filter Dropdowns -->
           <div class="flex flex-col gap-3 w-full sm:flex-row">
-            <select
-              class="block py-2 pr-10 pl-3 w-full text-base text-gray-900 bg-gray-100 rounded-md border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm dark:bg-gray-800 dark:text-white"
-            >
+            <select class="block py-2 pr-10 pl-3 w-full text-sm text-zinc-900 bg-zinc-50 rounded-lg border border-zinc-200 dark:border-zinc-700 focus:outline-none focus:ring-1 focus:ring-violet-500 dark:bg-zinc-800 dark:text-white">
               <option>All Offices</option>
               <option>Axis Building</option>
               <option>Elevate Complex</option>
               <option>Innovate Tower</option>
             </select>
-            <select
-              class="block py-2 pr-10 pl-3 w-full text-base text-gray-900 bg-gray-100 rounded-md border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm dark:bg-gray-800 dark:text-white"
-            >
+            <select class="block py-2 pr-10 pl-3 w-full text-sm text-zinc-900 bg-zinc-50 rounded-lg border border-zinc-200 dark:border-zinc-700 focus:outline-none focus:ring-1 focus:ring-violet-500 dark:bg-zinc-800 dark:text-white">
               <option>All Departments</option>
               <option>Products</option>
               <option>Growth</option>
               <option>Marketing</option>
             </select>
-            <select
-              class="block py-2 pr-10 pl-3 w-full text-base text-gray-900 bg-gray-100 rounded-md border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm dark:bg-gray-800 dark:text-white"
-            >
+            <select class="block py-2 pr-10 pl-3 w-full text-sm text-zinc-900 bg-zinc-50 rounded-lg border border-zinc-200 dark:border-zinc-700 focus:outline-none focus:ring-1 focus:ring-violet-500 dark:bg-zinc-800 dark:text-white">
               <option>All Job Titles</option>
               <option>Designer</option>
               <option>Developer</option>
               <option>Manager</option>
             </select>
-            <select
-              class="block py-2 pr-10 pl-3 w-full text-base text-gray-900 bg-gray-100 rounded-md border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm dark:bg-gray-800 dark:text-white"
-            >
+            <select class="block py-2 pr-10 pl-3 w-full text-sm text-zinc-900 bg-zinc-50 rounded-lg border border-zinc-200 dark:border-zinc-700 focus:outline-none focus:ring-1 focus:ring-violet-500 dark:bg-zinc-800 dark:text-white">
               <option>All Employment Type</option>
               <option>Full-time</option>
               <option>Part-time</option>
@@ -128,7 +101,7 @@
         </div>
         <button
           (click)="clearFilters()"
-          class="self-end text-sm text-gray-500 whitespace-nowrap transition-colors dark:text-gray-400 hover:text-primary xl:self-center"
+          class="self-end text-sm text-zinc-500 whitespace-nowrap transition-colors dark:text-zinc-400 hover:text-violet-600 xl:self-center"
         >
           Clear filters
         </button>
@@ -136,171 +109,88 @@
     </div>
 
     <!-- Employee Table -->
-    <div
-      class="overflow-hidden rounded-lg border border-gray-200 shadow-sm bg-surface-light dark:bg-surface-dark dark:border-gray-700"
-    >
+    <div class="overflow-hidden rounded-2xl glass-panel">
       <!-- Loading State -->
       @if (loading) {
         <div class="flex justify-center items-center py-16">
-          <div
-            class="w-10 h-10 rounded-full border-t-2 border-b-2 animate-spin border-primary"
-          ></div>
+          <div class="w-9 h-9 rounded-full border-[3px] border-zinc-200 dark:border-zinc-700 border-t-violet-600 animate-spin"></div>
         </div>
       }
 
       @if (!loading) {
         <div class="overflow-x-auto">
-          <table
-            class="min-w-full divide-y divide-gray-200 dark:divide-gray-700"
-          >
-            <thead class="bg-gray-50 dark:bg-gray-800/50">
+          <table class="min-w-full">
+            <thead class="bg-zinc-50/80 dark:bg-zinc-900/60 border-b border-zinc-100 dark:border-zinc-800">
               <tr>
-                <th
-                  scope="col"
-                  class="px-6 py-4 w-10 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-400"
-                >
-                  <input
-                    type="checkbox"
-                    class="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary dark:bg-gray-700 dark:border-gray-600"
-                  />
+                <th scope="col" class="px-6 py-3.5 w-10">
+                  <input type="checkbox" class="w-4 h-4 rounded border-zinc-300 text-violet-600 focus:ring-violet-500 dark:bg-zinc-700 dark:border-zinc-600" />
                 </th>
-                <th
-                  scope="col"
-                  class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase dark:text-gray-400"
-                >
-                  Avatar
-                </th>
-                <th
-                  scope="col"
-                  class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase dark:text-gray-400"
-                >
-                  Name
-                </th>
-                <th
-                  scope="col"
-                  class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase dark:text-gray-400"
-                >
-                  Employee ID
-                </th>
-                <th
-                  scope="col"
-                  class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase dark:text-gray-400"
-                >
-                  Job Title
-                </th>
-                <th
-                  scope="col"
-                  class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase dark:text-gray-400"
-                >
-                  Department
-                </th>
-                <th
-                  scope="col"
-                  class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase dark:text-gray-400"
-                >
-                  Employment Type
-                </th>
-                <th
-                  scope="col"
-                  class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase dark:text-gray-400"
-                >
-                  Actions
-                </th>
+                <th scope="col" class="px-6 py-3.5 label-overline text-left text-zinc-500 dark:text-zinc-400">Employee</th>
+                <th scope="col" class="px-6 py-3.5 label-overline text-left text-zinc-500 dark:text-zinc-400">ID</th>
+                <th scope="col" class="px-6 py-3.5 label-overline text-left text-zinc-500 dark:text-zinc-400">Job Title</th>
+                <th scope="col" class="px-6 py-3.5 label-overline text-left text-zinc-500 dark:text-zinc-400">Department</th>
+                <th scope="col" class="px-6 py-3.5 label-overline text-left text-zinc-500 dark:text-zinc-400">Type</th>
+                <th scope="col" class="px-6 py-3.5 label-overline text-left text-zinc-500 dark:text-zinc-400">Actions</th>
               </tr>
             </thead>
-            <tbody
-              class="divide-y divide-gray-200 bg-surface-light dark:bg-surface-dark dark:divide-gray-700"
-            >
+            <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
               @for (
                 employee of paginatedEmployees;
                 track trackByEmployeeId($index, employee)
               ) {
-                <tr
-                  class="transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50"
-                >
+                <tr class="group transition-colors hover:bg-violet-50/30 dark:hover:bg-zinc-800/40 cursor-default">
                   <td class="px-6 py-4 whitespace-nowrap">
-                    <input
-                      type="checkbox"
-                      class="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary dark:bg-gray-700 dark:border-gray-600"
-                    />
+                    <input type="checkbox" class="w-4 h-4 rounded border-zinc-300 text-violet-600 focus:ring-violet-500 dark:bg-zinc-700 dark:border-zinc-600" />
                   </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="flex-shrink-0 w-10 h-10">
+                  <!-- Avatar + Name merged -->
+                  <td class="px-6 py-4 whitespace-nowrap" colspan="1">
+                    <div class="flex items-center gap-3">
                       <img
-                        [src]="
-                          getAvatarUrl(employee.avatarUrl) ||
-                          'assets/images/defaults/avatar-1.png'
-                        "
+                        [src]="getAvatarUrl(employee.avatarUrl) || 'assets/images/defaults/avatar-1.png'"
                         [alt]="employee.fullName"
-                        class="object-cover w-10 h-10 rounded-full"
-                        onerror="
-                          this.src =
-                            'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjZTVlN2ViIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzljYTNhZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPj88L3RleHQ+PC9zdmc+'
-                        "
-                      />
+                        class="w-9 h-9 rounded-full object-cover ring-2 ring-zinc-100 dark:ring-zinc-700 flex-shrink-0"
+                        onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjZjRmNGY1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzdjM2FlZCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPiYjOTg2MTs8L3RleHQ+PC9zdmc+'" />
+                      <span class="text-sm font-semibold text-zinc-900 dark:text-white">{{ employee.fullName }}</span>
                     </div>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap">
-                    <div
-                      class="text-sm font-bold text-gray-900 dark:text-white"
-                    >
-                      {{ employee.fullName }}
-                    </div>
+                    <span class="text-xs font-mono font-bold text-zinc-400 dark:text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded">{{ employee.employeeCode }}</span>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="text-sm text-gray-500 dark:text-gray-400">
-                      {{ employee.employeeCode }}
-                    </div>
+                    <span class="text-sm text-zinc-600 dark:text-zinc-300">{{ getPositionTitle(employee) }}</span>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="text-sm text-gray-900 dark:text-white">
-                      {{ getPositionTitle(employee) }}
-                    </div>
+                    <span class="text-sm text-zinc-600 dark:text-zinc-300">{{ getDepartmentName(employee) }}</span>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="text-sm text-gray-900 dark:text-white">
-                      {{ getDepartmentName(employee) }}
-                    </div>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <span
-                      [ngClass]="getEmploymentTypeClass(employee)"
-                      class="inline-flex px-2 text-xs font-semibold leading-5 rounded-full"
-                    >
+                    <span [ngClass]="getEmploymentTypeClass(employee)" class="inline-flex items-center px-2.5 py-0.5 text-xs font-semibold rounded-full">
                       {{ getEmploymentType(employee) }}
                     </span>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="flex gap-2 items-center">
-                      <a
-                        [routerLink]="['/employees', employee.id]"
-                        class="p-1.5 text-gray-400 rounded transition-colors hover:text-primary hover:bg-orange-50 dark:hover:bg-orange-900/20"
-                        title="View Profile"
-                      >
-                        <span class="text-sm material-symbols-outlined"
-                          >visibility</span
-                        >
-                      </a>
-                    </div>
+                    <a
+                      [routerLink]="['/employees', employee.id]"
+                      class="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-400 dark:text-zinc-500 hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
+                      title="View Profile"
+                    >
+                      <span class="text-base material-symbols-outlined">arrow_outward</span>
+                      View
+                    </a>
                   </td>
                 </tr>
               }
               <!-- Empty State -->
               @if (paginatedEmployees.length === 0 && !loading) {
                 <tr>
-                  <td
-                    colspan="8"
-                    class="py-12 text-center text-gray-500 dark:text-gray-400"
-                  >
-                    <div class="flex flex-col items-center">
-                      <span
-                        class="mb-2 text-4xl text-gray-300 material-symbols-outlined"
-                        >inbox</span
-                      >
-                      <p class="text-lg font-medium">No employees found</p>
-                      <p class="text-sm">
-                        Try adjusting your search or filter criteria
-                      </p>
+                  <td colspan="7" class="py-16 text-center">
+                    <div class="flex flex-col items-center gap-3">
+                      <div class="w-14 h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
+                        <span class="text-3xl text-zinc-400 dark:text-zinc-600 material-symbols-outlined">group_off</span>
+                      </div>
+                      <div>
+                        <p class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">No employees found</p>
+                        <p class="text-xs text-zinc-400 mt-0.5">Try adjusting your search or filter criteria</p>
+                      </div>
                     </div>
                   </td>
                 </tr>
@@ -312,46 +202,37 @@
     </div>
 
     <!-- Pagination -->
-    <div
-      class="flex flex-col justify-between items-center px-1 mt-6 sm:flex-row"
-    >
-      <div class="mb-4 text-sm text-gray-500 dark:text-gray-400 sm:mb-0">
-        Show
-        <span class="font-medium text-gray-900 dark:text-white">{{
+    <div class="flex flex-col justify-between items-center px-1 mt-6 sm:flex-row">
+      <div class="mb-4 text-sm text-zinc-500 dark:text-zinc-400 sm:mb-0">
+        Showing
+        <span class="font-semibold text-zinc-900 dark:text-white">{{
           (currentPage - 1) * pageSize + 1
         }}</span>
-        to
-        <span class="font-medium text-gray-900 dark:text-white">{{
+        &ndash;
+        <span class="font-semibold text-zinc-900 dark:text-white">{{
           Math.min(currentPage * pageSize, totalItems)
         }}</span>
         of
-        <span class="font-medium text-gray-900 dark:text-white">{{
+        <span class="font-semibold text-zinc-900 dark:text-white">{{
           totalItems
         }}</span>
         results
       </div>
-      <nav
-        aria-label="Pagination"
-        class="inline-flex relative z-0 -space-x-px rounded-md shadow-sm"
-      >
+      <nav aria-label="Pagination" class="flex items-center gap-1">
         <button
           (click)="goToPage(currentPage - 1)"
           [disabled]="currentPage === 1"
-          class="inline-flex relative items-center px-2 py-2 text-sm font-medium text-gray-500 rounded-l-md border border-gray-300 dark:border-gray-600 bg-surface-light dark:bg-surface-dark dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+          class="inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-zinc-500 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
-          <span class="text-sm material-symbols-outlined">chevron_left</span>
+          <span class="text-base material-symbols-outlined">chevron_left</span>
         </button>
         @for (page of getPageNumbers(); track trackByPage($index, page)) {
           <button
             (click)="goToPage(page)"
-            [class.bg-primary]="page === currentPage"
-            [class.border-primary]="page === currentPage"
-            [class.text-white]="page === currentPage"
-            class="inline-flex relative items-center px-4 py-2 text-sm font-medium border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800"
-            [ngClass]="{
-              'bg-surface-light dark:bg-surface-dark text-gray-500 dark:text-gray-400':
-                page !== currentPage,
-            }"
+            [ngClass]="page === currentPage
+              ? 'bg-violet-600 border-violet-600 text-white shadow-sm'
+              : 'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800'"
+            class="inline-flex items-center justify-center w-8 h-8 text-sm font-semibold rounded-lg border transition-colors"
           >
             {{ page }}
           </button>
@@ -359,23 +240,22 @@
         <button
           (click)="goToPage(currentPage + 1)"
           [disabled]="currentPage === totalPages"
-          class="inline-flex relative items-center px-2 py-2 text-sm font-medium text-gray-500 rounded-r-md border border-gray-300 dark:border-gray-600 bg-surface-light dark:bg-surface-dark dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+          class="inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-zinc-500 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
-          <span class="text-sm material-symbols-outlined">chevron_right</span>
+          <span class="text-base material-symbols-outlined">chevron_right</span>
         </button>
       </nav>
     </div>
-  </main>
 
   <!-- Edit/Add Employee Drawer -->
   @if (showEditDrawer) {
     <div class="flex fixed inset-0 z-50 justify-end items-center">
       <div
-        class="absolute inset-0 backdrop-blur-sm transition-opacity bg-gray-900/40"
+        class="absolute inset-0 backdrop-blur-sm transition-opacity bg-zinc-900/50"
         (click)="closeEditDrawer()"
       ></div>
       <div
-        class="overflow-hidden relative w-full max-w-4xl h-full bg-white border-l border-gray-200 shadow-2xl transition-all transform dark:bg-gray-900 dark:border-gray-700"
+        class="overflow-hidden relative w-full max-w-4xl h-full bg-white border-l border-zinc-200 shadow-2xl dark:bg-zinc-900 dark:border-zinc-800"
       >
         <app-add-employee
           [employeeId]="selectedEmployeeId"

@@ -1,287 +1,178 @@
-<div
-  class="flex flex-col min-h-screen text-gray-900 transition-colors duration-200 departments-layout bg-background-light dark:bg-background-dark font-body dark:text-gray-100"
-  >
-  <!-- Main Content -->
-  <main class="flex-1 max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
-    <div class="flex flex-col items-center mb-10">
-      <h1 class="mb-6 text-3xl font-bold text-gray-900 dark:text-white">
-        Department
-      </h1>
+﻿<div class="p-6 max-w-[1600px] mx-auto">
+  <!-- Page Header -->
+  <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+      <p class="label-overline text-violet-500 mb-1">Organization</p>
+      <h1 class="text-2xl font-black tracking-tight text-zinc-900 dark:text-white">Departments</h1>
+      <p class="text-zinc-500 dark:text-zinc-400 text-sm mt-1">Organize your workforce by business function.</p>
     </div>
+    <button
+      (click)="openDeptModal('create')"
+      class="flex gap-2 items-center px-5 py-2.5 text-sm font-bold text-white rounded-xl shadow-lg transition-all bg-violet-600 hover:bg-violet-500 shadow-violet-600/25 btn-glow whitespace-nowrap"
+    >
+      <span class="text-lg material-symbols-outlined">add_circle</span>
+      Add Department
+    </button>
+  </div>
 
-    <!-- Filter Card -->
-    <div
-      class="p-5 mb-6 rounded-lg border border-gray-200 shadow-sm bg-surface-light dark:bg-surface-dark dark:border-gray-700"
-      >
-      <!-- Action Buttons -->
-      <div
-        class="flex flex-col justify-end mb-6 space-y-3 sm:flex-row sm:space-y-0 sm:space-x-3"
-        >
-        <button
-          (click)="openDeptModal('create')"
-          class="inline-flex justify-center items-center px-4 py-2 text-sm font-medium text-white rounded-md border border-transparent shadow-sm transition-colors bg-primary hover:bg-orange-600"
-          >
-          <span class="mr-2 text-sm material-symbols-outlined">add_circle</span>
-          Add Department
-        </button>
+  <!-- Search Bar -->
+  <div class="p-5 mb-6 rounded-2xl glass-panel elevated-card">
+    <div class="flex flex-col justify-between items-center gap-4 sm:flex-row">
+      <div class="relative w-full sm:w-80">
+        <span class="flex absolute inset-y-0 left-0 items-center pl-3 text-zinc-400">
+          <span class="text-lg material-symbols-outlined">search</span>
+        </span>
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="onFilterChange()"
+          placeholder="Search departments..."
+          class="block py-2 pr-3 pl-10 w-full text-sm placeholder-zinc-400 text-zinc-900 bg-zinc-50 rounded-lg border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500"
+        />
       </div>
+      <button
+        (click)="searchTerm = ''; onFilterChange()"
+        class="flex items-center text-sm font-medium text-zinc-400 transition-colors hover:text-violet-600"
+      >
+        <span class="mr-1 text-sm material-symbols-outlined">backspace</span>
+        Clear
+      </button>
+    </div>
+  </div>
 
-      <!-- Filters Row -->
-      <div
-        class="flex flex-col justify-between items-center space-y-4 sm:flex-row sm:space-y-0"
-        >
-        <div class="relative w-full sm:w-96">
-          <span
-            class="flex absolute inset-y-0 left-0 items-center pl-3 text-gray-400"
+  <!-- Table Card -->
+  <div class="overflow-hidden rounded-2xl glass-panel">
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm text-left">
+        <thead class="bg-zinc-50/80 dark:bg-zinc-900/60 border-b border-zinc-100 dark:border-zinc-800">
+          <tr>
+            <th class="px-6 py-3.5 w-10">
+              <input type="checkbox" class="w-4 h-4 rounded border-zinc-300 text-violet-600 focus:ring-violet-500 dark:bg-zinc-700" />
+            </th>
+            <th class="px-6 py-3.5 label-overline text-left text-zinc-500 dark:text-zinc-400">Name</th>
+            <th class="px-6 py-3.5 label-overline text-left text-zinc-500 dark:text-zinc-400">Code</th>
+            <th class="px-6 py-3.5 label-overline text-left text-zinc-500 dark:text-zinc-400">Description</th>
+            <th class="px-6 py-3.5 label-overline text-right text-zinc-500 dark:text-zinc-400">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
+          @for (dept of filteredDepartments; track trackByDeptId($index, dept)) {
+            <tr
+              class="group transition-colors hover:bg-violet-50/30 dark:hover:bg-zinc-800/40 cursor-default"
+              [ngClass]="{'bg-violet-50/50 dark:bg-violet-900/10': selectedDepartment?.id === dept.id}"
             >
-            <span class="text-lg material-symbols-outlined">search</span>
-          </span>
-          <input
-            type="text"
-            [(ngModel)]="searchTerm"
-            (ngModelChange)="onFilterChange()"
-            placeholder="Search departments..."
-            class="block py-2 pr-3 pl-10 w-full leading-5 placeholder-gray-500 text-gray-900 bg-white rounded-md border border-gray-300 transition-colors dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm"
-            />
-          </div>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <input type="checkbox" class="w-4 h-4 rounded border-zinc-300 text-violet-600 focus:ring-violet-500 dark:bg-zinc-700" />
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap" (click)="selectDepartment(dept)">
+                <div class="flex items-center gap-3 cursor-pointer">
+                  <div class="w-2 h-2 rounded-full bg-violet-500 flex-shrink-0"></div>
+                  <span class="text-sm font-semibold text-zinc-900 dark:text-white">{{ dept.name }}</span>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-2 py-0.5 font-mono text-xs font-bold text-zinc-500 bg-zinc-100 dark:bg-zinc-800 dark:text-zinc-400 rounded">{{ dept.code }}</span>
+              </td>
+              <td class="px-6 py-4">
+                <p class="max-w-xs text-sm text-zinc-500 dark:text-zinc-400 line-clamp-1">{{ dept.description || '—' }}</p>
+              </td>
+              <td class="px-6 py-4 text-right whitespace-nowrap">
+                <div class="flex gap-1.5 justify-end">
+                  <button
+                    (click)="openDeptModal('edit', dept)"
+                    class="p-1.5 rounded-lg transition-colors text-zinc-400 hover:text-violet-600 hover:bg-violet-50 dark:hover:bg-violet-900/20"
+                    title="Edit"
+                  >
+                    <span class="material-symbols-outlined text-[18px]">edit</span>
+                  </button>
+                  <button
+                    (click)="deleteDepartment(dept, $event)"
+                    class="p-1.5 rounded-lg transition-colors text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
+                    title="Delete"
+                  >
+                    <span class="material-symbols-outlined text-[18px]">delete</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+          @if (filteredDepartments.length === 0) {
+            <tr>
+              <td colspan="5" class="py-16 text-center">
+                <div class="flex flex-col items-center gap-3">
+                  <div class="w-14 h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
+                    <span class="text-3xl text-zinc-400 material-symbols-outlined">corporate_fare</span>
+                  </div>
+                  <div>
+                    <p class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">No departments found</p>
+                    <p class="text-xs text-zinc-400 mt-0.5">Add a new department to get started</p>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
 
-          <button
-            (click)="searchTerm = ''; onFilterChange()"
-            class="flex items-center text-sm font-medium text-gray-500 transition-colors hover:text-primary"
-            >
-            <span class="mr-1 text-sm material-symbols-outlined">backspace</span>
-            Clear filters
+  <!-- Result count -->
+  <div class="mt-4 text-sm text-zinc-500 dark:text-zinc-400">
+    Showing <span class="font-semibold text-zinc-900 dark:text-white">{{ filteredDepartments.length }}</span> of <span class="font-semibold text-zinc-900 dark:text-white">{{ departments.length }}</span> departments
+  </div>
+
+  <!-- Modal -->
+  @if (isDeptModalOpen) {
+    <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-zinc-900/60 backdrop-blur-sm">
+      <div class="overflow-hidden w-full max-w-md rounded-2xl shadow-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700">
+        <div class="flex justify-between items-center px-6 py-4 border-b border-zinc-100 dark:border-zinc-800">
+          <h3 class="text-base font-black text-zinc-900 dark:text-white">
+            {{ modalMode === 'create' ? 'Add New' : 'Edit' }} Department
+          </h3>
+          <button (click)="closeDeptModal()" class="text-zinc-400 hover:text-zinc-600 transition-colors">
+            <span class="material-symbols-outlined">close</span>
           </button>
         </div>
+        <form [formGroup]="deptForm" (ngSubmit)="saveDepartment()" class="p-6 space-y-4">
+          <div>
+            <label class="label-overline text-zinc-500 dark:text-zinc-400 block mb-1.5">Department Name</label>
+            <input
+              formControlName="name"
+              class="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-sm text-zinc-900 dark:text-white rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 outline-none transition-all"
+              placeholder="e.g. Marketing"
+            />
+          </div>
+          <div>
+            <label class="label-overline text-zinc-500 dark:text-zinc-400 block mb-1.5">Department Code</label>
+            <input
+              formControlName="code"
+              class="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-sm text-zinc-900 dark:text-white rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 outline-none transition-all uppercase"
+              placeholder="e.g. MKT"
+            />
+          </div>
+          <div>
+            <label class="label-overline text-zinc-500 dark:text-zinc-400 block mb-1.5">Description</label>
+            <textarea
+              formControlName="description"
+              rows="3"
+              class="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-sm text-zinc-900 dark:text-white rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 outline-none transition-all resize-none"
+              placeholder="Brief description..."
+            ></textarea>
+          </div>
+          <div class="flex gap-3 justify-end pt-2">
+            <button type="button" (click)="closeDeptModal()" class="px-5 py-2.5 text-sm font-semibold rounded-lg transition-all text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800">
+              Cancel
+            </button>
+            <button
+              type="submit"
+              [disabled]="deptForm.invalid"
+              class="px-5 py-2.5 text-sm font-bold text-white bg-violet-600 hover:bg-violet-500 rounded-lg shadow-md transition-all disabled:opacity-50 btn-glow"
+            >
+              Save Department
+            </button>
+          </div>
+        </form>
       </div>
-
-      <!-- Table Card -->
-      <div
-        class="overflow-hidden rounded-lg border border-gray-200 shadow-sm bg-surface-light dark:bg-surface-dark dark:border-gray-700"
-        >
-        <div class="overflow-x-auto">
-          <table class="w-full text-sm text-left">
-            <thead
-              class="bg-gray-50 border-b border-gray-200 dark:bg-gray-800/50 dark:border-gray-700"
-              >
-              <tr>
-                <th class="px-6 py-4 w-10">
-                  <input
-                    type="checkbox"
-                    class="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary dark:bg-gray-700 dark:border-gray-600"
-                    />
-                  </th>
-                  <th
-                    class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase dark:text-gray-400"
-                    >
-                    Department Name
-                  </th>
-                  <th
-                    class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase dark:text-gray-400"
-                    >
-                    Department Code
-                  </th>
-                  <th
-                    class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase dark:text-gray-400"
-                    >
-                    Description
-                  </th>
-                  <th
-                    class="px-6 py-4 text-xs font-semibold tracking-wider text-right text-gray-500 uppercase dark:text-gray-400"
-                    >
-                    Action
-                  </th>
-                </tr>
-              </thead>
-              <tbody
-                class="divide-y divide-gray-200 bg-surface-light dark:bg-surface-dark dark:divide-gray-700"
-                >
-                @for (dept of filteredDepartments; track trackByDeptId($index, dept)) {
-                  <tr
-                    class="transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50"
-              [ngClass]="{
-                'bg-orange-50/40': selectedDepartment?.id === dept.id,
-              }"
-                    >
-                    <td class="px-6 py-4 whitespace-nowrap">
-                      <input
-                        type="checkbox"
-                        class="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary dark:bg-gray-700 dark:border-gray-600"
-                        />
-                      </td>
-                      <td
-                        class="px-6 py-4 whitespace-nowrap"
-                        (click)="selectDepartment(dept)"
-                        >
-                        <div class="flex items-center cursor-pointer">
-                          <div
-                            class="mr-3 w-2.5 h-2.5 rounded-full shadow-sm bg-primary"
-                          ></div>
-                          <span
-                            class="text-sm font-bold text-gray-900 dark:text-white"
-                            >{{ dept.name }}</span
-                            >
-                          </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                          <span
-                            class="px-2 py-1 font-mono text-xs font-bold text-gray-500 truncate bg-gray-100 rounded dark:bg-gray-800"
-                            >{{ dept.code }}</span
-                            >
-                          </td>
-                          <td class="px-6 py-4">
-                            <p
-                              class="max-w-xs text-sm text-gray-600 dark:text-gray-400 line-clamp-1"
-                              >
-                              {{ dept.description || "-" }}
-                            </p>
-                          </td>
-                          <td class="px-6 py-4 text-right whitespace-nowrap">
-                            <div class="flex gap-2 justify-end">
-                              <button
-                                (click)="openDeptModal('edit', dept)"
-                                class="p-1.5 text-gray-400 rounded transition-colors hover:text-primary hover:bg-orange-50 dark:hover:bg-orange-900/20"
-                                >
-                                <span class="material-symbols-outlined text-[18px]"
-                                  >edit</span
-                                  >
-                                </button>
-                                <button
-                                  (click)="deleteDepartment(dept, $event)"
-                                  class="p-1.5 text-gray-400 rounded transition-colors hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
-                                  >
-                                  <span class="material-symbols-outlined text-[18px]"
-                                    >delete</span
-                                    >
-                                  </button>
-                                </div>
-                              </td>
-                            </tr>
-                          }
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-
-                  <!-- Pagination -->
-                  <div
-                    class="flex flex-col justify-between items-center mt-8 text-sm md:flex-row"
-                    >
-                    <div class="mb-4 font-medium text-slate-500 md:mb-0">
-                      Show <span class="font-bold text-slate-900">1</span> to
-                      <span class="font-bold text-slate-900">{{
-                        filteredDepartments.length
-                      }}</span>
-                      of
-                      <span class="font-bold text-slate-900">{{ departments.length }}</span>
-                      results
-                    </div>
-                    <div
-                      class="flex overflow-hidden items-center bg-white rounded-xl border shadow-sm border-slate-200"
-                      >
-                      <button
-                        class="flex justify-center items-center w-10 h-10 border-r transition-all text-slate-400 hover:text-slate-800 hover:bg-slate-50 border-slate-100 disabled:opacity-30"
-                        disabled
-                        >
-                        <span class="material-symbols-outlined text-[18px]"
-                          >chevron_left</span
-                          >
-                        </button>
-                        <button
-                          class="w-10 h-10 flex items-center justify-center bg-[#F4623A] text-white font-bold shadow-inner"
-                          >
-                          1
-                        </button>
-                        <button
-                          class="flex justify-center items-center w-10 h-10 border-l transition-all text-slate-400 hover:text-slate-800 hover:bg-slate-50 border-slate-100 disabled:opacity-30"
-                          disabled
-                          >
-                          <span class="material-symbols-outlined text-[18px]"
-                            >chevron_right</span
-                            >
-                          </button>
-                        </div>
-                      </div>
-                    </main>
-
-                    <!-- Modal for Department (Keeping simple for now, using Tailwind) -->
-                    @if (isDeptModalOpen) {
-                      <div
-                        class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
-                        >
-                        <div
-                          class="overflow-hidden w-full max-w-md bg-white rounded-2xl shadow-2xl transition-all transform"
-                          >
-                          <div
-                            class="flex justify-between items-center px-6 py-4 border-b border-slate-100 bg-slate-50/50"
-                            >
-                            <h3 class="text-lg font-bold text-slate-900">
-                              {{ modalMode === "create" ? "Add New" : "Edit" }} Department
-                            </h3>
-                            <button
-                              (click)="closeDeptModal()"
-                              class="transition-colors text-slate-400 hover:text-slate-600"
-                              >
-                              <span class="material-symbols-outlined">close</span>
-                            </button>
-                          </div>
-                          <form
-                            [formGroup]="deptForm"
-                            (ngSubmit)="saveDepartment()"
-                            class="p-6 space-y-4"
-                            >
-                            <div>
-                              <label
-                                class="block mb-1.5 text-xs font-bold tracking-widest uppercase text-slate-500"
-                                >Department Name</label
-                                >
-                                <input
-                                  formControlName="name"
-                                  class="w-full bg-slate-50 border border-slate-200 text-sm text-slate-700 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#F4623A]/20 focus:border-[#F4623A] outline-none transition-all"
-                                  placeholder="e.g. Marketing"
-                                  />
-                                </div>
-                                <div>
-                                  <label
-                                    class="block mb-1.5 text-xs font-bold tracking-widest uppercase text-slate-500"
-                                    >Department Code</label
-                                    >
-                                    <input
-                                      formControlName="code"
-                                      class="w-full bg-slate-50 border border-slate-200 text-sm text-slate-700 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#F4623A]/20 focus:border-[#F4623A] outline-none transition-all uppercase"
-                                      placeholder="e.g. MKT"
-                                      />
-                                    </div>
-                                    <div>
-                                      <label
-                                        class="block mb-1.5 text-xs font-bold tracking-widest uppercase text-slate-500"
-                                        >Description</label
-                                        >
-                                        <textarea
-                                          formControlName="description"
-                                          rows="3"
-                                          class="w-full bg-slate-50 border border-slate-200 text-sm text-slate-700 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#F4623A]/20 focus:border-[#F4623A] outline-none transition-all resize-none"
-                                          placeholder="Brief description..."
-                                        ></textarea>
-                                      </div>
-                                      <div class="flex gap-3 justify-end pt-4">
-                                        <button
-                                          type="button"
-                                          (click)="closeDeptModal()"
-                                          class="px-6 py-2.5 text-sm font-semibold rounded-lg transition-all text-slate-600 hover:bg-slate-100"
-                                          >
-                                          Cancel
-                                        </button>
-                                        <button
-                                          type="submit"
-                                          [disabled]="deptForm.invalid"
-                                          class="px-6 py-2.5 text-sm font-semibold text-white bg-[#F4623A] hover:bg-[#d95332] rounded-lg shadow-md transition-all disabled:opacity-50"
-                                          >
-                                          Save Department
-                                        </button>
-                                      </div>
-                                    </form>
-                                  </div>
-                                </div>
-                              }
-                            </div>
+    </div>
+  }
+</div>

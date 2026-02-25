@@ -1,396 +1,253 @@
-<div
-  class="flex flex-col min-h-screen text-gray-900 transition-colors duration-200 payroll-layout bg-background-light dark:bg-background-dark dark:text-gray-100"
->
-  <!-- Main Content -->
-  <main class="flex-1 max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
-    <!-- Page Header -->
-    <div
-      class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4"
-    >
-      <div>
-        <h1
-          class="text-2xl font-extrabold text-slate-800 dark:text-white tracking-tight"
+﻿<div class="p-6 max-w-[1600px] mx-auto">
+  <!-- Page Header -->
+  <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+      <p class="label-overline text-violet-500 mb-1">Finance</p>
+      <h1 class="text-2xl font-black tracking-tight text-zinc-900 dark:text-white">Payroll Management</h1>
+      <p class="text-zinc-500 dark:text-zinc-400 text-sm mt-1">Review, calculate, and manage employee salaries and payouts.</p>
+    </div>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="grid grid-cols-1 gap-6 mb-8 md:grid-cols-3">
+    <div class="p-6 glass-panel rounded-2xl shadow-soft">
+      <div class="flex gap-4 items-center">
+        <div class="flex justify-center items-center w-12 h-12 icon-bg-violet rounded-xl">
+          <span class="text-violet-600 material-symbols-outlined">payments</span>
+        </div>
+        <div>
+          <p class="label-overline text-zinc-500 dark:text-zinc-400">Total Payout</p>
+          <h3 class="text-2xl font-black text-zinc-900 dark:text-white">{{ formatCurrency(totalNetSalary) }}</h3>
+        </div>
+      </div>
+    </div>
+    <div class="p-6 glass-panel rounded-2xl shadow-soft">
+      <div class="flex gap-4 items-center">
+        <div class="flex justify-center items-center w-12 h-12 icon-bg-blue rounded-xl">
+          <span class="text-blue-600 material-symbols-outlined">group</span>
+        </div>
+        <div>
+          <p class="label-overline text-zinc-500 dark:text-zinc-400">Total Employees</p>
+          <h3 class="text-2xl font-black text-zinc-900 dark:text-white">{{ payrollRecords.length }}</h3>
+        </div>
+      </div>
+    </div>
+    <div class="p-6 glass-panel rounded-2xl shadow-soft">
+      <div class="flex gap-4 items-center">
+        <div class="flex justify-center items-center w-12 h-12 icon-bg-green rounded-xl">
+          <span class="text-green-600 material-symbols-outlined">event_available</span>
+        </div>
+        <div>
+          <p class="label-overline text-zinc-500 dark:text-zinc-400">Payroll Period</p>
+          <h3 class="text-xl font-black text-zinc-900 dark:text-white">{{ selectedMonth }} {{ selectedYear }}</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Controls Card -->
+  <div class="p-5 mb-8 rounded-2xl glass-panel elevated-card">
+    <div class="flex flex-col gap-6 justify-between items-center lg:flex-row">
+      <div class="flex flex-wrap gap-4 items-center">
+        <div class="flex gap-3">
+          <div class="relative">
+            <select
+              [(ngModel)]="selectedMonth"
+              (change)="loadPayrollData()"
+              class="py-2.5 pr-10 pl-4 text-sm bg-zinc-50 dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700 appearance-none outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500 dark:text-white"
+            >
+              @for (m of months; track trackByMonth($index, m)) {
+                <option [value]="m">{{ m }}</option>
+              }
+            </select>
+            <span class="absolute top-2.5 right-3 text-zinc-400 pointer-events-none material-symbols-outlined">expand_more</span>
+          </div>
+          <div class="relative">
+            <select
+              [(ngModel)]="selectedYear"
+              (change)="loadPayrollData()"
+              class="py-2.5 pr-10 pl-4 text-sm bg-zinc-50 dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700 appearance-none outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500 dark:text-white"
+            >
+              @for (y of years; track trackByYear($index, y)) {
+                <option [value]="y">{{ y }}</option>
+              }
+            </select>
+            <span class="absolute top-2.5 right-3 text-zinc-400 pointer-events-none material-symbols-outlined">expand_more</span>
+          </div>
+        </div>
+        <button
+          (click)="loadPayrollData()"
+          class="p-2.5 text-zinc-400 rounded-lg transition-all hover:text-violet-600 hover:bg-violet-50 dark:hover:bg-violet-900/20"
+          title="Refresh Data"
         >
-          Payroll Management
-        </h1>
-        <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">
-          Review, calculate, and manage employee salaries and payouts.
-        </p>
+          <span class="material-symbols-outlined">refresh</span>
+        </button>
+      </div>
+      <div class="flex gap-3 w-full lg:w-auto">
+        <button
+          (click)="exportPayrollCsv()"
+          class="flex flex-1 gap-2 justify-center items-center px-6 py-2.5 text-sm font-bold text-zinc-700 dark:text-zinc-200 bg-white dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700 shadow-sm transition-all hover:bg-zinc-50 dark:hover:bg-zinc-700"
+          title="Export current payroll period to CSV"
+        >
+          <span class="text-lg material-symbols-outlined">csv</span>
+          CSV
+        </button>
+        <button
+          (click)="onExport()"
+          class="flex flex-1 gap-2 justify-center items-center px-6 py-2.5 text-sm font-bold text-zinc-700 dark:text-zinc-200 bg-white dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700 shadow-sm transition-all hover:bg-zinc-50 dark:hover:bg-zinc-700"
+        >
+          <span class="text-lg material-symbols-outlined">download</span>
+          Export
+        </button>
+        <button
+          (click)="onCalculate()"
+          [disabled]="calculating || loading"
+          class="flex flex-1 gap-2 justify-center items-center px-6 py-2.5 text-sm font-bold text-white rounded-lg shadow-lg transition-all bg-violet-600 hover:bg-violet-500 shadow-violet-600/25 btn-glow disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          @if (!calculating) {
+            <span class="text-lg material-symbols-outlined">calculate</span>
+          }
+          @if (calculating) {
+            <div class="w-4 h-4 rounded-full border-2 animate-spin border-white/30 border-t-white"></div>
+          }
+          {{ calculating ? "Processing..." : "Run Calculation" }}
+        </button>
       </div>
     </div>
+  </div>
 
-    <!-- Summary Cards -->
-    <div class="grid grid-cols-1 gap-6 mb-8 md:grid-cols-3">
-      <!-- Total Payroll -->
-      <div class="p-6 glass-panel rounded-2xl shadow-soft">
-        <div class="flex gap-4 items-center">
-          <div
-            class="flex justify-center items-center w-12 h-12 bg-orange-100 rounded-xl dark:bg-orange-900/30"
-          >
-            <span class="text-orange-600 material-symbols-outlined"
-              >payments</span
-            >
-          </div>
-          <div>
-            <p
-              class="text-xs font-bold tracking-widest uppercase text-slate-500 dark:text-slate-400"
-            >
-              Total Payout
-            </p>
-            <h3 class="text-2xl font-bold text-slate-900 dark:text-white">
-              {{ formatCurrency(totalNetSalary) }}
-            </h3>
-          </div>
-        </div>
-      </div>
-      <!-- Total Employees -->
-      <div class="p-6 glass-panel rounded-2xl shadow-soft">
-        <div class="flex gap-4 items-center">
-          <div
-            class="flex justify-center items-center w-12 h-12 bg-blue-100 rounded-xl dark:bg-blue-900/30"
-          >
-            <span class="text-blue-600 material-symbols-outlined">group</span>
-          </div>
-          <div>
-            <p
-              class="text-xs font-bold tracking-widest uppercase text-slate-500 dark:text-slate-400"
-            >
-              Total Employees
-            </p>
-            <h3 class="text-2xl font-bold text-slate-900 dark:text-white">
-              {{ payrollRecords.length }}
-            </h3>
-          </div>
-        </div>
-      </div>
-      <!-- Status -->
-      <div class="p-6 glass-panel rounded-2xl shadow-soft">
-        <div class="flex gap-4 items-center">
-          <div
-            class="flex justify-center items-center w-12 h-12 bg-green-100 rounded-xl dark:bg-green-900/30"
-          >
-            <span class="text-green-600 material-symbols-outlined"
-              >event_available</span
-            >
-          </div>
-          <div>
-            <p
-              class="text-xs font-bold tracking-widest uppercase text-slate-500 dark:text-slate-400"
-            >
-              Payroll Period
-            </p>
-            <h3 class="text-xl font-bold text-slate-900 dark:text-white">
-              {{ selectedMonth }} {{ selectedYear }}
-            </h3>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Controls Card -->
-    <div
-      class="p-6 mb-8 rounded-xl border border-gray-200 shadow-sm bg-surface-light dark:bg-surface-dark dark:border-gray-700"
-    >
-      <div class="flex flex-col gap-6 justify-between items-center lg:flex-row">
-        <!-- Month/Year Selection -->
-        <div class="flex flex-wrap gap-4 items-center">
-          <div class="flex gap-3 selection-group">
-            <div class="relative">
-              <select
-                [(ngModel)]="selectedMonth"
-                (change)="loadPayrollData()"
-                class="py-2.5 pr-10 pl-4 text-sm bg-gray-50 rounded-lg border border-gray-300 transition-all appearance-none outline-none dark:bg-gray-800 dark:border-gray-600 focus:ring-1 focus:ring-primary focus:border-primary dark:text-white"
-              >
-                @for (m of months; track trackByMonth($index, m)) {
-                  <option [value]="m">{{ m }}</option>
-                }
-              </select>
-              <span
-                class="absolute top-2.5 right-3 text-gray-400 pointer-events-none material-symbols-outlined"
-                >expand_more</span
-              >
-            </div>
-
-            <div class="relative">
-              <select
-                [(ngModel)]="selectedYear"
-                (change)="loadPayrollData()"
-                class="py-2.5 pr-10 pl-4 text-sm bg-gray-50 rounded-lg border border-gray-300 transition-all appearance-none outline-none dark:bg-gray-800 dark:border-gray-600 focus:ring-1 focus:ring-primary focus:border-primary dark:text-white"
-              >
-                @for (y of years; track trackByYear($index, y)) {
-                  <option [value]="y">{{ y }}</option>
-                }
-              </select>
-              <span
-                class="absolute top-2.5 right-3 text-gray-400 pointer-events-none material-symbols-outlined"
-                >expand_more</span
-              >
-            </div>
-          </div>
-
-          <button
-            (click)="loadPayrollData()"
-            class="p-2.5 text-gray-500 rounded-lg transition-all hover:text-primary hover:bg-orange-50 dark:hover:bg-orange-900/20"
-            title="Refresh Data"
-          >
-            <span class="material-symbols-outlined">refresh</span>
-          </button>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="flex gap-3 w-full lg:w-auto">
-          <button
-            (click)="exportPayrollCsv()"
-            class="flex flex-1 gap-2 justify-center items-center px-6 py-2.5 text-sm font-bold text-gray-700 bg-white rounded-lg border border-gray-300 shadow-sm transition-all hover:bg-gray-50 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600"
-            title="Export current payroll period to CSV"
-          >
-            <span class="text-lg material-symbols-outlined">csv</span>
-            CSV
-          </button>
-          <button
-            (click)="onExport()"
-            class="flex flex-1 gap-2 justify-center items-center px-6 py-2.5 text-sm font-bold text-gray-700 bg-white rounded-lg border border-gray-300 shadow-sm transition-all hover:bg-gray-50 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600"
-          >
-            <span class="text-lg material-symbols-outlined">download</span>
-            Export
-          </button>
-          <button
-            (click)="onCalculate()"
-            [disabled]="calculating || loading"
-            class="flex flex-1 gap-2 justify-center items-center px-6 py-2.5 text-sm font-bold text-white rounded-lg shadow-md transition-all bg-primary hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed shadow-orange-500/20"
-          >
-            @if (!calculating) {
-              <span class="text-lg material-symbols-outlined">calculate</span>
-            }
-            @if (calculating) {
-              <div
-                class="w-4 h-4 rounded-full border-2 animate-spin border-white/30 border-t-white"
-              ></div>
-            }
-            {{ calculating ? "Processing..." : "Run Calculation" }}
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Payroll Table -->
-    <div
-      class="overflow-hidden relative rounded-xl border border-gray-200 shadow-sm bg-surface-light dark:bg-surface-dark dark:border-gray-700"
-    >
-      <!-- Skeleton Loader -->
-      @if (loading) {
-        <div class="overflow-x-auto">
-          <table class="w-full text-sm text-left">
-            <thead
-              class="bg-gray-50 border-b border-gray-200 dark:bg-gray-800/50 dark:border-gray-700"
-            >
-              <tr
-                class="text-xs uppercase font-bold text-gray-500 dark:text-gray-400 tracking-wider"
-              >
-                <th class="px-6 py-4">Employee</th>
-                <th class="px-6 py-4">Monthly Salary</th>
-                <th class="px-6 py-4">Allowances</th>
-                <th class="px-6 py-4">Working Hours</th>
-                <th class="px-6 py-4">Net Salary</th>
-                <th class="px-6 py-4">Status</th>
-                <th class="px-6 py-4 text-right">Actions</th>
+  <!-- Payroll Table -->
+  <div class="overflow-hidden relative rounded-2xl glass-panel">
+    @if (loading) {
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left">
+          <thead class="bg-zinc-50/80 dark:bg-zinc-900/60 border-b border-zinc-100 dark:border-zinc-800">
+            <tr>
+              <th class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Employee</th>
+              <th class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Monthly Salary</th>
+              <th class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Allowances</th>
+              <th class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Working Hours</th>
+              <th class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Net Salary</th>
+              <th class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Status</th>
+              <th class="px-6 py-3.5 label-overline text-right text-zinc-500 dark:text-zinc-400">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
+            @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+              <tr class="animate-pulse">
+                <td class="px-6 py-4">
+                  <div class="flex items-center gap-3">
+                    <div class="skeleton skeleton-avatar w-9 h-9 shrink-0"></div>
+                    <div class="space-y-1.5">
+                      <div class="skeleton skeleton-text w-28 h-3"></div>
+                      <div class="skeleton skeleton-text w-20 h-2.5"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4"><div class="skeleton skeleton-text w-24 h-3"></div></td>
+                <td class="px-6 py-4"><div class="skeleton skeleton-text w-20 h-3"></div></td>
+                <td class="px-6 py-4"><div class="skeleton skeleton-text w-16 h-3"></div></td>
+                <td class="px-6 py-4"><div class="skeleton skeleton-text w-24 h-3"></div></td>
+                <td class="px-6 py-4"><div class="skeleton w-20 h-6 rounded-full"></div></td>
+                <td class="px-6 py-4"><div class="skeleton skeleton-button ml-auto w-8 h-8 rounded-lg"></div></td>
               </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-              @for (i of [1, 2, 3, 4, 5, 6]; track i) {
-                <tr class="animate-pulse">
-                  <td class="px-6 py-4">
-                    <div class="flex items-center gap-3">
-                      <div
-                        class="skeleton skeleton-avatar w-9 h-9 shrink-0"
-                      ></div>
-                      <div class="space-y-1.5">
-                        <div class="skeleton skeleton-text w-28 h-3"></div>
-                        <div class="skeleton skeleton-text w-20 h-2.5"></div>
-                      </div>
-                    </div>
-                  </td>
-                  <td class="px-6 py-4">
-                    <div class="skeleton skeleton-text w-24 h-3"></div>
-                  </td>
-                  <td class="px-6 py-4">
-                    <div class="skeleton skeleton-text w-20 h-3"></div>
-                  </td>
-                  <td class="px-6 py-4">
-                    <div class="skeleton skeleton-text w-16 h-3"></div>
-                  </td>
-                  <td class="px-6 py-4">
-                    <div class="skeleton skeleton-text w-24 h-3"></div>
-                  </td>
-                  <td class="px-6 py-4">
-                    <div class="skeleton w-20 h-6 rounded-full"></div>
-                  </td>
-                  <td class="px-6 py-4">
-                    <div
-                      class="skeleton skeleton-button ml-auto w-8 h-8 rounded-lg"
-                    ></div>
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-      }
+            }
+          </tbody>
+        </table>
+      </div>
+    }
 
-      @if (!loading) {
-        <div class="overflow-x-auto">
-          <table class="w-full text-sm text-left">
-            <thead
-              class="bg-gray-50 border-b border-gray-200 dark:bg-gray-800/50 dark:border-gray-700"
-            >
-              <tr
-                class="text-xs uppercase font-bold text-gray-500 dark:text-gray-400 tracking-wider"
-              >
-                <th scope="col" class="px-6 py-4">Employee</th>
-                <th scope="col" class="px-6 py-4">Monthly Salary</th>
-                <th scope="col" class="px-6 py-4">Allowances</th>
-                <th scope="col" class="px-6 py-4">Working Hours</th>
-                <th scope="col" class="px-6 py-4">Net Salary</th>
-                <th scope="col" class="px-6 py-4">Status</th>
-                <th scope="col" class="px-6 py-4 text-right">Actions</th>
+    @if (!loading) {
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left">
+          <thead class="bg-zinc-50/80 dark:bg-zinc-900/60 border-b border-zinc-100 dark:border-zinc-800">
+            <tr>
+              <th scope="col" class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Employee</th>
+              <th scope="col" class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Monthly Salary</th>
+              <th scope="col" class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Allowances</th>
+              <th scope="col" class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Working Hours</th>
+              <th scope="col" class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Net Salary</th>
+              <th scope="col" class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Status</th>
+              <th scope="col" class="px-6 py-3.5 label-overline text-right text-zinc-500 dark:text-zinc-400">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
+            @for (record of payrollRecords; track trackByRecord($index, record)) {
+              <tr class="group transition-colors hover:bg-violet-50/30 dark:hover:bg-zinc-800/40">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex gap-3 items-center">
+                    <img
+                      [src]="record.avatar || 'assets/images/defaults/avatar-1.png'"
+                      class="object-cover w-10 h-10 rounded-full border-2 border-white shadow-sm dark:border-zinc-700"
+                      alt=""
+                    />
+                    <div>
+                      <div class="font-bold text-zinc-900 dark:text-white">{{ record.employeeName }}</div>
+                      <div class="font-mono text-xs text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded mt-0.5 inline-block">{{ record.employeeCode }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 font-medium text-zinc-700 dark:text-zinc-300">{{ formatCurrency(record.baseSalary) }}</td>
+                <td class="px-6 py-4 font-medium text-green-600 dark:text-green-500">+{{ formatCurrency(record.allowances) }}</td>
+                <td class="px-6 py-4 text-zinc-600 dark:text-zinc-400">
+                  <div class="flex gap-1.5 items-center">
+                    <span class="font-bold">{{ record.displayWorkingHours }}</span>
+                    <span class="text-xs uppercase tracking-wide">hrs</span>
+                  </div>
+                </td>
+                <td class="px-6 py-4">
+                  <span class="text-base font-black text-zinc-900 dark:text-white">{{ formatCurrency(record.displayNetSalary) }}</span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span
+                    class="px-2.5 py-1 text-xs font-bold tracking-wide uppercase rounded-full border"
+                    [ngClass]="{
+                      'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800': record.status === 'Paid',
+                      'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-800': record.status === 'Calculated',
+                      'bg-zinc-100 text-zinc-600 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:border-zinc-700': record.status === 'Pending',
+                    }"
+                  >
+                    {{ record.status }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-right whitespace-nowrap">
+                  <div class="flex gap-2 justify-end">
+                    <button class="p-1.5 text-zinc-400 rounded-lg transition-all hover:text-violet-600 hover:bg-violet-50 dark:hover:bg-violet-900/20" title="View Breakdown">
+                      <span class="text-lg material-symbols-outlined">info</span>
+                    </button>
+                    <button
+                      (click)="onDownloadPdf(record)"
+                      [disabled]="!record.id"
+                      class="p-1.5 text-zinc-400 rounded-lg transition-all hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 disabled:opacity-30"
+                      title="Export PDF"
+                    >
+                      <span class="text-lg material-symbols-outlined">picture_as_pdf</span>
+                    </button>
+                    <button class="p-1.5 text-zinc-400 rounded-lg transition-all hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20" title="Send Payslip">
+                      <span class="text-lg material-symbols-outlined">mail</span>
+                    </button>
+                  </div>
+                </td>
               </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-              @for (
-                record of payrollRecords;
-                track trackByRecord($index, record)
-              ) {
-                <tr
-                  class="transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/30 group"
-                >
-                  <!-- Employee Column -->
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="flex gap-3 items-center">
-                      <img
-                        [src]="
-                          record.avatar || 'assets/images/defaults/avatar-1.png'
-                        "
-                        class="object-cover w-10 h-10 rounded-full border-2 border-white shadow-sm dark:border-gray-700"
-                        alt=""
-                      />
-                      <div>
-                        <div class="font-bold text-gray-900 dark:text-white">
-                          {{ record.employeeName }}
-                        </div>
-                        <div
-                          class="text-xs font-bold text-gray-400 uppercase tracking-tighter"
-                        >
-                          {{ record.employeeCode }}
-                        </div>
-                      </div>
+            }
+            @if (payrollRecords.length === 0) {
+              <tr>
+                <td colspan="7" class="py-16 text-center">
+                  <div class="flex flex-col items-center gap-3">
+                    <div class="w-14 h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
+                      <span class="text-3xl text-zinc-400 material-symbols-outlined">payments</span>
                     </div>
-                  </td>
-                  <!-- Monthly Salary -->
-                  <td
-                    class="px-6 py-4 font-medium text-gray-700 dark:text-gray-300"
-                  >
-                    {{ formatCurrency(record.baseSalary) }}
-                  </td>
-                  <!-- Allowances -->
-                  <td
-                    class="px-6 py-4 font-medium text-green-600 dark:text-green-500"
-                  >
-                    +{{ formatCurrency(record.allowances) }}
-                  </td>
-                  <!-- Hours -->
-                  <td class="px-6 py-4 text-gray-600 dark:text-gray-400">
-                    <div class="flex gap-1.5 items-center">
-                      <span class="font-bold">{{
-                        record.displayWorkingHours
-                      }}</span>
-                      <span class="text-xs uppercase tracking-wide">hrs</span>
+                    <div>
+                      <p class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">No payroll records found</p>
+                      <p class="text-xs text-zinc-400 mt-0.5">Try running a calculation for this period.</p>
                     </div>
-                  </td>
-                  <!-- Net Salary -->
-                  <td class="px-6 py-4">
-                    <span
-                      class="text-base font-bold text-gray-900 dark:text-white"
-                    >
-                      {{ formatCurrency(record.displayNetSalary) }}
-                    </span>
-                  </td>
-                  <!-- Status -->
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <span
-                      class="px-2.5 py-1 text-xs font-bold tracking-wide uppercase rounded-full border"
-                      [ngClass]="{
-                        'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800':
-                          record.status === 'Paid',
-                        'bg-yellow-100 text-yellow-700 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-800':
-                          record.status === 'Calculated',
-                        'bg-gray-100 text-gray-600 border-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700':
-                          record.status === 'Pending',
-                      }"
-                    >
-                      {{ record.status }}
-                    </span>
-                  </td>
-                  <!-- Actions -->
-                  <td class="px-6 py-4 text-right whitespace-nowrap">
-                    <div class="flex gap-2 justify-end">
-                      <button
-                        class="p-1.5 text-gray-400 rounded-lg transition-all hover:text-primary hover:bg-orange-50 dark:hover:bg-orange-900/20"
-                        title="View Breakdown"
-                      >
-                        <span class="text-lg material-symbols-outlined"
-                          >info</span
-                        >
-                      </button>
-                      <button
-                        (click)="onDownloadPdf(record)"
-                        [disabled]="!record.id"
-                        class="p-1.5 text-gray-400 rounded-lg transition-all hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 disabled:opacity-30"
-                        title="Export PDF"
-                      >
-                        <span class="text-lg material-symbols-outlined"
-                          >picture_as_pdf</span
-                        >
-                      </button>
-                      <button
-                        class="p-1.5 text-gray-400 rounded-lg transition-all hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20"
-                        title="Send Payslip"
-                      >
-                        <span class="text-lg material-symbols-outlined"
-                          >mail</span
-                        >
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              }
-              <!-- Empty State -->
-              @if (payrollRecords.length === 0) {
-                <tr>
-                  <td
-                    colspan="7"
-                    class="px-6 py-20 text-center text-gray-500 dark:text-gray-400"
-                  >
-                    <div class="flex flex-col items-center">
-                      <span
-                        class="mb-4 text-5xl text-gray-300 material-symbols-outlined dark:text-gray-600"
-                        >payments</span
-                      >
-                      <p
-                        class="text-lg font-bold text-gray-900 dark:text-white"
-                      >
-                        No payroll records found
-                      </p>
-                      <p class="text-sm">
-                        Try running a calculation for this period.
-                      </p>
-                    </div>
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-      }
-    </div>
-  </main>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
 </div>

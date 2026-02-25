@@ -1,479 +1,307 @@
-<div
-  class="flex flex-col min-h-screen text-gray-900 transition-colors duration-200 attendance-layout bg-background-light dark:bg-background-dark dark:text-gray-100"
->
-  <!-- Main Content -->
-  <main class="flex-1 max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
-    <!-- Page Header -->
-    <div
-      class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4"
-    >
-      <div>
-        <h1
-          class="text-2xl font-extrabold text-slate-800 dark:text-white tracking-tight"
-        >
-          Attendance Tracking
-        </h1>
-        <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">
-          Monitor daily attendance, working hours, and late-in records.
-        </p>
+﻿<div class="p-6 max-w-[1600px] mx-auto">
+  <!-- Page Header -->
+  <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+      <p class="label-overline text-violet-500 mb-1">Workforce</p>
+      <h1 class="text-2xl font-black tracking-tight text-zinc-900 dark:text-white">Attendance Tracking</h1>
+      <p class="text-zinc-500 dark:text-zinc-400 text-sm mt-1">Monitor daily attendance, working hours, and late-in records.</p>
+    </div>
+  </div>
+
+  <!-- Stats Row -->
+  <div class="grid grid-cols-2 gap-4 mb-8 md:grid-cols-4 md:gap-6">
+    <div class="p-5 glass-panel rounded-2xl shadow-soft">
+      <div class="flex flex-col items-center text-center">
+        <div class="flex items-center justify-center w-10 h-10 mb-3 bg-green-100 dark:bg-green-900/30 rounded-xl">
+          <span class="text-green-600 material-symbols-outlined">person_check</span>
+        </div>
+        <h4 class="text-2xl font-black text-zinc-900 dark:text-white">{{ stats.present }}</h4>
+        <p class="label-overline text-zinc-400 mt-1">Present</p>
       </div>
     </div>
-
-    <!-- Stats Row -->
-    <div class="grid grid-cols-2 gap-4 mb-8 md:grid-cols-4 md:gap-6">
-      <!-- Present -->
-      <div class="p-5 glass-panel rounded-2xl shadow-soft">
-        <div class="flex flex-col items-center text-center">
-          <div
-            class="flex items-center justify-center w-10 h-10 mb-3 bg-green-100 rounded-xl dark:bg-green-900/30"
-          >
-            <span class="text-green-600 material-symbols-outlined"
-              >person_check</span
-            >
-          </div>
-          <h4 class="text-2xl font-bold text-slate-900 dark:text-white">
-            {{ stats.present }}
-          </h4>
-          <p class="text-xs font-bold tracking-widest uppercase text-slate-400">
-            Present
-          </p>
+    <div class="p-5 glass-panel rounded-2xl shadow-soft">
+      <div class="flex flex-col items-center text-center">
+        <div class="flex items-center justify-center w-10 h-10 mb-3 bg-amber-100 dark:bg-amber-900/30 rounded-xl">
+          <span class="text-amber-500 material-symbols-outlined">schedule</span>
         </div>
-      </div>
-      <!-- Late -->
-      <div class="p-5 glass-panel rounded-2xl shadow-soft">
-        <div class="flex flex-col items-center text-center">
-          <div
-            class="flex items-center justify-center w-10 h-10 mb-3 bg-orange-100 rounded-xl dark:bg-orange-900/30"
-          >
-            <span class="text-orange-600 material-symbols-outlined"
-              >schedule</span
-            >
-          </div>
-          <h4 class="text-2xl font-bold text-slate-900 dark:text-white">
-            {{ stats.late }}
-          </h4>
-          <p class="text-xs font-bold tracking-widest uppercase text-slate-400">
-            Late In
-          </p>
-        </div>
-      </div>
-      <!-- Absent -->
-      <div class="p-5 glass-panel rounded-2xl shadow-soft">
-        <div class="flex flex-col items-center text-center">
-          <div
-            class="flex items-center justify-center w-10 h-10 mb-3 bg-red-100 rounded-xl dark:bg-red-900/30"
-          >
-            <span class="text-red-600 material-symbols-outlined"
-              >person_off</span
-            >
-          </div>
-          <h4 class="text-2xl font-bold text-slate-900 dark:text-white">
-            {{ stats.absent }}
-          </h4>
-          <p class="text-xs font-bold tracking-widest uppercase text-slate-400">
-            Absent
-          </p>
-        </div>
-      </div>
-      <!-- On Leave -->
-      <div class="p-5 glass-panel rounded-2xl shadow-soft">
-        <div class="flex flex-col items-center text-center">
-          <div
-            class="flex items-center justify-center w-10 h-10 mb-3 bg-blue-100 rounded-xl dark:bg-blue-900/30"
-          >
-            <span class="text-blue-600 material-symbols-outlined"
-              >beach_access</span
-            >
-          </div>
-          <h4 class="text-2xl font-bold text-slate-900 dark:text-white">
-            {{ stats.onLeave }}
-          </h4>
-          <p class="text-xs font-bold tracking-widest uppercase text-slate-400">
-            On Leave
-          </p>
-        </div>
+        <h4 class="text-2xl font-black text-zinc-900 dark:text-white">{{ stats.late }}</h4>
+        <p class="label-overline text-zinc-400 mt-1">Late In</p>
       </div>
     </div>
-
-    <!-- Actions Bar -->
-    <div
-      class="flex flex-col gap-4 justify-between items-center p-4 mb-8 glass-panel rounded-xl sm:flex-row"
-    >
-      <div class="flex flex-1 gap-4 items-center w-full sm:w-auto">
-        <div class="relative w-full sm:w-48">
-          <input
-            type="date"
-            [ngModel]="selectedDate | date: 'yyyy-MM-dd'"
-            (ngModelChange)="onDateChange($event)"
-            class="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white focus:ring-1 focus:ring-primary outline-none"
-          />
+    <div class="p-5 glass-panel rounded-2xl shadow-soft">
+      <div class="flex flex-col items-center text-center">
+        <div class="flex items-center justify-center w-10 h-10 mb-3 bg-red-100 dark:bg-red-900/30 rounded-xl">
+          <span class="text-red-600 material-symbols-outlined">person_off</span>
         </div>
-        <p
-          class="hidden text-xs font-bold text-gray-400 uppercase tracking-widest lg:block"
-        >
-          Records for Selected Day
-        </p>
-      </div>
-
-      <div class="flex gap-3 w-full sm:w-auto">
-        <button
-          (click)="openSimulator()"
-          class="flex flex-1 gap-2 justify-center items-center px-4 py-2 text-sm font-bold text-gray-700 bg-white border border-gray-300 rounded-lg transition-all hover:bg-gray-50 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600"
-        >
-          <span class="material-symbols-outlined text-lg">qr_code_scanner</span>
-          Simulator
-        </button>
-        <button
-          (click)="processLogs()"
-          class="flex flex-1 gap-2 justify-center items-center px-6 py-2 text-sm font-bold text-white rounded-lg transition-all bg-primary hover:bg-orange-600 shadow-md shadow-orange-500/20"
-        >
-          <span class="material-symbols-outlined text-lg">sync_alt</span>
-          Process Daily Logs
-        </button>
+        <h4 class="text-2xl font-black text-zinc-900 dark:text-white">{{ stats.absent }}</h4>
+        <p class="label-overline text-zinc-400 mt-1">Absent</p>
       </div>
     </div>
-
-    <!-- Table Section -->
-    <div
-      class="overflow-hidden border border-gray-200 shadow-sm rounded-xl bg-surface-light dark:bg-surface-dark dark:border-gray-700"
-    >
-      @if (loading) {
-        <div class="overflow-x-auto">
-          <table class="w-full text-sm text-left">
-            <thead
-              class="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700 text-xs uppercase font-bold text-gray-500 dark:text-gray-400 tracking-wider"
-            >
-              <tr>
-                <th class="px-6 py-4">Employee</th>
-                <th class="px-6 py-4">Check-In</th>
-                <th class="px-6 py-4">Check-Out</th>
-                <th class="px-6 py-4">Working Hours</th>
-                <th class="px-6 py-4">Status</th>
-                <th class="px-6 py-4 text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-              @for (i of [1, 2, 3, 4, 5, 6]; track i) {
-                <tr class="animate-pulse">
-                  <td class="px-6 py-4">
-                    <div class="flex items-center gap-3">
-                      <div
-                        class="skeleton skeleton-avatar w-9 h-9 shrink-0"
-                      ></div>
-                      <div class="space-y-1.5">
-                        <div class="skeleton skeleton-text w-28 h-3"></div>
-                        <div class="skeleton skeleton-text w-20 h-2.5"></div>
-                      </div>
-                    </div>
-                  </td>
-                  <td class="px-6 py-4">
-                    <div class="skeleton skeleton-text w-20 h-3"></div>
-                  </td>
-                  <td class="px-6 py-4">
-                    <div class="skeleton skeleton-text w-20 h-3"></div>
-                  </td>
-                  <td class="px-6 py-4">
-                    <div class="skeleton skeleton-text w-16 h-3"></div>
-                  </td>
-                  <td class="px-6 py-4">
-                    <div class="skeleton w-20 h-6 rounded-full"></div>
-                  </td>
-                  <td class="px-6 py-4">
-                    <div
-                      class="skeleton skeleton-button ml-auto w-8 h-8 rounded-lg"
-                    ></div>
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
+    <div class="p-5 glass-panel rounded-2xl shadow-soft">
+      <div class="flex flex-col items-center text-center">
+        <div class="flex items-center justify-center w-10 h-10 mb-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
+          <span class="text-blue-600 material-symbols-outlined">beach_access</span>
         </div>
-      }
-
-      @if (!loading) {
-        <div class="overflow-x-auto">
-          <table class="w-full text-sm text-left">
-            <thead
-              class="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700 text-xs uppercase font-bold text-gray-500 dark:text-gray-400 tracking-wider"
-            >
-              <tr>
-                <th scope="col" class="px-6 py-4">Employee</th>
-                <th scope="col" class="px-6 py-4">Check-In</th>
-                <th scope="col" class="px-6 py-4">Check-Out</th>
-                <th scope="col" class="px-6 py-4">Working Hours</th>
-                <th scope="col" class="px-6 py-4">Status</th>
-                <th scope="col" class="px-6 py-4 text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-              @for (record of records; track trackByIndex($index, record)) {
-                <tr
-                  class="transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/30 group"
-                >
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="flex gap-3 items-center">
-                      <img
-                        [src]="record.employee.avatar"
-                        class="w-9 h-9 rounded-full border border-gray-200 dark:border-gray-600 object-cover"
-                      />
-                      <div>
-                        <div class="font-bold text-gray-900 dark:text-white">
-                          {{ record.employee.name }}
-                        </div>
-                        <div
-                          class="text-xs font-bold text-gray-400 uppercase tracking-tighter"
-                        >
-                          {{ record.employee.employeeCode }}
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td
-                    class="px-6 py-4 font-mono text-xs text-gray-600 dark:text-gray-400"
-                  >
-                    {{ record.checkIn }}
-                  </td>
-                  <td
-                    class="px-6 py-4 font-mono text-xs text-gray-600 dark:text-gray-400"
-                  >
-                    {{ record.checkOut }}
-                  </td>
-                  <td class="px-6 py-4">
-                    <div class="flex items-center gap-1.5">
-                      <span
-                        class="font-bold text-gray-700 dark:text-gray-300"
-                        >{{ record.workingHours || "-" }}</span
-                      >
-                      <span
-                        class="text-xs uppercase tracking-wide text-gray-400"
-                        >hrs</span
-                      >
-                    </div>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <span
-                      [ngClass]="getStatusClass(record.status)"
-                      class="px-2.5 py-1 text-xs font-bold uppercase rounded-full border"
-                    >
-                      {{ record.status }}
-                    </span>
-                  </td>
-                  <td class="px-6 py-4 text-right">
-                    <button
-                      class="p-1.5 text-gray-400 rounded-lg transition-all hover:text-primary hover:bg-orange-50 dark:hover:bg-orange-900/20"
-                    >
-                      <span class="material-symbols-outlined text-lg"
-                        >edit_note</span
-                      >
-                    </button>
-                  </td>
-                </tr>
-              }
-              @if (records.length === 0) {
-                <tr>
-                  <td
-                    colspan="6"
-                    class="px-6 py-20 text-center text-gray-500 dark:text-gray-400"
-                  >
-                    <div class="flex flex-col items-center">
-                      <span
-                        class="material-symbols-outlined text-5xl text-gray-300 dark:text-gray-600 mb-4"
-                        >person_search</span
-                      >
-                      <p
-                        class="text-lg font-bold text-gray-900 dark:text-white"
-                      >
-                        No attendance records
-                      </p>
-                      <p class="text-sm">
-                        No logs found for the selected date.
-                      </p>
-                    </div>
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-      }
-    </div>
-
-    <!-- Pagination -->
-    <div
-      class="flex flex-col justify-between items-center px-1 mt-6 sm:flex-row"
-    >
-      <div class="mb-4 text-sm text-gray-500 dark:text-gray-400 sm:mb-0">
-        Show
-        <span class="font-medium text-gray-900 dark:text-white">{{
-          (currentPage - 1) * pageSize + 1
-        }}</span>
-        to
-        <span class="font-medium text-gray-900 dark:text-white">{{
-          Math.min(currentPage * pageSize, totalItems)
-        }}</span>
-        of
-        <span class="font-medium text-gray-900 dark:text-white">{{
-          totalItems
-        }}</span>
-        results
+        <h4 class="text-2xl font-black text-zinc-900 dark:text-white">{{ stats.onLeave }}</h4>
+        <p class="label-overline text-zinc-400 mt-1">On Leave</p>
       </div>
-      <nav
-        aria-label="Pagination"
-        class="inline-flex relative z-0 -space-x-px rounded-md shadow-sm"
+    </div>
+  </div>
+
+  <!-- Actions Bar -->
+  <div class="flex flex-col gap-4 justify-between items-center p-5 mb-6 glass-panel elevated-card rounded-2xl sm:flex-row">
+    <div class="flex flex-1 gap-4 items-center w-full sm:w-auto">
+      <div class="relative w-full sm:w-48">
+        <input
+          type="date"
+          [ngModel]="selectedDate | date: 'yyyy-MM-dd'"
+          (ngModelChange)="onDateChange($event)"
+          class="w-full px-4 py-2.5 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-sm text-zinc-900 dark:text-white focus:ring-1 focus:ring-violet-500 focus:border-violet-500 outline-none"
+        />
+      </div>
+      <p class="hidden text-xs font-bold text-zinc-400 uppercase tracking-widest lg:block">Records for Selected Day</p>
+    </div>
+    <div class="flex gap-3 w-full sm:w-auto">
+      <button
+        (click)="openSimulator()"
+        class="flex flex-1 gap-2 justify-center items-center px-4 py-2.5 text-sm font-bold text-zinc-700 dark:text-zinc-200 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg transition-all hover:bg-zinc-50 dark:hover:bg-zinc-700"
       >
+        <span class="material-symbols-outlined text-lg">qr_code_scanner</span>
+        Simulator
+      </button>
+      <button
+        (click)="processLogs()"
+        class="flex flex-1 gap-2 justify-center items-center px-6 py-2.5 text-sm font-bold text-white rounded-lg transition-all bg-violet-600 hover:bg-violet-500 shadow-lg shadow-violet-600/25 btn-glow"
+      >
+        <span class="material-symbols-outlined text-lg">sync_alt</span>
+        Process Daily Logs
+      </button>
+    </div>
+  </div>
+
+  <!-- Table Section -->
+  <div class="overflow-hidden rounded-2xl glass-panel">
+    @if (loading) {
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left">
+          <thead class="bg-zinc-50/80 dark:bg-zinc-900/60 border-b border-zinc-100 dark:border-zinc-800">
+            <tr>
+              <th class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Employee</th>
+              <th class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Check-In</th>
+              <th class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Check-Out</th>
+              <th class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Working Hours</th>
+              <th class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Status</th>
+              <th class="px-6 py-3.5 label-overline text-right text-zinc-500 dark:text-zinc-400">Action</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
+            @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+              <tr class="animate-pulse">
+                <td class="px-6 py-4">
+                  <div class="flex items-center gap-3">
+                    <div class="skeleton skeleton-avatar w-9 h-9 shrink-0"></div>
+                    <div class="space-y-1.5">
+                      <div class="skeleton skeleton-text w-28 h-3"></div>
+                      <div class="skeleton skeleton-text w-20 h-2.5"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4"><div class="skeleton skeleton-text w-20 h-3"></div></td>
+                <td class="px-6 py-4"><div class="skeleton skeleton-text w-20 h-3"></div></td>
+                <td class="px-6 py-4"><div class="skeleton skeleton-text w-16 h-3"></div></td>
+                <td class="px-6 py-4"><div class="skeleton w-20 h-6 rounded-full"></div></td>
+                <td class="px-6 py-4"><div class="skeleton skeleton-button ml-auto w-8 h-8 rounded-lg"></div></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+    @if (!loading) {
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left">
+          <thead class="bg-zinc-50/80 dark:bg-zinc-900/60 border-b border-zinc-100 dark:border-zinc-800">
+            <tr>
+              <th scope="col" class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Employee</th>
+              <th scope="col" class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Check-In</th>
+              <th scope="col" class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Check-Out</th>
+              <th scope="col" class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Working Hours</th>
+              <th scope="col" class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Status</th>
+              <th scope="col" class="px-6 py-3.5 label-overline text-right text-zinc-500 dark:text-zinc-400">Action</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
+            @for (record of records; track trackByIndex($index, record)) {
+              <tr class="group transition-colors hover:bg-violet-50/30 dark:hover:bg-zinc-800/40">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex gap-3 items-center">
+                    <img [src]="record.employee.avatar" class="w-9 h-9 rounded-full border border-zinc-200 dark:border-zinc-700 object-cover" />
+                    <div>
+                      <div class="font-bold text-zinc-900 dark:text-white">{{ record.employee.name }}</div>
+                      <div class="font-mono text-xs px-1.5 py-0.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-400 rounded mt-0.5 inline-block">{{ record.employee.employeeCode }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 font-mono text-xs text-zinc-600 dark:text-zinc-400">{{ record.checkIn }}</td>
+                <td class="px-6 py-4 font-mono text-xs text-zinc-600 dark:text-zinc-400">{{ record.checkOut }}</td>
+                <td class="px-6 py-4">
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-bold text-zinc-700 dark:text-zinc-300">{{ record.workingHours || "-" }}</span>
+                    <span class="text-xs uppercase tracking-wide text-zinc-400">hrs</span>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span [ngClass]="getStatusClass(record.status)" class="px-2.5 py-1 text-xs font-bold uppercase rounded-full border">
+                    {{ record.status }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-right">
+                  <button class="p-1.5 text-zinc-400 rounded-lg transition-all hover:text-violet-600 hover:bg-violet-50 dark:hover:bg-violet-900/20">
+                    <span class="material-symbols-outlined text-lg">edit_note</span>
+                  </button>
+                </td>
+              </tr>
+            }
+            @if (records.length === 0) {
+              <tr>
+                <td colspan="6" class="py-16 text-center">
+                  <div class="flex flex-col items-center gap-3">
+                    <div class="w-14 h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
+                      <span class="text-3xl text-zinc-400 material-symbols-outlined">person_search</span>
+                    </div>
+                    <div>
+                      <p class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">No attendance records</p>
+                      <p class="text-xs text-zinc-400 mt-0.5">No logs found for the selected date.</p>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+
+  <!-- Pagination -->
+  <div class="flex flex-col justify-between items-center px-1 mt-6 sm:flex-row">
+    <div class="mb-4 text-sm text-zinc-500 dark:text-zinc-400 sm:mb-0">
+      Show
+      <span class="font-semibold text-zinc-900 dark:text-white">{{ (currentPage - 1) * pageSize + 1 }}</span>
+      to
+      <span class="font-semibold text-zinc-900 dark:text-white">{{ Math.min(currentPage * pageSize, totalItems) }}</span>
+      of
+      <span class="font-semibold text-zinc-900 dark:text-white">{{ totalItems }}</span>
+      results
+    </div>
+    <nav class="inline-flex gap-1" aria-label="Pagination">
+      <button
+        (click)="goToPage(currentPage - 1)"
+        [disabled]="currentPage === 1"
+        class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-sm font-medium text-zinc-500 border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed"
+      >
+        <span class="text-sm material-symbols-outlined">chevron_left</span>
+      </button>
+      @for (page of getPageNumbers(); track trackByPage($index, page)) {
         <button
-          (click)="goToPage(currentPage - 1)"
-          [disabled]="currentPage === 1"
-          class="inline-flex relative items-center px-2 py-2 text-sm font-medium text-gray-500 rounded-l-md border border-gray-300 dark:border-gray-600 bg-surface-light dark:bg-surface-dark dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+          (click)="goToPage(page)"
+          class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-sm font-medium transition-colors"
+          [ngClass]="page === currentPage
+            ? 'bg-violet-600 text-white shadow-md shadow-violet-600/25'
+            : 'text-zinc-500 border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800'"
         >
-          <span class="text-sm material-symbols-outlined">chevron_left</span>
+          {{ page }}
         </button>
-        @for (page of getPageNumbers(); track trackByPage($index, page)) {
+      }
+      <button
+        (click)="goToPage(currentPage + 1)"
+        [disabled]="currentPage === totalPagesCount"
+        class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-sm font-medium text-zinc-500 border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed"
+      >
+        <span class="text-sm material-symbols-outlined">chevron_right</span>
+      </button>
+    </nav>
+  </div>
+</div>
+
+<!-- Attendance Simulator Modal -->
+@if (showSimulator) {
+  <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-zinc-900/60 backdrop-blur-sm">
+    <div class="w-full max-w-lg bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl overflow-hidden border border-zinc-200 dark:border-zinc-700 animate-fade-in-up">
+      <div class="p-6 border-b border-zinc-100 dark:border-zinc-800 flex justify-between items-center bg-zinc-50/50 dark:bg-zinc-800/50">
+        <div>
+          <h3 class="text-base font-black text-zinc-900 dark:text-white">Attendance Simulator</h3>
+          <p class="text-xs text-zinc-400 font-medium mt-0.5">Clock in/out for employees to test system logic</p>
+        </div>
+        <button (click)="closeSimulator()" class="text-zinc-400 hover:text-zinc-600 dark:hover:text-white transition-colors">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="p-8">
+        <div class="flex flex-col items-center mb-8">
+          <div class="px-6 py-3 bg-zinc-900 rounded-xl border-2 border-zinc-800 shadow-inner">
+            <span class="text-4xl font-mono font-bold text-violet-400">{{ currentTime | date: "HH:mm:ss" }}</span>
+          </div>
+          <p class="mt-2 label-overline text-zinc-400">{{ currentTime | date: "EEEE, MMMM dd" }}</p>
+        </div>
+        <div class="space-y-4">
+          <div>
+            <label class="label-overline text-zinc-500 dark:text-zinc-400 block mb-1.5">Employee Search</label>
+            <div class="relative">
+              <span class="material-symbols-outlined absolute left-3 top-2.5 text-zinc-400 text-lg">search</span>
+              <input
+                type="text"
+                [(ngModel)]="searchTerm"
+                (input)="filterEmployees()"
+                placeholder="Enter name or employee ID..."
+                class="w-full pl-10 pr-4 py-2.5 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all dark:text-white"
+              />
+            </div>
+          </div>
+          <div>
+            <label class="label-overline text-zinc-500 dark:text-zinc-400 block mb-1.5">Select Employee</label>
+            <select
+              [(ngModel)]="selectedEmployeeId"
+              class="w-full px-4 py-2.5 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all dark:text-white appearance-none"
+            >
+              <option value="" disabled>-- Choose an employee --</option>
+              @for (emp of filteredEmployees; track trackByEmployeeId($index, emp)) {
+                <option [value]="emp.id">{{ emp.fullName }} ({{ emp.employeeCode }})</option>
+              }
+            </select>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4 mt-8">
           <button
-            (click)="goToPage(page)"
-            [class.bg-primary]="page === currentPage"
-            [class.border-primary]="page === currentPage"
-            [class.text-white]="page === currentPage"
-            class="inline-flex relative items-center px-4 py-2 text-sm font-medium border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800"
+            (click)="simulateCheckIn()"
+            [disabled]="!selectedEmployeeId"
+            class="flex items-center justify-center gap-2 py-3 bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl transition-all shadow-lg shadow-green-500/20 disabled:opacity-50"
+          >
+            <span class="material-symbols-outlined text-xl">login</span>
+            Check-In
+          </button>
+          <button
+            (click)="simulateCheckOut()"
+            [disabled]="!selectedEmployeeId"
+            class="flex items-center justify-center gap-2 py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl transition-all shadow-lg shadow-rose-500/20 disabled:opacity-50"
+          >
+            <span class="material-symbols-outlined text-xl">logout</span>
+            Check-Out
+          </button>
+        </div>
+        @if (simulatorMessage) {
+          <div
+            class="mt-6 p-4 rounded-xl text-sm font-medium animate-pulse"
             [ngClass]="{
-              'bg-surface-light dark:bg-surface-dark text-gray-500 dark:text-gray-400':
-                page !== currentPage,
+              'bg-green-50 text-green-700 border border-green-100': simulatorStatus === 'success',
+              'bg-red-50 text-red-700 border border-red-100': simulatorStatus === 'error',
             }"
           >
-            {{ page }}
-          </button>
+            {{ simulatorMessage }}
+          </div>
         }
-        <button
-          (click)="goToPage(currentPage + 1)"
-          [disabled]="currentPage === totalPagesCount"
-          class="inline-flex relative items-center px-2 py-2 text-sm font-medium text-gray-500 rounded-r-md border border-gray-300 dark:border-gray-600 bg-surface-light dark:bg-surface-dark dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <span class="text-sm material-symbols-outlined">chevron_right</span>
-        </button>
-      </nav>
-    </div>
-  </main>
-
-  <!-- Attendance Simulator Modal -->
-  @if (showSimulator) {
-    <div
-      class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
-    >
-      <div
-        class="w-full max-w-lg bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden animate-fade-in-up"
-      >
-        <!-- Header -->
-        <div
-          class="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/50"
-        >
-          <div>
-            <h3 class="text-xl font-bold text-gray-900 dark:text-white">
-              Attendance Simulator
-            </h3>
-            <p class="text-xs text-gray-400 font-medium">
-              Clock in/out for employees to test system logic
-            </p>
-          </div>
-          <button
-            (click)="closeSimulator()"
-            class="text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors"
-          >
-            <span class="material-symbols-outlined">close</span>
-          </button>
-        </div>
-        <div class="p-8">
-          <!-- Digital Clock -->
-          <div class="flex flex-col items-center mb-8">
-            <div
-              class="px-6 py-3 bg-gray-900 rounded-xl border-2 border-gray-800 shadow-inner"
-            >
-              <span class="text-4xl font-mono font-bold text-primary">{{
-                currentTime | date: "HH:mm:ss"
-              }}</span>
-            </div>
-            <p
-              class="mt-2 text-xs font-bold text-gray-400 uppercase tracking-widest"
-            >
-              {{ currentTime | date: "EEEE, MMMM dd" }}
-            </p>
-          </div>
-          <!-- Search & Select -->
-          <div class="space-y-4">
-            <div>
-              <label
-                class="block mb-1.5 text-xs font-bold tracking-widest uppercase text-slate-500"
-                >Employee Search</label
-              >
-              <div class="relative">
-                <span
-                  class="material-symbols-outlined absolute left-3 top-2.5 text-gray-400 text-lg"
-                  >search</span
-                >
-                <input
-                  type="text"
-                  [(ngModel)]="searchTerm"
-                  (input)="filterEmployees()"
-                  placeholder="Enter name or employee ID..."
-                  class="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all dark:text-white"
-                />
-              </div>
-            </div>
-            <div>
-              <label
-                class="block mb-1.5 text-xs font-bold tracking-widest uppercase text-slate-500"
-                >Select Employee</label
-              >
-              <select
-                [(ngModel)]="selectedEmployeeId"
-                class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all dark:text-white appearance-none"
-              >
-                <option value="" disabled>-- Choose an employee --</option>
-                @for (
-                  emp of filteredEmployees;
-                  track trackByEmployeeId($index, emp)
-                ) {
-                  <option [value]="emp.id">
-                    {{ emp.fullName }} ({{ emp.employeeCode }})
-                  </option>
-                }
-              </select>
-            </div>
-          </div>
-          <!-- Actions -->
-          <div class="grid grid-cols-2 gap-4 mt-8">
-            <button
-              (click)="simulateCheckIn()"
-              [disabled]="!selectedEmployeeId"
-              class="flex items-center justify-center gap-2 py-3 bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl transition-all shadow-lg shadow-green-500/20 disabled:opacity-50"
-            >
-              <span class="material-symbols-outlined text-xl">login</span>
-              Check-In
-            </button>
-            <button
-              (click)="simulateCheckOut()"
-              [disabled]="!selectedEmployeeId"
-              class="flex items-center justify-center gap-2 py-3 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl transition-all shadow-lg shadow-orange-500/20 disabled:opacity-50"
-            >
-              <span class="material-symbols-outlined text-xl">logout</span>
-              Check-Out
-            </button>
-          </div>
-          <!-- Feedback Message -->
-          @if (simulatorMessage) {
-            <div
-              class="mt-6 p-4 rounded-xl text-sm font-medium animate-pulse"
-              [ngClass]="{
-                'bg-green-50 text-green-700 border border-green-100':
-                  simulatorStatus === 'success',
-                'bg-red-50 text-red-700 border border-red-100':
-                  simulatorStatus === 'error',
-              }"
-            >
-              {{ simulatorMessage }}
-            </div>
-          }
-        </div>
       </div>
     </div>
-  }
-</div>
+  </div>
+}

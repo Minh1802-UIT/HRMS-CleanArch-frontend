@@ -23,7 +23,7 @@
       class="flex items-center justify-center w-8 h-8 rounded-lg text-zinc-500 hover:text-white hover:bg-zinc-800 transition-colors flex-shrink-0"
     >
       <span class="material-symbols-outlined text-[20px]">
-        {{ collapsed() ? 'menu_open' : 'menu' }}
+        {{ collapsed() ? "menu_open" : "menu" }}
       </span>
     </button>
   </div>
@@ -52,9 +52,11 @@
           [title]="collapsed() ? item.label : ''"
           [ngClass]="{
             'bg-violet-600/15 text-[#a78bfa]': isActive(item.activePage),
-            'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/70': !isActive(item.activePage),
+            'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/70': !isActive(
+              item.activePage
+            ),
             'justify-center': collapsed(),
-            'justify-start': !collapsed()
+            'justify-start': !collapsed(),
           }"
           class="relative flex items-center gap-3 mx-2 rounded-lg px-3 py-2 text-[13px] font-medium transition-all duration-150 group/item"
         >
@@ -67,7 +69,11 @@
 
           <!-- Icon -->
           <span
-            [ngClass]="isActive(item.activePage) ? 'text-[#a78bfa]' : 'text-zinc-400 group-hover/item:text-zinc-200'"
+            [ngClass]="
+              isActive(item.activePage)
+                ? 'text-[#a78bfa]'
+                : 'text-zinc-400 group-hover/item:text-zinc-200'
+            "
             class="material-symbols-outlined text-[20px] flex-shrink-0 transition-colors"
           >
             {{ item.icon }}
