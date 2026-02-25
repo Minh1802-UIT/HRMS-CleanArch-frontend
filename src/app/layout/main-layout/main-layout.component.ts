@@ -10,7 +10,7 @@ import { Subject, filter, map, takeUntil } from 'rxjs';
   standalone: true,
   imports: [RouterOutlet, RouterModule, SharedNavbarComponent, AppFooter],
   template: `
-    <div class="min-h-screen transition-colors duration-500 bg-slate-50 dark:bg-slate-950">
+    <div class="min-h-screen transition-colors duration-500 bg-zinc-50 dark:bg-[#09090b]">
       <app-shared-navbar
         [activePage]="activePage"
         [showSubTabs]="false"

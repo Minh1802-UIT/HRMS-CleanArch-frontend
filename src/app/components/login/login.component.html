@@ -1,219 +1,201 @@
 <div
-  class="flex min-h-screen w-full flex-row overflow-hidden bg-background-light dark:bg-background-dark font-display text-[#1c120d] dark:text-[#f4ebe7]"
-  >
+  class="flex min-h-screen w-full flex-row overflow-hidden bg-zinc-50 dark:bg-zinc-950 font-display text-zinc-900 dark:text-zinc-100"
+>
   <!-- Left Side: Form -->
   <div
-    class="flex w-full flex-col justify-center px-6 py-12 lg:w-1/2 lg:px-20 xl:px-32 bg-surface-light dark:bg-background-dark relative z-10"
-    >
+    class="flex w-full flex-col justify-center px-6 py-12 lg:w-1/2 lg:px-20 xl:px-32 bg-white dark:bg-zinc-900 relative z-10 border-r border-zinc-100 dark:border-zinc-800"
+  >
     <div class="mx-auto w-full max-w-[480px]">
       <!-- Header Section -->
       <div class="mb-8 text-center lg:text-left">
         <div
-          class="flex items-center gap-2 mb-8 text-primary font-extrabold text-2xl tracking-tighter cursor-pointer"
+          class="flex items-center gap-2 mb-8 font-extrabold text-2xl tracking-tighter cursor-pointer"
           routerLink="/"
-          >
-          <i class="pi pi-share-alt text-3xl"></i>
-          HRMagnet
+        >
+          <div class="w-8 h-8 rounded-lg bg-violet-600 flex items-center justify-center">
+            <i class="pi pi-share-alt text-white text-sm"></i>
+          </div>
+          <span class="text-zinc-900 dark:text-white">HRMagnet</span>
         </div>
         <h2
-          class="text-[#1c120d] dark:text-white text-[32px] font-bold leading-tight tracking-[-0.015em] mb-3"
-          >
+          class="text-zinc-900 dark:text-white text-[32px] font-bold leading-tight tracking-[-0.015em] mb-3"
+        >
           Welcome back
         </h2>
-        <p
-          class="text-[#9c6549] dark:text-[#ccb0a1] text-base font-normal leading-normal"
-          >
+        <p class="text-zinc-500 dark:text-zinc-400 text-base font-normal leading-normal">
           Please enter your details to sign in
         </p>
       </div>
 
-            <!-- Email Form -->
-            <form
-              class="flex flex-col gap-5"
-              [formGroup]="loginForm"
-              (ngSubmit)="onSubmit()"
-              >
-              <div class="flex flex-col gap-1.5">
-                <label
-                  class="text-sm font-bold text-[#1c120d] dark:text-[#f4ebe7]"
-                  for="username"
-                  >Username / Work email</label
-                  >
-                  <input
-                    class="w-full h-12 rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-surface-dark px-4 text-base text-[#1c120d] dark:text-white placeholder-[#9c6549]/60 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors"
-                    id="username"
-                    formControlName="username"
-                    placeholder="name@company.com"
-                    type="text"
-                    />
-                  </div>
-                  <div class="flex flex-col gap-1.5">
-                    <label
-                      class="text-sm font-bold text-[#1c120d] dark:text-[#f4ebe7]"
-                      for="password"
-                      >Password</label
-                      >
-                      <input
-                        class="w-full h-12 rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-surface-dark px-4 text-base text-[#1c120d] dark:text-white placeholder-[#9c6549]/60 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors"
-                        id="password"
-                        formControlName="password"
-                        placeholder="Enter your password"
-                        type="password"
-                        />
-                      </div>
+      <!-- Email Form -->
+      <form
+        class="flex flex-col gap-5"
+        [formGroup]="loginForm"
+        (ngSubmit)="onSubmit()"
+      >
+        <div class="flex flex-col gap-1.5">
+          <label
+            class="text-sm font-semibold text-zinc-700 dark:text-zinc-300"
+            for="username"
+            >Username / Work email</label
+          >
+          <input
+            class="w-full h-12 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 px-4 text-base text-zinc-900 dark:text-white placeholder-zinc-400 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 outline-none transition-all"
+            id="username"
+            formControlName="username"
+            placeholder="name@company.com"
+            type="text"
+          />
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <label
+            class="text-sm font-semibold text-zinc-700 dark:text-zinc-300"
+            for="password"
+            >Password</label
+          >
+          <input
+            class="w-full h-12 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 px-4 text-base text-zinc-900 dark:text-white placeholder-zinc-400 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 outline-none transition-all"
+            id="password"
+            formControlName="password"
+            placeholder="Enter your password"
+            type="password"
+          />
+        </div>
 
-                      <div class="flex justify-end">
-                        <a
-                          class="text-sm font-bold text-primary hover:text-primary/80 transition-colors cursor-pointer"
-                          (click)="onForgotPassword()"
-                          >Forgot password?</a
-                          >
-                        </div>
+        <div class="flex justify-end">
+          <a
+            class="text-sm font-semibold text-violet-600 hover:text-violet-500 transition-colors cursor-pointer"
+            (click)="onForgotPassword()"
+            >Forgot password?</a
+          >
+        </div>
 
-                        @if (errorMessage) {
-                          <div
-                            class="p-3 text-sm text-red-600 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200"
-                            >
-                            {{ errorMessage }}
-                          </div>
-                        }
+        @if (errorMessage) {
+          <div
+            class="p-3 text-sm text-red-600 bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-200 dark:border-red-800"
+          >
+            {{ errorMessage }}
+          </div>
+        }
 
-                        <button
-                          class="mt-2 flex w-full cursor-pointer items-center justify-center rounded-lg h-12 px-5 bg-primary hover:bg-primary/90 text-white text-base font-bold leading-normal tracking-[0.015em] shadow-lg shadow-primary/20 transition-all duration-200 transform active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
-                          type="submit"
-                          [disabled]="isLoading || loginForm.invalid"
-                          >
-                          @if (isLoading) {
-                            <i class="pi pi-spin pi-spinner mr-2"></i>
-                          }
-                          {{ isLoading ? "Signing in..." : "Sign in" }}
-                        </button>
-                      </form>
+        <button
+          class="mt-2 flex w-full cursor-pointer items-center justify-center rounded-xl h-12 px-5 bg-violet-600 hover:bg-violet-500 text-white text-base font-bold leading-normal tracking-[0.015em] shadow-lg shadow-violet-600/25 transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+          type="submit"
+          [disabled]="isLoading || loginForm.invalid"
+        >
+          @if (isLoading) {
+            <i class="pi pi-spin pi-spinner mr-2"></i>
+          }
+          {{ isLoading ? "Signing in..." : "Sign in" }}
+        </button>
+      </form>
 
-                      <!-- Footer -->
-                      <div class="mt-8 text-center">
-                        <p class="text-[#1c120d] dark:text-[#ccb0a1] text-sm">
-                          Don't have an account?
-                          <a
-                            class="font-bold text-primary hover:text-primary/80 ml-1 cursor-pointer"
-                            routerLink="/register"
-                            >Sign up</a
-                            >
-                          </p>
-                        </div>
-                      </div>
-                    </div>
+      <!-- Footer -->
+      <div class="mt-8 text-center">
+        <p class="text-zinc-500 dark:text-zinc-400 text-sm">
+          Don't have an account?
+          <a
+            class="font-bold text-violet-600 hover:text-violet-500 ml-1 cursor-pointer transition-colors"
+            routerLink="/register"
+            >Sign up</a
+          >
+        </p>
+      </div>
+    </div>
+  </div>
 
-                    <!-- Right Side: Visuals -->
-                    <div
-                      class="hidden lg:block w-1/2 relative bg-[#f8f6f5] dark:bg-[#1a100c] overflow-hidden"
-                      >
-                      <!-- Background Geometric Shapes -->
-                      <div
-                        class="absolute top-0 right-0 w-[80%] h-[90%] bg-blue-900/10 dark:bg-blue-900/20 rounded-bl-[200px] z-0"
-                      ></div>
-                      <div
-                        class="absolute bottom-20 left-10 w-64 h-64 bg-primary/10 rounded-full blur-3xl z-0"
-                      ></div>
-                      <div
-                        class="absolute top-40 left-20 w-40 h-40 bg-teal-200/20 rounded-full blur-2xl z-0"
-                      ></div>
+  <!-- Right Side: Deep Purple Visual -->
+  <div
+    class="hidden lg:block w-1/2 relative bg-[#0d0820] overflow-hidden"
+  >
+    <!-- Background glow blobs -->
+    <div class="absolute top-[-80px] right-[-80px] w-[500px] h-[500px] bg-violet-600/20 rounded-full blur-[120px] z-0"></div>
+    <div class="absolute bottom-[-60px] left-[-60px] w-[400px] h-[400px] bg-fuchsia-600/15 rounded-full blur-[100px] z-0"></div>
+    <div class="absolute top-1/2 left-1/3 w-[200px] h-[200px] bg-violet-400/10 rounded-full blur-[60px] z-0"></div>
 
-                      <!-- Content Container -->
-                      <div class="relative w-full h-full flex items-center justify-center p-12">
-                        <div class="relative w-full max-w-lg h-[600px]">
-                          <!-- Decorative Collage Elements -->
-                          <!-- Image 1: Man in suit (Top Right) -->
-                          <div
-                            class="absolute top-0 right-0 w-64 h-72 rounded-2xl overflow-hidden shadow-2xl border-4 border-white dark:border-[#2d1e17] z-10 transform hover:scale-105 transition-transform duration-500"
-                            >
-                            <img
-                              alt="Professional man"
-                              class="w-full h-full object-cover"
-                              src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=600"
-                              />
-                            </div>
-                            <!-- Image 2: Woman with laptop (Bottom Left) -->
-                            <div
-                              class="absolute bottom-0 left-0 w-64 h-64 rounded-2xl overflow-hidden shadow-2xl border-4 border-white dark:border-[#2d1e17] z-20 transform hover:scale-105 transition-transform duration-500"
-                              >
-                              <img
-                                alt="Professional woman"
-                                class="w-full h-full object-cover"
-                                src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=600"
-                                />
-                              </div>
-                              <!-- Geometric Decor -->
-                              <div
-                                class="absolute top-60 left-10 w-20 h-20 bg-teal-100 dark:bg-teal-900/50 rounded-lg -rotate-12 z-0"
-                              ></div>
-                              <div
-                                class="absolute bottom-40 right-10 w-16 h-16 bg-primary/20 rounded-full z-0"
-                              ></div>
+    <!-- Subtle grid overlay -->
+    <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTYwIDBoLTFWNjBoMVYweiIgZmlsbD0id2hpdGUiIGZpbGwtb3BhY2l0eT0iMC4wMyIvPjxwYXRoIGQ9Ik0wIDBoMVY2MGgtMVYweiIgZmlsbD0id2hpdGUiIGZpbGwtb3BhY2l0eT0iMC4wMyIvPjxwYXRoIGQ9Ik0wIDBoNjB2MUgwVjB6IiBmaWxsPSJ3aGl0ZSIgZmlsbC1vcGFjaXR5PSIwLjAzIi8+PHBhdGggZD0iTTAgNjBoNjB2LTFIMFY2MHoiIGZpbGw9IndoaXRlIiBmaWxsLW9wYWNpdHk9IjAuMDMiLz48L3N2Zz4=')] opacity-40 z-0"></div>
 
-                              <!-- Floating Badge: Secure Login -->
-                              <div
-                                class="absolute top-24 left-0 bg-white dark:bg-[#2d1e17] p-3 rounded-xl shadow-lg flex items-center gap-3 z-30 animate-bounce"
-                                style="animation-duration: 3s"
-                                >
-                                <div
-                                  class="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center text-green-600 dark:text-green-300"
-                                  >
-                                  <i class="pi pi-lock text-xl"></i>
-                                </div>
-                                <div class="pr-2">
-                                  <p class="text-xs font-bold text-gray-800 dark:text-gray-200">
-                                    Secure Login
-                                  </p>
-                                  <p class="text-xs text-gray-500 dark:text-gray-400">Encrypted</p>
-                                </div>
-                              </div>
+    <!-- Content Container -->
+    <div class="relative w-full h-full flex items-center justify-center p-12">
+      <div class="relative w-full max-w-lg h-[600px]">
 
-                              <!-- Floating Badge: Analytics -->
-                              <div
-                                class="absolute bottom-32 right-[-20px] bg-white dark:bg-[#2d1e17] p-3 rounded-xl shadow-lg flex items-center gap-3 z-30"
-                                >
-                                <div
-                                  class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-300"
-                                  >
-                                  <i class="pi pi-chart-line text-xl"></i>
-                                </div>
-                                <div class="pr-2">
-                                  <p class="text-xs font-bold text-gray-800 dark:text-gray-200">
-                                    Analytics Overview
-                                  </p>
-                                  <div
-                                    class="h-1.5 w-16 bg-gray-100 dark:bg-gray-700 rounded-full mt-1 overflow-hidden"
-                                    >
-                                    <div class="h-full w-[70%] bg-blue-500 rounded-full"></div>
-                                  </div>
-                                </div>
-                              </div>
+        <!-- Image 1: Man in suit (Top Right) -->
+        <div
+          class="absolute top-0 right-0 w-64 h-72 rounded-2xl overflow-hidden shadow-2xl border border-violet-500/20 z-10 transform hover:scale-105 transition-transform duration-500"
+        >
+          <img
+            alt="Professional man"
+            class="w-full h-full object-cover"
+            src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=600"
+          />
+          <div class="absolute inset-0 bg-violet-900/10"></div>
+        </div>
 
-                              <!-- Floating Badge: Manage Team -->
-                              <div
-                                class="absolute top-[50%] left-[45%] transform -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-[#2d1e17] px-4 py-2 rounded-full shadow-xl z-40 border border-gray-100 dark:border-gray-800"
-                                >
-                                <div class="flex items-center gap-2">
-                                  <div class="flex -space-x-2">
-                                    <div
-                                      class="w-6 h-6 rounded-full bg-gray-300 border-2 border-white dark:border-[#2d1e17]"
-                                    ></div>
-                                    <div
-                                      class="w-6 h-6 rounded-full bg-gray-400 border-2 border-white dark:border-[#2d1e17]"
-                                    ></div>
-                                    <div
-                                      class="w-6 h-6 rounded-full bg-primary border-2 border-white dark:border-[#2d1e17] flex items-center justify-center text-[8px] text-white font-bold"
-                                      >
-                                      +5
-                                    </div>
-                                  </div>
-                                  <span class="text-xs font-bold text-gray-800 dark:text-gray-200"
-                                    >Manage your team</span
-                                    >
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+        <!-- Image 2: Woman with laptop (Bottom Left) -->
+        <div
+          class="absolute bottom-0 left-0 w-64 h-64 rounded-2xl overflow-hidden shadow-2xl border border-violet-500/20 z-20 transform hover:scale-105 transition-transform duration-500"
+        >
+          <img
+            alt="Professional woman"
+            class="w-full h-full object-cover"
+            src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=600"
+          />
+          <div class="absolute inset-0 bg-violet-900/10"></div>
+        </div>
+
+        <!-- Geometric Decor -->
+        <div class="absolute top-60 left-10 w-20 h-20 bg-violet-500/20 border border-violet-500/30 rounded-xl -rotate-12 z-0"></div>
+        <div class="absolute bottom-40 right-10 w-16 h-16 bg-fuchsia-500/20 rounded-full border border-fuchsia-500/20 z-0"></div>
+
+        <!-- Floating Badge: Secure Login -->
+        <div
+          class="absolute top-24 left-0 bg-zinc-900/90 backdrop-blur-sm border border-violet-500/20 p-3 rounded-xl shadow-xl flex items-center gap-3 z-30 animate-bounce"
+          style="animation-duration: 3s"
+        >
+          <div class="w-10 h-10 rounded-full bg-green-500/15 border border-green-500/30 flex items-center justify-center text-green-400">
+            <i class="pi pi-lock text-lg"></i>
+          </div>
+          <div class="pr-2">
+            <p class="text-xs font-bold text-white">Secure Login</p>
+            <p class="text-xs text-zinc-400">256-bit encrypted</p>
+          </div>
+        </div>
+
+        <!-- Floating Badge: Analytics -->
+        <div
+          class="absolute bottom-32 right-[-20px] bg-zinc-900/90 backdrop-blur-sm border border-violet-500/20 p-3 rounded-xl shadow-xl flex items-center gap-3 z-30"
+        >
+          <div class="w-10 h-10 rounded-full bg-violet-500/15 border border-violet-500/30 flex items-center justify-center text-violet-400">
+            <i class="pi pi-chart-line text-lg"></i>
+          </div>
+          <div class="pr-2">
+            <p class="text-xs font-bold text-white">Analytics Overview</p>
+            <div class="h-1.5 w-16 bg-zinc-700 rounded-full mt-1 overflow-hidden">
+              <div class="h-full w-[70%] bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-full"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Floating Badge: Manage Team -->
+        <div
+          class="absolute top-[50%] left-[45%] transform -translate-x-1/2 -translate-y-1/2 bg-zinc-900/90 backdrop-blur-sm border border-violet-500/20 px-4 py-2 rounded-full shadow-xl z-40"
+        >
+          <div class="flex items-center gap-2">
+            <div class="flex -space-x-2">
+              <div class="w-6 h-6 rounded-full bg-violet-400 border-2 border-zinc-900"></div>
+              <div class="w-6 h-6 rounded-full bg-fuchsia-400 border-2 border-zinc-900"></div>
+              <div class="w-6 h-6 rounded-full bg-violet-600 border-2 border-zinc-900 flex items-center justify-center text-[8px] text-white font-bold">+5</div>
+            </div>
+            <span class="text-xs font-bold text-white">Manage your team</span>
+          </div>
+        </div>
+
+        <!-- Brand tagline -->
+        <div class="absolute bottom-[-10px] right-0 left-0 text-center z-30">
+          <p class="text-xs text-zinc-500 font-medium tracking-widest uppercase">Trusted by 500+ companies</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

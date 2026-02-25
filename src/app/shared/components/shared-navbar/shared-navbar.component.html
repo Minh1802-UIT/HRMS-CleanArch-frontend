@@ -1,12 +1,12 @@
 <!-- Main Navigation -->
 <nav
-  class="bg-[#1E1E4E] text-white h-16 px-6 flex items-center justify-between shadow-md z-50 sticky top-0"
+  class="bg-[#0a0a0f] text-white h-16 px-6 flex items-center justify-between shadow-md z-50 sticky top-0"
 >
   <div class="flex items-center space-x-10">
     <!-- Logo -->
     <a routerLink="/dashboard" class="flex items-center space-x-2">
       <div class="flex items-center text-2xl font-bold">
-        <span class="text-[#F4623A] text-3xl mr-1">M</span> HRMagnet
+        <span class="text-[#a78bfa] text-3xl mr-1">M</span> HRMagnet
       </div>
     </a>
 
@@ -28,7 +28,7 @@
           (click)="toggleManagement()"
           class="flex items-center transition-colors hover:text-white"
           [ngClass]="{
-            'text-[#F4623A] font-semibold border-b-2 border-[#F4623A] pb-1 translate-y-[2px]':
+            'text-[#a78bfa] font-semibold border-b-2 border-[#a78bfa] pb-1 translate-y-[2px]':
               [
                 'employees',
                 'Departments',
@@ -46,94 +46,94 @@
         </button>
         <!-- Dropdown Menu -->
         <div
-          class="absolute top-full left-0 mt-0 w-48 bg-[#1E1E4E] border border-slate-700 rounded-lg shadow-xl py-2 animate-fade-in z-50"
+          class="absolute top-full left-0 mt-0 w-48 bg-[#0a0a0f] border border-zinc-800 rounded-lg shadow-xl py-2 animate-fade-in z-50"
           [class.hidden]="!isManagementOpen"
           [class.block]="isManagementOpen"
         >
           <a
             routerLink="/employees"
             (click)="closeManagement()"
-            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800"
-            [ngClass]="{ 'text-[#F4623A]': activePage === 'employees' }"
+            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-zinc-900"
+            [ngClass]="{ 'text-[#a78bfa]': activePage === 'employees' }"
             *appHasRole="['Admin', 'HR', 'Manager']"
             >Employees</a
           >
           <a
             routerLink="/departments"
             (click)="closeManagement()"
-            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800"
-            [ngClass]="{ 'text-[#F4623A]': activePage === 'departments' }"
+            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-zinc-900"
+            [ngClass]="{ 'text-[#a78bfa]': activePage === 'departments' }"
             *appHasRole="['Admin', 'HR']"
             >Departments</a
           >
           <a
             routerLink="/system/positions"
             (click)="closeManagement()"
-            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800"
-            [ngClass]="{ 'text-[#F4623A]': activePage === 'positions' }"
+            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-zinc-900"
+            [ngClass]="{ 'text-[#a78bfa]': activePage === 'positions' }"
             *appHasRole="['Admin', 'HR']"
             >Positions</a
           >
           <a
             routerLink="/payroll"
             (click)="closeManagement()"
-            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800"
-            [ngClass]="{ 'text-[#F4623A]': activePage === 'payroll' }"
+            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-zinc-900"
+            [ngClass]="{ 'text-[#a78bfa]': activePage === 'payroll' }"
             *appHasRole="['Admin', 'HR']"
             >Payroll</a
           >
           <a
             routerLink="/attendance"
             (click)="closeManagement()"
-            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800"
-            [ngClass]="{ 'text-[#F4623A]': activePage === 'attendance' }"
+            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-zinc-900"
+            [ngClass]="{ 'text-[#a78bfa]': activePage === 'attendance' }"
             *appHasRole="['Admin', 'HR', 'Manager']"
             >Attendance</a
           >
           <a
             routerLink="/attendance/shifts"
             (click)="closeManagement()"
-            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800"
-            [ngClass]="{ 'text-[#F4623A]': activePage === 'shifts' }"
+            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-zinc-900"
+            [ngClass]="{ 'text-[#a78bfa]': activePage === 'shifts' }"
             *appHasRole="['Admin', 'HR', 'Manager']"
             >Shifts</a
           >
           <a
             routerLink="/leaves"
             (click)="closeManagement()"
-            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800"
-            [ngClass]="{ 'text-[#F4623A]': activePage === 'leaves' }"
+            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-zinc-900"
+            [ngClass]="{ 'text-[#a78bfa]': activePage === 'leaves' }"
             >Leaves</a
           >
           <a
             routerLink="/admin/leave-reports"
             (click)="closeManagement()"
-            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800"
-            [ngClass]="{ 'text-[#F4623A]': activePage === 'leave-reports' }"
+            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-zinc-900"
+            [ngClass]="{ 'text-[#a78bfa]': activePage === 'leave-reports' }"
             *appHasRole="['Admin', 'HR']"
             >Leave Reports</a
           >
           <a
             routerLink="/approvals"
             (click)="closeManagement()"
-            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800"
-            [ngClass]="{ 'text-[#F4623A]': activePage === 'approvals' }"
+            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-zinc-900"
+            [ngClass]="{ 'text-[#a78bfa]': activePage === 'approvals' }"
             *appHasRole="['Admin', 'HR', 'Manager']"
             >Approvals</a
           >
           <a
             routerLink="/system/users"
             (click)="closeManagement()"
-            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800"
-            [ngClass]="{ 'text-[#F4623A]': activePage === 'users' }"
+            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-zinc-900"
+            [ngClass]="{ 'text-[#a78bfa]': activePage === 'users' }"
             *appHasRole="['Admin']"
             >User Management</a
           >
           <a
             routerLink="/system/audit-logs"
             (click)="closeManagement()"
-            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800"
-            [ngClass]="{ 'text-[#F4623A]': activePage === 'audit-logs' }"
+            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-zinc-900"
+            [ngClass]="{ 'text-[#a78bfa]': activePage === 'audit-logs' }"
             *appHasRole="['Admin']"
             >Audit Logs</a
           >
@@ -144,7 +144,7 @@
         routerLink="/approvals"
         class="transition-colors hover:text-white"
         [ngClass]="{
-          'text-[#F4623A] font-semibold border-b-2 border-[#F4623A] pb-1 translate-y-[2px]':
+          'text-[#a78bfa] font-semibold border-b-2 border-[#a78bfa] pb-1 translate-y-[2px]':
             activePage === 'tasks' || activePage === 'approvals',
         }"
         >Task Lists</a
@@ -154,7 +154,7 @@
         routerLink="/attendance"
         class="transition-colors hover:text-white"
         [ngClass]="{
-          'text-[#F4623A] font-semibold border-b-2 border-[#F4623A] pb-1 translate-y-[2px]':
+          'text-[#a78bfa] font-semibold border-b-2 border-[#a78bfa] pb-1 translate-y-[2px]':
             activePage === 'time-tracking' || activePage === 'attendance',
         }"
         >Time Tracking</a
@@ -164,7 +164,7 @@
         routerLink="/performance"
         class="transition-colors hover:text-white"
         [ngClass]="{
-          'text-[#F4623A] font-semibold border-b-2 border-[#F4623A] pb-1 translate-y-[2px]':
+          'text-[#a78bfa] font-semibold border-b-2 border-[#a78bfa] pb-1 translate-y-[2px]':
             activePage === 'performance',
         }"
         >Performance</a
@@ -174,7 +174,7 @@
         routerLink="/recruitment"
         class="transition-colors hover:text-white"
         [ngClass]="{
-          'text-[#F4623A] font-semibold border-b-2 border-[#F4623A] pb-1 translate-y-[2px]':
+          'text-[#a78bfa] font-semibold border-b-2 border-[#a78bfa] pb-1 translate-y-[2px]':
             activePage === 'recruitment',
         }"
         >Recruitment</a
@@ -192,29 +192,29 @@
           >
         </button>
         <div
-          class="absolute top-full left-0 mt-0 w-48 bg-[#1E1E4E] border border-slate-700 rounded-lg shadow-xl py-2 animate-fade-in z-50"
+          class="absolute top-full left-0 mt-0 w-48 bg-[#0a0a0f] border border-zinc-800 rounded-lg shadow-xl py-2 animate-fade-in z-50"
           [class.hidden]="!isMoreOpen"
           [class.block]="isMoreOpen"
         >
           <a
             routerLink="/documents"
             (click)="closeMore()"
-            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800"
-            [ngClass]="{ 'text-[#F4623A]': activePage === 'documents' }"
+            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-zinc-900"
+            [ngClass]="{ 'text-[#a78bfa]': activePage === 'documents' }"
             >Documents</a
           >
           <a
             routerLink="/news"
             (click)="closeMore()"
-            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800"
-            [ngClass]="{ 'text-[#F4623A]': activePage === 'news' }"
+            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-zinc-900"
+            [ngClass]="{ 'text-[#a78bfa]': activePage === 'news' }"
             >News & Internal</a
           >
           <a
             routerLink="/org-chart"
             (click)="closeMore()"
-            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800"
-            [ngClass]="{ 'text-[#F4623A]': activePage === 'org-chart' }"
+            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-zinc-900"
+            [ngClass]="{ 'text-[#a78bfa]': activePage === 'org-chart' }"
             >Org Chart</a
           >
         </div>
@@ -224,7 +224,7 @@
 
   <!-- Right Side Actions -->
   <div class="flex items-center space-x-4">
-    <div class="flex items-center pr-4 space-x-3 border-r border-slate-700">
+    <div class="flex items-center pr-4 space-x-3 border-r border-zinc-800">
       <button class="text-slate-300 hover:text-white">
         <span class="material-symbols-outlined">search</span>
       </button>
@@ -232,7 +232,7 @@
       <!-- Attendance Simulator Trigger -->
       <button
         (click)="openSimulator()"
-        class="text-slate-300 hover:text-[#F4623A] transition-colors"
+        class="text-slate-300 hover:text-[#a78bfa] transition-colors"
         title="Attendance Simulator"
       >
         <span class="material-symbols-outlined">verified_user</span>
@@ -248,7 +248,7 @@
           @if ((unreadCount$ | async) ?? 0; as count) {
             @if (count > 0) {
               <span
-                class="absolute -top-1 -right-1 flex items-center justify-center min-w-[18px] h-[18px] text-[10px] font-bold text-white bg-[#F4623A] rounded-full px-1"
+                class="absolute -top-1 -right-1 flex items-center justify-center min-w-[18px] h-[18px] text-[10px] font-bold text-white bg-[#a78bfa] rounded-full px-1"
               >
                 {{ count > 99 ? "99+" : count }}
               </span>
@@ -259,19 +259,19 @@
         <!-- Notification Dropdown Panel -->
         @if (showNotifPanel) {
           <div
-            class="absolute right-0 top-full z-50 mt-2 w-80 bg-[#1E1E4E] border border-slate-700 rounded-lg shadow-2xl animate-fade-in"
+            class="absolute right-0 top-full z-50 mt-2 w-80 bg-[#0a0a0f] border border-zinc-800 rounded-lg shadow-2xl animate-fade-in"
             (click)="$event.stopPropagation()"
           >
             <!-- Header -->
             <div
-              class="flex items-center justify-between px-4 py-3 border-b border-slate-700"
+              class="flex items-center justify-between px-4 py-3 border-b border-zinc-800"
             >
               <span class="text-sm font-semibold text-white"
                 >Notifications</span
               >
               <button
                 (click)="onMarkAllRead()"
-                class="text-xs text-[#F4623A] hover:underline"
+                class="text-xs text-[#a78bfa] hover:underline"
               >
                 Mark all read
               </button>
@@ -287,7 +287,7 @@
               @for (notif of notifications; track notif.id) {
                 <div
                   [class.bg-slate-800]="!notif.isRead"
-                  class="flex items-start gap-3 px-4 py-3 border-b border-slate-700/50 hover:bg-slate-700/40 cursor-default transition-colors"
+                  class="flex items-start gap-3 px-4 py-3 border-b border-zinc-800/50 hover:bg-slate-700/40 cursor-default transition-colors"
                 >
                   <span
                     class="material-symbols-outlined text-base mt-0.5 flex-shrink-0"
@@ -333,7 +333,7 @@
             </div>
 
             <!-- Footer -->
-            <div class="px-4 py-2 text-center border-t border-slate-700">
+            <div class="px-4 py-2 text-center border-t border-zinc-800">
               <button
                 (click)="closeNotifPanel()"
                 class="text-xs text-slate-400 hover:text-white"
@@ -354,7 +354,7 @@
       @if (currentUser$ | async; as user) {
         <div class="relative group">
           <div
-            class="flex items-center p-1 pl-3 space-x-2 rounded-full transition-colors cursor-pointer bg-slate-800/50 hover:bg-slate-800"
+            class="flex items-center p-1 pl-3 space-x-2 rounded-full transition-colors cursor-pointer bg-slate-800/50 hover:bg-zinc-900"
           >
             <span class="text-xs font-medium">Hi, {{ user.username }}</span>
             <img
@@ -376,9 +376,9 @@
             class="hidden absolute right-0 top-full z-50 pt-2 w-48 transition-all group-hover:block"
           >
             <div
-              class="bg-[#1E1E4E] border border-slate-700 rounded-lg shadow-xl py-2 animate-fade-in text-left"
+              class="bg-[#0a0a0f] border border-zinc-800 rounded-lg shadow-xl py-2 animate-fade-in text-left"
             >
-              <div class="px-4 py-2 mb-1 border-b border-slate-700">
+              <div class="px-4 py-2 mb-1 border-b border-zinc-800">
                 <p class="text-xs font-bold text-white truncate">
                   {{ user.username }}
                 </p>
@@ -388,14 +388,14 @@
               </div>
               <a
                 routerLink="/profile"
-                class="flex gap-2 items-center px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800"
+                class="flex gap-2 items-center px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-zinc-900"
               >
                 <span class="text-sm material-symbols-outlined">person</span>
                 Profile
               </a>
               <a
                 routerLink="/settings"
-                class="flex gap-2 items-center px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800"
+                class="flex gap-2 items-center px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-zinc-900"
               >
                 <span class="text-sm material-symbols-outlined">settings</span>
                 Settings
@@ -403,7 +403,7 @@
               <div class="my-1 h-px bg-slate-700"></div>
               <button
                 (click)="logout()"
-                class="flex gap-2 items-center px-4 py-2 w-full text-sm text-left text-red-400 hover:text-red-300 hover:bg-slate-800"
+                class="flex gap-2 items-center px-4 py-2 w-full text-sm text-left text-red-400 hover:text-red-300 hover:bg-zinc-900"
               >
                 <span class="text-sm material-symbols-outlined">logout</span>
                 Logout
