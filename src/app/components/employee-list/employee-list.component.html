@@ -1,251 +1,301 @@
 <div class="p-6 max-w-[1600px] mx-auto">
-    <!-- Page Header -->
-    <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
-      <div>
-        <p class="label-overline text-violet-500 mb-1">Workforce</p>
-        <h1 class="text-2xl font-black tracking-tight text-zinc-900 dark:text-white">
-          Employee Management
-        </h1>
-        <p class="text-zinc-500 dark:text-zinc-400 text-sm mt-1">
-          Manage your team members, view profiles, and track employment details.
-        </p>
-      </div>
-      <button
-        (click)="onAddEmployee()"
-        class="flex gap-2 items-center px-5 py-2.5 text-sm font-bold text-white rounded-xl shadow-lg transition-all bg-violet-600 hover:bg-violet-500 shadow-violet-600/25 btn-glow whitespace-nowrap"
+  <!-- Page Header -->
+  <div
+    class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4"
+  >
+    <div>
+      <p class="label-overline text-violet-500 mb-1">Workforce</p>
+      <h1
+        class="text-2xl font-black tracking-tight text-zinc-900 dark:text-white"
       >
-        <span class="text-lg material-symbols-outlined">add_circle</span>
-        Add Employee
+        Employee Management
+      </h1>
+      <p class="text-zinc-500 dark:text-zinc-400 text-sm mt-1">
+        Manage your team members, view profiles, and track employment details.
+      </p>
+    </div>
+    <button
+      (click)="onAddEmployee()"
+      class="flex gap-2 items-center px-5 py-2.5 text-sm font-bold text-white rounded-xl shadow-lg transition-all bg-violet-600 hover:bg-violet-500 shadow-violet-600/25 btn-glow whitespace-nowrap"
+    >
+      <span class="text-lg material-symbols-outlined">add_circle</span>
+      Add Employee
+    </button>
+  </div>
+  <!-- Sub-navigation tabs -->
+  <div
+    class="flex space-x-6 mb-8 border-b border-zinc-200 dark:border-zinc-800"
+  >
+    <a
+      routerLink="/employees"
+      class="px-1 pb-3 text-xs font-bold tracking-widest uppercase border-b-2 transition-all cursor-pointer border-violet-600 text-violet-600"
+      >Team Members</a
+    >
+    <a
+      routerLink="/directory"
+      class="px-1 pb-3 text-xs font-bold tracking-widest uppercase border-b-2 border-transparent text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 hover:border-zinc-300 transition-all cursor-pointer"
+      >Directory</a
+    >
+    <a
+      routerLink="/org-chart"
+      class="px-1 pb-3 text-xs font-bold tracking-widest uppercase border-b-2 border-transparent text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 hover:border-zinc-300 transition-all cursor-pointer"
+      >Org Chart</a
+    >
+  </div>
+
+  <!-- Filter Card -->
+  <div class="p-5 mb-6 rounded-2xl glass-panel elevated-card">
+    <!-- Action Buttons -->
+    <div
+      class="flex flex-col justify-end mb-5 space-y-3 sm:flex-row sm:space-y-0 sm:space-x-3"
+    >
+      <button
+        (click)="exportEmployeesCsv()"
+        class="inline-flex justify-center items-center px-4 py-2 text-sm font-semibold bg-transparent rounded-lg border transition-colors border-violet-500 text-violet-600 hover:bg-violet-50 dark:hover:bg-violet-900/20"
+      >
+        <span class="mr-2 text-sm material-symbols-outlined">download</span>
+        Export CSV
       </button>
     </div>
-    <!-- Sub-navigation tabs -->
-    <div class="flex space-x-6 mb-8 border-b border-zinc-200 dark:border-zinc-800">
-      <a
-        routerLink="/employees"
-        class="px-1 pb-3 text-xs font-bold tracking-widest uppercase border-b-2 transition-all cursor-pointer border-violet-600 text-violet-600"
-        >Team Members</a
-      >
-      <a
-        routerLink="/directory"
-        class="px-1 pb-3 text-xs font-bold tracking-widest uppercase border-b-2 border-transparent text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 hover:border-zinc-300 transition-all cursor-pointer"
-        >Directory</a
-      >
-      <a
-        routerLink="/org-chart"
-        class="px-1 pb-3 text-xs font-bold tracking-widest uppercase border-b-2 border-transparent text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 hover:border-zinc-300 transition-all cursor-pointer"
-        >Org Chart</a
-      >
-    </div>
 
-    <!-- Filter Card -->
-    <div class="p-5 mb-6 rounded-2xl glass-panel elevated-card">
-      <!-- Action Buttons -->
-      <div class="flex flex-col justify-end mb-5 space-y-3 sm:flex-row sm:space-y-0 sm:space-x-3">
-        <button
-          (click)="exportEmployeesCsv()"
-          class="inline-flex justify-center items-center px-4 py-2 text-sm font-semibold bg-transparent rounded-lg border transition-colors border-violet-500 text-violet-600 hover:bg-violet-50 dark:hover:bg-violet-900/20"
-        >
-          <span class="mr-2 text-sm material-symbols-outlined">download</span>
-          Export CSV
-        </button>
-      </div>
-
-      <!-- Filters Row -->
+    <!-- Filters Row -->
+    <div
+      class="flex flex-col gap-4 justify-between xl:flex-row xl:items-center"
+    >
       <div
-        class="flex flex-col gap-4 justify-between xl:flex-row xl:items-center"
+        class="flex flex-col flex-1 gap-4 items-start w-full md:flex-row md:items-center"
       >
-        <div
-          class="flex flex-col flex-1 gap-4 items-start w-full md:flex-row md:items-center"
-        >
-          <!-- Search Input -->
-          <div class="relative w-full md:w-64">
-            <div class="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
-              <span class="text-sm text-zinc-400 material-symbols-outlined">search</span>
-            </div>
-            <input
-              type="text"
-              [(ngModel)]="searchTerm"
-              (input)="onSearch()"
-              class="block py-2 pr-3 pl-10 w-full text-sm placeholder-zinc-400 text-zinc-900 bg-zinc-50 rounded-lg border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500"
-              placeholder="Search employees..."
-            />
-          </div>
-          <div class="hidden mx-2 w-px h-8 bg-zinc-200 md:block dark:bg-zinc-700"></div>
-          <!-- Filter Dropdowns -->
-          <div class="flex flex-col gap-3 w-full sm:flex-row">
-            <select class="block py-2 pr-10 pl-3 w-full text-sm text-zinc-900 bg-zinc-50 rounded-lg border border-zinc-200 dark:border-zinc-700 focus:outline-none focus:ring-1 focus:ring-violet-500 dark:bg-zinc-800 dark:text-white">
-              <option>All Offices</option>
-              <option>Axis Building</option>
-              <option>Elevate Complex</option>
-              <option>Innovate Tower</option>
-            </select>
-            <select class="block py-2 pr-10 pl-3 w-full text-sm text-zinc-900 bg-zinc-50 rounded-lg border border-zinc-200 dark:border-zinc-700 focus:outline-none focus:ring-1 focus:ring-violet-500 dark:bg-zinc-800 dark:text-white">
-              <option>All Departments</option>
-              <option>Products</option>
-              <option>Growth</option>
-              <option>Marketing</option>
-            </select>
-            <select class="block py-2 pr-10 pl-3 w-full text-sm text-zinc-900 bg-zinc-50 rounded-lg border border-zinc-200 dark:border-zinc-700 focus:outline-none focus:ring-1 focus:ring-violet-500 dark:bg-zinc-800 dark:text-white">
-              <option>All Job Titles</option>
-              <option>Designer</option>
-              <option>Developer</option>
-              <option>Manager</option>
-            </select>
-            <select class="block py-2 pr-10 pl-3 w-full text-sm text-zinc-900 bg-zinc-50 rounded-lg border border-zinc-200 dark:border-zinc-700 focus:outline-none focus:ring-1 focus:ring-violet-500 dark:bg-zinc-800 dark:text-white">
-              <option>All Employment Type</option>
-              <option>Full-time</option>
-              <option>Part-time</option>
-              <option>Contractor</option>
-            </select>
-          </div>
-        </div>
-        <button
-          (click)="clearFilters()"
-          class="self-end text-sm text-zinc-500 whitespace-nowrap transition-colors dark:text-zinc-400 hover:text-violet-600 xl:self-center"
-        >
-          Clear filters
-        </button>
-      </div>
-    </div>
-
-    <!-- Employee Table -->
-    <div class="overflow-hidden rounded-2xl glass-panel">
-      <!-- Loading State -->
-      @if (loading) {
-        <div class="flex justify-center items-center py-16">
-          <div class="w-9 h-9 rounded-full border-[3px] border-zinc-200 dark:border-zinc-700 border-t-violet-600 animate-spin"></div>
-        </div>
-      }
-
-      @if (!loading) {
-        <div class="overflow-x-auto">
-          <table class="min-w-full">
-            <thead class="bg-zinc-50/80 dark:bg-zinc-900/60 border-b border-zinc-100 dark:border-zinc-800">
-              <tr>
-                <th scope="col" class="px-6 py-3.5 w-10">
-                  <input type="checkbox" class="w-4 h-4 rounded border-zinc-300 text-violet-600 focus:ring-violet-500 dark:bg-zinc-700 dark:border-zinc-600" />
-                </th>
-                <th scope="col" class="px-6 py-3.5 label-overline text-left text-zinc-500 dark:text-zinc-400">Employee</th>
-                <th scope="col" class="px-6 py-3.5 label-overline text-left text-zinc-500 dark:text-zinc-400">ID</th>
-                <th scope="col" class="px-6 py-3.5 label-overline text-left text-zinc-500 dark:text-zinc-400">Job Title</th>
-                <th scope="col" class="px-6 py-3.5 label-overline text-left text-zinc-500 dark:text-zinc-400">Department</th>
-                <th scope="col" class="px-6 py-3.5 label-overline text-left text-zinc-500 dark:text-zinc-400">Type</th>
-                <th scope="col" class="px-6 py-3.5 label-overline text-left text-zinc-500 dark:text-zinc-400">Actions</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
-              @for (
-                employee of paginatedEmployees;
-                track trackByEmployeeId($index, employee)
-              ) {
-                <tr class="group transition-colors hover:bg-violet-50/30 dark:hover:bg-zinc-800/40 cursor-default">
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <input type="checkbox" class="w-4 h-4 rounded border-zinc-300 text-violet-600 focus:ring-violet-500 dark:bg-zinc-700 dark:border-zinc-600" />
-                  </td>
-                  <!-- Avatar + Name merged -->
-                  <td class="px-6 py-4 whitespace-nowrap" colspan="1">
-                    <div class="flex items-center gap-3">
-                      <img
-                        [src]="getAvatarUrl(employee.avatarUrl) || 'assets/images/defaults/avatar-1.png'"
-                        [alt]="employee.fullName"
-                        class="w-9 h-9 rounded-full object-cover ring-2 ring-zinc-100 dark:ring-zinc-700 flex-shrink-0"
-                        onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjZjRmNGY1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzdjM2FlZCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPiYjOTg2MTs8L3RleHQ+PC9zdmc+'" />
-                      <span class="text-sm font-semibold text-zinc-900 dark:text-white">{{ employee.fullName }}</span>
-                    </div>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <span class="text-xs font-mono font-bold text-zinc-400 dark:text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded">{{ employee.employeeCode }}</span>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <span class="text-sm text-zinc-600 dark:text-zinc-300">{{ getPositionTitle(employee) }}</span>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <span class="text-sm text-zinc-600 dark:text-zinc-300">{{ getDepartmentName(employee) }}</span>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <span [ngClass]="getEmploymentTypeClass(employee)" class="inline-flex items-center px-2.5 py-0.5 text-xs font-semibold rounded-full">
-                      {{ getEmploymentType(employee) }}
-                    </span>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <a
-                      [routerLink]="['/employees', employee.id]"
-                      class="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-400 dark:text-zinc-500 hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
-                      title="View Profile"
-                    >
-                      <span class="text-base material-symbols-outlined">arrow_outward</span>
-                      View
-                    </a>
-                  </td>
-                </tr>
-              }
-              <!-- Empty State -->
-              @if (paginatedEmployees.length === 0 && !loading) {
-                <tr>
-                  <td colspan="7" class="py-16 text-center">
-                    <div class="flex flex-col items-center gap-3">
-                      <div class="w-14 h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
-                        <span class="text-3xl text-zinc-400 dark:text-zinc-600 material-symbols-outlined">group_off</span>
-                      </div>
-                      <div>
-                        <p class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">No employees found</p>
-                        <p class="text-xs text-zinc-400 mt-0.5">Try adjusting your search or filter criteria</p>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-      }
-    </div>
-
-    <!-- Pagination -->
-    <div class="flex flex-col justify-between items-center px-1 mt-6 sm:flex-row">
-      <div class="mb-4 text-sm text-zinc-500 dark:text-zinc-400 sm:mb-0">
-        Showing
-        <span class="font-semibold text-zinc-900 dark:text-white">{{
-          (currentPage - 1) * pageSize + 1
-        }}</span>
-        &ndash;
-        <span class="font-semibold text-zinc-900 dark:text-white">{{
-          Math.min(currentPage * pageSize, totalItems)
-        }}</span>
-        of
-        <span class="font-semibold text-zinc-900 dark:text-white">{{
-          totalItems
-        }}</span>
-        results
-      </div>
-      <nav aria-label="Pagination" class="flex items-center gap-1">
-        <button
-          (click)="goToPage(currentPage - 1)"
-          [disabled]="currentPage === 1"
-          class="inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-zinc-500 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-        >
-          <span class="text-base material-symbols-outlined">chevron_left</span>
-        </button>
-        @for (page of getPageNumbers(); track trackByPage($index, page)) {
-          <button
-            (click)="goToPage(page)"
-            [ngClass]="page === currentPage
-              ? 'bg-violet-600 border-violet-600 text-white shadow-sm'
-              : 'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800'"
-            class="inline-flex items-center justify-center w-8 h-8 text-sm font-semibold rounded-lg border transition-colors"
+        <!-- Search Input -->
+        <div class="relative w-full md:w-64">
+          <div
+            class="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none"
           >
-            {{ page }}
-          </button>
-        }
-        <button
-          (click)="goToPage(currentPage + 1)"
-          [disabled]="currentPage === totalPages"
-          class="inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-zinc-500 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-        >
-          <span class="text-base material-symbols-outlined">chevron_right</span>
-        </button>
-      </nav>
+            <span class="text-sm text-zinc-400 material-symbols-outlined"
+              >search</span
+            >
+          </div>
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            (input)="onSearch()"
+            class="block py-2 pr-3 pl-10 w-full text-sm placeholder-zinc-400 text-zinc-900 bg-zinc-50 rounded-lg border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500"
+            placeholder="Search employees..."
+          />
+        </div>
+
+      </div>
+      <button
+        (click)="clearFilters()"
+        class="self-end text-sm text-zinc-500 whitespace-nowrap transition-colors dark:text-zinc-400 hover:text-violet-600 xl:self-center"
+      >
+        Clear filters
+      </button>
     </div>
+  </div>
+
+  <!-- Employee Table -->
+  <div class="overflow-hidden rounded-2xl glass-panel">
+    <!-- Loading State -->
+    @if (loading) {
+      <div class="flex justify-center items-center py-16">
+        <div
+          class="w-9 h-9 rounded-full border-[3px] border-zinc-200 dark:border-zinc-700 border-t-violet-600 animate-spin"
+        ></div>
+      </div>
+    }
+
+    @if (!loading) {
+      <div class="overflow-x-auto">
+        <table class="min-w-full">
+          <thead
+            class="bg-zinc-50/80 dark:bg-zinc-900/60 border-b border-zinc-100 dark:border-zinc-800"
+          >
+            <tr>
+              <th
+                scope="col"
+                class="px-6 py-3.5 label-overline text-left text-zinc-500 dark:text-zinc-400"
+              >
+                Employee
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3.5 label-overline text-left text-zinc-500 dark:text-zinc-400"
+              >
+                ID
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3.5 label-overline text-left text-zinc-500 dark:text-zinc-400"
+              >
+                Job Title
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3.5 label-overline text-left text-zinc-500 dark:text-zinc-400"
+              >
+                Department
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3.5 label-overline text-left text-zinc-500 dark:text-zinc-400"
+              >
+                Type
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3.5 label-overline text-left text-zinc-500 dark:text-zinc-400"
+              >
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
+            @for (
+              employee of paginatedEmployees;
+              track trackByEmployeeId($index, employee)
+            ) {
+              <tr
+                class="group transition-colors hover:bg-violet-50/30 dark:hover:bg-zinc-800/40 cursor-default"
+              >
+                <!-- Avatar + Name merged -->
+                <td class="px-6 py-4 whitespace-nowrap" colspan="1">
+                  <div class="flex items-center gap-3">
+                    <img
+                      [src]="
+                        getAvatarUrl(employee.avatarUrl) ||
+                        'assets/images/defaults/avatar-1.png'
+                      "
+                      [alt]="employee.fullName"
+                      class="w-9 h-9 rounded-full object-cover ring-2 ring-zinc-100 dark:ring-zinc-700 flex-shrink-0"
+                      onerror="
+                        this.src =
+                          'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjZjRmNGY1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzdjM2FlZCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPiYjOTg2MTs8L3RleHQ+PC9zdmc+'
+                      "
+                    />
+                    <span
+                      class="text-sm font-semibold text-zinc-900 dark:text-white"
+                      >{{ employee.fullName }}</span
+                    >
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span
+                    class="text-xs font-mono font-bold text-zinc-400 dark:text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded"
+                    >{{ employee.employeeCode }}</span
+                  >
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="text-sm text-zinc-600 dark:text-zinc-300">{{
+                    getPositionTitle(employee)
+                  }}</span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="text-sm text-zinc-600 dark:text-zinc-300">{{
+                    getDepartmentName(employee)
+                  }}</span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span
+                    [ngClass]="getEmploymentTypeClass(employee)"
+                    class="inline-flex items-center px-2.5 py-0.5 text-xs font-semibold rounded-full"
+                  >
+                    {{ getEmploymentType(employee) }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <a
+                    [routerLink]="['/employees', employee.id]"
+                    class="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-400 dark:text-zinc-500 hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
+                    title="View Profile"
+                  >
+                    <span class="text-base material-symbols-outlined"
+                      >arrow_outward</span
+                    >
+                    View
+                  </a>
+                </td>
+              </tr>
+            }
+            <!-- Empty State -->
+            @if (paginatedEmployees.length === 0 && !loading) {
+              <tr>
+                <td colspan="6" class="py-16 text-center">
+                  <div class="flex flex-col items-center gap-3">
+                    <div
+                      class="w-14 h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center"
+                    >
+                      <span
+                        class="text-3xl text-zinc-400 dark:text-zinc-600 material-symbols-outlined"
+                        >group_off</span
+                      >
+                    </div>
+                    <div>
+                      <p
+                        class="text-sm font-semibold text-zinc-700 dark:text-zinc-300"
+                      >
+                        No employees found
+                      </p>
+                      <p class="text-xs text-zinc-400 mt-0.5">
+                        Try adjusting your search or filter criteria
+                      </p>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+
+  <!-- Pagination -->
+  <div class="flex flex-col justify-between items-center px-1 mt-6 sm:flex-row">
+    <div class="mb-4 text-sm text-zinc-500 dark:text-zinc-400 sm:mb-0">
+      Showing
+      <span class="font-semibold text-zinc-900 dark:text-white">{{
+        (currentPage - 1) * pageSize + 1
+      }}</span>
+      &ndash;
+      <span class="font-semibold text-zinc-900 dark:text-white">{{
+        Math.min(currentPage * pageSize, totalItems)
+      }}</span>
+      of
+      <span class="font-semibold text-zinc-900 dark:text-white">{{
+        totalItems
+      }}</span>
+      results
+    </div>
+    <nav aria-label="Pagination" class="flex items-center gap-1">
+      <button
+        (click)="goToPage(currentPage - 1)"
+        [disabled]="currentPage === 1"
+        class="inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-zinc-500 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+      >
+        <span class="text-base material-symbols-outlined">chevron_left</span>
+      </button>
+      @for (page of getPageNumbers(); track trackByPage($index, page)) {
+        <button
+          (click)="goToPage(page)"
+          [ngClass]="
+            page === currentPage
+              ? 'bg-violet-600 border-violet-600 text-white shadow-sm'
+              : 'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800'
+          "
+          class="inline-flex items-center justify-center w-8 h-8 text-sm font-semibold rounded-lg border transition-colors"
+        >
+          {{ page }}
+        </button>
+      }
+      <button
+        (click)="goToPage(currentPage + 1)"
+        [disabled]="currentPage === totalPages"
+        class="inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-zinc-500 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+      >
+        <span class="text-base material-symbols-outlined">chevron_right</span>
+      </button>
+    </nav>
+  </div>
 
   <!-- Edit/Add Employee Drawer -->
   @if (showEditDrawer) {

@@ -91,7 +91,6 @@
               <th class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Check-Out</th>
               <th class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Working Hours</th>
               <th class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Status</th>
-              <th class="px-6 py-3.5 label-overline text-right text-zinc-500 dark:text-zinc-400">Action</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
@@ -128,7 +127,6 @@
               <th scope="col" class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Check-Out</th>
               <th scope="col" class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Working Hours</th>
               <th scope="col" class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Status</th>
-              <th scope="col" class="px-6 py-3.5 label-overline text-right text-zinc-500 dark:text-zinc-400">Action</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
@@ -156,16 +154,11 @@
                     {{ record.status }}
                   </span>
                 </td>
-                <td class="px-6 py-4 text-right">
-                  <button class="p-1.5 text-zinc-400 rounded-lg transition-all hover:text-violet-600 hover:bg-violet-50 dark:hover:bg-violet-900/20">
-                    <span class="material-symbols-outlined text-lg">edit_note</span>
-                  </button>
-                </td>
               </tr>
             }
             @if (records.length === 0) {
               <tr>
-                <td colspan="6" class="py-16 text-center">
+                <td colspan="5" class="py-16 text-center">
                   <div class="flex flex-col items-center gap-3">
                     <div class="w-14 h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
                       <span class="text-3xl text-zinc-400 material-symbols-outlined">person_search</span>

@@ -1,10 +1,18 @@
 ﻿<div class="p-6 max-w-[1600px] mx-auto">
   <!-- Page Header -->
-  <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+  <div
+    class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4"
+  >
     <div>
       <p class="label-overline text-violet-500 mb-1">Organization</p>
-      <h1 class="text-2xl font-black tracking-tight text-zinc-900 dark:text-white">Departments</h1>
-      <p class="text-zinc-500 dark:text-zinc-400 text-sm mt-1">Organize your workforce by business function.</p>
+      <h1
+        class="text-2xl font-black tracking-tight text-zinc-900 dark:text-white"
+      >
+        Departments
+      </h1>
+      <p class="text-zinc-500 dark:text-zinc-400 text-sm mt-1">
+        Organize your workforce by business function.
+      </p>
     </div>
     <button
       (click)="openDeptModal('create')"
@@ -19,7 +27,9 @@
   <div class="p-5 mb-6 rounded-2xl glass-panel elevated-card">
     <div class="flex flex-col justify-between items-center gap-4 sm:flex-row">
       <div class="relative w-full sm:w-80">
-        <span class="flex absolute inset-y-0 left-0 items-center pl-3 text-zinc-400">
+        <span
+          class="flex absolute inset-y-0 left-0 items-center pl-3 text-zinc-400"
+        >
           <span class="text-lg material-symbols-outlined">search</span>
         </span>
         <input
@@ -44,37 +54,65 @@
   <div class="overflow-hidden rounded-2xl glass-panel">
     <div class="overflow-x-auto">
       <table class="w-full text-sm text-left">
-        <thead class="bg-zinc-50/80 dark:bg-zinc-900/60 border-b border-zinc-100 dark:border-zinc-800">
+        <thead
+          class="bg-zinc-50/80 dark:bg-zinc-900/60 border-b border-zinc-100 dark:border-zinc-800"
+        >
           <tr>
-            <th class="px-6 py-3.5 w-10">
-              <input type="checkbox" class="w-4 h-4 rounded border-zinc-300 text-violet-600 focus:ring-violet-500 dark:bg-zinc-700" />
+            <th
+              class="px-6 py-3.5 label-overline text-left text-zinc-500 dark:text-zinc-400"
+            >
+              Name
             </th>
-            <th class="px-6 py-3.5 label-overline text-left text-zinc-500 dark:text-zinc-400">Name</th>
-            <th class="px-6 py-3.5 label-overline text-left text-zinc-500 dark:text-zinc-400">Code</th>
-            <th class="px-6 py-3.5 label-overline text-left text-zinc-500 dark:text-zinc-400">Description</th>
-            <th class="px-6 py-3.5 label-overline text-right text-zinc-500 dark:text-zinc-400">Actions</th>
+            <th
+              class="px-6 py-3.5 label-overline text-left text-zinc-500 dark:text-zinc-400"
+            >
+              Code
+            </th>
+            <th
+              class="px-6 py-3.5 label-overline text-left text-zinc-500 dark:text-zinc-400"
+            >
+              Description
+            </th>
+            <th
+              class="px-6 py-3.5 label-overline text-right text-zinc-500 dark:text-zinc-400"
+            >
+              Actions
+            </th>
           </tr>
         </thead>
         <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
-          @for (dept of filteredDepartments; track trackByDeptId($index, dept)) {
+          @for (
+            dept of filteredDepartments;
+            track trackByDeptId($index, dept)
+          ) {
             <tr
               class="group transition-colors hover:bg-violet-50/30 dark:hover:bg-zinc-800/40 cursor-default"
-              [ngClass]="{'bg-violet-50/50 dark:bg-violet-900/10': selectedDepartment?.id === dept.id}"
             >
-              <td class="px-6 py-4 whitespace-nowrap">
-                <input type="checkbox" class="w-4 h-4 rounded border-zinc-300 text-violet-600 focus:ring-violet-500 dark:bg-zinc-700" />
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap" (click)="selectDepartment(dept)">
-                <div class="flex items-center gap-3 cursor-pointer">
-                  <div class="w-2 h-2 rounded-full bg-violet-500 flex-shrink-0"></div>
-                  <span class="text-sm font-semibold text-zinc-900 dark:text-white">{{ dept.name }}</span>
+              <td
+                class="px-6 py-4 whitespace-nowrap"
+              >
+                <div class="flex items-center gap-3">
+                  <div
+                    class="w-2 h-2 rounded-full bg-violet-500 flex-shrink-0"
+                  ></div>
+                  <span
+                    class="text-sm font-semibold text-zinc-900 dark:text-white"
+                    >{{ dept.name }}</span
+                  >
                 </div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <span class="px-2 py-0.5 font-mono text-xs font-bold text-zinc-500 bg-zinc-100 dark:bg-zinc-800 dark:text-zinc-400 rounded">{{ dept.code }}</span>
+                <span
+                  class="px-2 py-0.5 font-mono text-xs font-bold text-zinc-500 bg-zinc-100 dark:bg-zinc-800 dark:text-zinc-400 rounded"
+                  >{{ dept.code }}</span
+                >
               </td>
               <td class="px-6 py-4">
-                <p class="max-w-xs text-sm text-zinc-500 dark:text-zinc-400 line-clamp-1">{{ dept.description || '—' }}</p>
+                <p
+                  class="max-w-xs text-sm text-zinc-500 dark:text-zinc-400 line-clamp-1"
+                >
+                  {{ dept.description || "—" }}
+                </p>
               </td>
               <td class="px-6 py-4 text-right whitespace-nowrap">
                 <div class="flex gap-1.5 justify-end">
@@ -83,14 +121,18 @@
                     class="p-1.5 rounded-lg transition-colors text-zinc-400 hover:text-violet-600 hover:bg-violet-50 dark:hover:bg-violet-900/20"
                     title="Edit"
                   >
-                    <span class="material-symbols-outlined text-[18px]">edit</span>
+                    <span class="material-symbols-outlined text-[18px]"
+                      >edit</span
+                    >
                   </button>
                   <button
                     (click)="deleteDepartment(dept, $event)"
                     class="p-1.5 rounded-lg transition-colors text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
                     title="Delete"
                   >
-                    <span class="material-symbols-outlined text-[18px]">delete</span>
+                    <span class="material-symbols-outlined text-[18px]"
+                      >delete</span
+                    >
                   </button>
                 </div>
               </td>
@@ -98,14 +140,25 @@
           }
           @if (filteredDepartments.length === 0) {
             <tr>
-              <td colspan="5" class="py-16 text-center">
+              <td colspan="4" class="py-16 text-center">
                 <div class="flex flex-col items-center gap-3">
-                  <div class="w-14 h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
-                    <span class="text-3xl text-zinc-400 material-symbols-outlined">corporate_fare</span>
+                  <div
+                    class="w-14 h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center"
+                  >
+                    <span
+                      class="text-3xl text-zinc-400 material-symbols-outlined"
+                      >corporate_fare</span
+                    >
                   </div>
                   <div>
-                    <p class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">No departments found</p>
-                    <p class="text-xs text-zinc-400 mt-0.5">Add a new department to get started</p>
+                    <p
+                      class="text-sm font-semibold text-zinc-700 dark:text-zinc-300"
+                    >
+                      No departments found
+                    </p>
+                    <p class="text-xs text-zinc-400 mt-0.5">
+                      Add a new department to get started
+                    </p>
                   </div>
                 </div>
               </td>
@@ -118,24 +171,48 @@
 
   <!-- Result count -->
   <div class="mt-4 text-sm text-zinc-500 dark:text-zinc-400">
-    Showing <span class="font-semibold text-zinc-900 dark:text-white">{{ filteredDepartments.length }}</span> of <span class="font-semibold text-zinc-900 dark:text-white">{{ departments.length }}</span> departments
+    Showing
+    <span class="font-semibold text-zinc-900 dark:text-white">{{
+      filteredDepartments.length
+    }}</span>
+    of
+    <span class="font-semibold text-zinc-900 dark:text-white">{{
+      departments.length
+    }}</span>
+    departments
   </div>
 
   <!-- Modal -->
   @if (isDeptModalOpen) {
-    <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-zinc-900/60 backdrop-blur-sm">
-      <div class="overflow-hidden w-full max-w-md rounded-2xl shadow-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700">
-        <div class="flex justify-between items-center px-6 py-4 border-b border-zinc-100 dark:border-zinc-800">
+    <div
+      class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-zinc-900/60 backdrop-blur-sm"
+    >
+      <div
+        class="overflow-hidden w-full max-w-md rounded-2xl shadow-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700"
+      >
+        <div
+          class="flex justify-between items-center px-6 py-4 border-b border-zinc-100 dark:border-zinc-800"
+        >
           <h3 class="text-base font-black text-zinc-900 dark:text-white">
-            {{ modalMode === 'create' ? 'Add New' : 'Edit' }} Department
+            {{ modalMode === "create" ? "Add New" : "Edit" }} Department
           </h3>
-          <button (click)="closeDeptModal()" class="text-zinc-400 hover:text-zinc-600 transition-colors">
+          <button
+            (click)="closeDeptModal()"
+            class="text-zinc-400 hover:text-zinc-600 transition-colors"
+          >
             <span class="material-symbols-outlined">close</span>
           </button>
         </div>
-        <form [formGroup]="deptForm" (ngSubmit)="saveDepartment()" class="p-6 space-y-4">
+        <form
+          [formGroup]="deptForm"
+          (ngSubmit)="saveDepartment()"
+          class="p-6 space-y-4"
+        >
           <div>
-            <label class="label-overline text-zinc-500 dark:text-zinc-400 block mb-1.5">Department Name</label>
+            <label
+              class="label-overline text-zinc-500 dark:text-zinc-400 block mb-1.5"
+              >Department Name</label
+            >
             <input
               formControlName="name"
               class="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-sm text-zinc-900 dark:text-white rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 outline-none transition-all"
@@ -143,7 +220,10 @@
             />
           </div>
           <div>
-            <label class="label-overline text-zinc-500 dark:text-zinc-400 block mb-1.5">Department Code</label>
+            <label
+              class="label-overline text-zinc-500 dark:text-zinc-400 block mb-1.5"
+              >Department Code</label
+            >
             <input
               formControlName="code"
               class="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-sm text-zinc-900 dark:text-white rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 outline-none transition-all uppercase"
@@ -151,7 +231,10 @@
             />
           </div>
           <div>
-            <label class="label-overline text-zinc-500 dark:text-zinc-400 block mb-1.5">Description</label>
+            <label
+              class="label-overline text-zinc-500 dark:text-zinc-400 block mb-1.5"
+              >Description</label
+            >
             <textarea
               formControlName="description"
               rows="3"
@@ -160,7 +243,11 @@
             ></textarea>
           </div>
           <div class="flex gap-3 justify-end pt-2">
-            <button type="button" (click)="closeDeptModal()" class="px-5 py-2.5 text-sm font-semibold rounded-lg transition-all text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800">
+            <button
+              type="button"
+              (click)="closeDeptModal()"
+              class="px-5 py-2.5 text-sm font-semibold rounded-lg transition-all text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+            >
               Cancel
             </button>
             <button
