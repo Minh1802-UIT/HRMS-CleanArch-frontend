@@ -105,7 +105,8 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
     this.loadMasterData();
     
     this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe(params => {
-      this.employeeId = params.get('id') || '';
+      // /profile route has no :id — fall back to the current user's own employeeId
+      this.employeeId = params.get('id') || this.authService.currentUserValue?.employeeId || '';
       if (this.employeeId) {
         this.loadEmployee();
         this.loadContracts();
