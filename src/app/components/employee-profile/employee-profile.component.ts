@@ -240,12 +240,12 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
 
   public getLeaveIcon(typeName: string): string {
     const name = typeName.toLowerCase();
-    if (name.includes('annual')) return 'pi-calendar';
-    if (name.includes('sick')) return 'pi-heart';
-    if (name.includes('wedding')) return 'pi-heart-fill';
-    if (name.includes('funeral')) return 'pi-minus-circle';
-    if (name.includes('maternity')) return 'pi-users';
-    return 'pi-info-circle';
+    if (name.includes('annual'))  return 'calendar_month';
+    if (name.includes('sick'))    return 'health_and_safety';
+    if (name.includes('wedding')) return 'favorite';
+    if (name.includes('funeral')) return 'sentiment_sad';
+    if (name.includes('maternity')) return 'child_care';
+    return 'event_available';
   }
 
   getDepartmentName(): string {
