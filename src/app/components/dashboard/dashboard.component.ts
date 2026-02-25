@@ -159,11 +159,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private getChartColors() {
     const isDark = document.documentElement.classList.contains('dark');
-    return {
+    const colors = {
       textColor:          isDark ? '#e4e4e7' : '#3f3f46',
       textColorSecondary: isDark ? '#a1a1aa' : '#71717a',
       surfaceBorder:      isDark ? '#3f3f46' : '#e4e4e7',
     };
+    // Set Chart.js global default so every unlabelled element picks up the right colour
+    Chart.defaults.color = colors.textColorSecondary;
+    return colors;
   }
 
   initChartOptions() {
@@ -282,16 +285,25 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         maintainAspectRatio: false,
         aspectRatio: 0.8,
         plugins: {
-            legend: { display: false }
+            legend: { display: false },
+            tooltip: { enabled: true }
         },
         scales: {
             x: {
+                border: { display: false },
                 grid: { display: false },
-                ticks: { color: textColor }
+                ticks: {
+                    color: textColor,
+                    font: { size: 12, weight: '500' }
+                }
             },
             y: {
+                border: { display: false },
                 grid: { display: false },
-                ticks: { color: textColor }
+                ticks: {
+                    color: textColor,
+                    font: { size: 12, weight: '600' }
+                }
             }
         }
     };
