@@ -15,6 +15,31 @@ import { takeUntil } from 'rxjs/operators';
 
 Chart.register(...registerables);
 
+// Custom plugin: draws number + 'TOTAL' label at the geometric centre of a doughnut
+const doughnutCenterPlugin = {
+  id: 'doughnutCenter',
+  afterDraw(chart: any) {
+    if (chart.config.type !== 'doughnut') return;
+    const opts = chart.options?.plugins?.doughnutCenter;
+    if (!opts?.text) return;
+    const { ctx, chartArea: { top, bottom, left, right } } = chart;
+    const cx = (left + right) / 2;
+    const cy = (top + bottom) / 2;
+    ctx.save();
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = `900 26px "Plus Jakarta Sans", Inter, sans-serif`;
+    ctx.fillStyle = opts.color ?? '#09090b';
+    ctx.fillText(opts.text, cx, cy - 10);
+    ctx.font = `700 9px "Plus Jakarta Sans", Inter, sans-serif`;
+    ctx.fillStyle = opts.labelColor ?? '#71717a';
+    ctx.letterSpacing = '0.1em';
+    ctx.fillText('TOTAL', cx, cy + 13);
+    ctx.restore();
+  }
+};
+Chart.register(doughnutCenterPlugin);
+
 import { ChartModule } from 'primeng/chart';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
@@ -176,7 +201,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           maintainAspectRatio: false,
           aspectRatio: 0.6,
           layout: {
-              padding: { top: 8, right: 4, bottom: 4, left: 0 }
+              padding: { top: 8, right: 24, bottom: 8, left: 0 }
           },
           plugins: {
               legend: {
@@ -267,10 +292,16 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       };
     }
 
+    const isDark = document.documentElement.classList.contains('dark');
     this.distributionOptions = {
         cutout: '62%',
         layout: { padding: 8 },
         plugins: {
+            doughnutCenter: {
+                text: this.getTotalEmployees(),
+                color: isDark ? '#ffffff' : '#09090b',
+                labelColor: isDark ? '#a1a1aa' : '#71717a'
+            },
             legend: {
                 position: 'right',
                 align: 'center',

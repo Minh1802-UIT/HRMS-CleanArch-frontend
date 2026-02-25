@@ -241,23 +241,6 @@
               [data]="distributionData"
               [options]="distributionOptions"
             ></p-chart>
-            <!-- Overlay centred on the donut (legend takes ~36% right → shift center left) -->
-            <div
-              class="absolute inset-0 flex items-center justify-center pr-[36%] pointer-events-none"
-            >
-              <div class="text-center">
-                <p
-                  class="text-2xl font-extrabold text-slate-900 dark:text-white"
-                >
-                  {{ getTotalEmployees() }}
-                </p>
-                <p
-                  class="text-xs font-bold tracking-widest uppercase text-slate-400 dark:text-slate-500"
-                >
-                  Total
-                </p>
-              </div>
-            </div>
           </div>
         }
       </div>
