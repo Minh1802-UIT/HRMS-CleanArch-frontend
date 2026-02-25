@@ -1,10 +1,18 @@
 ﻿<div class="p-6 max-w-[1600px] mx-auto">
   <!-- Header -->
-  <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+  <div
+    class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4"
+  >
     <div>
       <p class="label-overline text-violet-500 mb-1">Time & Leave</p>
-      <h1 class="text-2xl font-black tracking-tight text-zinc-900 dark:text-white">Leave Request Portal</h1>
-      <p class="text-zinc-500 dark:text-zinc-400 text-sm mt-1">Manage your leave applications and track your remaining balance.</p>
+      <h1
+        class="text-2xl font-black tracking-tight text-zinc-900 dark:text-white"
+      >
+        Leave Request Portal
+      </h1>
+      <p class="text-zinc-500 dark:text-zinc-400 text-sm mt-1">
+        Manage your leave applications and track your remaining balance.
+      </p>
     </div>
     <div class="flex items-center gap-3">
       <button
@@ -12,7 +20,9 @@
         class="p-2 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg shadow-sm hover:bg-zinc-50 transition-colors"
         title="Refresh Data"
       >
-        <span class="material-symbols-outlined text-zinc-500 dark:text-zinc-400">refresh</span>
+        <span class="material-symbols-outlined text-zinc-500 dark:text-zinc-400"
+          >refresh</span
+        >
       </button>
     </div>
   </div>
@@ -21,21 +31,38 @@
     <!-- Left Column: Leave Form & Balances -->
     <div class="w-full lg:w-[400px] space-y-6 form-section">
       <!-- Balances Card -->
-      <div class="bg-gradient-to-br from-[#0d0820] to-zinc-900 rounded-2xl p-6 text-white shadow-xl overflow-hidden relative group">
-        <div class="absolute -right-8 -top-8 w-32 h-32 bg-white/10 rounded-full blur-2xl group-hover:scale-125 transition-transform duration-500"></div>
+      <div
+        class="bg-gradient-to-br from-[#0d0820] to-zinc-900 rounded-2xl p-6 text-white shadow-xl overflow-hidden relative group"
+      >
+        <div
+          class="absolute -right-8 -top-8 w-32 h-32 bg-white/10 rounded-full blur-2xl group-hover:scale-125 transition-transform duration-500"
+        ></div>
         <h3 class="text-base font-black mb-4 flex items-center gap-2">
-          <span class="material-symbols-outlined text-violet-400">account_balance_wallet</span>
+          <span class="material-symbols-outlined text-violet-400"
+            >account_balance_wallet</span
+          >
           Leave Balances
         </h3>
         <div class="space-y-4">
           @for (type of leaveTypes; track trackByLeaveTypeId($index, type)) {
-            <div class="bg-white/5 rounded-xl p-3 border border-white/10 hover:bg-white/10 transition-colors">
+            <div
+              class="bg-white/5 rounded-xl p-3 border border-white/10 hover:bg-white/10 transition-colors"
+            >
               <div class="flex justify-between items-center mb-2">
-                <span class="text-sm font-bold text-zinc-100">{{ type.name }}</span>
-                <span class="text-sm font-bold">{{ balances[type.id] || 0 }} Days</span>
+                <span class="text-sm font-bold text-zinc-100">{{
+                  type.name
+                }}</span>
+                <span class="text-sm font-bold"
+                  >{{ balances[type.id] || 0 }} Days</span
+                >
               </div>
-              <div class="w-full bg-white/10 rounded-full h-1.5 overflow-hidden">
-                <div class="bg-violet-400 h-full transition-all" [style.width.%]="(balances[type.id] / 20) * 100"></div>
+              <div
+                class="w-full bg-white/10 rounded-full h-1.5 overflow-hidden"
+              >
+                <div
+                  class="bg-violet-400 h-full transition-all"
+                  [style.width.%]="(balances[type.id] / 20) * 100"
+                ></div>
               </div>
             </div>
           }
@@ -43,17 +70,29 @@
       </div>
 
       <!-- Request Form Card -->
-      <div class="glass-panel rounded-2xl border border-zinc-100 dark:border-zinc-800 p-6 sticky top-8">
-        <h3 class="text-base font-black text-zinc-900 dark:text-white mb-6 flex items-center gap-2">
-          <span class="material-symbols-outlined text-violet-600">edit_document</span>
+      <div
+        class="glass-panel rounded-2xl border border-zinc-100 dark:border-zinc-800 p-6 sticky top-8"
+      >
+        <h3
+          class="text-base font-black text-zinc-900 dark:text-white mb-6 flex items-center gap-2"
+        >
+          <span class="material-symbols-outlined text-violet-600"
+            >edit_document</span
+          >
           Submit New Request
         </h3>
         <form (ngSubmit)="onSubmit()" #leaveForm="ngForm" class="space-y-5">
           <!-- Leave Type -->
           <div>
-            <label class="label-overline text-zinc-500 dark:text-zinc-400 block mb-1.5">Leave Type *</label>
+            <label
+              class="label-overline text-zinc-500 dark:text-zinc-400 block mb-1.5"
+              >Leave Type *</label
+            >
             <div class="grid grid-cols-2 gap-2">
-              @for (type of leaveTypes; track trackByLeaveTypeId($index, type)) {
+              @for (
+                type of leaveTypes;
+                track trackByLeaveTypeId($index, type)
+              ) {
                 <button
                   type="button"
                   (click)="selectedTypeId = type.id"
@@ -61,7 +100,9 @@
                   class="type-btn text-left px-3 py-2 rounded-xl border text-xs transition-all flex flex-col gap-1"
                 >
                   <span>{{ type.name }}</span>
-                  <span class="text-xs opacity-70">{{ balances[type.id] || 0 }} Left</span>
+                  <span class="text-xs opacity-70"
+                    >{{ balances[type.id] || 0 }} Left</span
+                  >
                 </button>
               }
             </div>
@@ -69,7 +110,10 @@
           <!-- Dates Row -->
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="label-overline text-zinc-500 dark:text-zinc-400 block mb-1.5">Start Date *</label>
+              <label
+                class="label-overline text-zinc-500 dark:text-zinc-400 block mb-1.5"
+                >Start Date *</label
+              >
               <input
                 type="date"
                 [(ngModel)]="startDate"
@@ -79,7 +123,10 @@
               />
             </div>
             <div>
-              <label class="label-overline text-zinc-500 dark:text-zinc-400 block mb-1.5">End Date *</label>
+              <label
+                class="label-overline text-zinc-500 dark:text-zinc-400 block mb-1.5"
+                >End Date *</label
+              >
               <input
                 type="date"
                 [(ngModel)]="endDate"
@@ -91,7 +138,10 @@
           </div>
           <!-- Reason -->
           <div>
-            <label class="label-overline text-zinc-500 dark:text-zinc-400 block mb-1.5">Reason *</label>
+            <label
+              class="label-overline text-zinc-500 dark:text-zinc-400 block mb-1.5"
+              >Reason *</label
+            >
             <textarea
               [(ngModel)]="reason"
               name="reason"
@@ -108,7 +158,10 @@
             class="w-full py-3 bg-violet-600 hover:bg-violet-500 text-white font-bold rounded-xl shadow-lg shadow-violet-600/25 btn-glow transition-all flex items-center justify-center gap-2 group disabled:opacity-50"
           >
             @if (!submitting) {
-              <span class="material-symbols-outlined text-xl group-hover:translate-x-1 transition-transform">send</span>
+              <span
+                class="material-symbols-outlined text-xl group-hover:translate-x-1 transition-transform"
+                >send</span
+              >
             }
             @if (submitting) {
               <div class="spinner-small"></div>
@@ -121,10 +174,18 @@
 
     <!-- Right Column: Leave History -->
     <div class="flex-1 space-y-6 history-section">
-      <div class="glass-panel rounded-2xl border border-zinc-100 dark:border-zinc-800 overflow-hidden min-h-[600px]">
-        <div class="px-6 py-4 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between bg-zinc-50/80 dark:bg-zinc-900/60">
-          <h3 class="text-base font-black text-zinc-900 dark:text-white">Request History</h3>
-          <span class="text-xs font-semibold px-2 py-1 bg-white dark:bg-zinc-800 rounded-lg text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700">
+      <div
+        class="glass-panel rounded-2xl border border-zinc-100 dark:border-zinc-800 overflow-hidden min-h-[600px]"
+      >
+        <div
+          class="px-6 py-4 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between bg-zinc-50/80 dark:bg-zinc-900/60"
+        >
+          <h3 class="text-base font-black text-zinc-900 dark:text-white">
+            Request History
+          </h3>
+          <span
+            class="text-xs font-semibold px-2 py-1 bg-white dark:bg-zinc-800 rounded-lg text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700"
+          >
             {{ history.length }} Total Requests
           </span>
         </div>
@@ -132,22 +193,36 @@
           @if (loading) {
             <div class="flex flex-col items-center justify-center py-20">
               <div class="spinner mb-4"></div>
-              <p class="text-zinc-500 text-sm font-medium animate-pulse">Fetching records...</p>
+              <p class="text-zinc-500 text-sm font-medium animate-pulse">
+                Fetching records...
+              </p>
             </div>
           }
           @if (!loading && history.length === 0) {
-            <div class="flex flex-col items-center justify-center py-20 text-center">
-              <div class="w-14 h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center mb-4">
-                <span class="material-symbols-outlined text-3xl text-zinc-400">event_busy</span>
+            <div
+              class="flex flex-col items-center justify-center py-20 text-center"
+            >
+              <div
+                class="w-14 h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center mb-4"
+              >
+                <span class="material-symbols-outlined text-3xl text-zinc-400"
+                  >event_busy</span
+                >
               </div>
-              <h4 class="text-zinc-800 dark:text-white font-black text-sm">No History Found</h4>
-              <p class="text-zinc-500 text-xs max-w-[250px] mt-1">You haven't submitted any leave requests yet.</p>
+              <h4 class="text-zinc-800 dark:text-white font-black text-sm">
+                No History Found
+              </h4>
+              <p class="text-zinc-500 text-xs max-w-[250px] mt-1">
+                You haven't submitted any leave requests yet.
+              </p>
             </div>
           }
           @if (!loading && history.length > 0) {
             <div class="space-y-4">
               @for (item of history; track trackByIndex($index, item)) {
-                <div class="group border border-zinc-100 dark:border-zinc-800 rounded-2xl p-4 hover:border-violet-200 dark:hover:border-violet-900 hover:bg-violet-50/30 dark:hover:bg-violet-900/10 transition-all relative overflow-hidden">
+                <div
+                  class="group border border-zinc-100 dark:border-zinc-800 rounded-2xl p-4 hover:border-violet-200 dark:hover:border-violet-900 hover:bg-violet-50/30 dark:hover:bg-violet-900/10 transition-all relative overflow-hidden"
+                >
                   <div
                     class="absolute left-0 top-0 bottom-0 w-1.5 rounded-l-2xl"
                     [ngClass]="{
@@ -156,30 +231,63 @@
                       'bg-red-500': item.status === 'Rejected',
                     }"
                   ></div>
-                  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div
+                    class="flex flex-col md:flex-row md:items-center justify-between gap-4"
+                  >
                     <div class="flex items-start gap-4">
-                      <div class="w-12 h-12 rounded-xl bg-white dark:bg-zinc-800 border border-zinc-100 dark:border-zinc-700 flex flex-col items-center justify-center shadow-sm flex-shrink-0">
-                        <span class="text-xs font-bold text-zinc-400 uppercase leading-none">{{ item.startDate | date: "MMM" }}</span>
-                        <span class="text-lg font-black text-zinc-800 dark:text-white leading-none">{{ item.startDate | date: "dd" }}</span>
+                      <div
+                        class="w-12 h-12 rounded-xl bg-white dark:bg-zinc-800 border border-zinc-100 dark:border-zinc-700 flex flex-col items-center justify-center shadow-sm flex-shrink-0"
+                      >
+                        <span
+                          class="text-xs font-bold text-zinc-400 uppercase leading-none"
+                          >{{ item.startDate | date: "MMM" }}</span
+                        >
+                        <span
+                          class="text-lg font-black text-zinc-800 dark:text-white leading-none"
+                          >{{ item.startDate | date: "dd" }}</span
+                        >
                       </div>
                       <div>
                         <div class="flex items-center gap-2 mb-1">
-                          <span class="text-sm font-bold text-zinc-800 dark:text-white">{{ item.type }}</span>
-                          <span class="text-xs font-bold px-1.5 py-0.5 rounded-md uppercase tracking-wider shadow-sm" [ngClass]="getStatusClass(item.status)">
+                          <span
+                            class="text-sm font-bold text-zinc-800 dark:text-white"
+                            >{{ item.type }}</span
+                          >
+                          <span
+                            class="text-xs font-bold px-1.5 py-0.5 rounded-md uppercase tracking-wider shadow-sm"
+                            [ngClass]="getStatusClass(item.status)"
+                          >
                             {{ item.status }}
                           </span>
                         </div>
-                        <p class="text-xs font-medium text-zinc-500 flex items-center gap-1">
-                          <span class="material-symbols-outlined text-sm">calendar_month</span>
-                          {{ formatDate(item.startDate) }} - {{ formatDate(item.endDate) }}
+                        <p
+                          class="text-xs font-medium text-zinc-500 flex items-center gap-1"
+                        >
+                          <span class="material-symbols-outlined text-sm"
+                            >calendar_month</span
+                          >
+                          {{ formatDate(item.startDate) }} -
+                          {{ formatDate(item.endDate) }}
                           <span class="mx-1">•</span>
-                          <span class="text-violet-600 dark:text-violet-400 font-bold">{{ item.days }} Days</span>
+                          <span
+                            class="text-violet-600 dark:text-violet-400 font-bold"
+                            >{{ item.days }} Days</span
+                          >
                         </p>
-                        <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-2 line-clamp-1 italic">"{{ item.reason }}"</p>
+                        <p
+                          class="text-xs text-zinc-500 dark:text-zinc-400 mt-2 line-clamp-1 italic"
+                        >
+                          "{{ item.reason }}"
+                        </p>
                       </div>
                     </div>
-                    <div class="flex items-center md:flex-col md:items-end gap-2">
-                      <span class="text-xs font-bold text-zinc-400">Request Date: {{ item.requestDate | date: "MMM dd, yyyy" }}</span>
+                    <div
+                      class="flex items-center md:flex-col md:items-end gap-2"
+                    >
+                      <span class="text-xs font-bold text-zinc-400"
+                        >Request Date:
+                        {{ item.requestDate | date: "MMM dd, yyyy" }}</span
+                      >
                     </div>
                   </div>
                 </div>

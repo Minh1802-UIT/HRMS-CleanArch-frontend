@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
 import { NotificationService } from '@core/services/notification.service';
+import { ThemeService } from '@core/services/theme.service';
 import { Observable } from 'rxjs';
 import { User } from '../../../core/models/user.model';
 import { NotificationItem } from '../../../core/models/notification.model';
@@ -53,10 +54,13 @@ export class SharedNavbarComponent implements OnInit {
     return PAGE_TITLES[this.activePage] ?? 'HR Management';
   }
 
+  get isDark(): boolean { return this.themeService.isDark(); }
+
   constructor(
     private authService: AuthService,
     private notificationService: NotificationService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    public themeService: ThemeService
   ) {
     this.currentUser$ = this.authService.currentUser;
     this.unreadCount$ = this.notificationService.unreadCount$;

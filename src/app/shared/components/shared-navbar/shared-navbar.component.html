@@ -11,6 +11,19 @@
 
   <!-- Right: Actions -->
   <div class="flex items-center gap-1">
+    <!-- Dark / Light Mode Toggle -->
+    <button
+      (click)="themeService.toggle()"
+      class="flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+      [title]="isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
+    >
+      @if (isDark) {
+        <span class="material-symbols-outlined text-[20px]">light_mode</span>
+      } @else {
+        <span class="material-symbols-outlined text-[20px]">dark_mode</span>
+      }
+    </button>
+
     <!-- Attendance Simulator -->
     <button
       (click)="openSimulator()"

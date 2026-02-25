@@ -1,10 +1,18 @@
 ﻿<div class="p-6 max-w-[1600px] mx-auto">
   <!-- Page Header -->
-  <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+  <div
+    class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4"
+  >
     <div>
       <p class="label-overline text-violet-500 mb-1">Finance</p>
-      <h1 class="text-2xl font-black tracking-tight text-zinc-900 dark:text-white">Payroll Management</h1>
-      <p class="text-zinc-500 dark:text-zinc-400 text-sm mt-1">Review, calculate, and manage employee salaries and payouts.</p>
+      <h1
+        class="text-2xl font-black tracking-tight text-zinc-900 dark:text-white"
+      >
+        Payroll Management
+      </h1>
+      <p class="text-zinc-500 dark:text-zinc-400 text-sm mt-1">
+        Review, calculate, and manage employee salaries and payouts.
+      </p>
     </div>
   </div>
 
@@ -12,34 +20,56 @@
   <div class="grid grid-cols-1 gap-6 mb-8 md:grid-cols-3">
     <div class="p-6 glass-panel rounded-2xl shadow-soft">
       <div class="flex gap-4 items-center">
-        <div class="flex justify-center items-center w-12 h-12 icon-bg-violet rounded-xl">
-          <span class="text-violet-600 material-symbols-outlined">payments</span>
+        <div
+          class="flex justify-center items-center w-12 h-12 icon-bg-violet rounded-xl"
+        >
+          <span class="text-violet-600 material-symbols-outlined"
+            >payments</span
+          >
         </div>
         <div>
-          <p class="label-overline text-zinc-500 dark:text-zinc-400">Total Payout</p>
-          <h3 class="text-2xl font-black text-zinc-900 dark:text-white">{{ formatCurrency(totalNetSalary) }}</h3>
+          <p class="label-overline text-zinc-500 dark:text-zinc-400">
+            Total Payout
+          </p>
+          <h3 class="text-2xl font-black text-zinc-900 dark:text-white">
+            {{ formatCurrency(totalNetSalary) }}
+          </h3>
         </div>
       </div>
     </div>
     <div class="p-6 glass-panel rounded-2xl shadow-soft">
       <div class="flex gap-4 items-center">
-        <div class="flex justify-center items-center w-12 h-12 icon-bg-blue rounded-xl">
+        <div
+          class="flex justify-center items-center w-12 h-12 icon-bg-blue rounded-xl"
+        >
           <span class="text-blue-600 material-symbols-outlined">group</span>
         </div>
         <div>
-          <p class="label-overline text-zinc-500 dark:text-zinc-400">Total Employees</p>
-          <h3 class="text-2xl font-black text-zinc-900 dark:text-white">{{ payrollRecords.length }}</h3>
+          <p class="label-overline text-zinc-500 dark:text-zinc-400">
+            Total Employees
+          </p>
+          <h3 class="text-2xl font-black text-zinc-900 dark:text-white">
+            {{ payrollRecords.length }}
+          </h3>
         </div>
       </div>
     </div>
     <div class="p-6 glass-panel rounded-2xl shadow-soft">
       <div class="flex gap-4 items-center">
-        <div class="flex justify-center items-center w-12 h-12 icon-bg-green rounded-xl">
-          <span class="text-green-600 material-symbols-outlined">event_available</span>
+        <div
+          class="flex justify-center items-center w-12 h-12 icon-bg-green rounded-xl"
+        >
+          <span class="text-green-600 material-symbols-outlined"
+            >event_available</span
+          >
         </div>
         <div>
-          <p class="label-overline text-zinc-500 dark:text-zinc-400">Payroll Period</p>
-          <h3 class="text-xl font-black text-zinc-900 dark:text-white">{{ selectedMonth }} {{ selectedYear }}</h3>
+          <p class="label-overline text-zinc-500 dark:text-zinc-400">
+            Payroll Period
+          </p>
+          <h3 class="text-xl font-black text-zinc-900 dark:text-white">
+            {{ selectedMonth }} {{ selectedYear }}
+          </h3>
         </div>
       </div>
     </div>
@@ -60,7 +90,10 @@
                 <option [value]="m">{{ m }}</option>
               }
             </select>
-            <span class="absolute top-2.5 right-3 text-zinc-400 pointer-events-none material-symbols-outlined">expand_more</span>
+            <span
+              class="absolute top-2.5 right-3 text-zinc-400 pointer-events-none material-symbols-outlined"
+              >expand_more</span
+            >
           </div>
           <div class="relative">
             <select
@@ -72,7 +105,10 @@
                 <option [value]="y">{{ y }}</option>
               }
             </select>
-            <span class="absolute top-2.5 right-3 text-zinc-400 pointer-events-none material-symbols-outlined">expand_more</span>
+            <span
+              class="absolute top-2.5 right-3 text-zinc-400 pointer-events-none material-symbols-outlined"
+              >expand_more</span
+            >
           </div>
         </div>
         <button
@@ -108,7 +144,9 @@
             <span class="text-lg material-symbols-outlined">calculate</span>
           }
           @if (calculating) {
-            <div class="w-4 h-4 rounded-full border-2 animate-spin border-white/30 border-t-white"></div>
+            <div
+              class="w-4 h-4 rounded-full border-2 animate-spin border-white/30 border-t-white"
+            ></div>
           }
           {{ calculating ? "Processing..." : "Run Calculation" }}
         </button>
@@ -121,15 +159,45 @@
     @if (loading) {
       <div class="overflow-x-auto">
         <table class="w-full text-sm text-left">
-          <thead class="bg-zinc-50/80 dark:bg-zinc-900/60 border-b border-zinc-100 dark:border-zinc-800">
+          <thead
+            class="bg-zinc-50/80 dark:bg-zinc-900/60 border-b border-zinc-100 dark:border-zinc-800"
+          >
             <tr>
-              <th class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Employee</th>
-              <th class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Monthly Salary</th>
-              <th class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Allowances</th>
-              <th class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Working Hours</th>
-              <th class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Net Salary</th>
-              <th class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Status</th>
-              <th class="px-6 py-3.5 label-overline text-right text-zinc-500 dark:text-zinc-400">Actions</th>
+              <th
+                class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400"
+              >
+                Employee
+              </th>
+              <th
+                class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400"
+              >
+                Monthly Salary
+              </th>
+              <th
+                class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400"
+              >
+                Allowances
+              </th>
+              <th
+                class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400"
+              >
+                Working Hours
+              </th>
+              <th
+                class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400"
+              >
+                Net Salary
+              </th>
+              <th
+                class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400"
+              >
+                Status
+              </th>
+              <th
+                class="px-6 py-3.5 label-overline text-right text-zinc-500 dark:text-zinc-400"
+              >
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
@@ -137,19 +205,35 @@
               <tr class="animate-pulse">
                 <td class="px-6 py-4">
                   <div class="flex items-center gap-3">
-                    <div class="skeleton skeleton-avatar w-9 h-9 shrink-0"></div>
+                    <div
+                      class="skeleton skeleton-avatar w-9 h-9 shrink-0"
+                    ></div>
                     <div class="space-y-1.5">
                       <div class="skeleton skeleton-text w-28 h-3"></div>
                       <div class="skeleton skeleton-text w-20 h-2.5"></div>
                     </div>
                   </div>
                 </td>
-                <td class="px-6 py-4"><div class="skeleton skeleton-text w-24 h-3"></div></td>
-                <td class="px-6 py-4"><div class="skeleton skeleton-text w-20 h-3"></div></td>
-                <td class="px-6 py-4"><div class="skeleton skeleton-text w-16 h-3"></div></td>
-                <td class="px-6 py-4"><div class="skeleton skeleton-text w-24 h-3"></div></td>
-                <td class="px-6 py-4"><div class="skeleton w-20 h-6 rounded-full"></div></td>
-                <td class="px-6 py-4"><div class="skeleton skeleton-button ml-auto w-8 h-8 rounded-lg"></div></td>
+                <td class="px-6 py-4">
+                  <div class="skeleton skeleton-text w-24 h-3"></div>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="skeleton skeleton-text w-20 h-3"></div>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="skeleton skeleton-text w-16 h-3"></div>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="skeleton skeleton-text w-24 h-3"></div>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="skeleton w-20 h-6 rounded-full"></div>
+                </td>
+                <td class="px-6 py-4">
+                  <div
+                    class="skeleton skeleton-button ml-auto w-8 h-8 rounded-lg"
+                  ></div>
+                </td>
               </tr>
             }
           </tbody>
@@ -160,51 +244,117 @@
     @if (!loading) {
       <div class="overflow-x-auto">
         <table class="w-full text-sm text-left">
-          <thead class="bg-zinc-50/80 dark:bg-zinc-900/60 border-b border-zinc-100 dark:border-zinc-800">
+          <thead
+            class="bg-zinc-50/80 dark:bg-zinc-900/60 border-b border-zinc-100 dark:border-zinc-800"
+          >
             <tr>
-              <th scope="col" class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Employee</th>
-              <th scope="col" class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Monthly Salary</th>
-              <th scope="col" class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Allowances</th>
-              <th scope="col" class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Working Hours</th>
-              <th scope="col" class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Net Salary</th>
-              <th scope="col" class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400">Status</th>
-              <th scope="col" class="px-6 py-3.5 label-overline text-right text-zinc-500 dark:text-zinc-400">Actions</th>
+              <th
+                scope="col"
+                class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400"
+              >
+                Employee
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400"
+              >
+                Monthly Salary
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400"
+              >
+                Allowances
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400"
+              >
+                Working Hours
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400"
+              >
+                Net Salary
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400"
+              >
+                Status
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3.5 label-overline text-right text-zinc-500 dark:text-zinc-400"
+              >
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
-            @for (record of payrollRecords; track trackByRecord($index, record)) {
-              <tr class="group transition-colors hover:bg-violet-50/30 dark:hover:bg-zinc-800/40">
+            @for (
+              record of payrollRecords;
+              track trackByRecord($index, record)
+            ) {
+              <tr
+                class="group transition-colors hover:bg-violet-50/30 dark:hover:bg-zinc-800/40"
+              >
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="flex gap-3 items-center">
                     <img
-                      [src]="record.avatar || 'assets/images/defaults/avatar-1.png'"
+                      [src]="
+                        record.avatar || 'assets/images/defaults/avatar-1.png'
+                      "
                       class="object-cover w-10 h-10 rounded-full border-2 border-white shadow-sm dark:border-zinc-700"
                       alt=""
                     />
                     <div>
-                      <div class="font-bold text-zinc-900 dark:text-white">{{ record.employeeName }}</div>
-                      <div class="font-mono text-xs text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded mt-0.5 inline-block">{{ record.employeeCode }}</div>
+                      <div class="font-bold text-zinc-900 dark:text-white">
+                        {{ record.employeeName }}
+                      </div>
+                      <div
+                        class="font-mono text-xs text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded mt-0.5 inline-block"
+                      >
+                        {{ record.employeeCode }}
+                      </div>
                     </div>
                   </div>
                 </td>
-                <td class="px-6 py-4 font-medium text-zinc-700 dark:text-zinc-300">{{ formatCurrency(record.baseSalary) }}</td>
-                <td class="px-6 py-4 font-medium text-green-600 dark:text-green-500">+{{ formatCurrency(record.allowances) }}</td>
+                <td
+                  class="px-6 py-4 font-medium text-zinc-700 dark:text-zinc-300"
+                >
+                  {{ formatCurrency(record.baseSalary) }}
+                </td>
+                <td
+                  class="px-6 py-4 font-medium text-green-600 dark:text-green-500"
+                >
+                  +{{ formatCurrency(record.allowances) }}
+                </td>
                 <td class="px-6 py-4 text-zinc-600 dark:text-zinc-400">
                   <div class="flex gap-1.5 items-center">
-                    <span class="font-bold">{{ record.displayWorkingHours }}</span>
+                    <span class="font-bold">{{
+                      record.displayWorkingHours
+                    }}</span>
                     <span class="text-xs uppercase tracking-wide">hrs</span>
                   </div>
                 </td>
                 <td class="px-6 py-4">
-                  <span class="text-base font-black text-zinc-900 dark:text-white">{{ formatCurrency(record.displayNetSalary) }}</span>
+                  <span
+                    class="text-base font-black text-zinc-900 dark:text-white"
+                    >{{ formatCurrency(record.displayNetSalary) }}</span
+                  >
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <span
                     class="px-2.5 py-1 text-xs font-bold tracking-wide uppercase rounded-full border"
                     [ngClass]="{
-                      'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800': record.status === 'Paid',
-                      'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-800': record.status === 'Calculated',
-                      'bg-zinc-100 text-zinc-600 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:border-zinc-700': record.status === 'Pending',
+                      'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800':
+                        record.status === 'Paid',
+                      'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-800':
+                        record.status === 'Calculated',
+                      'bg-zinc-100 text-zinc-600 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:border-zinc-700':
+                        record.status === 'Pending',
                     }"
                   >
                     {{ record.status }}
@@ -218,7 +368,9 @@
                       class="p-1.5 text-zinc-400 rounded-lg transition-all hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 disabled:opacity-30"
                       title="Export PDF"
                     >
-                      <span class="text-lg material-symbols-outlined">picture_as_pdf</span>
+                      <span class="text-lg material-symbols-outlined"
+                        >picture_as_pdf</span
+                      >
                     </button>
                   </div>
                 </td>
@@ -228,12 +380,23 @@
               <tr>
                 <td colspan="7" class="py-16 text-center">
                   <div class="flex flex-col items-center gap-3">
-                    <div class="w-14 h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
-                      <span class="text-3xl text-zinc-400 material-symbols-outlined">payments</span>
+                    <div
+                      class="w-14 h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center"
+                    >
+                      <span
+                        class="text-3xl text-zinc-400 material-symbols-outlined"
+                        >payments</span
+                      >
                     </div>
                     <div>
-                      <p class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">No payroll records found</p>
-                      <p class="text-xs text-zinc-400 mt-0.5">Try running a calculation for this period.</p>
+                      <p
+                        class="text-sm font-semibold text-zinc-700 dark:text-zinc-300"
+                      >
+                        No payroll records found
+                      </p>
+                      <p class="text-xs text-zinc-400 mt-0.5">
+                        Try running a calculation for this period.
+                      </p>
                     </div>
                   </div>
                 </td>
