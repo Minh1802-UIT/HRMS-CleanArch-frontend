@@ -95,6 +95,7 @@ jobs:
         uses: actions/checkout@v4
 
       # Pull the new frontend image and restart the nginx container
+      # NOTE: docker-compose files live in the backend repo; we use plain docker commands here.
       - name: Deploy & Health Check
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -103,17 +104,25 @@ jobs:
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           script: |
             set -e
-            cd ${{ secrets.DEPLOY_PATH }}
+            NEW_IMAGE="${{ secrets.DOCKER_USERNAME }}/employee-hr-ui:${{ needs.docker-build.outputs.image-tag }}"
 
-            # 1. Capture current image for rollback
+            # 1. Capture current running image for rollback
             PREV_IMAGE=$(docker inspect employee_nginx --format='{{.Image}}' 2>/dev/null || echo "none")
             echo "Previous image: $PREV_IMAGE"
+            echo "New image:      $NEW_IMAGE"
 
-            # 2. Pull new frontend image
-            docker compose -f docker-compose.yml -f docker-compose.prod.yml pull app_frontend
+            # 2. Pull new image
+            docker pull "$NEW_IMAGE"
 
-            # 3. Restart frontend container only
-            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --remove-orphans app_frontend
+            # 3. Stop & replace nginx container
+            docker stop employee_nginx || true
+            docker rm   employee_nginx || true
+            docker run -d \
+              --name employee_nginx \
+              --network $(docker inspect employee_api --format='{{range $k,$v := .NetworkSettings.Networks}}{{$k}}{{end}}' 2>/dev/null || echo bridge) \
+              -p 80:80 \
+              --restart always \
+              "$NEW_IMAGE"
 
             # 4. Health check (poll /nginx-health up to 60s)
             echo "Waiting for nginx to become healthy..."
@@ -127,9 +136,11 @@ jobs:
               if [ "$i" = "12" ]; then
                 echo "Health check FAILED — rolling back to $PREV_IMAGE"
                 docker stop employee_nginx || true
-                docker rm employee_nginx || true
-                docker run -d --name employee_nginx --network hrms_employee_network \
-                  -p 80:80 "$PREV_IMAGE"
+                docker rm   employee_nginx || true
+                if [ "$PREV_IMAGE" != "none" ]; then
+                  NETWORK=$(docker inspect employee_api --format='{{range $k,$v := .NetworkSettings.Networks}}{{$k}}{{end}}' 2>/dev/null || echo bridge)
+                  docker run -d --name employee_nginx --network "$NETWORK" -p 80:80 --restart always "$PREV_IMAGE"
+                fi
                 exit 1
               fi
               sleep 5
