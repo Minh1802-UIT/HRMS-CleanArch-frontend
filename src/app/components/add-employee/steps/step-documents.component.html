@@ -1,17 +1,17 @@
 <div class="space-y-10" [formGroup]="formGroup">
   <!-- Required Documents Section -->
   <div class="space-y-6">
-    <div class="flex gap-3 items-center pb-3 border-b border-gray-200">
-      <span class="text-2xl text-blue-600 material-symbols-outlined"
+    <div class="flex gap-3 items-center pb-3 border-b border-gray-200 dark:border-zinc-700">
+      <span class="text-2xl text-violet-600 dark:text-violet-400 material-symbols-outlined"
         >description</span
         >
-        <h3 class="text-base font-bold text-gray-900">Required Documents</h3>
+        <h3 class="text-base font-bold text-gray-900 dark:text-zinc-100">Required Documents</h3>
       </div>
 
       <div class="grid grid-cols-2 gap-6">
         <!-- Resume Upload -->
         <div
-          class="relative p-6 rounded-xl border-2 border-gray-300 border-dashed transition-all cursor-pointer hover:border-blue-500 hover:bg-blue-50/30 group"
+          class="relative p-6 rounded-xl border-2 border-gray-300 dark:border-zinc-600 border-dashed transition-all cursor-pointer hover:border-violet-500 dark:hover:border-violet-400 hover:bg-violet-50/30 dark:hover:bg-violet-900/10 group"
           (click)="resumeInput.click()"
           >
           <input
@@ -24,26 +24,26 @@
 
             <div class="flex flex-col gap-3 items-center">
               <div
-                class="flex justify-center items-center w-12 h-12 bg-gray-100 rounded-full transition-colors group-hover:bg-blue-100"
+                class="flex justify-center items-center w-12 h-12 bg-gray-100 dark:bg-zinc-700 rounded-full transition-colors group-hover:bg-violet-100 dark:group-hover:bg-violet-900/30"
                 >
                 <span
                   class="text-2xl material-symbols-outlined"
               [ngClass]="
                 resumePath
                   ? 'text-green-600'
-                  : 'text-gray-400 group-hover:text-blue-600'
+                  : 'text-gray-400 dark:text-zinc-500 group-hover:text-violet-600 dark:group-hover:text-violet-400'
               "
                   >{{ resumePath ? "check_circle" : "upload_file" }}</span
                   >
                 </div>
 
                 <div class="text-center">
-                  <p class="text-sm font-bold text-gray-900">
+                  <p class="text-sm font-bold text-gray-900 dark:text-zinc-100">
                     {{ resumePath ? "Resume Uploaded" : "Upload Resume" }}
                   </p>
                   @if (!uploadingResume && !resumePath) {
                     <p
-                      class="text-xs text-gray-500 mt-1"
+                      class="text-xs text-gray-500 dark:text-zinc-400 mt-1"
                       >
                       PDF, DOCX (Max 5MB)
                     </p>
@@ -68,7 +68,7 @@
 
             <!-- Contract Upload -->
             <div
-              class="relative p-6 rounded-xl border-2 border-gray-300 border-dashed transition-all cursor-pointer hover:border-blue-500 hover:bg-blue-50/30 group"
+              class="relative p-6 rounded-xl border-2 border-gray-300 dark:border-zinc-600 border-dashed transition-all cursor-pointer hover:border-violet-500 dark:hover:border-violet-400 hover:bg-violet-50/30 dark:hover:bg-violet-900/10 group"
               (click)="contractInput.click()"
               >
               <input
@@ -81,26 +81,26 @@
 
                 <div class="flex flex-col gap-3 items-center">
                   <div
-                    class="flex justify-center items-center w-12 h-12 bg-gray-100 rounded-full transition-colors group-hover:bg-blue-100"
+                    class="flex justify-center items-center w-12 h-12 bg-gray-100 dark:bg-zinc-700 rounded-full transition-colors group-hover:bg-violet-100 dark:group-hover:bg-violet-900/30"
                     >
                     <span
                       class="text-2xl material-symbols-outlined"
               [ngClass]="
                 contractPath
                   ? 'text-green-600'
-                  : 'text-gray-400 group-hover:text-blue-600'
+                  : 'text-gray-400 dark:text-zinc-500 group-hover:text-violet-600 dark:group-hover:text-violet-400'
               "
                       >{{ contractPath ? "check_circle" : "upload_file" }}</span
                       >
                     </div>
 
                     <div class="text-center">
-                      <p class="text-sm font-bold text-gray-900">
+                      <p class="text-sm font-bold text-gray-900 dark:text-zinc-100">
                         {{ contractPath ? "Contract Uploaded" : "Upload Contract" }}
                       </p>
                       @if (!uploadingContract && !contractPath) {
                         <p
-                          class="text-xs text-gray-500 mt-1"
+                          class="text-xs text-gray-500 dark:text-zinc-400 mt-1"
                           >
                           Signed PDF only
                         </p>
@@ -127,7 +127,7 @@
 
             <!-- Confirmation Section -->
             <div
-              class="p-5 bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl border border-orange-200"
+              class="p-5 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 rounded-xl border border-orange-200 dark:border-orange-800/30"
               >
               <div class="flex gap-4 items-start">
                 <div
@@ -136,10 +136,10 @@
                   <span class="text-orange-600 material-symbols-outlined">info</span>
                 </div>
                 <div class="flex-1">
-                  <h4 class="mb-2 text-sm font-bold text-gray-900">
+                  <h4 class="mb-2 text-sm font-bold text-gray-900 dark:text-zinc-100">
                     Ready to Complete Onboarding?
                   </h4>
-                  <p class="text-xs leading-relaxed text-gray-700">
+                  <p class="text-xs leading-relaxed text-gray-700 dark:text-zinc-300">
                     Please review all sections before proceeding. Once you click
                     <strong>"Complete Onboarding"</strong>, the employee profile will be
                     created and an email notification will be sent.

@@ -24,11 +24,11 @@ export class EmployeeWizardStepsComponent {
    */
   getStepIndicatorClass(step: number): string {
     if (this.currentStep === step) {
-      return 'bg-blue-600 text-white';
+      return 'bg-violet-600 text-white';
     } else if (this.currentStep > step) {
-      return 'bg-blue-600 text-white';
+      return 'bg-violet-600 text-white';
     } else {
-      return 'bg-gray-200 text-gray-500';
+      return 'bg-gray-200 dark:bg-zinc-700 text-gray-500 dark:text-zinc-400';
     }
   }
 }

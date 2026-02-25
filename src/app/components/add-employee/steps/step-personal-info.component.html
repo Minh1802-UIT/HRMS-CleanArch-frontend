@@ -2,7 +2,7 @@
   <!-- Profile Picture Section -->
   <div class="flex gap-8 items-start">
     <div
-      class="flex overflow-hidden relative flex-col justify-center items-center p-4 w-40 h-40 rounded-xl border-2 border-gray-300 border-dashed transition-all cursor-pointer hover:border-blue-500 hover:bg-blue-50/50 group"
+      class="flex overflow-hidden relative flex-col justify-center items-center p-4 w-40 h-40 rounded-xl border-2 border-gray-300 dark:border-zinc-600 border-dashed transition-all cursor-pointer hover:border-violet-500 dark:hover:border-violet-400 hover:bg-violet-50/50 dark:hover:bg-violet-900/10 group"
       (click)="fileInput.click()"
       >
       <input
@@ -33,13 +33,13 @@
               </div>
             } @else {
               <div
-                class="flex justify-center items-center mb-2 w-10 h-10 bg-gray-100 rounded-full transition-transform group-hover:scale-110"
+                class="flex justify-center items-center mb-2 w-10 h-10 bg-gray-100 dark:bg-zinc-700 rounded-full transition-transform group-hover:scale-110"
                 >
-                <span class="text-gray-400 material-symbols-outlined"
+                <span class="text-gray-400 dark:text-zinc-500 material-symbols-outlined"
                   >upload_file</span
                   >
                 </div>
-                <span class="text-xs text-center font-medium text-gray-500"
+                <span class="text-xs text-center font-medium text-gray-500 dark:text-zinc-400"
                   >Drag image or click</span
                   >
                 }
@@ -53,11 +53,11 @@
             </div>
 
             <div class="flex-1 pt-2">
-              <h3 class="mb-1 text-base font-bold text-gray-900">Profile Picture</h3>
-              <p class="mb-4 text-xs leading-relaxed text-gray-500">
+              <h3 class="mb-1 text-base font-bold text-gray-900 dark:text-zinc-100">Profile Picture</h3>
+              <p class="mb-4 text-xs leading-relaxed text-gray-500 dark:text-zinc-400">
                 Upload a professional photo for the employee profile.<br />
                 Supported formats:
-                <strong class="text-gray-700">.jpg, .png</strong> (Max 5MB)
+                <strong class="text-gray-700 dark:text-zinc-300">.jpg, .png</strong> (Max 5MB)
               </p>
             </div>
           </div>
