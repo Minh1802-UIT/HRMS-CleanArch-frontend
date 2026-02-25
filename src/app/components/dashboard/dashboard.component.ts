@@ -33,6 +33,9 @@ import { RouterModule } from '@angular/router';
 export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @ViewChild('attendanceChart') chartCanvas!: ElementRef<HTMLCanvasElement>;
+
+  readonly today = new Date();
+  readonly Math = Math;
   
   summaryCards: SummaryCard[] = [];
   auditLogs: AuditLog[] = [];

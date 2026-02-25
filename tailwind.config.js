@@ -55,7 +55,8 @@ module.exports = {
       },
       boxShadow: {
         soft: "0 1px 3px 0 rgba(0,0,0,0.06), 0 1px 2px -1px rgba(0,0,0,0.06)",
-        premium: "0 10px 40px -10px rgba(124,58,237,0.25), 0 2px 8px -2px rgba(0,0,0,0.08)",
+        premium:
+          "0 10px 40px -10px rgba(124,58,237,0.25), 0 2px 8px -2px rgba(0,0,0,0.08)",
         glass: "0 8px 32px 0 rgba(124, 58, 237, 0.08)",
         glow: "0 0 20px rgba(124,58,237,0.35)",
       },
