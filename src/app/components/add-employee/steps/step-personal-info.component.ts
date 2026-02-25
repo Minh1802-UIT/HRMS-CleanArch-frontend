@@ -29,6 +29,8 @@ export class StepPersonalInfoComponent implements OnInit {
 
   uploading = false;
   previewUrl: string | null = null;
+  /** Set when file validation or upload fails — displayed near the file input. */
+  uploadError: string | null = null;
 
   constructor(private uploadService: UploadService, private logger: LoggerService, private cdr: ChangeDetectorRef) {}
 
@@ -47,22 +49,25 @@ export class StepPersonalInfoComponent implements OnInit {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (file) {
       this.uploading = true;
+      this.uploadError = null;
       this.uploadService.uploadFile(file, 'avatars').subscribe({
         next: (path) => {
           this.previewUrl = this.uploadService.getFileUrl(path);
-          
+          this.uploadError = null;
+
           // Update the avatarUrl in the root form
           if (this.formGroup.parent) {
             const rootForm = this.formGroup.root as FormGroup;
             rootForm.get('avatarUrl')?.setValue(path);
             rootForm.markAsDirty();
           }
-          
+
           this.uploading = false;
           this.cdr.markForCheck();
         },
-        error: (err) => {
+        error: (err: Error) => {
           this.logger.error('Upload failed', err);
+          this.uploadError = err.message || 'Upload failed. Please try again.';
           this.uploading = false;
           this.cdr.markForCheck();
         }

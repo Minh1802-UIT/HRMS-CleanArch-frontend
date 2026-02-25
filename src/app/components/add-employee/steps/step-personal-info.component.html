@@ -9,7 +9,7 @@
         #fileInput
         type="file"
         class="hidden"
-        accept="image/*"
+        accept="image/jpeg,image/png,image/webp"
         (change)="onFileSelected($event)"
       />
 
@@ -59,9 +59,12 @@
       <p class="mb-4 text-xs leading-relaxed text-gray-500 dark:text-zinc-400">
         Upload a professional photo for the employee profile.<br />
         Supported formats:
-        <strong class="text-gray-700 dark:text-zinc-300">.jpg, .png</strong>
+        <strong class="text-gray-700 dark:text-zinc-300">.jpg, .png, .webp</strong>
         (Max 5MB)
       </p>
+      @if (uploadError) {
+        <p class="text-xs text-red-600 dark:text-red-400 font-medium">{{ uploadError }}</p>
+      }
     </div>
   </div>
 

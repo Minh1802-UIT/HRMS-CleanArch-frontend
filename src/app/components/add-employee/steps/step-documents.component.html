@@ -63,6 +63,11 @@
                 {{ resumePath }}
               </p>
             }
+            @if (resumeError) {
+              <p class="text-xs text-red-600 mt-1 font-medium break-words max-w-[200px]">
+                {{ resumeError }}
+              </p>
+            }
           </div>
         </div>
       </div>
@@ -114,6 +119,11 @@
                 class="text-xs text-green-600 mt-1 font-medium truncate max-w-[200px]"
               >
                 {{ contractPath }}
+              </p>
+            }
+            @if (contractError) {
+              <p class="text-xs text-red-600 mt-1 font-medium break-words max-w-[200px]">
+                {{ contractError }}
               </p>
             }
           </div>

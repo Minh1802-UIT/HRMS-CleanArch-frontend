@@ -41,10 +41,18 @@ export class CsvExportService {
 
   private escapeCell(value: unknown): string {
     const str = value == null ? '' : String(value);
-    // Wrap in quotes if the value contains a comma, quote, or newline
-    if (str.includes(',') || str.includes('"') || str.includes('\n')) {
-      return `"${str.replace(/"/g, '""')}"`;
+
+    // ── CSV formula injection prevention ──────────────────────────────────
+    // Spreadsheet apps (Excel, Sheets) treat cells starting with =, +, -, @,
+    // |, or % as formulas.  Prefix such values with a tab so they are
+    // rendered as plain text without triggering formula evaluation.
+    const FORMULA_CHARS = /^[=+\-@|%]/;
+    const safe = FORMULA_CHARS.test(str) ? `\t${str}` : str;
+
+    // Wrap in double-quotes if the value contains commas, quotes or newlines
+    if (safe.includes(',') || safe.includes('"') || safe.includes('\n')) {
+      return `"${safe.replace(/"/g, '""')}"`;
     }
-    return str;
+    return safe;
   }
 }

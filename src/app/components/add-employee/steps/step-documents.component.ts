@@ -29,23 +29,27 @@ export class StepDocumentsComponent {
   uploadingContract = false;
   resumePath: string | null = null;
   contractPath: string | null = null;
+  resumeError: string | null = null;
+  contractError: string | null = null;
 
   constructor(private uploadService: UploadService, private logger: LoggerService, private cdr: ChangeDetectorRef) {}
 
   onResumeSelected(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (file) {
+      this.resumeError = null;
       this.uploadingResume = true;
       this.uploadService.uploadFile(file, 'resumes').subscribe({
         next: (path) => {
           this.resumePath = path;
-          // Set in form
+          this.resumeError = null;
           this.formGroup.get('resumeUrl')?.setValue(path);
           this.uploadingResume = false;
           this.cdr.markForCheck();
         },
-        error: (err) => {
+        error: (err: Error) => {
           this.logger.error('Resume upload failed', err);
+          this.resumeError = err.message || 'Resume upload failed.';
           this.uploadingResume = false;
           this.cdr.markForCheck();
         }
@@ -56,17 +60,19 @@ export class StepDocumentsComponent {
   onContractSelected(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (file) {
+      this.contractError = null;
       this.uploadingContract = true;
       this.uploadService.uploadFile(file, 'contracts').subscribe({
         next: (path) => {
           this.contractPath = path;
-          // Set in form
+          this.contractError = null;
           this.formGroup.get('contractUrl')?.setValue(path);
           this.uploadingContract = false;
           this.cdr.markForCheck();
         },
-        error: (err) => {
+        error: (err: Error) => {
           this.logger.error('Contract upload failed', err);
+          this.contractError = err.message || 'Contract upload failed.';
           this.uploadingContract = false;
           this.cdr.markForCheck();
         }

@@ -291,8 +291,16 @@ export class EmployeeDetailComponent implements OnInit, OnDestroy {
   onDocSelected(event: Event, type: 'resume' | 'contract') {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (file && this.employee) {
-      this.isUploadingDoc = true;
       const folder = type === 'resume' ? 'resumes' : 'contracts';
+      // Validate file type and size before uploading
+      const validationError = this.uploadService.validateFile(file, folder);
+      if (validationError) {
+        this.toastService.showError('Invalid File', validationError);
+        // Reset input so the same file triggers change again if user picks another
+        (event.target as HTMLInputElement).value = '';
+        return;
+      }
+      this.isUploadingDoc = true;
       
       this.uploadService.uploadFile(file, folder).pipe(takeUntil(this.destroy$)).subscribe({
         next: (path) => {
@@ -340,9 +348,14 @@ export class EmployeeDetailComponent implements OnInit, OnDestroy {
   }
 
   downloadDoc(path: string | undefined) {
-    if (path) {
-      window.open(this.uploadService.getFileUrl(path), '_blank');
+    if (!path) return;
+    const safeUrl = this.uploadService.getFileUrl(path);
+    if (!safeUrl) {
+      this.toastService.showError('Invalid URL', 'Document URL is not from a trusted source.');
+      return;
     }
+    // noopener,noreferrer prevents the opened tab from accessing window.opener
+    window.open(safeUrl, '_blank', 'noopener,noreferrer');
   }
 
   getAvatarUrl(): string {
