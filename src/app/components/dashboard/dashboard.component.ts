@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, ViewChild, AfterViewInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, AfterViewInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, effect } from '@angular/core';
 import { NgClass, DatePipe } from '@angular/common';
 import { HasRoleDirective } from '../../core/directives/has-role.directive';
 
@@ -8,6 +8,7 @@ import { AuditLog } from '@features/system/models/audit-log.model';
 import { Chart, registerables } from 'chart.js';
 import { LoggerService } from '@core/services/logger.service';
 import { AuthService } from '@core/services/auth.service';
+import { ThemeService } from '@core/services/theme.service';
 import { User } from '@core/models/user.model';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -76,8 +77,17 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       private auditLogService: AuditLogService,
       private logger: LoggerService,
       private authService: AuthService,
-      private cdr: ChangeDetectorRef
-  ) {}
+      private cdr: ChangeDetectorRef,
+      private themeService: ThemeService
+  ) {
+    // Re-initialise chart colours whenever dark/light mode changes
+    effect(() => {
+      this.themeService.isDark(); // track signal
+      this.initChartOptions();
+      if (this.chartData) this.updateChartData();
+      this.cdr.markForCheck();
+    });
+  }
 
   currentUser: User | null = null;
   private dashboardLoaded = false;
@@ -147,11 +157,17 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     // No longer need manual canvas init
   }
 
+  private getChartColors() {
+    const isDark = document.documentElement.classList.contains('dark');
+    return {
+      textColor:          isDark ? '#e4e4e7' : '#3f3f46',
+      textColorSecondary: isDark ? '#a1a1aa' : '#71717a',
+      surfaceBorder:      isDark ? '#3f3f46' : '#e4e4e7',
+    };
+  }
+
   initChartOptions() {
-      const documentStyle = getComputedStyle(document.documentElement);
-      const textColor = documentStyle.getPropertyValue('--text-color');
-      const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
-      const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
+      const { textColor, textColorSecondary, surfaceBorder } = this.getChartColors();
 
       this.chartOptions = {
           maintainAspectRatio: false,
@@ -189,10 +205,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   updateChartData() {
     if (!this.attendanceTrendData) return;
 
-    const documentStyle = getComputedStyle(document.documentElement);
     const primaryColor = '#3b67f5';
     const accentColor = '#f59e0b';
-    const textColor = documentStyle.getPropertyValue('--text-color') || '#4b5563';
+    const { textColor } = this.getChartColors();
 
     // 1. Attendance Trend (Line Chart)
     this.chartData = {
