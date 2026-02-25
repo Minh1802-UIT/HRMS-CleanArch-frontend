@@ -1,37 +1,40 @@
 <div
-  class="flex overflow-hidden flex-col h-screen min-h-screen antialiased bg-background-light dark:bg-background-dark font-body"
+  class="flex overflow-hidden flex-col h-screen min-h-screen antialiased"
   >
   <!-- Main Content -->
   <main
-    class="flex overflow-hidden relative flex-col flex-1 px-4 py-6 sm:px-6 lg:px-8"
+    class="flex overflow-hidden relative flex-col flex-1 px-6 py-6"
     >
-    <!-- Header (Keep Tabs as they are specific to Employees) -->
-    <div class="flex flex-col items-center mb-6 shrink-0">
-      <h1 class="mb-6 text-3xl font-bold text-gray-900 dark:text-white">
+    <!-- Page Header -->
+    <div class="mb-4 shrink-0">
+      <p class="label-overline text-violet-500 mb-1">Workforce</p>
+      <h1 class="text-2xl font-black tracking-tight text-zinc-900 dark:text-white">
         Employee Management
       </h1>
-      <div
-        class="flex justify-center space-x-12 w-full max-w-2xl border-b border-gray-200 dark:border-gray-700"
-        >
-        <a
-          routerLink="/employees"
-          class="px-2 pb-4 text-xs font-bold tracking-widest text-gray-500 uppercase border-b-2 border-transparent transition-all cursor-pointer dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:border-gray-300"
-          >Team members</a
-          >
-          <a
-            routerLink="/directory"
-            class="px-2 pb-4 text-xs font-bold tracking-widest text-gray-500 uppercase border-b-2 border-transparent transition-all cursor-pointer dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:border-gray-300"
-            >Directory</a
-            >
-            <a
-              routerLink="/org-chart"
-              class="px-2 pb-4 text-xs font-bold tracking-widest uppercase border-b-2 transition-all cursor-pointer border-primary text-primary"
-              >Org chart</a
-              >
-            </div>
-          </div>
+      <p class="text-zinc-500 dark:text-zinc-400 text-sm mt-1">
+        Visualize your organization's hierarchy.
+      </p>
+    </div>
+    <!-- Sub-navigation tabs -->
+    <div class="flex space-x-6 mb-4 border-b border-zinc-200 dark:border-zinc-800 shrink-0">
+      <a
+        routerLink="/employees"
+        class="px-1 pb-3 text-xs font-bold tracking-widest uppercase border-b-2 border-transparent text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 hover:border-zinc-300 transition-all cursor-pointer"
+        >Team Members</a
+      >
+      <a
+        routerLink="/directory"
+        class="px-1 pb-3 text-xs font-bold tracking-widest uppercase border-b-2 border-transparent text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 hover:border-zinc-300 transition-all cursor-pointer"
+        >Directory</a
+      >
+      <a
+        routerLink="/org-chart"
+        class="px-1 pb-3 text-xs font-bold tracking-widest uppercase border-b-2 border-violet-600 text-violet-600 transition-all cursor-pointer"
+        >Org Chart</a
+      >
+    </div>
 
-          <!-- Content Card (MATCHING POSITION LIST STYLE) -->
+          <!-- Content Card -->
           <div
             class="flex overflow-hidden flex-col flex-1 bg-white rounded-lg border border-gray-200 shadow-sm dark:bg-gray-800 dark:border-gray-700"
             >

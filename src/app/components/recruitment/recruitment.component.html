@@ -1,65 +1,37 @@
-<div
-  class="min-h-screen antialiased transition-colors duration-200 bg-background-light dark:bg-background-dark font-body"
-  >
-  <!-- Sub Navigation -->
-  <div
-    class="z-20 backdrop-blur-md bg-white/70 dark:bg-slate-900/70 border-b border-white/50 dark:border-slate-800/50 sticky top-[64px]"
-    >
-    <div
-      class="flex justify-center flex-col items-center px-6 mx-auto max-w-7xl pt-10 pb-2"
-      >
-      <div class="relative mb-8">
-        <div
-          class="absolute -inset-4 bg-primary/10 blur-2xl rounded-full"
-        ></div>
-        <h1
-          class="relative text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight"
-          >
-          Recruitment <span class="text-primary">Hub</span>
-        </h1>
-      </div>
-      <div
-        class="flex justify-center space-x-12 border-b border-slate-200 dark:border-slate-800 w-full max-w-2xl"
-        >
-        <button
-          (click)="onTabChange('jobs')"
-          class="pb-4 px-4 flex relative items-center h-full transition-all text-xs font-bold uppercase tracking-[0.2em] border-b-2"
-          [ngClass]="
-            activeTab === 'jobs'
-              ? 'text-primary border-primary'
-              : 'text-slate-400 border-transparent hover:text-slate-600 dark:hover:text-slate-200'
-          "
-          >
-          Jobs
-        </button>
-        <button
-          (click)="onTabChange('candidates')"
-          class="pb-4 px-4 flex relative items-center h-full transition-all text-xs font-bold uppercase tracking-[0.2em] border-b-2"
-          [ngClass]="
-            activeTab === 'candidates'
-              ? 'text-primary border-primary'
-              : 'text-slate-400 border-transparent hover:text-slate-600 dark:hover:text-slate-200'
-          "
-          >
-          Candidates
-        </button>
-        <button
-          (click)="onTabChange('process')"
-          class="pb-4 px-4 flex relative items-center h-full transition-all text-xs font-bold uppercase tracking-[0.2em] border-b-2"
-          [ngClass]="
-            activeTab === 'process'
-              ? 'text-primary border-primary'
-              : 'text-slate-400 border-transparent hover:text-slate-600 dark:hover:text-slate-200'
-          "
-          >
-          Working Process
-        </button>
-      </div>
+<div class="p-6 max-w-[1600px] mx-auto">
+  <!-- Page Header -->
+  <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+      <p class="label-overline text-violet-500 mb-1">Talent</p>
+      <h1 class="text-2xl font-black tracking-tight text-zinc-900 dark:text-white">
+        Recruitment Hub
+      </h1>
+      <p class="text-zinc-500 dark:text-zinc-400 text-sm mt-1">
+        Manage job openings, candidates, and hiring pipelines.
+      </p>
     </div>
+  </div>
+  <!-- Sub-navigation tabs -->
+  <div class="flex space-x-6 mb-8 border-b border-zinc-200 dark:border-zinc-800">
+    <button
+      (click)="onTabChange('jobs')"
+      class="px-1 pb-3 text-xs font-bold tracking-widest uppercase border-b-2 transition-all"
+      [ngClass]="activeTab === 'jobs' ? 'border-violet-600 text-violet-600' : 'border-transparent text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 hover:border-zinc-300'"
+    >Jobs</button>
+    <button
+      (click)="onTabChange('candidates')"
+      class="px-1 pb-3 text-xs font-bold tracking-widest uppercase border-b-2 transition-all"
+      [ngClass]="activeTab === 'candidates' ? 'border-violet-600 text-violet-600' : 'border-transparent text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 hover:border-zinc-300'"
+    >Candidates</button>
+    <button
+      (click)="onTabChange('process')"
+      class="px-1 pb-3 text-xs font-bold tracking-widest uppercase border-b-2 transition-all"
+      [ngClass]="activeTab === 'process' ? 'border-violet-600 text-violet-600' : 'border-transparent text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 hover:border-zinc-300'"
+    >Working Process</button>
   </div>
 
   <!-- Main Content -->
-  <main class="px-6 py-8 mx-auto max-w-7xl">
+  <div>
     <!-- Jobs Tab -->
     @if (activeTab === 'jobs') {
       <!-- List View -->
@@ -873,5 +845,5 @@
                                                   </div>
                                                 </div>
                                               }
-                                            </main>
+                                            </div>
                                           </div>

@@ -1,54 +1,39 @@
-<main class="p-8 max-w-[1440px] mx-auto">
-  <div
-    class="flex flex-col gap-6 justify-between mb-8 lg:flex-row lg:items-center"
-    >
-    <div class="flex gap-12 items-center">
-      <h1 class="text-2xl font-bold text-slate-800 dark:text-white">
+<div class="p-6 max-w-[1600px] mx-auto">
+  <!-- Page Header -->
+  <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+      <p class="label-overline text-violet-500 mb-1">Time &amp; Leave</p>
+      <h1 class="text-2xl font-black tracking-tight text-zinc-900 dark:text-white">
         Leave Approvals
       </h1>
-      <div
-        class="flex gap-8 items-center border-b border-slate-200 lg:border-none"
-        >
-        <button
-          (click)="activeFilter = 'Pending'"
-          [class.text-blue-700]="activeFilter === 'Pending'"
-          [class.border-b-2]="activeFilter === 'Pending'"
-          [class.border-blue-700]="activeFilter === 'Pending'"
-          [class.text-slate-600]="activeFilter !== 'Pending'"
-          class="px-2 pb-4 text-sm font-semibold transition-colors"
-          >
-          Pending ({{ pendingCount }})
-        </button>
-        <button
-          (click)="activeFilter = 'Approved'"
-          [class.text-blue-700]="activeFilter === 'Approved'"
-          [class.border-b-2]="activeFilter === 'Approved'"
-          [class.border-blue-700]="activeFilter === 'Approved'"
-          [class.text-slate-600]="activeFilter !== 'Approved'"
-          class="px-2 pb-4 text-sm font-semibold transition-colors"
-          >
-          Approved ({{ approvedCount }})
-        </button>
-        <button
-          (click)="activeFilter = 'Rejected'"
-          [class.text-blue-700]="activeFilter === 'Rejected'"
-          [class.border-b-2]="activeFilter === 'Rejected'"
-          [class.border-blue-700]="activeFilter === 'Rejected'"
-          [class.text-slate-600]="activeFilter !== 'Rejected'"
-          class="px-2 pb-4 text-sm font-semibold transition-colors"
-          >
-          Rejected ({{ rejectedCount }})
-        </button>
-      </div>
+      <p class="text-zinc-500 dark:text-zinc-400 text-sm mt-1">
+        Review and act on employee leave requests.
+      </p>
     </div>
-    <div class="flex flex-wrap gap-3 items-center">
-      <button
-        class="flex gap-2 items-center px-4 py-2 text-sm font-semibold rounded-lg border-2 transition-colors border-primary text-primary hover:bg-primary/5"
-        >
-        <i class="text-lg pi pi-download"></i>
-        Download Report
-      </button>
-    </div>
+    <button
+      class="flex gap-2 items-center px-5 py-2.5 text-sm font-bold text-white rounded-xl shadow-lg transition-all bg-violet-600 hover:bg-violet-500 shadow-violet-600/25 btn-glow whitespace-nowrap"
+    >
+      <span class="text-lg material-symbols-outlined">download</span>
+      Download Report
+    </button>
+  </div>
+  <!-- Status Filter Tabs -->
+  <div class="flex space-x-6 mb-8 border-b border-zinc-200 dark:border-zinc-800">
+    <button
+      (click)="activeFilter = 'Pending'"
+      class="px-1 pb-3 text-xs font-bold tracking-widest uppercase border-b-2 transition-all"
+      [ngClass]="activeFilter === 'Pending' ? 'border-violet-600 text-violet-600' : 'border-transparent text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 hover:border-zinc-300'"
+    >Pending ({{ pendingCount }})</button>
+    <button
+      (click)="activeFilter = 'Approved'"
+      class="px-1 pb-3 text-xs font-bold tracking-widest uppercase border-b-2 transition-all"
+      [ngClass]="activeFilter === 'Approved' ? 'border-violet-600 text-violet-600' : 'border-transparent text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 hover:border-zinc-300'"
+    >Approved ({{ approvedCount }})</button>
+    <button
+      (click)="activeFilter = 'Rejected'"
+      class="px-1 pb-3 text-xs font-bold tracking-widest uppercase border-b-2 transition-all"
+      [ngClass]="activeFilter === 'Rejected' ? 'border-violet-600 text-violet-600' : 'border-transparent text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 hover:border-zinc-300'"
+    >Rejected ({{ rejectedCount }})</button>
   </div>
 
   <!-- Filters Row -->
@@ -435,4 +420,4 @@
                             </div>
                           </div>
                         }
-                      </main>
+                      </div>
