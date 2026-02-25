@@ -205,6 +205,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
               },
               y: {
                   border: { display: false },
+                  min: 0,
                   ticks: {
                       color: textColorSecondary,
                       font: { size: 11 }
