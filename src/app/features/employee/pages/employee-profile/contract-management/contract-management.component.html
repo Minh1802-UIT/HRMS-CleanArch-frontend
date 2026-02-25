@@ -1,0 +1,266 @@
+<div class="space-y-6">
+  <!-- Header & Actions -->
+  <div class="flex justify-between items-center">
+    <h3 class="text-lg font-bold text-gray-800 dark:text-white">
+      Contract History
+    </h3>
+    @if (canEdit) {
+      <button
+        (click)="openAddModal()"
+        class="flex gap-2 items-center px-4 py-2 text-sm font-bold text-white rounded-lg shadow-sm bg-primary hover:bg-primary-dark"
+      >
+        <span class="text-xl material-symbols-outlined">add</span>
+        New Contract
+      </button>
+    }
+  </div>
+
+  <!-- Contract List -->
+  <div
+    class="overflow-hidden bg-white rounded-xl border border-gray-100 shadow-sm dark:bg-gray-800 dark:border-gray-700"
+  >
+    <table class="w-full text-sm text-left">
+      <thead
+        class="text-xs font-medium text-gray-500 uppercase bg-gray-50 dark:bg-gray-700/50"
+      >
+        <tr>
+          <th class="px-6 py-4">Contract Code</th>
+          <th class="px-6 py-4">Type</th>
+          <th class="px-6 py-4">Duration</th>
+          <th class="px-6 py-4">Salary (Basic)</th>
+          <th class="px-6 py-4">Status</th>
+          <th class="px-6 py-4 text-center">Attachment</th>
+          @if (canEdit) {
+            <th class="px-6 py-4 text-center">Actions</th>
+          }
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+        @for (contract of contracts; track trackByIndex($index, contract)) {
+          <tr
+            class="transition-colors hover:bg-gray-50 dark:hover:bg-gray-700/30"
+          >
+            <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
+              {{ contract.contractCode }}
+            </td>
+            <td class="px-6 py-4 text-gray-600 dark:text-gray-300">
+              {{ contract.type }}
+            </td>
+            <td class="px-6 py-4">
+              <div class="flex flex-col">
+                <span class="font-medium text-gray-900 dark:text-white">{{
+                  contract.startDate | date: "mediumDate"
+                }}</span>
+                <span class="text-xs text-gray-500"
+                  >to
+                  {{
+                    (contract.endDate | date: "mediumDate") || "Indefinite"
+                  }}</span
+                >
+              </div>
+            </td>
+            <td class="px-6 py-4 text-gray-600 dark:text-gray-300">
+              {{ contract.salary.basicSalary | currency: "USD" }}
+            </td>
+            <td class="px-6 py-4">
+              <span
+                [ngClass]="{
+                  'bg-green-100 text-green-700 border-green-200':
+                    contract.status === 'Active',
+                  'bg-gray-100 text-gray-700 border-gray-200':
+                    contract.status === 'Expired',
+                  'bg-red-100 text-red-700 border-red-200':
+                    contract.status === 'Terminated',
+                }"
+                class="px-2.5 py-0.5 text-xs font-bold rounded-full border"
+              >
+                {{ contract.status }}
+              </span>
+            </td>
+            <td class="px-6 py-4 text-center">
+              @if (contract.fileUrl) {
+                <a
+                  [href]="contract.fileUrl"
+                  target="_blank"
+                  class="inline-flex justify-center items-center w-8 h-8 text-blue-600 bg-blue-50 rounded-full transition-colors hover:bg-blue-100"
+                  title="Download Contract"
+                >
+                  <span class="text-sm material-symbols-outlined"
+                    >download</span
+                  >
+                </a>
+              }
+              @if (!contract.fileUrl) {
+                <span class="text-gray-400">-</span>
+              }
+            </td>
+            @if (canEdit) {
+              <td class="px-6 py-4 text-center">
+                <button
+                  (click)="openEditModal(contract)"
+                  class="mx-1 text-gray-400 transition-colors hover:text-primary"
+                  title="Edit"
+                >
+                  <span class="material-symbols-outlined">edit</span>
+                </button>
+              </td>
+            }
+          </tr>
+        }
+        @if (contracts.length === 0) {
+          <tr>
+            <td
+              [attr.colspan]="canEdit ? 7 : 6"
+              class="px-6 py-12 text-center text-gray-500"
+            >
+              <div class="flex flex-col gap-2 items-center">
+                <span class="text-4xl text-gray-300 material-symbols-outlined"
+                  >description</span
+                >
+                <p>No contracts found for this employee.</p>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal -->
+@if (showModal) {
+  <div
+    class="flex fixed inset-0 z-50 justify-center items-center p-4 backdrop-blur-sm bg-black/50"
+  >
+    <div
+      class="overflow-hidden w-full max-w-2xl bg-white rounded-xl shadow-xl dark:bg-gray-800 animate-fade-in-up"
+    >
+      <!-- Header -->
+      <div
+        class="flex justify-between items-center px-6 py-4 border-b border-gray-100 dark:border-gray-700"
+      >
+        <h3 class="text-lg font-bold text-gray-800 dark:text-white">
+          {{ isEditing ? "Edit Contract" : "New Contract" }}
+        </h3>
+        <button
+          (click)="closeModal()"
+          class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+        >
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <!-- Body -->
+      <div class="p-6 overflow-y-auto max-h-[80vh]">
+        <form [formGroup]="contractForm" class="space-y-6">
+          <!-- Code & Type -->
+          <div class="grid grid-cols-2 gap-6">
+            <app-form-input
+              [formGroup]="contractForm"
+              controlName="contractCode"
+              label="Contract Code"
+              [required]="true"
+              placeholder="e.g. CNT-2023-001"
+            ></app-form-input>
+            <app-form-select
+              [formGroup]="contractForm"
+              controlName="type"
+              label="Contract Type"
+              [options]="[
+                { id: 'Fixed-Term', name: 'Fixed-Term' },
+                { id: 'Indefinite', name: 'Indefinite' },
+              ]"
+              optionValue="id"
+              optionLabel="name"
+              [required]="true"
+            ></app-form-select>
+          </div>
+          <!-- Dates -->
+          <div class="grid grid-cols-2 gap-6">
+            <app-form-input
+              [formGroup]="contractForm"
+              controlName="startDate"
+              label="Start Date"
+              type="date"
+              [required]="true"
+            ></app-form-input>
+            <app-form-input
+              [formGroup]="contractForm"
+              controlName="endDate"
+              label="End Date"
+              type="date"
+            ></app-form-input>
+          </div>
+          <!-- Salary -->
+          <div class="p-4 space-y-4 bg-gray-50 rounded-lg dark:bg-gray-700/30">
+            <h4 class="mb-2 text-sm font-bold text-gray-700 dark:text-gray-300">
+              Salary Components
+            </h4>
+            <div class="grid grid-cols-2 gap-4" formGroupName="salary">
+              <app-form-input
+                [formGroup]="$any(contractForm.get('salary'))"
+                controlName="basicSalary"
+                label="Basic Salary"
+                type="number"
+                [required]="true"
+              ></app-form-input>
+              <app-form-input
+                [formGroup]="$any(contractForm.get('salary'))"
+                controlName="transportAllowance"
+                label="Transport Allowance"
+                type="number"
+              ></app-form-input>
+              <app-form-input
+                [formGroup]="$any(contractForm.get('salary'))"
+                controlName="lunchAllowance"
+                label="Lunch Allowance"
+                type="number"
+              ></app-form-input>
+              <app-form-input
+                [formGroup]="$any(contractForm.get('salary'))"
+                controlName="otherAllowance"
+                label="Other Allowance"
+                type="number"
+              ></app-form-input>
+            </div>
+          </div>
+          <app-form-input
+            [formGroup]="contractForm"
+            controlName="note"
+            label="Note"
+            placeholder="Additional notes..."
+          ></app-form-input>
+          <!-- File Upload Placeholder -->
+          <div>
+            <label
+              class="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"
+              >Attachment</label
+            >
+            <input
+              type="file"
+              accept=".pdf,.doc,.docx"
+              class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
+            />
+          </div>
+        </form>
+      </div>
+      <!-- Footer -->
+      <div
+        class="flex gap-3 justify-end px-6 py-4 bg-gray-50 border-t border-gray-100 dark:border-gray-700 dark:bg-gray-700/30"
+      >
+        <button
+          (click)="closeModal()"
+          class="px-4 py-2 text-sm font-bold text-gray-600 bg-white rounded-lg border border-gray-300 hover:bg-gray-50"
+        >
+          Cancel
+        </button>
+        <button
+          (click)="saveContract()"
+          class="px-4 py-2 text-sm font-bold text-white rounded-lg shadow-sm bg-primary hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed"
+          [disabled]="contractForm.invalid"
+        >
+          {{ isEditing ? "Update Contract" : "Create Contract" }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
