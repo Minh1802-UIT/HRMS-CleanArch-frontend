@@ -1,476 +1,215 @@
-<!-- Main Navigation -->
-<nav
-  class="bg-[#0a0a0f] text-white h-16 px-6 flex items-center justify-between shadow-md z-50 sticky top-0"
+﻿<!-- Slim Top Bar -->
+<header
+  class="flex items-center justify-between h-14 px-6 bg-[#0a0a0f] border-b border-zinc-800 flex-shrink-0 z-30"
 >
-  <div class="flex items-center space-x-10">
-    <!-- Logo -->
-    <a routerLink="/dashboard" class="flex items-center space-x-2">
-      <div class="flex items-center text-2xl font-bold">
-        <span class="text-[#a78bfa] text-3xl mr-1">M</span> HRMagnet
-      </div>
-    </a>
+  <!-- Left: Page Title -->
+  <div class="flex items-center gap-3 min-w-0">
+    <span class="text-[13px] font-semibold text-zinc-200 truncate">{{
+      pageTitle
+    }}</span>
+  </div>
 
-    <!-- Main Navigation Links -->
-    <div
-      class="hidden items-center space-x-6 text-[13px] font-medium text-slate-300 lg:flex"
+  <!-- Right: Actions -->
+  <div class="flex items-center gap-1">
+    <!-- Search -->
+    <button
+      class="flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+      title="Search"
     >
-      <a
-        routerLink="/dashboard"
-        class="transition-colors hover:text-white"
-        [ngClass]="{ 'text-white font-semibold': activePage === 'dashboard' }"
-      >
-        Dashboard
-      </a>
+      <span class="material-symbols-outlined text-[20px]">search</span>
+    </button>
 
-      <!-- Management Dropdown -->
-      <div class="flex relative items-center h-full">
-        <button
-          (click)="toggleManagement()"
-          class="flex items-center transition-colors hover:text-white"
-          [ngClass]="{
-            'text-[#a78bfa] font-semibold border-b-2 border-[#a78bfa] pb-1 translate-y-[2px]':
-              [
-                'employees',
-                'Departments',
-                'payroll',
-                'attendance',
-                'leaves',
-                'approvals',
-              ].includes(activePage),
-          }"
-        >
-          Management
-          <span class="material-symbols-outlined text-[18px] ml-0.5"
-            >expand_more</span
-          >
-        </button>
-        <!-- Dropdown Menu -->
-        <div
-          class="absolute top-full left-0 mt-0 w-48 bg-[#0a0a0f] border border-zinc-800 rounded-lg shadow-xl py-2 animate-fade-in z-50"
-          [class.hidden]="!isManagementOpen"
-          [class.block]="isManagementOpen"
-        >
-          <a
-            routerLink="/employees"
-            (click)="closeManagement()"
-            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-zinc-900"
-            [ngClass]="{ 'text-[#a78bfa]': activePage === 'employees' }"
-            *appHasRole="['Admin', 'HR', 'Manager']"
-            >Employees</a
-          >
-          <a
-            routerLink="/departments"
-            (click)="closeManagement()"
-            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-zinc-900"
-            [ngClass]="{ 'text-[#a78bfa]': activePage === 'departments' }"
-            *appHasRole="['Admin', 'HR']"
-            >Departments</a
-          >
-          <a
-            routerLink="/system/positions"
-            (click)="closeManagement()"
-            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-zinc-900"
-            [ngClass]="{ 'text-[#a78bfa]': activePage === 'positions' }"
-            *appHasRole="['Admin', 'HR']"
-            >Positions</a
-          >
-          <a
-            routerLink="/payroll"
-            (click)="closeManagement()"
-            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-zinc-900"
-            [ngClass]="{ 'text-[#a78bfa]': activePage === 'payroll' }"
-            *appHasRole="['Admin', 'HR']"
-            >Payroll</a
-          >
-          <a
-            routerLink="/attendance"
-            (click)="closeManagement()"
-            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-zinc-900"
-            [ngClass]="{ 'text-[#a78bfa]': activePage === 'attendance' }"
-            *appHasRole="['Admin', 'HR', 'Manager']"
-            >Attendance</a
-          >
-          <a
-            routerLink="/attendance/shifts"
-            (click)="closeManagement()"
-            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-zinc-900"
-            [ngClass]="{ 'text-[#a78bfa]': activePage === 'shifts' }"
-            *appHasRole="['Admin', 'HR', 'Manager']"
-            >Shifts</a
-          >
-          <a
-            routerLink="/leaves"
-            (click)="closeManagement()"
-            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-zinc-900"
-            [ngClass]="{ 'text-[#a78bfa]': activePage === 'leaves' }"
-            >Leaves</a
-          >
-          <a
-            routerLink="/admin/leave-reports"
-            (click)="closeManagement()"
-            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-zinc-900"
-            [ngClass]="{ 'text-[#a78bfa]': activePage === 'leave-reports' }"
-            *appHasRole="['Admin', 'HR']"
-            >Leave Reports</a
-          >
-          <a
-            routerLink="/approvals"
-            (click)="closeManagement()"
-            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-zinc-900"
-            [ngClass]="{ 'text-[#a78bfa]': activePage === 'approvals' }"
-            *appHasRole="['Admin', 'HR', 'Manager']"
-            >Approvals</a
-          >
-          <a
-            routerLink="/system/users"
-            (click)="closeManagement()"
-            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-zinc-900"
-            [ngClass]="{ 'text-[#a78bfa]': activePage === 'users' }"
-            *appHasRole="['Admin']"
-            >User Management</a
-          >
-          <a
-            routerLink="/system/audit-logs"
-            (click)="closeManagement()"
-            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-zinc-900"
-            [ngClass]="{ 'text-[#a78bfa]': activePage === 'audit-logs' }"
-            *appHasRole="['Admin']"
-            >Audit Logs</a
-          >
-        </div>
-      </div>
+    <!-- Attendance Simulator -->
+    <button
+      (click)="openSimulator()"
+      class="flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-[#a78bfa] hover:bg-zinc-800 transition-colors"
+      title="Attendance Simulator"
+    >
+      <span class="material-symbols-outlined text-[20px]">verified_user</span>
+    </button>
 
-      <a
-        routerLink="/approvals"
-        class="transition-colors hover:text-white"
-        [ngClass]="{
-          'text-[#a78bfa] font-semibold border-b-2 border-[#a78bfa] pb-1 translate-y-[2px]':
-            activePage === 'tasks' || activePage === 'approvals',
-        }"
-        >Task Lists</a
-      >
-
-      <a
-        routerLink="/attendance"
-        class="transition-colors hover:text-white"
-        [ngClass]="{
-          'text-[#a78bfa] font-semibold border-b-2 border-[#a78bfa] pb-1 translate-y-[2px]':
-            activePage === 'time-tracking' || activePage === 'attendance',
-        }"
-        >Time Tracking</a
-      >
-
-      <a
-        routerLink="/performance"
-        class="transition-colors hover:text-white"
-        [ngClass]="{
-          'text-[#a78bfa] font-semibold border-b-2 border-[#a78bfa] pb-1 translate-y-[2px]':
-            activePage === 'performance',
-        }"
-        >Performance</a
-      >
-
-      <a
-        routerLink="/recruitment"
-        class="transition-colors hover:text-white"
-        [ngClass]="{
-          'text-[#a78bfa] font-semibold border-b-2 border-[#a78bfa] pb-1 translate-y-[2px]':
-            activePage === 'recruitment',
-        }"
-        >Recruitment</a
-      >
-
-      <!-- More Dropdown -->
-      <div class="flex relative items-center h-full">
-        <button
-          (click)="toggleMore()"
-          class="flex items-center transition-colors text-slate-300 hover:text-white"
-        >
-          More
-          <span class="material-symbols-outlined text-[18px] ml-0.5"
-            >expand_more</span
-          >
-        </button>
-        <div
-          class="absolute top-full left-0 mt-0 w-48 bg-[#0a0a0f] border border-zinc-800 rounded-lg shadow-xl py-2 animate-fade-in z-50"
-          [class.hidden]="!isMoreOpen"
-          [class.block]="isMoreOpen"
-        >
-          <a
-            routerLink="/documents"
-            (click)="closeMore()"
-            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-zinc-900"
-            [ngClass]="{ 'text-[#a78bfa]': activePage === 'documents' }"
-            >Documents</a
-          >
-          <a
-            routerLink="/news"
-            (click)="closeMore()"
-            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-zinc-900"
-            [ngClass]="{ 'text-[#a78bfa]': activePage === 'news' }"
-            >News & Internal</a
-          >
-          <a
-            routerLink="/org-chart"
-            (click)="closeMore()"
-            class="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-zinc-900"
-            [ngClass]="{ 'text-[#a78bfa]': activePage === 'org-chart' }"
-            >Org Chart</a
-          >
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Right Side Actions -->
-  <div class="flex items-center space-x-4">
-    <div class="flex items-center pr-4 space-x-3 border-r border-zinc-800">
-      <button class="text-slate-300 hover:text-white">
-        <span class="material-symbols-outlined">search</span>
-      </button>
-
-      <!-- Attendance Simulator Trigger -->
+    <!-- Notification Bell -->
+    <div class="relative">
       <button
-        (click)="openSimulator()"
-        class="text-slate-300 hover:text-[#a78bfa] transition-colors"
-        title="Attendance Simulator"
+        (click)="toggleNotifPanel()"
+        class="relative flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+        title="Notifications"
       >
-        <span class="material-symbols-outlined">verified_user</span>
-      </button>
-      <!-- Notification Bell -->
-      <div class="relative">
-        <button
-          (click)="toggleNotifPanel()"
-          class="relative text-slate-300 hover:text-white transition-colors"
-          title="Notifications"
-        >
-          <span class="material-symbols-outlined">notifications</span>
-          @if ((unreadCount$ | async) ?? 0; as count) {
-            @if (count > 0) {
-              <span
-                class="absolute -top-1 -right-1 flex items-center justify-center min-w-[18px] h-[18px] text-[10px] font-bold text-white bg-[#a78bfa] rounded-full px-1"
-              >
-                {{ count > 99 ? "99+" : count }}
-              </span>
-            }
+        <span class="material-symbols-outlined text-[20px]">notifications</span>
+        @if ((unreadCount$ | async) ?? 0; as count) {
+          @if (count > 0) {
+            <span
+              class="absolute top-1 right-1 flex items-center justify-center min-w-[16px] h-[16px] text-[9px] font-bold text-white bg-[#a78bfa] rounded-full px-0.5 leading-none"
+            >
+              {{ count > 99 ? '99+' : count }}
+            </span>
           }
-        </button>
-
-        <!-- Notification Dropdown Panel -->
-        @if (showNotifPanel) {
-          <div
-            class="absolute right-0 top-full z-50 mt-2 w-80 bg-[#0a0a0f] border border-zinc-800 rounded-lg shadow-2xl animate-fade-in"
-            (click)="$event.stopPropagation()"
-          >
-            <!-- Header -->
-            <div
-              class="flex items-center justify-between px-4 py-3 border-b border-zinc-800"
-            >
-              <span class="text-sm font-semibold text-white"
-                >Notifications</span
-              >
-              <button
-                (click)="onMarkAllRead()"
-                class="text-xs text-[#a78bfa] hover:underline"
-              >
-                Mark all read
-              </button>
-            </div>
-
-            <!-- List -->
-            <div class="overflow-y-auto max-h-72">
-              @if (notifications.length === 0) {
-                <div class="px-4 py-6 text-center text-slate-400 text-sm">
-                  No notifications
-                </div>
-              }
-              @for (notif of notifications; track notif.id) {
-                <div
-                  [class.bg-slate-800]="!notif.isRead"
-                  class="flex items-start gap-3 px-4 py-3 border-b border-zinc-800/50 hover:bg-slate-700/40 cursor-default transition-colors"
-                >
-                  <span
-                    class="material-symbols-outlined text-base mt-0.5 flex-shrink-0"
-                    [class.text-green-400]="notif.type === 'LeaveApproved'"
-                    [class.text-red-400]="notif.type === 'LeaveRejected'"
-                    [class.text-blue-400]="
-                      notif.type !== 'LeaveApproved' &&
-                      notif.type !== 'LeaveRejected'
-                    "
-                  >
-                    {{
-                      notif.type === "LeaveApproved"
-                        ? "check_circle"
-                        : notif.type === "LeaveRejected"
-                          ? "cancel"
-                          : "info"
-                    }}
-                  </span>
-                  <div class="flex-1 min-w-0">
-                    <p class="text-xs font-semibold text-white truncate">
-                      {{ notif.title }}
-                    </p>
-                    <p class="text-xs text-slate-400 mt-0.5 line-clamp-2">
-                      {{ notif.body }}
-                    </p>
-                    <p class="text-[10px] text-slate-500 mt-1">
-                      {{ notif.createdAt | date: "short" }}
-                    </p>
-                  </div>
-                  @if (!notif.isRead) {
-                    <button
-                      (click)="onMarkRead(notif.id, $event)"
-                      class="text-slate-400 hover:text-white flex-shrink-0"
-                      title="Mark as read"
-                    >
-                      <span class="material-symbols-outlined text-sm"
-                        >done</span
-                      >
-                    </button>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Footer -->
-            <div class="px-4 py-2 text-center border-t border-zinc-800">
-              <button
-                (click)="closeNotifPanel()"
-                class="text-xs text-slate-400 hover:text-white"
-              >
-                Close
-              </button>
-            </div>
-          </div>
         }
-      </div>
-      <button class="text-slate-300 hover:text-white">
-        <span class="material-symbols-outlined">settings</span>
       </button>
-    </div>
 
-    <div class="flex items-center space-x-3">
-      <!-- User profile dropdown (Authenicated) -->
-      @if (currentUser$ | async; as user) {
-        <div class="relative group">
+      <!-- Notification Dropdown -->
+      @if (showNotifPanel) {
+        <div
+          class="absolute right-0 top-full z-50 mt-2 w-80 bg-[#0a0a0f] border border-zinc-800 rounded-xl shadow-2xl animate-fade-in"
+          (click)="$event.stopPropagation()"
+        >
+          <!-- Header -->
           <div
-            class="flex items-center p-1 pl-3 space-x-2 rounded-full transition-colors cursor-pointer bg-slate-800/50 hover:bg-zinc-900"
+            class="flex items-center justify-between px-4 py-3 border-b border-zinc-800"
           >
-            <span class="text-xs font-medium">Hi, {{ user.username }}</span>
-            <img
-              [src]="user.avatar || 'placeholder'"
-              alt="User"
-              class="object-cover w-8 h-8 rounded-full border border-slate-600"
-              onerror="
-                this.onerror = null;
-                this.src =
-                  'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjZTVlN2ViIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzljYTNhZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPj88L3RleHQ+PC9zdmc+';
-              "
-            />
-            <span class="material-symbols-outlined text-slate-400 text-[18px]"
-              >expand_more</span
+            <span class="text-sm font-semibold text-white">Notifications</span>
+            <button
+              (click)="onMarkAllRead()"
+              class="text-xs text-[#a78bfa] hover:underline"
             >
+              Mark all read
+            </button>
           </div>
-          <!-- Profile Dropdown Menu -->
-          <div
-            class="hidden absolute right-0 top-full z-50 pt-2 w-48 transition-all group-hover:block"
-          >
-            <div
-              class="bg-[#0a0a0f] border border-zinc-800 rounded-lg shadow-xl py-2 animate-fade-in text-left"
-            >
-              <div class="px-4 py-2 mb-1 border-b border-zinc-800">
-                <p class="text-xs font-bold text-white truncate">
-                  {{ user.username }}
-                </p>
-                <p class="text-[10px] text-slate-400 truncate">
-                  {{ user.email }}
-                </p>
+
+          <!-- List -->
+          <div class="overflow-y-auto max-h-72">
+            @if (notifications.length === 0) {
+              <div class="px-4 py-8 text-center text-zinc-500 text-sm">
+                <span class="material-symbols-outlined text-3xl block mb-2 text-zinc-700"
+                  >notifications_off</span
+                >
+                No notifications
               </div>
-              <a
-                routerLink="/profile"
-                class="flex gap-2 items-center px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-zinc-900"
+            }
+            @for (notif of notifications; track notif.id) {
+              <div
+                [ngClass]="{'bg-zinc-900/60': !notif.isRead}"
+                class="flex items-start gap-3 px-4 py-3 border-b border-zinc-800/50 hover:bg-zinc-800/40 cursor-default transition-colors"
               >
-                <span class="text-sm material-symbols-outlined">person</span>
-                Profile
-              </a>
-              <a
-                routerLink="/settings"
-                class="flex gap-2 items-center px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-zinc-900"
-              >
-                <span class="text-sm material-symbols-outlined">settings</span>
-                Settings
-              </a>
-              <div class="my-1 h-px bg-slate-700"></div>
-              <button
-                (click)="logout()"
-                class="flex gap-2 items-center px-4 py-2 w-full text-sm text-left text-red-400 hover:text-red-300 hover:bg-zinc-900"
-              >
-                <span class="text-sm material-symbols-outlined">logout</span>
-                Logout
-              </button>
-            </div>
+                <span
+                  class="material-symbols-outlined text-base mt-0.5 flex-shrink-0"
+                  [class.text-emerald-400]="notif.type === 'LeaveApproved'"
+                  [class.text-red-400]="notif.type === 'LeaveRejected'"
+                  [class.text-sky-400]="
+                    notif.type !== 'LeaveApproved' &&
+                    notif.type !== 'LeaveRejected'
+                  "
+                >
+                  {{
+                    notif.type === 'LeaveApproved'
+                      ? 'check_circle'
+                      : notif.type === 'LeaveRejected'
+                        ? 'cancel'
+                        : 'info'
+                  }}
+                </span>
+                <div class="flex-1 min-w-0">
+                  <p class="text-xs font-semibold text-white truncate">
+                    {{ notif.title }}
+                  </p>
+                  <p class="text-xs text-zinc-400 mt-0.5 line-clamp-2">
+                    {{ notif.body }}
+                  </p>
+                  <p class="text-[10px] text-zinc-600 mt-1">
+                    {{ notif.createdAt | date: 'short' }}
+                  </p>
+                </div>
+                @if (!notif.isRead) {
+                  <button
+                    (click)="onMarkRead(notif.id, $event)"
+                    class="text-zinc-500 hover:text-white flex-shrink-0 transition-colors"
+                    title="Mark as read"
+                  >
+                    <span class="material-symbols-outlined text-sm">done</span>
+                  </button>
+                }
+              </div>
+            }
+          </div>
+
+          <!-- Footer -->
+          <div class="px-4 py-2 text-center border-t border-zinc-800">
+            <button
+              (click)="closeNotifPanel()"
+              class="text-xs text-zinc-500 hover:text-white transition-colors"
+            >
+              Close
+            </button>
           </div>
         </div>
-      } @else {
-        <a
-          routerLink="/login"
-          class="px-4 py-1.5 text-xs font-bold text-white rounded-lg shadow-sm transition-all bg-primary hover:bg-primary/90"
-        >
-          Login
-        </a>
       }
-
-      <!-- Guest Login (Fallback) -->
     </div>
-  </div>
-</nav>
 
-<!-- Sub Navigation Tabs (if enabled) -->
-@if (showSubTabs) {
-  <div
-    class="flex justify-between items-center px-6 h-14 bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700"
-  >
-    <h1 class="text-xl font-bold text-gray-800 dark:text-white">
-      {{ subTabTitle }}
-    </h1>
-    <div class="flex space-x-8 h-full">
+    <!-- Divider -->
+    <div class="w-px h-5 bg-zinc-800 mx-1"></div>
+
+    <!-- User Profile -->
+    @if (currentUser$ | async; as user) {
+      <div class="relative group">
+        <div
+          class="flex items-center gap-2 pl-2 pr-3 py-1 rounded-full cursor-pointer hover:bg-zinc-800 transition-colors"
+        >
+          <img
+            [src]="user.avatar || ''"
+            alt="User"
+            class="w-7 h-7 rounded-full object-cover border border-zinc-700 flex-shrink-0"
+            onerror="
+              this.onerror = null;
+              this.src =
+                'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjM2YzZjQ2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iI2E3OGJmYSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPiYjOTc4MTs8L3RleHQ+PC9zdmc+';
+            "
+          />
+          <span class="text-xs font-medium text-zinc-200 max-w-[80px] truncate hidden sm:block">
+            {{ user.username }}
+          </span>
+          <span class="material-symbols-outlined text-zinc-500 text-[16px]">
+            expand_more
+          </span>
+        </div>
+
+        <!-- Profile dropdown -->
+        <div
+          class="hidden absolute right-0 top-full z-50 pt-1 w-48 transition-all group-hover:block"
+        >
+          <div
+            class="bg-[#0a0a0f] border border-zinc-800 rounded-xl shadow-2xl py-1 animate-fade-in text-left"
+          >
+            <div class="px-4 py-2.5 border-b border-zinc-800 mb-1">
+              <p class="text-xs font-bold text-white truncate">
+                {{ user.username }}
+              </p>
+              <p class="text-[10px] text-zinc-500 truncate">{{ user.email }}</p>
+            </div>
+            <a
+              routerLink="/profile"
+              class="flex gap-2.5 items-center px-4 py-2 text-[13px] text-zinc-300 hover:text-white hover:bg-zinc-800 transition-colors"
+            >
+              <span class="material-symbols-outlined text-[16px]">person</span>
+              Profile
+            </a>
+            <a
+              routerLink="/settings"
+              class="flex gap-2.5 items-center px-4 py-2 text-[13px] text-zinc-300 hover:text-white hover:bg-zinc-800 transition-colors"
+            >
+              <span class="material-symbols-outlined text-[16px]">settings</span>
+              Settings
+            </a>
+            <div class="my-1 mx-3 h-px bg-zinc-800"></div>
+            <button
+              (click)="logout()"
+              class="flex gap-2.5 items-center px-4 py-2 w-full text-[13px] text-left text-red-400 hover:text-red-300 hover:bg-zinc-800 transition-colors"
+            >
+              <span class="material-symbols-outlined text-[16px]">logout</span>
+              Logout
+            </button>
+          </div>
+        </div>
+      </div>
+    } @else {
       <a
-        routerLink="/employees"
-        class="flex items-center h-full text-sm font-medium border-b-2 transition-colors"
-        [ngClass]="
-          activeSubTab === 'team'
-            ? 'text-primary border-primary'
-            : 'text-gray-500 dark:text-gray-400 border-transparent hover:text-gray-800 dark:hover:text-gray-200 hover:border-gray-300'
-        "
+        routerLink="/login"
+        class="px-4 py-1.5 text-xs font-bold text-white rounded-lg transition-all bg-violet-600 hover:bg-violet-500"
       >
-        Team members
+        Login
       </a>
-      <a
-        routerLink="/directory"
-        class="flex items-center h-full text-sm font-medium border-b-2 transition-colors"
-        [ngClass]="
-          activeSubTab === 'directory'
-            ? 'text-primary border-primary'
-            : 'text-gray-500 dark:text-gray-400 border-transparent hover:text-gray-800 dark:hover:text-gray-200 hover:border-gray-300'
-        "
-      >
-        Directory
-      </a>
-      <a
-        routerLink="/org-chart"
-        class="flex items-center h-full text-sm font-medium border-b-2 transition-colors"
-        [ngClass]="
-          activeSubTab === 'org-chart'
-            ? 'text-primary border-primary'
-            : 'text-gray-500 dark:text-gray-400 border-transparent hover:text-gray-800 dark:hover:text-gray-200 hover:border-gray-300'
-        "
-      >
-        Org chart
-      </a>
-    </div>
-    <div class="w-10"></div>
+    }
   </div>
-}
+</header>
 
 <app-attendance-simulator
   [isVisible]="showSimulator"

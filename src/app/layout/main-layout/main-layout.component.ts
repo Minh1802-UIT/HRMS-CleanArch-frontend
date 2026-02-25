@@ -2,21 +2,28 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from
 
 import { RouterModule, RouterOutlet, ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { SharedNavbarComponent } from '@shared/components/shared-navbar/shared-navbar.component';
-import { AppFooter } from '../../components/footer/app.footer';
+import { SidebarComponent } from '../sidebar/sidebar.component';
 import { Subject, filter, map, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [RouterOutlet, RouterModule, SharedNavbarComponent, AppFooter],
+  imports: [RouterOutlet, RouterModule, SharedNavbarComponent, SidebarComponent],
   template: `
-    <div class="min-h-screen transition-colors duration-500 bg-zinc-50 dark:bg-[#09090b]">
-      <app-shared-navbar
-        [activePage]="activePage"
-        [showSubTabs]="false"
-      ></app-shared-navbar>
-      <router-outlet></router-outlet>
-      <app-footer></app-footer>
+    <div class="flex h-screen overflow-hidden bg-zinc-50 dark:bg-[#09090b]">
+      <!-- Left Sidebar -->
+      <app-sidebar [activePage]="activePage"></app-sidebar>
+
+      <!-- Right: Topbar + Page Content -->
+      <div class="flex flex-col flex-1 min-w-0 overflow-hidden">
+        <!-- Slim Topbar -->
+        <app-shared-navbar [activePage]="activePage"></app-shared-navbar>
+
+        <!-- Scrollable page area -->
+        <main class="flex-1 overflow-y-auto">
+          <router-outlet></router-outlet>
+        </main>
+      </div>
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush

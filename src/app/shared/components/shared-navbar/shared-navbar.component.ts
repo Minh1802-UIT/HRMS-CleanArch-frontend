@@ -7,13 +7,31 @@ import { Observable } from 'rxjs';
 import { User } from '../../../core/models/user.model';
 import { NotificationItem } from '../../../core/models/notification.model';
 
-import { HasRoleDirective } from '../../../core/directives/has-role.directive';
 import { AttendanceSimulatorComponent } from '../attendance-simulator/attendance-simulator.component';
+
+const PAGE_TITLES: Record<string, string> = {
+  dashboard:     'Dashboard',
+  employees:     'Employees',
+  Departments:   'Departments',
+  positions:     'Positions',
+  'org-chart':   'Org Chart',
+  attendance:    'Attendance',
+  shifts:        'Shifts',
+  leaves:        'Leave Requests',
+  approvals:     'Approvals',
+  'leave-reports': 'Leave Reports',
+  performance:   'Performance',
+  recruitment:   'Recruitment',
+  payroll:       'Payroll',
+  users:         'User Management',
+  'audit-logs':  'Audit Logs',
+  profile:       'My Profile',
+};
 
 @Component({
   selector: 'app-shared-navbar',
   standalone: true,
-  imports: [CommonModule, RouterModule, HasRoleDirective, AttendanceSimulatorComponent],
+  imports: [CommonModule, RouterModule, AttendanceSimulatorComponent],
   templateUrl: './shared-navbar.component.html',
   styleUrl: './shared-navbar.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -27,11 +45,13 @@ export class SharedNavbarComponent implements OnInit {
   currentUser$: Observable<User | null>;
   unreadCount$: Observable<number>;
 
-  isManagementOpen: boolean = false;
-  isMoreOpen: boolean = false;
   showSimulator: boolean = false;
   showNotifPanel: boolean = false;
   notifications: NotificationItem[] = [];
+
+  get pageTitle(): string {
+    return PAGE_TITLES[this.activePage] ?? 'HR Management';
+  }
 
   constructor(
     private authService: AuthService,
@@ -44,24 +64,6 @@ export class SharedNavbarComponent implements OnInit {
 
   ngOnInit(): void {
     this.notificationService.refreshUnreadCount();
-  }
-
-  toggleManagement() {
-    this.isManagementOpen = !this.isManagementOpen;
-    if (this.isManagementOpen) this.isMoreOpen = false; // Close others
-  }
-
-  closeManagement() {
-    this.isManagementOpen = false;
-  }
-
-  toggleMore() {
-    this.isMoreOpen = !this.isMoreOpen;
-    if (this.isMoreOpen) this.isManagementOpen = false; // Close others
-  }
-
-  closeMore() {
-    this.isMoreOpen = false;
   }
 
   openSimulator() {

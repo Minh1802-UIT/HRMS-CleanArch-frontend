@@ -1,0 +1,103 @@
+<aside
+  class="relative flex flex-col h-screen bg-[#0a0a0f] border-r border-zinc-800 transition-all duration-300 ease-in-out flex-shrink-0 z-40"
+  [class.w-60]="!collapsed()"
+  [class.w-16]="collapsed()"
+>
+  <!-- ── Header: Logo + Toggle ── -->
+  <div
+    class="flex items-center h-14 px-3 border-b border-zinc-800 flex-shrink-0"
+    [class.justify-between]="!collapsed()"
+    [class.justify-center]="collapsed()"
+  >
+    @if (!collapsed()) {
+      <a routerLink="/dashboard" class="flex items-center gap-2 min-w-0">
+        <span class="text-[#a78bfa] text-2xl font-bold leading-none">M</span>
+        <span class="text-white text-[13px] font-bold tracking-tight truncate"
+          >HRMagnet</span
+        >
+      </a>
+    }
+    <button
+      (click)="toggle()"
+      title="Toggle sidebar"
+      class="flex items-center justify-center w-8 h-8 rounded-lg text-zinc-500 hover:text-white hover:bg-zinc-800 transition-colors flex-shrink-0"
+    >
+      <span class="material-symbols-outlined text-[20px]">
+        {{ collapsed() ? 'menu_open' : 'menu' }}
+      </span>
+    </button>
+  </div>
+
+  <!-- ── Navigation ── -->
+  <nav
+    class="flex-1 overflow-y-auto overflow-x-hidden py-3 space-y-px"
+    style="scrollbar-width: thin; scrollbar-color: #27272a transparent"
+  >
+    @for (group of filteredGroups(); track group.title) {
+      <!-- Section label -->
+      @if (!collapsed()) {
+        <p
+          class="label-overline text-zinc-600 px-4 pt-5 pb-1.5 first:pt-2 select-none"
+        >
+          {{ group.title }}
+        </p>
+      } @else {
+        <div class="mx-3 mt-4 mb-2 border-t border-zinc-800/60"></div>
+      }
+
+      <!-- Nav items -->
+      @for (item of group.items; track item.route) {
+        <a
+          [routerLink]="item.route"
+          [title]="collapsed() ? item.label : ''"
+          [ngClass]="{
+            'bg-violet-600/15 text-[#a78bfa]': isActive(item.activePage),
+            'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/70': !isActive(item.activePage),
+            'justify-center': collapsed(),
+            'justify-start': !collapsed()
+          }"
+          class="relative flex items-center gap-3 mx-2 rounded-lg px-3 py-2 text-[13px] font-medium transition-all duration-150 group/item"
+        >
+          <!-- Active left-bar indicator -->
+          @if (isActive(item.activePage)) {
+            <span
+              class="absolute left-0 inset-y-1.5 w-[3px] rounded-r-full bg-[#a78bfa]"
+            ></span>
+          }
+
+          <!-- Icon -->
+          <span
+            [ngClass]="isActive(item.activePage) ? 'text-[#a78bfa]' : 'text-zinc-400 group-hover/item:text-zinc-200'"
+            class="material-symbols-outlined text-[20px] flex-shrink-0 transition-colors"
+          >
+            {{ item.icon }}
+          </span>
+
+          <!-- Label -->
+          @if (!collapsed()) {
+            <span class="truncate">{{ item.label }}</span>
+          }
+
+          <!-- Tooltip (collapsed mode) -->
+          @if (collapsed()) {
+            <span
+              class="absolute left-full ml-3 px-2.5 py-1 bg-zinc-900 border border-zinc-700 text-white text-xs font-medium rounded-md shadow-lg pointer-events-none whitespace-nowrap opacity-0 group-hover/item:opacity-100 transition-opacity duration-150 z-50"
+            >
+              {{ item.label }}
+            </span>
+          }
+        </a>
+      }
+    }
+  </nav>
+
+  <!-- ── Footer: version tag ── -->
+  @if (!collapsed()) {
+    <div
+      class="flex-shrink-0 px-4 py-3 border-t border-zinc-800 flex items-center justify-between"
+    >
+      <span class="label-overline text-zinc-700">HRMagnet</span>
+      <span class="text-[10px] text-zinc-700 font-mono">v1.0</span>
+    </div>
+  }
+</aside>
