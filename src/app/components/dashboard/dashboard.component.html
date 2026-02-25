@@ -234,22 +234,25 @@
 
         @if (!isLoading) {
           <div
-            class="h-[300px] flex items-center justify-center relative animate-fade-in-up stagger-2"
+            class="h-[300px] relative animate-fade-in-up stagger-2"
           >
             <p-chart
               type="doughnut"
               [data]="distributionData"
               [options]="distributionOptions"
             ></p-chart>
-            <div class="absolute text-center pointer-events-none">
-              <p class="text-2xl font-extrabold text-slate-900 dark:text-white">
-                {{ getTotalEmployees() }}
-              </p>
-              <p
-                class="text-xs font-bold tracking-widest uppercase text-slate-400"
-              >
-                Total
-              </p>
+            <!-- Overlay centred on the donut (left ~50 % of canvas when legend is on right) -->
+            <div class="absolute inset-y-0 left-0 w-1/2 flex items-center justify-center pointer-events-none">
+              <div class="text-center">
+                <p class="text-2xl font-extrabold text-slate-900 dark:text-white">
+                  {{ getTotalEmployees() }}
+                </p>
+                <p
+                  class="text-xs font-bold tracking-widest uppercase text-slate-400 dark:text-slate-500"
+                >
+                  Total
+                </p>
+              </div>
             </div>
           </div>
         }

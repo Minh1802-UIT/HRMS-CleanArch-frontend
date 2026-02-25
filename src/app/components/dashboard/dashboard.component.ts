@@ -175,30 +175,42 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.chartOptions = {
           maintainAspectRatio: false,
           aspectRatio: 0.6,
+          layout: {
+              padding: { top: 8, right: 16, bottom: 0, left: 0 }
+          },
           plugins: {
               legend: {
                   labels: {
-                      color: textColor
+                      color: textColor,
+                      usePointStyle: true,
+                      pointStyle: 'rectRounded',
+                      boxWidth: 12,
+                      boxHeight: 12,
+                      padding: 16,
+                      font: { size: 12, weight: '500' }
                   }
               }
           },
           scales: {
               x: {
+                  border: { display: false },
                   ticks: {
-                      color: textColorSecondary
+                      color: textColorSecondary,
+                      maxRotation: 0,
+                      font: { size: 11 }
                   },
                   grid: {
-                      color: surfaceBorder,
-                      drawBorder: false
+                      color: surfaceBorder
                   }
               },
               y: {
+                  border: { display: false },
                   ticks: {
-                      color: textColorSecondary
+                      color: textColorSecondary,
+                      font: { size: 11 }
                   },
                   grid: {
-                      color: surfaceBorder,
-                      drawBorder: false
+                      color: surfaceBorder
                   }
               }
           }
@@ -232,15 +244,22 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     };
 
     // 2. Staff Distribution (Pie/Doughnut Chart)
-    const distData = this.analytics?.staffDistribution; 
+    const distData = this.analytics?.staffDistribution;
+    const palette = [
+      primaryColor, accentColor,
+      '#8B5CF6', '#10B981', '#64748B',
+      '#F43F5E', '#06B6D4', '#84CC16',
+      '#FB923C', '#A855F7', '#14B8A6', '#EAB308'
+    ];
     if (distData) {
+      const colors = distData.labels.map((_, i) => palette[i % palette.length]);
       this.distributionData = {
           labels: distData.labels,
           datasets: [
               {
                   data: distData.data,
-                  backgroundColor: [primaryColor, accentColor, '#8B5CF6', '#10B981', '#64748B'],
-                  hoverBackgroundColor: [primaryColor, accentColor, '#8B5CF6', '#10B981', '#64748B'],
+                  backgroundColor: colors,
+                  hoverBackgroundColor: colors,
                   borderWidth: 0
               }
           ]
@@ -248,15 +267,20 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.distributionOptions = {
-        cutout: '60%',
+        cutout: '62%',
+        layout: { padding: 8 },
         plugins: {
             legend: {
-                position: 'bottom',
+                position: 'right',
+                align: 'center',
                 labels: {
                     usePointStyle: true,
+                    pointStyle: 'circle',
                     color: textColor,
-                    padding: 20,
-                    font: { size: 12, weight: '500' }
+                    padding: 12,
+                    boxWidth: 8,
+                    boxHeight: 8,
+                    font: { size: 11, weight: '500' }
                 }
             }
         }
