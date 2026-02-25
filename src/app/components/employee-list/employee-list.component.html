@@ -28,16 +28,22 @@
   >
     <a
       routerLink="/employees"
-      class="px-1 pb-3 text-xs font-bold tracking-widest uppercase border-b-2 transition-all cursor-pointer border-violet-600 text-violet-600"
+      routerLinkActive="border-violet-600 text-violet-600"
+      [routerLinkActiveOptions]="{exact: true}"
+      class="px-1 pb-3 text-xs font-bold tracking-widest uppercase border-b-2 border-transparent text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 hover:border-zinc-300 transition-all cursor-pointer"
       >Team Members</a
     >
     <a
       routerLink="/directory"
+      routerLinkActive="border-violet-600 text-violet-600"
+      [routerLinkActiveOptions]="{exact: true}"
       class="px-1 pb-3 text-xs font-bold tracking-widest uppercase border-b-2 border-transparent text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 hover:border-zinc-300 transition-all cursor-pointer"
       >Directory</a
     >
     <a
       routerLink="/org-chart"
+      routerLinkActive="border-violet-600 text-violet-600"
+      [routerLinkActiveOptions]="{exact: true}"
       class="px-1 pb-3 text-xs font-bold tracking-widest uppercase border-b-2 border-transparent text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 hover:border-zinc-300 transition-all cursor-pointer"
       >Org Chart</a
     >

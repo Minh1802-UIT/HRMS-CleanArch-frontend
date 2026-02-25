@@ -1,9 +1,13 @@
 <div class="p-6 max-w-[1600px] mx-auto">
   <!-- Page Header -->
-  <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+  <div
+    class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4"
+  >
     <div>
       <p class="label-overline text-violet-500 mb-1">Time &amp; Leave</p>
-      <h1 class="text-2xl font-black tracking-tight text-zinc-900 dark:text-white">
+      <h1
+        class="text-2xl font-black tracking-tight text-zinc-900 dark:text-white"
+      >
         Leave Reports
       </h1>
       <p class="text-zinc-500 dark:text-zinc-400 text-sm mt-1">
@@ -20,188 +24,190 @@
           (keyup.enter)="onSearch()"
           placeholder="Search employee..."
           class="pl-10 pr-4 py-2 border border-slate-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-200 w-64"
-          />
-          <span
-            class="material-symbols-outlined absolute left-3 top-2.5 text-slate-500 text-sm"
-            >search</span
-            >
-          </div>
-
-          <button
-            (click)="onSearch()"
-            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-sm transition-colors text-sm font-medium"
-            >
-            Search
-          </button>
-
-          <button
-            (click)="loadData()"
-            class="px-4 py-2 bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-lg text-slate-600 hover:text-blue-600 shadow-sm transition-colors"
-            >
-            <span class="material-symbols-outlined align-middle mr-1 text-sm"
-              >refresh</span
-              >
-              Refresh
-            </button>
-          </div>
-        </div>
-
-        <!-- Filters & Content -->
-        <div
-          class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-slate-200 dark:border-gray-700 overflow-hidden"
-          >
-          <!-- Table -->
-          <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-              <thead
-                class="bg-slate-50 dark:bg-gray-700/50 text-slate-600 dark:text-gray-300 text-xs uppercase font-bold sticky top-0 z-10"
-                >
-                <tr>
-                  <th class="p-4 border-b border-slate-200 dark:border-gray-700">
-                    Employee
-                  </th>
-                  <th class="p-4 border-b border-slate-200 dark:border-gray-700">
-                    Leave Type
-                  </th>
-                  <th
-                    class="p-4 border-b border-slate-200 dark:border-gray-700 text-center"
-                    >
-                    Year
-                  </th>
-                  <th
-                    class="p-4 border-b border-slate-200 dark:border-gray-700 text-center"
-                    >
-                    Total
-                  </th>
-                  <th
-                    class="p-4 border-b border-slate-200 dark:border-gray-700 text-center"
-                    >
-                    Accrued
-                  </th>
-                  <th
-                    class="p-4 border-b border-slate-200 dark:border-gray-700 text-center"
-                    >
-                    Used
-                  </th>
-                  <th
-                    class="p-4 border-b border-slate-200 dark:border-gray-700 text-center"
-                    >
-                    Balance
-                  </th>
-                  <th
-                    class="p-4 border-b border-slate-200 dark:border-gray-700 text-right"
-                    >
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-100 dark:divide-gray-700">
-                @if (loading) {
-                  <tr class="animate-pulse">
-                    <td colspan="8" class="p-6 text-center text-slate-500">
-                      Loading data...
-                    </td>
-                  </tr>
-                }
-
-                @for (item of allocations; track trackByIndex($index, item)) {
-                  <tr
-                    class="hover:bg-slate-50 dark:hover:bg-gray-700/30 transition-colors"
-                    >
-                    <td class="p-4">
-                      <div class="flex items-center gap-3">
-                        <div
-                          class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold"
-                          >
-                          {{ item.employeeName?.charAt(0) || "U" }}
-                        </div>
-                        <div>
-                          <div class="font-bold text-slate-800 dark:text-white text-sm">
-                            {{ item.employeeName || "Unknown" }}
-                          </div>
-                          <div class="text-xs text-slate-600">
-                            Code: {{ item.employeeCode }}
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td
-                      class="p-4 text-sm font-medium text-slate-600 dark:text-gray-300"
-                      >
-                      {{ item.leaveTypeName }}
-                    </td>
-                    <td class="p-4 text-center text-sm text-slate-600">
-                      {{ item.year }}
-                    </td>
-                    <td
-                      class="p-4 text-center text-sm font-semibold text-slate-700 dark:text-gray-200"
-                      >
-                      {{ item.totalDays }}
-                    </td>
-                    <td class="p-4 text-center text-sm text-slate-600">
-                      {{ item.accruedDays | number: "1.0-2" }}
-                    </td>
-                    <td class="p-4 text-center text-sm text-orange-600 font-medium">
-                      {{ item.usedDays | number: "1.0-2" }}
-                    </td>
-                    <td class="p-4 text-center">
-                      <span
-                        class="px-2 py-1 rounded-md text-xs font-bold"
-                [ngClass]="{
-                  'bg-green-100 text-green-700': getBalance(item) > 5,
-                  'bg-amber-100 text-amber-700':
-                    getBalance(item) <= 5 && getBalance(item) > 0,
-                  'bg-red-100 text-red-700': getBalance(item) <= 0,
-                }"
-                        >
-                        {{ getBalance(item) | number: "1.0-2" }}
-                      </span>
-                    </td>
-                    <td class="p-4 text-right">
-                      <button
-                        class="text-slate-500 hover:text-blue-600 transition-colors"
-                        >
-                        <span class="material-symbols-outlined text-lg">edit</span>
-                      </button>
-                    </td>
-                  </tr>
-                }
-
-                @if (!loading && allocations.length === 0) {
-                  <tr>
-                    <td colspan="8" class="p-8 text-center text-slate-600">
-                      No records found.
-                    </td>
-                  </tr>
-                }
-              </tbody>
-            </table>
-          </div>
-
-          <!-- Pagination -->
-          <div
-            class="p-4 border-t border-slate-200 dark:border-gray-700 flex justify-between items-center bg-slate-50 dark:bg-gray-800"
-            >
-            <span class="text-xs text-slate-600">
-              Showing page {{ pageNumber }} of
-              {{ Math.ceil(totalCount / pageSize) }} ({{ totalCount }} total)
-            </span>
-            <div class="flex gap-2">
-              <button
-                [disabled]="pageNumber === 1"
-                (click)="changePage(pageNumber - 1)"
-                class="px-3 py-1 bg-white dark:bg-gray-700 border border-slate-200 dark:border-gray-600 rounded hover:bg-slate-100 disabled:opacity-50 text-sm"
-                >
-                Previous
-              </button>
-              <button
-                [disabled]="pageNumber * pageSize >= totalCount"
-                (click)="changePage(pageNumber + 1)"
-                class="px-3 py-1 bg-white dark:bg-gray-700 border border-slate-200 dark:border-gray-600 rounded hover:bg-slate-100 disabled:opacity-50 text-sm"
-                >
-                Next
-              </button>
-            </div>
-          </div>
-        </div>
+        />
+        <span
+          class="material-symbols-outlined absolute left-3 top-2.5 text-slate-500 text-sm"
+          >search</span
+        >
       </div>
+
+      <button
+        (click)="onSearch()"
+        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-sm transition-colors text-sm font-medium"
+      >
+        Search
+      </button>
+
+      <button
+        (click)="loadData()"
+        class="px-4 py-2 bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-lg text-slate-600 hover:text-blue-600 shadow-sm transition-colors"
+      >
+        <span class="material-symbols-outlined align-middle mr-1 text-sm"
+          >refresh</span
+        >
+        Refresh
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters & Content -->
+  <div
+    class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-slate-200 dark:border-gray-700 overflow-hidden"
+  >
+    <!-- Table -->
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead
+          class="bg-slate-50 dark:bg-gray-700/50 text-slate-600 dark:text-gray-300 text-xs uppercase font-bold sticky top-0 z-10"
+        >
+          <tr>
+            <th class="p-4 border-b border-slate-200 dark:border-gray-700">
+              Employee
+            </th>
+            <th class="p-4 border-b border-slate-200 dark:border-gray-700">
+              Leave Type
+            </th>
+            <th
+              class="p-4 border-b border-slate-200 dark:border-gray-700 text-center"
+            >
+              Year
+            </th>
+            <th
+              class="p-4 border-b border-slate-200 dark:border-gray-700 text-center"
+            >
+              Total
+            </th>
+            <th
+              class="p-4 border-b border-slate-200 dark:border-gray-700 text-center"
+            >
+              Accrued
+            </th>
+            <th
+              class="p-4 border-b border-slate-200 dark:border-gray-700 text-center"
+            >
+              Used
+            </th>
+            <th
+              class="p-4 border-b border-slate-200 dark:border-gray-700 text-center"
+            >
+              Balance
+            </th>
+            <th
+              class="p-4 border-b border-slate-200 dark:border-gray-700 text-right"
+            >
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 dark:divide-gray-700">
+          @if (loading) {
+            <tr class="animate-pulse">
+              <td colspan="8" class="p-6 text-center text-slate-500">
+                Loading data...
+              </td>
+            </tr>
+          }
+
+          @for (item of allocations; track trackByIndex($index, item)) {
+            <tr
+              class="hover:bg-slate-50 dark:hover:bg-gray-700/30 transition-colors"
+            >
+              <td class="p-4">
+                <div class="flex items-center gap-3">
+                  <div
+                    class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold"
+                  >
+                    {{ item.employeeName?.charAt(0) || "U" }}
+                  </div>
+                  <div>
+                    <div
+                      class="font-bold text-slate-800 dark:text-white text-sm"
+                    >
+                      {{ item.employeeName || "Unknown" }}
+                    </div>
+                    <div class="text-xs text-slate-600">
+                      Code: {{ item.employeeCode }}
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td
+                class="p-4 text-sm font-medium text-slate-600 dark:text-gray-300"
+              >
+                {{ item.leaveTypeName }}
+              </td>
+              <td class="p-4 text-center text-sm text-slate-600">
+                {{ item.year }}
+              </td>
+              <td
+                class="p-4 text-center text-sm font-semibold text-slate-700 dark:text-gray-200"
+              >
+                {{ item.totalDays }}
+              </td>
+              <td class="p-4 text-center text-sm text-slate-600">
+                {{ item.accruedDays | number: "1.0-2" }}
+              </td>
+              <td class="p-4 text-center text-sm text-orange-600 font-medium">
+                {{ item.usedDays | number: "1.0-2" }}
+              </td>
+              <td class="p-4 text-center">
+                <span
+                  class="px-2 py-1 rounded-md text-xs font-bold"
+                  [ngClass]="{
+                    'bg-green-100 text-green-700': getBalance(item) > 5,
+                    'bg-amber-100 text-amber-700':
+                      getBalance(item) <= 5 && getBalance(item) > 0,
+                    'bg-red-100 text-red-700': getBalance(item) <= 0,
+                  }"
+                >
+                  {{ getBalance(item) | number: "1.0-2" }}
+                </span>
+              </td>
+              <td class="p-4 text-right">
+                <button
+                  class="text-slate-500 hover:text-blue-600 transition-colors"
+                >
+                  <span class="material-symbols-outlined text-lg">edit</span>
+                </button>
+              </td>
+            </tr>
+          }
+
+          @if (!loading && allocations.length === 0) {
+            <tr>
+              <td colspan="8" class="p-8 text-center text-slate-600">
+                No records found.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div
+      class="p-4 border-t border-slate-200 dark:border-gray-700 flex justify-between items-center bg-slate-50 dark:bg-gray-800"
+    >
+      <span class="text-xs text-slate-600">
+        Showing page {{ pageNumber }} of
+        {{ Math.ceil(totalCount / pageSize) }} ({{ totalCount }} total)
+      </span>
+      <div class="flex gap-2">
+        <button
+          [disabled]="pageNumber === 1"
+          (click)="changePage(pageNumber - 1)"
+          class="px-3 py-1 bg-white dark:bg-gray-700 border border-slate-200 dark:border-gray-600 rounded hover:bg-slate-100 disabled:opacity-50 text-sm"
+        >
+          Previous
+        </button>
+        <button
+          [disabled]="pageNumber * pageSize >= totalCount"
+          (click)="changePage(pageNumber + 1)"
+          class="px-3 py-1 bg-white dark:bg-gray-700 border border-slate-200 dark:border-gray-600 rounded hover:bg-slate-100 disabled:opacity-50 text-sm"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

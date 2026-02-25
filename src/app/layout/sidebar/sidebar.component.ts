@@ -228,8 +228,15 @@ export class SidebarComponent implements OnInit, OnDestroy {
     };
     const route = routeMap[activePage];
     if (!route) return false;
-    // Exact match for dashboard, prefix match for others
+    // Exact match for dashboard
     if (activePage === 'dashboard') return url === '/dashboard' || url.startsWith('/dashboard?');
+    // If a more-specific sibling route also starts with this route and matches the
+    // current URL, this parent item should NOT be highlighted (e.g. /attendance vs /attendance/shifts)
+    const allRoutes = Object.values(routeMap);
+    const hasMoreSpecificMatch = allRoutes.some(
+      (r) => r !== route && r.startsWith(route + '/') && url.startsWith(r)
+    );
+    if (hasMoreSpecificMatch) return false;
     return url.startsWith(route);
   }
 }
