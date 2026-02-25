@@ -17,13 +17,22 @@
         class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ring-4 ring-white dark:ring-zinc-900"
         [ngClass]="getStepIndicatorClass(1)"
       >
-        @if (currentStep <= 1) { <span>1</span> }
-        @if (currentStep > 1) { <span class="material-symbols-outlined text-xs">check</span> }
+        @if (currentStep <= 1) {
+          <span>1</span>
+        }
+        @if (currentStep > 1) {
+          <span class="material-symbols-outlined text-xs">check</span>
+        }
       </div>
       <span
         class="mt-2 text-xs font-bold uppercase tracking-wider transition-colors duration-300"
-        [ngClass]="currentStep >= 1 ? 'text-violet-600 dark:text-violet-400' : 'text-gray-400 dark:text-zinc-600'"
-      >Personal</span>
+        [ngClass]="
+          currentStep >= 1
+            ? 'text-violet-600 dark:text-violet-400'
+            : 'text-gray-400 dark:text-zinc-600'
+        "
+        >Personal</span
+      >
     </div>
 
     <!-- Step 2: Job Details -->
@@ -32,13 +41,22 @@
         class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ring-4 ring-white dark:ring-zinc-900"
         [ngClass]="getStepIndicatorClass(2)"
       >
-        @if (currentStep <= 2) { <span>2</span> }
-        @if (currentStep > 2) { <span class="material-symbols-outlined text-xs">check</span> }
+        @if (currentStep <= 2) {
+          <span>2</span>
+        }
+        @if (currentStep > 2) {
+          <span class="material-symbols-outlined text-xs">check</span>
+        }
       </div>
       <span
         class="mt-2 text-xs font-bold uppercase tracking-wider transition-colors duration-300"
-        [ngClass]="currentStep >= 2 ? 'text-violet-600 dark:text-violet-400' : 'text-gray-400 dark:text-zinc-600'"
-      >Job Details</span>
+        [ngClass]="
+          currentStep >= 2
+            ? 'text-violet-600 dark:text-violet-400'
+            : 'text-gray-400 dark:text-zinc-600'
+        "
+        >Job Details</span
+      >
     </div>
 
     <!-- Step 3: Compensation -->
@@ -47,13 +65,22 @@
         class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ring-4 ring-white dark:ring-zinc-900"
         [ngClass]="getStepIndicatorClass(3)"
       >
-        @if (currentStep <= 3) { <span>3</span> }
-        @if (currentStep > 3) { <span class="material-symbols-outlined text-xs">check</span> }
+        @if (currentStep <= 3) {
+          <span>3</span>
+        }
+        @if (currentStep > 3) {
+          <span class="material-symbols-outlined text-xs">check</span>
+        }
       </div>
       <span
         class="mt-2 text-xs font-bold uppercase tracking-wider transition-colors duration-300"
-        [ngClass]="currentStep >= 3 ? 'text-violet-600 dark:text-violet-400' : 'text-gray-400 dark:text-zinc-600'"
-      >Compensation</span>
+        [ngClass]="
+          currentStep >= 3
+            ? 'text-violet-600 dark:text-violet-400'
+            : 'text-gray-400 dark:text-zinc-600'
+        "
+        >Compensation</span
+      >
     </div>
 
     <!-- Step 4: Documents -->
@@ -62,13 +89,22 @@
         class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ring-4 ring-white dark:ring-zinc-900"
         [ngClass]="getStepIndicatorClass(4)"
       >
-        @if (currentStep <= 4) { <span>4</span> }
-        @if (currentStep > 4) { <span class="material-symbols-outlined text-xs">check</span> }
+        @if (currentStep <= 4) {
+          <span>4</span>
+        }
+        @if (currentStep > 4) {
+          <span class="material-symbols-outlined text-xs">check</span>
+        }
       </div>
       <span
         class="mt-2 text-xs font-bold uppercase tracking-wider transition-colors duration-300"
-        [ngClass]="currentStep >= 4 ? 'text-violet-600 dark:text-violet-400' : 'text-gray-400 dark:text-zinc-600'"
-      >Documents</span>
+        [ngClass]="
+          currentStep >= 4
+            ? 'text-violet-600 dark:text-violet-400'
+            : 'text-gray-400 dark:text-zinc-600'
+        "
+        >Documents</span
+      >
     </div>
   </div>
 </div>

@@ -1,5 +1,7 @@
 <div [formGroup]="formGroup">
-  <label class="block mb-1 text-sm font-medium text-gray-700 dark:text-zinc-300">
+  <label
+    class="block mb-1 text-sm font-medium text-gray-700 dark:text-zinc-300"
+  >
     {{ label }}
     @if (required) {
       <span class="text-red-500">*</span>
@@ -11,11 +13,11 @@
     [type]="type"
     [placeholder]="placeholder"
     class="w-full rounded-lg border-gray-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-gray-900 dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-500 shadow-sm focus:ring-violet-500 focus:border-violet-500 dark:focus:ring-violet-400 dark:focus:border-violet-400"
-    />
+  />
 
-    @if (showError) {
-      <small class="block mt-1 text-xs text-red-600">
-        {{ errorMessage }}
-      </small>
-    }
-  </div>
+  @if (showError) {
+    <small class="block mt-1 text-xs text-red-600">
+      {{ errorMessage }}
+    </small>
+  }
+</div>

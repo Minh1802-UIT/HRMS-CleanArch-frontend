@@ -59,106 +59,107 @@
     <label
       class="pl-3 text-sm font-bold text-gray-900 dark:text-zinc-100 border-l-4 border-violet-600"
       >Employment Type <span class="text-red-500">*</span></label
-      >
-      <div class="flex flex-wrap gap-3">
-        @for (
-          type of ['Full-time', 'Part-time', 'Contractor', 'Internship']; track trackByIndex($index,
-          type)) {
-          <button
-            type="button"
-            (click)="setEmploymentType(type)"
-            class="px-6 py-2.5 text-sm font-semibold rounded-lg border-2 transition-all duration-200"
-        [ngClass]="
-          getEmploymentType() === type
-            ? 'bg-violet-50 dark:bg-violet-900/20 border-violet-600 text-violet-600 dark:text-violet-400'
-            : 'bg-white dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 text-gray-500 dark:text-zinc-400 hover:border-gray-300 dark:hover:border-zinc-500'
-        "
-            >
-            {{ type }}
-          </button>
-        }
-      </div>
-    </div>
-
-    <!-- Direct Manager -->
-    <div class="grid grid-cols-2 gap-x-8">
-      <div class="col-span-2">
-        <app-form-select
-          [formGroup]="formGroup"
-          controlName="manager"
-          label="Direct Manager"
-          [options]="managers"
-          optionValue="id"
-          optionLabel="label"
-          placeholder="Select Manager"
-        ></app-form-select>
-      </div>
-    </div>
-
-    <!-- Dates -->
-    <div class="grid grid-cols-2 gap-y-6 gap-x-8">
-      <app-form-input
-        [formGroup]="formGroup"
-        controlName="joinDate"
-        label="Joining Date"
-        type="date"
-        [required]="true"
-      ></app-form-input>
-
-      <app-form-input
-        [formGroup]="formGroup"
-        controlName="probationEndDate"
-        label="Probation End Date (Optional)"
-        type="date"
-      ></app-form-input>
-    </div>
-
-    <!-- Work arrangement selection -->
-    <div class="space-y-4">
-      <label
-        class="pl-3 text-sm font-bold text-gray-900 dark:text-zinc-100 border-l-4 border-violet-600"
-        >Work Location Arrangement</label
+    >
+    <div class="flex flex-wrap gap-3">
+      @for (
+        type of ["Full-time", "Part-time", "Contractor", "Internship"];
+        track trackByIndex($index, type)
+      ) {
+        <button
+          type="button"
+          (click)="setEmploymentType(type)"
+          class="px-6 py-2.5 text-sm font-semibold rounded-lg border-2 transition-all duration-200"
+          [ngClass]="
+            getEmploymentType() === type
+              ? 'bg-violet-50 dark:bg-violet-900/20 border-violet-600 text-violet-600 dark:text-violet-400'
+              : 'bg-white dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 text-gray-500 dark:text-zinc-400 hover:border-gray-300 dark:hover:border-zinc-500'
+          "
         >
-        <div class="grid grid-cols-3 gap-4">
-          <!-- Remote -->
-          <div
-            (click)="setWorkArrangement('Remote')"
-            class="flex flex-col gap-3 justify-center items-center p-4 rounded-xl border-2 transition-all duration-200 cursor-pointer"
+          {{ type }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Direct Manager -->
+  <div class="grid grid-cols-2 gap-x-8">
+    <div class="col-span-2">
+      <app-form-select
+        [formGroup]="formGroup"
+        controlName="manager"
+        label="Direct Manager"
+        [options]="managers"
+        optionValue="id"
+        optionLabel="label"
+        placeholder="Select Manager"
+      ></app-form-select>
+    </div>
+  </div>
+
+  <!-- Dates -->
+  <div class="grid grid-cols-2 gap-y-6 gap-x-8">
+    <app-form-input
+      [formGroup]="formGroup"
+      controlName="joinDate"
+      label="Joining Date"
+      type="date"
+      [required]="true"
+    ></app-form-input>
+
+    <app-form-input
+      [formGroup]="formGroup"
+      controlName="probationEndDate"
+      label="Probation End Date (Optional)"
+      type="date"
+    ></app-form-input>
+  </div>
+
+  <!-- Work arrangement selection -->
+  <div class="space-y-4">
+    <label
+      class="pl-3 text-sm font-bold text-gray-900 dark:text-zinc-100 border-l-4 border-violet-600"
+      >Work Location Arrangement</label
+    >
+    <div class="grid grid-cols-3 gap-4">
+      <!-- Remote -->
+      <div
+        (click)="setWorkArrangement('Remote')"
+        class="flex flex-col gap-3 justify-center items-center p-4 rounded-xl border-2 transition-all duration-200 cursor-pointer"
         [ngClass]="
           getWorkArrangement() === 'Remote'
             ? 'bg-violet-50 dark:bg-violet-900/20 border-violet-600 text-violet-600 dark:text-violet-400'
             : 'bg-white dark:bg-zinc-800 border-gray-100 dark:border-zinc-700 text-gray-500 dark:text-zinc-400 hover:border-gray-300 dark:hover:border-zinc-500'
         "
-            >
-            <span class="text-3xl material-symbols-outlined">home_work</span>
-            <span class="text-xs font-bold tracking-wider uppercase">Remote</span>
-          </div>
-          <!-- On-site -->
-          <div
-            (click)="setWorkArrangement('On-site')"
-            class="flex flex-col gap-3 justify-center items-center p-4 rounded-xl border-2 transition-all duration-200 cursor-pointer"
+      >
+        <span class="text-3xl material-symbols-outlined">home_work</span>
+        <span class="text-xs font-bold tracking-wider uppercase">Remote</span>
+      </div>
+      <!-- On-site -->
+      <div
+        (click)="setWorkArrangement('On-site')"
+        class="flex flex-col gap-3 justify-center items-center p-4 rounded-xl border-2 transition-all duration-200 cursor-pointer"
         [ngClass]="
           getWorkArrangement() === 'On-site'
             ? 'bg-violet-50 dark:bg-violet-900/20 border-violet-600 text-violet-600 dark:text-violet-400'
             : 'bg-white dark:bg-zinc-800 border-gray-100 dark:border-zinc-700 text-gray-500 dark:text-zinc-400 hover:border-gray-300 dark:hover:border-zinc-500'
         "
-            >
-            <span class="text-3xl material-symbols-outlined">corporate_fare</span>
-            <span class="text-xs font-bold tracking-wider uppercase">On-site</span>
-          </div>
-          <!-- Hybrid -->
-          <div
-            (click)="setWorkArrangement('Hybrid')"
-            class="flex flex-col gap-3 justify-center items-center p-4 rounded-xl border-2 transition-all duration-200 cursor-pointer"
+      >
+        <span class="text-3xl material-symbols-outlined">corporate_fare</span>
+        <span class="text-xs font-bold tracking-wider uppercase">On-site</span>
+      </div>
+      <!-- Hybrid -->
+      <div
+        (click)="setWorkArrangement('Hybrid')"
+        class="flex flex-col gap-3 justify-center items-center p-4 rounded-xl border-2 transition-all duration-200 cursor-pointer"
         [ngClass]="
           getWorkArrangement() === 'Hybrid'
             ? 'bg-violet-50 dark:bg-violet-900/20 border-violet-600 text-violet-600 dark:text-violet-400'
             : 'bg-white dark:bg-zinc-800 border-gray-100 dark:border-zinc-700 text-gray-500 dark:text-zinc-400 hover:border-gray-300 dark:hover:border-zinc-500'
         "
-            >
-            <span class="text-3xl material-symbols-outlined">location_city</span>
-            <span class="text-xs font-bold tracking-wider uppercase">Hybrid</span>
-          </div>
-        </div>
+      >
+        <span class="text-3xl material-symbols-outlined">location_city</span>
+        <span class="text-xs font-bold tracking-wider uppercase">Hybrid</span>
       </div>
     </div>
+  </div>
+</div>

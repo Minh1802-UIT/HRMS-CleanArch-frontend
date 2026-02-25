@@ -1,36 +1,38 @@
 ﻿<div
   class="flex overflow-hidden relative flex-col h-full bg-white dark:bg-zinc-900 rounded-xl shadow-2xl"
-  >
+>
   <!-- Header -->
   <div
     class="flex sticky top-0 z-20 justify-between items-center px-8 py-6 bg-white dark:bg-zinc-900 border-b border-gray-100 dark:border-zinc-800"
-    >
+  >
     <div>
       <h2 class="text-2xl font-bold text-gray-900 dark:text-zinc-100">
         {{ isEditMode ? "Edit Employee" : "Add New Employee" }}
       </h2>
       <p class="mt-1 text-sm text-gray-500 dark:text-zinc-400">
         {{
-        isEditMode
-        ? "Update employee details."
-        : "Fill in the details to onboard a new team member."
+          isEditMode
+            ? "Update employee details."
+            : "Fill in the details to onboard a new team member."
         }}
       </p>
     </div>
     <button
       (click)="close.emit()"
       class="text-gray-400 dark:text-zinc-500 transition-colors hover:text-gray-600 dark:hover:text-zinc-200"
-      >
+    >
       <span class="text-2xl material-symbols-outlined">close</span>
     </button>
   </div>
 
   <!-- Horizontal Steps Indicator -->
-  <div class="py-6 border-b border-gray-100 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-900/30">
+  <div
+    class="py-6 border-b border-gray-100 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-900/30"
+  >
     <app-employee-wizard-steps
       [currentStep]="currentStep"
       [isEditMode]="isEditMode"
-      >
+    >
     </app-employee-wizard-steps>
   </div>
 
@@ -45,7 +47,7 @@
         (done)="close.emit()"
         (addAnother)="addAnother()"
         (viewProfile)="onViewProfile()"
-        >
+      >
       </app-employee-form-success>
     }
 
@@ -57,7 +59,7 @@
           @if (currentStep === 1) {
             <app-step-personal-info
               [formGroup]="$any(employeeForm.get('personalInfo'))"
-              >
+            >
             </app-step-personal-info>
           }
           <!-- Step 2: Job Details -->
@@ -68,14 +70,14 @@
               [positions]="positions"
               [shifts]="shifts"
               [managers]="managers"
-              >
+            >
             </app-step-job-details>
           }
           <!-- Step 3: Compensation -->
           @if (currentStep === 3) {
             <app-step-compensation
               [formGroup]="$any(employeeForm.get('compensation'))"
-              >
+            >
             </app-step-compensation>
           }
           <!-- Step 4: Documents -->
@@ -84,7 +86,7 @@
               [formGroup]="$any(employeeForm.get('documents'))"
               [loading]="loading"
               [isEditMode]="isEditMode"
-              >
+            >
             </app-step-documents>
           }
         </form>
@@ -96,54 +98,46 @@
   @if (!success) {
     <div
       class="flex sticky bottom-0 z-20 justify-between items-center px-8 py-6 bg-white dark:bg-zinc-900 border-t border-gray-100 dark:border-zinc-800"
-      >
+    >
       <button
         type="button"
         (click)="currentStep === 1 ? close.emit() : prevStep()"
         class="flex gap-2 items-center px-6 py-2.5 text-sm font-semibold text-gray-700 dark:text-zinc-300 bg-white dark:bg-zinc-800 rounded-lg border border-gray-300 dark:border-zinc-600 transition-colors hover:bg-gray-50 dark:hover:bg-zinc-700"
-        >
+      >
         @if (currentStep > 1) {
-          <span class="text-sm material-symbols-outlined"
-            >arrow_back</span
+          <span class="text-sm material-symbols-outlined">arrow_back</span>
+        }
+        {{ currentStep === 1 ? "Cancel" : "Back" }}
+      </button>
+      @if (currentStep < 4) {
+        <button
+          type="button"
+          (click)="nextStep()"
+          [disabled]="isStepInvalid(currentStep)"
+          class="flex gap-2 items-center px-8 py-2.5 text-sm font-semibold text-white bg-violet-600 rounded-lg shadow-sm transition-colors hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Next Step
+          <span class="text-sm material-symbols-outlined">arrow_forward</span>
+        </button>
+      }
+      @if (currentStep === 4) {
+        <button
+          type="button"
+          (click)="onSubmit()"
+          [disabled]="loading || employeeForm.invalid"
+          class="flex gap-2 items-center px-8 py-2.5 text-sm font-semibold text-white bg-orange-500 rounded-lg shadow-sm transition-colors hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          @if (loading) {
+            <span class="text-sm animate-spin material-symbols-outlined"
+              >sync</span
             >
           }
-          {{ currentStep === 1 ? "Cancel" : "Back" }}
+          {{ isEditMode ? "Save Changes" : "Complete Onboarding" }}
+          @if (!loading) {
+            <span class="text-sm material-symbols-outlined">check_circle</span>
+          }
         </button>
-        @if (currentStep < 4) {
-          <button
-            type="button"
-            (click)="nextStep()"
-            [disabled]="isStepInvalid(currentStep)"
-            class="flex gap-2 items-center px-8 py-2.5 text-sm font-semibold text-white bg-violet-600 rounded-lg shadow-sm transition-colors hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-            Next Step
-            <span class="text-sm material-symbols-outlined">arrow_forward</span>
-          </button>
-        }
-        @if (currentStep === 4) {
-          <button
-            type="button"
-            (click)="onSubmit()"
-            [disabled]="loading || employeeForm.invalid"
-            class="flex gap-2 items-center px-8 py-2.5 text-sm font-semibold text-white bg-orange-500 rounded-lg shadow-sm transition-colors hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-            @if (loading) {
-              <span
-                class="text-sm animate-spin material-symbols-outlined"
-                >sync</span
-                >
-              }
-              {{ isEditMode ? "Save Changes" : "Complete Onboarding" }}
-              @if (!loading) {
-                <span class="text-sm material-symbols-outlined"
-                  >check_circle</span
-                  >
-                }
-              </button>
-            }
-          </div>
-        }
-      </div>
-
-
-
+      }
+    </div>
+  }
+</div>

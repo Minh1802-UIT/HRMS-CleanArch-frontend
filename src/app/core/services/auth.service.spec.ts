@@ -187,7 +187,20 @@ describe('AuthService', () => {
       req.flush({
         succeeded: true,
         message: 'OK',
-        data: { accessToken: token, refreshToken: 'new-rt' }
+        data: {
+          accessToken: token,
+          tokenType: 'Bearer',
+          expiresIn: 3600,
+          user: {
+            id: '42',
+            username: 'john',
+            email: 'john@test.com',
+            fullName: 'John Doe',
+            roles: ['Employee'],
+            isActive: true,
+            mustChangePassword: false
+          }
+        }
       });
 
       // Verify state was updated
@@ -210,7 +223,22 @@ describe('AuthService', () => {
 
       service.login({ username: 'admin', password: 'p' }).subscribe();
       httpMock.expectOne(`${apiUrl}/login`).flush({
-        succeeded: true, message: '', data: { accessToken: token, refreshToken: 'rt' }
+        succeeded: true,
+        message: '',
+        data: {
+          accessToken: token,
+          tokenType: 'Bearer',
+          expiresIn: 3600,
+          user: {
+            id: '1',
+            username: 'admin',
+            email: 'a@b.com',
+            fullName: 'Admin User',
+            roles: ['Admin', 'Manager'],
+            isActive: true,
+            mustChangePassword: false
+          }
+        }
       });
 
       expect(service.currentUserValue!.roles).toEqual(['Admin', 'Manager']);

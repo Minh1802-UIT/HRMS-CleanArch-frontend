@@ -8,12 +8,31 @@ import { ApiResponse, PagedResult } from '../models/api-response';
 import { User, LoginCredentials, RegisterData, JwtPayload } from '../models/user.model';
 import { LoggerService } from './logger.service';
 
-/** Shape of the `data` field returned by POST /auth/login */
-type LoginResponseData = string | { accessToken?: string; token?: string; user?: { employeeId?: string; mustChangePassword?: boolean } };
+/** User info sub-object embedded in the login response. Mirrors backend UserDto. */
+interface LoginUserData {
+  id: string;
+  username: string;
+  email: string;
+  fullName: string;
+  employeeId?: string;
+  roles: string[];
+  isActive: boolean;
+  mustChangePassword: boolean;
+}
 
-/** Shape of the `data` field returned by POST /auth/refresh-token */
-interface RefreshTokenResponseData {
+/** Fixed contract for POST /api/auth/login  → ApiResponse<LoginSuccessData> */
+interface LoginSuccessData {
   accessToken: string;
+  tokenType: string;
+  expiresIn: number;
+  user: LoginUserData;
+}
+
+/** Fixed contract for POST /api/auth/refresh-token → ApiResponse<RefreshSuccessData> */
+interface RefreshSuccessData {
+  accessToken: string;
+  tokenType: string;
+  expiresIn: number;
 }
 
 
@@ -76,59 +95,34 @@ export class AuthService {
   }
 
   // Login — access token stored in sessionStorage; refresh token received as httpOnly cookie
-  login(loginData: LoginCredentials): Observable<LoginResponseData> {
-    return this.http.post<ApiResponse<LoginResponseData>>(`${this.apiUrl}/login`, loginData, { withCredentials: true }).pipe(
+  login(loginData: LoginCredentials): Observable<LoginSuccessData> {
+    return this.http.post<ApiResponse<LoginSuccessData>>(`${this.apiUrl}/login`, loginData, { withCredentials: true }).pipe(
       map(response => response.data),
       tap(data => {
-        this.logger.debug('Login data received', data);
+        const token = data.accessToken;
+        if (!token) return;
 
-        let token = '';
-        if (typeof data === 'string') token = data;
-        else if (data && data.accessToken) token = data.accessToken;
-        else if (data && data.token) token = data.token;
+        this.logger.debug('Login response received', { expiresIn: data.expiresIn, userId: data.user?.id });
 
-        if (token) {
-          const decodedToken = this.decodeJwtToken(token);
-          this.logger.debug('Decoded JWT token', decodedToken);
+        // Trust the typed user object from the response body — no JWT claim digging needed.
+        const user: User = {
+          id:                 data.user.id,
+          username:           data.user.username,
+          email:              data.user.email,
+          fullName:           data.user.fullName,
+          token,
+          // refreshToken intentionally NOT stored — lives in httpOnly cookie
+          roles:              data.user.roles?.length ? data.user.roles : ['User'],
+          avatar:             'assets/images/defaults/avatar-1.png',
+          employeeId:         data.user.employeeId,
+          mustChangePassword: data.user.mustChangePassword
+        };
 
-          let roles: string[] = ['User'];
-          if (decodedToken.role) {
-            roles = Array.isArray(decodedToken.role) ? decodedToken.role : [decodedToken.role];
-          } else if (decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']) {
-            const roleClaim = decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
-            roles = Array.isArray(roleClaim) ? roleClaim : [roleClaim];
-          }
-
-          this.logger.debug('Full Decoded Token:', decodedToken);
-          this.logger.debug('Decoded token keys:', Object.keys(decodedToken));
-
-          const empId = decodedToken.EmployeeId ||
-                        decodedToken.employeeId ||
-                        decodedToken['employeeID'] ||
-                        decodedToken['EmployeeId'] ||
-                        decodedToken['employeeid'] ||
-                        (data && typeof data !== 'string' && data.user ? data.user.employeeId : undefined);
-
-          // Store access token in user object; NO refresh token (it is in httpOnly cookie)
-          const mustChangePassword = typeof data !== 'string' ? (data.user?.mustChangePassword ?? false) : false;
-          const user: User = {
-            id: String(decodedToken.nameid || decodedToken.sub || decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'] || '1'),
-            username: String(decodedToken.unique_name || decodedToken.name || decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] || loginData.username),
-            email: String(decodedToken.email || decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'] || loginData.username),
-            token: token,
-            // refreshToken intentionally NOT stored — lives in httpOnly cookie
-            roles: roles,
-            avatar: 'assets/images/defaults/avatar-1.png',
-            employeeId: empId ? String(empId) : undefined,
-            mustChangePassword
-          };
-
-          this.logger.debug('User object created', user);
-          // sessionStorage clears on tab close, unlike localStorage
-          sessionStorage.setItem('currentUser', JSON.stringify(user));
-          this.currentUserSignal.set(user);
-          this.currentUserSubject.next(user);
-        }
+        this.logger.debug('User object created', user);
+        // sessionStorage clears on tab close, unlike localStorage
+        sessionStorage.setItem('currentUser', JSON.stringify(user));
+        this.currentUserSignal.set(user);
+        this.currentUserSubject.next(user);
       })
     );
   }
@@ -174,7 +168,7 @@ export class AuthService {
     this.refreshTokenSubject.next(null);
 
     // withCredentials sends the httpOnly refresh token cookie automatically
-    return this.http.post<ApiResponse<RefreshTokenResponseData>>(`${this.apiUrl}/refresh-token`,
+    return this.http.post<ApiResponse<RefreshSuccessData>>(`${this.apiUrl}/refresh-token`,
       { accessToken: currentToken },
       { withCredentials: true }
     ).pipe(

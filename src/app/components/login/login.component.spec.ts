@@ -17,9 +17,20 @@ describe('LoginComponent', () => {
   let mockLogger: jasmine.SpyObj<LoggerService>;
   let routerSpy: jasmine.SpyObj<Router>;
 
-  const mockLoginResponse: { accessToken: string; user: { employeeId?: string; mustChangePassword?: boolean } } = {
+  const mockLoginResponse = {
     accessToken: 'mock-access-token',
-    user: { employeeId: 'emp-1', mustChangePassword: false }
+    tokenType: 'Bearer',
+    expiresIn: 3600,
+    user: {
+      id: 'user-1',
+      username: 'testuser',
+      email: 'test@example.com',
+      fullName: 'Test User',
+      employeeId: 'emp-1',
+      roles: ['Employee'],
+      isActive: true,
+      mustChangePassword: false
+    }
   };
 
   beforeEach(async () => {
