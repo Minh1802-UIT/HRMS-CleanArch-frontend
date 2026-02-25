@@ -29,7 +29,7 @@ describe('authGuard', () => {
     expect(result).toBeTrue();
   });
 
-  it('should redirect to /login when user is not logged in', () => {
+  it('should redirect to /login with returnUrl when user is not logged in', () => {
     authServiceSpy.isLoggedIn.and.returnValue(false);
     const urlTree = {} as UrlTree;
     routerSpy.createUrlTree.and.returnValue(urlTree);
@@ -37,6 +37,23 @@ describe('authGuard', () => {
     const result = TestBed.runInInjectionContext(() => authGuard(mockRoute, mockState));
 
     expect(result).toBe(urlTree);
-    expect(routerSpy.createUrlTree).toHaveBeenCalledWith(['/login']);
+    expect(routerSpy.createUrlTree).toHaveBeenCalledWith(
+      ['/login'],
+      { queryParams: { returnUrl: '/dashboard' } }
+    );
+  });
+
+  it('should include the intended URL as returnUrl queryParam', () => {
+    authServiceSpy.isLoggedIn.and.returnValue(false);
+    const urlTree = {} as UrlTree;
+    routerSpy.createUrlTree.and.returnValue(urlTree);
+
+    const deepState = { url: '/employees/42/profile' } as RouterStateSnapshot;
+    TestBed.runInInjectionContext(() => authGuard(mockRoute, deepState));
+
+    expect(routerSpy.createUrlTree).toHaveBeenCalledWith(
+      ['/login'],
+      { queryParams: { returnUrl: '/employees/42/profile' } }
+    );
   });
 });
