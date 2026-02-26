@@ -1,555 +1,1010 @@
 <div
-  class="font-sans text-slate-600 bg-background-light dark:bg-background-dark dark:text-slate-300 transition-colors duration-300"
-  >
+  class="font-sans transition-colors duration-300 text-slate-600 bg-background-light dark:bg-background-dark dark:text-slate-300"
+>
   <!-- Top Banner -->
   <div
-    class="bg-surface-light dark:bg-slate-800 py-2 text-center text-xs sm:text-sm font-medium border-b border-orange-100 dark:border-slate-700"
-    >
-    <p
-      class="flex items-center justify-center gap-2 text-slate-700 dark:text-slate-200"
-      >
-      <span class="material-icons-round text-primary text-base text-orange-500"
+    class="py-2 text-xs font-medium text-center border-b border-slate-800/50 bg-[#050810] sm:text-sm"
+  >
+    <p class="flex gap-2 justify-center items-center text-slate-300">
+      <span class="text-base text-violet-400 material-icons-round"
         >rocket_launch</span
+      >
+      Chấm dứt kỉ nguyên quản lý nhân sự bằng giấy tờ. Chuyển đổi số ngay hôm
+      nay!
+      <span class="hidden font-medium text-orange-400 sm:inline"
+        >Trải nghiệm miễn phí 14 ngày ✨</span
+      >
+    </p>
+  </div>
+
+  <!-- Navbar -->
+  <nav
+    class="sticky top-0 z-50 border-b backdrop-blur-md bg-[#0a0f1c]/90 border-slate-800/50"
+  >
+    <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-20">
+        <!-- Logo -->
+        <div
+          class="flex flex-1 flex-shrink-0 gap-2 items-center cursor-pointer"
+          routerLink="/"
         >
-        Magnetize your HR with personalized workflows. Tailor checklists to your
-        processes.
-        <span class="hidden sm:inline">Click for a seamless HR journey! ✨</span>
-      </p>
+          <span
+            class="text-[22px] font-bold tracking-tight font-display text-white"
+            >ZenithHR</span
+          >
+        </div>
+
+        <!-- Nav Links -->
+        <div class="hidden items-center space-x-8 md:flex">
+          <a
+            class="font-medium transition-colors text-slate-300 hover:text-white text-[15px]"
+            href="#"
+            >Product</a
+          >
+          <a
+            class="flex gap-1.5 items-center font-medium transition-colors text-slate-300 hover:text-white text-[15px] group"
+            href="#"
+          >
+            Resources <i class="text-[10px] pi pi-chevron-down mt-1"></i>
+          </a>
+          <a
+            class="flex gap-1.5 items-center font-medium transition-colors text-slate-300 hover:text-white text-[15px] group"
+            href="#"
+          >
+            Features <i class="text-[10px] pi pi-chevron-down mt-1"></i>
+          </a>
+          <a
+            class="font-medium transition-colors text-slate-300 hover:text-white text-[15px]"
+            href="#"
+            >Benefits</a
+          >
+          <a
+            class="font-medium transition-colors text-slate-300 hover:text-white text-[15px]"
+            href="#"
+            >Pricing</a
+          >
+        </div>
+
+        <!-- Auth Actions -->
+        <div class="hidden flex-1 justify-end items-center space-x-6 md:flex">
+          <a
+            class="font-bold text-white hover:text-slate-200 text-[15px]"
+            routerLink="/login"
+            >Sign in</a
+          >
+          <a
+            class="px-6 py-2.5 font-bold text-white rounded-xl transition-all bg-[#050810] hover:bg-slate-900 border border-slate-800 shadow-[0_0_15px_rgba(30,41,59,0.5)]"
+            routerLink="/login"
+          >
+            Start for Free
+          </a>
+        </div>
+
+        <div class="flex items-center md:hidden">
+          <button
+            (click)="toggleMenu()"
+            class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white focus:outline-none"
+          >
+            <i class="text-3xl pi pi-bars"></i>
+          </button>
+        </div>
+      </div>
     </div>
 
-    <!-- Navbar -->
-    <nav
-      class="sticky top-0 z-50 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md border-b border-slate-100 dark:border-slate-800"
+    <!-- Mobile Menu -->
+    @if (isMenuOpen) {
+      <div
+        class="p-4 space-y-4 bg-white border-b md:hidden dark:bg-slate-900 border-slate-100"
       >
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-20">
+        <a
+          class="block font-medium text-slate-600 dark:text-slate-300 hover:text-primary"
+          href="#"
+          >Product</a
+        >
+        <a
+          class="block font-medium text-slate-600 dark:text-slate-300 hover:text-primary"
+          href="#"
+          >Resources</a
+        >
+        <a
+          class="block font-medium text-slate-600 dark:text-slate-300 hover:text-primary"
+          href="#"
+          >Features</a
+        >
+        <a
+          class="block font-medium text-slate-600 dark:text-slate-300 hover:text-primary"
+          href="#"
+          >Pricing</a
+        >
+        <hr class="border-slate-100" />
+        <div class="flex flex-col gap-4">
+          <a
+            class="font-bold text-center text-brand-blue dark:text-white"
+            routerLink="/login"
+            >Sign in</a
+          >
+          <a
+            class="px-5 py-2.5 font-bold text-center text-white rounded-full bg-brand-blue"
+            routerLink="/login"
+            >Start for Free</a
+          >
+        </div>
+      </div>
+    }
+  </nav>
+
+  <!-- Hero Section -->
+  <section
+    class="overflow-hidden relative pt-12 pb-20 lg:pt-20 lg:pb-28 bg-[#0a0f1c]"
+  >
+    <div class="relative z-10 px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+      <div class="grid gap-12 items-center lg:grid-cols-2 lg:gap-8">
+        <div
+          class="max-w-2xl delay-100 reveal-on-scroll reveal-left"
+          #revealElement
+        >
           <div
-            class="flex-shrink-0 flex items-center gap-2 cursor-pointer"
-            routerLink="/"
+            class="inline-flex gap-2 items-center px-4 py-1.5 mb-6 text-sm font-semibold text-blue-300 rounded-full border bg-slate-800/80 border-slate-700"
+          >
+            <span class="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></span>
+            Giải pháp Nhân sự & Bảng lương số 1 Việt Nam
+          </div>
+          <h1
+            class="mb-6 text-5xl font-extrabold leading-tight text-white font-display lg:text-6xl"
+          >
+            Chuyển đổi số nhân sự <br /><span class="text-blue-400"
+              >Dễ dàng & Chuyên nghiệp</span
             >
-            <div class="relative w-8 h-8">
-              <div
-                class="absolute inset-0 bg-brand-blue rounded-full opacity-20"
-              ></div>
+          </h1>
+          <p class="mb-8 max-w-lg text-lg leading-relaxed text-slate-400">
+            Được thiết kế riêng cho đặc thù doanh nghiệp Việt Nam. Hỗ trợ đầy đủ
+            Bảo hiểm xã hội, Thuế TNCN và Chấm công FaceID trên Mobile. Tự động
+            hóa 80% quy trình thủ công của bạn.
+          </p>
+          <div class="flex flex-col gap-4 mb-8 sm:flex-row">
+            <a
+              class="px-8 py-3.5 font-bold text-center text-white bg-violet-600 rounded-lg shadow-lg transition-all transform hover:bg-violet-500 shadow-violet-600/20 hover:-translate-y-1"
+              routerLink="/login"
+            >
+              Dùng thử miễn phí
+            </a>
+            <a
+              class="flex gap-2 justify-center items-center px-8 py-3.5 font-bold text-center text-violet-400 rounded-lg border transition-all border-slate-700 group bg-slate-800 hover:bg-slate-700"
+              href="#"
+            >
               <i
-                class="pi pi-infinity text-brand-blue dark:text-white text-3xl absolute -top-1 -left-1"
+                class="text-xl transition-transform pi pi-mobile group-hover:scale-110"
               ></i>
+              Trải nghiệm App Mobile
+            </a>
+          </div>
+          <div class="flex gap-4 items-center text-sm text-slate-400">
+            <div class="flex -space-x-2">
+              <img
+                class="w-8 h-8 rounded-full border-2 border-[#0a0f1c]"
+                src="https://i.pravatar.cc/100?img=1"
+                alt="User"
+              />
+              <img
+                class="w-8 h-8 rounded-full border-2 border-[#0a0f1c]"
+                src="https://i.pravatar.cc/100?img=2"
+                alt="User"
+              />
+              <img
+                class="w-8 h-8 rounded-full border-2 border-[#0a0f1c]"
+                src="https://i.pravatar.cc/100?img=3"
+                alt="User"
+              />
+              <div
+                class="flex justify-center items-center w-8 h-8 text-xs font-bold rounded-full border-2 border-[#0a0f1c] bg-slate-800 text-slate-300"
+              >
+                +5k
+              </div>
             </div>
             <span
-              class="font-display font-bold text-2xl text-slate-900 dark:text-white tracking-tight"
-              >HRMagnet</span
+              >Đã được tin dùng bởi <strong>500+</strong> doanh nghiệp.</span
+            >
+          </div>
+        </div>
+
+        <!-- Nửa bên phải: Hình ảnh Mô phỏng Nhân sự (Hero Image) -->
+        <div
+          class="relative h-[600px] w-full hidden lg:flex items-center justify-center reveal-on-scroll reveal-zoom delay-300"
+          #revealElement
+        >
+          <!-- Nền chìm (Background Decor) - Một Shape bo tròn màu xanh Navy rất đậm -->
+          <div
+            class="absolute right-8 bottom-12 w-64 h-80 bg-slate-900/60 rounded-tl-[120px] rounded-br-[40px] z-0"
+          ></div>
+
+          <!-- Hình ảnh Cô gái (Chân dung chính trung tâm) -->
+          <div class="relative z-10 w-80 h-[480px]">
+            <img
+              alt="Professional HR"
+              class="w-full h-full object-cover rounded-[50px] shadow-2xl bg-white"
+              src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=600"
+            />
+          </div>
+
+          <!-- Thẻ nổi 1 (Floating Badge Top Left): HR Head -->
+          <div
+            class="absolute top-12 left-16 z-20 animate-[bounce_4s_ease-in-out_infinite]"
+          >
+            <div class="flex relative justify-center items-center">
+              <!-- Vòng sáng mờ bao quanh -->
+              <div
+                class="absolute inset-0 rounded-full blur-sm scale-125 bg-teal-500/20"
+              ></div>
+              <img
+                alt="HR Manager Badge"
+                class="object-cover relative z-10 w-24 h-24 rounded-full border-4 border-[#0a0f1c] shadow-2xl"
+                src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=200"
+              />
+              <div
+                class="flex absolute -top-2 -right-6 z-20 gap-1 items-center px-3 py-1 rounded-full border shadow-xl backdrop-blur-md bg-slate-800/90 border-slate-700/50"
               >
+                <span class="text-xs font-bold text-white">HR Head</span>
+                <span class="text-xs text-yellow-500">★</span>
+              </div>
             </div>
+          </div>
 
-            <div class="hidden md:flex space-x-8 items-center">
-              <a
-                class="text-slate-600 dark:text-slate-300 hover:text-primary font-medium transition-colors"
-                href="#"
-                >Product</a
-                >
-                <a
-                  class="text-slate-600 dark:text-slate-300 hover:text-primary font-medium transition-colors group flex items-center gap-1"
-                  href="#"
-                  >
-                  Resources <i class="pi pi-chevron-down text-xs"></i>
-                </a>
-                <a
-                  class="text-slate-600 dark:text-slate-300 hover:text-primary font-medium transition-colors group flex items-center gap-1"
-                  href="#"
-                  >
-                  Features <i class="pi pi-chevron-down text-xs"></i>
-                </a>
-                <a
-                  class="text-slate-600 dark:text-slate-300 hover:text-primary font-medium transition-colors"
-                  href="#"
-                  >Benefits</a
-                  >
-                  <a
-                    class="text-slate-600 dark:text-slate-300 hover:text-primary font-medium transition-colors"
-                    href="#"
-                    >Pricing</a
-                    >
-                  </div>
-
-                  <div class="hidden md:flex items-center space-x-4">
-                    <a
-                      class="text-brand-blue dark:text-white font-bold hover:underline"
-                      routerLink="/login"
-                      >Sign in</a
-                      >
-                      <a
-                        class="bg-brand-blue hover:bg-blue-900 text-white px-5 py-2.5 rounded-full font-bold transition-all shadow-lg shadow-blue-900/20 transform hover:-translate-y-0.5"
-                        routerLink="/login"
-                        >
-                        Start for Free
-                      </a>
-                    </div>
-
-                    <div class="md:hidden flex items-center">
-                      <button
-                        (click)="toggleMenu()"
-                        class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white focus:outline-none"
-                        >
-                        <i class="pi pi-bars text-3xl"></i>
-                      </button>
-                    </div>
+          <!-- Thẻ nổi 2 (Floating Card Bottom Left): Onboarding Progress -->
+          <div
+            class="absolute left-0 bottom-24 z-30 transition-transform duration-300 transform hover:scale-105"
+          >
+            <div
+              class="p-5 w-[340px] bg-slate-800/90 backdrop-blur-xl rounded-[24px] border border-slate-700/50 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)]"
+            >
+              <div class="flex justify-between items-center mb-6">
+                <div class="flex gap-4 items-center">
+                  <!-- Circle Icon Placeholder -->
+                  <div
+                    class="flex justify-center items-center w-12 h-12 rounded-full bg-violet-500 shadow-[0_0_15px_rgba(139,92,246,0.5)]"
+                  ></div>
+                  <!-- Fake Text Lines -->
+                  <div class="flex flex-col gap-2">
+                    <div class="w-20 h-2.5 rounded-full bg-slate-600/80"></div>
+                    <div class="w-12 h-2 rounded-full bg-slate-700"></div>
                   </div>
                 </div>
+                <span class="text-xs font-bold text-green-400">Active</span>
+              </div>
 
-                <!-- Mobile Menu -->
-                @if (isMenuOpen) {
+              <div class="space-y-3">
+                <!-- Progress Bar -->
+                <div
+                  class="overflow-hidden w-full h-2.5 rounded-full shadow-inner bg-slate-700/80"
+                >
                   <div
-                    class="md:hidden bg-white dark:bg-slate-900 border-b border-slate-100 p-4 space-y-4"
-                    >
-                    <a
-                      class="block text-slate-600 dark:text-slate-300 hover:text-primary font-medium"
-                      href="#"
-                      >Product</a
-                      >
-                      <a
-                        class="block text-slate-600 dark:text-slate-300 hover:text-primary font-medium"
-                        href="#"
-                        >Resources</a
-                        >
-                        <a
-                          class="block text-slate-600 dark:text-slate-300 hover:text-primary font-medium"
-                          href="#"
-                          >Features</a
-                          >
-                          <a
-                            class="block text-slate-600 dark:text-slate-300 hover:text-primary font-medium"
-                            href="#"
-                            >Pricing</a
-                            >
-                            <hr class="border-slate-100" />
-                            <div class="flex flex-col gap-4">
-                              <a
-                                class="text-brand-blue dark:text-white font-bold text-center"
-                                routerLink="/login"
-                                >Sign in</a
-                                >
-                                <a
-                                  class="bg-brand-blue text-white px-5 py-2.5 rounded-full font-bold text-center"
-                                  routerLink="/login"
-                                  >Start for Free</a
-                                  >
-                                </div>
-                              </div>
-                            }
-                          </nav>
+                    class="w-3/4 h-full rounded-full bg-violet-500 shadow-[0_0_10px_rgba(139,92,246,0.8)]"
+                  ></div>
+                </div>
+                <div
+                  class="flex justify-between text-xs font-medium text-slate-400"
+                >
+                  <span>Onboarding Progress</span>
+                  <span>75%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-                          <!-- Hero Section -->
-                          <section class="relative pt-12 pb-20 lg:pt-20 lg:pb-28 overflow-hidden">
-                            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                              <div class="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
-                                <div class="max-w-2xl">
-                                  <h1
-                                    class="font-display text-5xl lg:text-6xl font-extrabold text-slate-900 dark:text-white leading-tight mb-6"
-                                    >
-                                    Magnetize <br />
-                                    Your Workplace <br />
-                                    <span class="text-brand-blue dark:text-blue-400"
-                                      >Management Solution</span
-                                      >
-                                    </h1>
-                                    <p
-                                      class="text-lg text-slate-600 dark:text-slate-400 mb-8 leading-relaxed max-w-lg"
-                                      >
-                                      Unlock efficiency with Magnet, your all-in-one workplace management
-                                      platform. Simplify HR tasks and elevate employee experience. Ready
-                                      to transform your workplace?
-                                    </p>
-                                    <div class="flex flex-col sm:flex-row gap-4">
-                                      <a
-                                        class="bg-primary hover:bg-orange-600 text-white px-8 py-3.5 rounded-lg font-bold text-center transition-all shadow-lg shadow-orange-500/30 transform hover:-translate-y-1"
-                                        routerLink="/login"
-                                        >
-                                        Get started today
-                                      </a>
-                                      <a
-                                        class="bg-surface-light dark:bg-slate-800 text-primary border border-orange-200 dark:border-slate-600 px-8 py-3.5 rounded-lg font-bold text-center hover:bg-orange-50 dark:hover:bg-slate-700 transition-all font-bold"
-                                        href="#"
-                                        >
-                                        Book a demo
-                                      </a>
-                                    </div>
-                                  </div>
+  <!-- Problem & Solution Section -->
+  <section class="py-16 bg-white dark:bg-slate-800">
+    <div
+      class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 reveal-on-scroll reveal-up"
+      #revealElement
+    >
+      <div class="mb-12 text-center">
+        <h2
+          class="mb-4 text-3xl font-bold font-display text-slate-900 dark:text-white"
+        >
+          Quản lý nhân sự đang bào mòn doanh nghiệp của bạn?
+        </h2>
+        <p class="mx-auto max-w-2xl text-slate-600 dark:text-slate-400">
+          Hàng tá bảng tính Excel, hàng trăm Email xin phép và những sai sót
+          tính lương đáng tiếc.
+        </p>
+      </div>
+      <div class="grid gap-8 md:grid-cols-3">
+        <div
+          class="p-6 bg-red-50 rounded-2xl border border-red-100 dark:bg-red-900/10 dark:border-red-900/30"
+        >
+          <i class="mb-4 text-3xl text-red-500 pi pi-file-excel"></i>
+          <h3 class="mb-2 font-bold text-slate-900 dark:text-white">
+            Chấm công phân mảnh
+          </h3>
+          <p class="text-sm text-slate-600 dark:text-slate-400">
+            Dữ liệu từ máy vân tay không đồng bộ. Kế toán mất 3 ngày mỗi tháng
+            chỉ để đối soát giờ làm.
+          </p>
+        </div>
+        <div
+          class="p-6 bg-orange-50 rounded-2xl border border-orange-100 dark:bg-orange-900/10 dark:border-orange-900/30"
+        >
+          <i class="mb-4 text-3xl text-orange-500 pi pi-envelope"></i>
+          <h3 class="mb-2 font-bold text-slate-900 dark:text-white">
+            Duyệt phép thủ công chậm chạp
+          </h3>
+          <p class="text-sm text-slate-600 dark:text-slate-400">
+            Nhân viên gửi Email, sếp quên duyệt, quỹ phép năm bị tính sai dẫn
+            đến khiếu nại liên tục.
+          </p>
+        </div>
+        <div
+          class="p-6 rounded-2xl border border-blue-100 bg-brand-blue/10 dark:bg-blue-900/10 dark:border-blue-900/30"
+        >
+          <i class="mb-4 text-3xl pi pi-database text-brand-blue"></i>
+          <h3 class="mb-2 font-bold text-slate-900 dark:text-white">
+            Dữ liệu phân tán nhiều nơi
+          </h3>
+          <p class="text-sm text-slate-600 dark:text-slate-400">
+            Hồ sơ ứng viên ở File Word, Hợp đồng ở Tủ tài liệu. Khó cấu trúc một
+            Sơ đồ tổ chức đồng nhất.
+          </p>
+        </div>
+      </div>
+      <div class="mt-12 text-center">
+        <div
+          class="inline-block px-6 py-3 font-bold text-green-700 bg-green-100 rounded-full shadow-sm dark:bg-green-900/30 dark:text-green-400"
+        >
+          <i class="mr-2 pi pi-check-circle"></i> ZenithHR giải quyết tất cả chỉ
+          trên 1 nền tảng duy nhất.
+        </div>
+      </div>
+    </div>
+  </section>
 
-                                  <div class="relative h-[500px] w-full hidden lg:block">
-                                    <div
-                                      class="absolute top-10 right-10 w-64 h-64 bg-brand-blue rounded-full opacity-10 dark:opacity-30"
-                                    ></div>
-                                    <div
-                                      class="absolute bottom-0 right-20 w-80 h-80 bg-primary/10 rounded-tl-[100px] rounded-bl-[40px] z-0"
-                                    ></div>
-                                    <div class="absolute right-10 bottom-10 z-20">
-                                      <img
-                                        alt="Professional HR"
-                                        class="w-72 h-[420px] object-cover rounded-2xl shadow-2xl relative z-20 mask-image-b-gradient"
-                                        src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=800"
-                                        />
-                                      </div>
+  <!-- Features - Interactive Tabs -->
+  <section class="py-20 lg:py-28 bg-background-light dark:bg-background-dark">
+    <div
+      class="px-4 mx-auto max-w-7xl delay-100 sm:px-6 lg:px-8 reveal-on-scroll reveal-up"
+      #revealElement
+    >
+      <div class="mb-16 text-center">
+        <h2
+          class="mb-4 text-4xl font-extrabold font-display md:text-5xl text-brand-blue dark:text-white"
+        >
+          Giải pháp Toàn diện
+        </h2>
+        <p class="mx-auto max-w-2xl text-lg text-slate-500 dark:text-slate-400">
+          Khám phá cách ZenithHR tự động hóa mọi quy trình nhân sự phức tạp nhất
+          của bạn chỉ trên một nền tảng duy nhất.
+        </p>
+      </div>
 
-                                      <!-- Flying Avatar 1 -->
-                                      <div
-                                        class="absolute top-0 left-20 z-10 animate-bounce"
-                                        style="animation-duration: 3s"
-                                        >
-                                        <div class="relative">
-                                          <div
-                                            class="absolute inset-0 bg-green-100 rounded-full transform scale-110"
-                                          ></div>
-                                          <img
-                                            alt="HR Manager"
-                                            class="w-24 h-24 rounded-full object-cover border-4 border-white dark:border-slate-800 shadow-lg relative z-10"
-                                            src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=200"
-                                            />
-                                            <div
-                                              class="absolute -right-4 top-0 bg-white dark:bg-slate-700 px-3 py-1 rounded-full shadow-md flex items-center gap-1 z-20 border border-slate-100 dark:border-slate-600"
-                                              >
-                                              <span class="text-xs font-bold text-slate-800 dark:text-white"
-                                                >HR Head</span
-                                                >
-                                                <span class="text-yellow-400 text-xs">★</span>
-                                              </div>
-                                            </div>
-                                          </div>
+      <div class="grid gap-10 items-center lg:grid-cols-12">
+        <!-- Interactive Feature List (Tabs) -->
+        <div class="space-y-4 lg:col-span-4">
+          @for (feature of features; track feature.id) {
+            <div
+              (click)="setActiveFeature(feature.id)"
+              [ngClass]="
+                activeFeatureId() === feature.id
+                  ? 'bg-white dark:bg-slate-800 border-primary shadow-lg shadow-orange-500/10 scale-105'
+                  : 'bg-transparent border-transparent hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:border-slate-200 dark:hover:border-slate-700 opacity-60 hover:opacity-100'
+              "
+              class="p-6 rounded-2xl border-2 transition-all duration-300 transform cursor-pointer"
+            >
+              <div class="flex gap-4 items-start">
+                <div
+                  [ngClass]="
+                    activeFeatureId() === feature.id
+                      ? 'bg-orange-100 dark:bg-orange-900/30 text-primary'
+                      : 'bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400'
+                  "
+                  class="flex flex-shrink-0 justify-center items-center w-12 h-12 rounded-xl transition-colors"
+                >
+                  <i class="pi {{ feature.icon }} text-xl"></i>
+                </div>
+                <div>
+                  <h3
+                    [ngClass]="
+                      activeFeatureId() === feature.id
+                        ? 'text-brand-blue dark:text-white font-bold'
+                        : 'text-slate-700 dark:text-slate-300 font-semibold'
+                    "
+                    class="mb-2 text-lg transition-colors"
+                  >
+                    {{ feature.title }}
+                  </h3>
+                  <p
+                    [ngClass]="
+                      activeFeatureId() === feature.id
+                        ? 'text-slate-600 dark:text-slate-400 max-h-24 opacity-100'
+                        : 'max-h-0 opacity-0 overflow-hidden'
+                    "
+                    class="text-sm leading-relaxed transition-all duration-500 ease-in-out"
+                  >
+                    {{ feature.description }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
 
-                                          <!-- Status Card -->
-                                          <div
-                                            class="absolute bottom-20 left-0 z-30 transform hover:scale-105 transition-transform duration-300"
-                                            >
-                                            <div
-                                              class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-2xl border border-slate-100 dark:border-slate-700 w-72"
-                                              >
-                                              <div class="flex items-center justify-between mb-4">
-                                                <div class="flex items-center gap-2">
-                                                  <div
-                                                    class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-600 overflow-hidden"
-                                                    >
-                                                    <img
-                                                      alt="User"
-                                                      src="https://ui-avatars.com/api/?name=JS&background=random"
-                                                      />
-                                                    </div>
-                                                    <div>
-                                                      <div
-                                                        class="h-2 w-20 bg-slate-200 dark:bg-slate-600 rounded mb-1"
-                                                      ></div>
-                                                      <div
-                                                        class="h-1.5 w-12 bg-slate-100 dark:bg-slate-700 rounded"
-                                                      ></div>
-                                                    </div>
-                                                  </div>
-                                                  <span
-                                                    class="text-green-500 text-xs font-bold bg-green-50 dark:bg-green-900/30 px-2 py-0.5 rounded"
-                                                    >Active</span
-                                                    >
-                                                  </div>
-                                                  <div class="space-y-2">
-                                                    <div
-                                                      class="h-2 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden"
-                                                      >
-                                                      <div class="h-full bg-primary w-3/4 rounded-full"></div>
-                                                    </div>
-                                                    <div class="flex justify-between text-xs text-slate-400">
-                                                      <span>Onboarding Progress</span>
-                                                      <span>75%</span>
-                                                    </div>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </section>
+        <!-- Feature Preview (Application Mockup) -->
+        <div class="relative lg:col-span-8">
+          <!-- Nền Gradient vát góc tạo chiều sâu, làm nổi bật khung App Mockup -->
+          <div
+            class="absolute inset-0 bg-gradient-to-tr from-brand-blue/10 to-transparent dark:from-brand-blue/5 rounded-[2.5rem] transform rotate-1 scale-[1.02] -z-10"
+          ></div>
 
-                                      <!-- Partners -->
-                                      <section
-                                        class="py-10 bg-slate-50 dark:bg-slate-900 border-y border-slate-100 dark:border-slate-800"
-                                        >
-                                        <div class="max-w-7xl mx-auto px-4 text-center">
-                                          <h3 class="text-lg font-bold text-brand-blue dark:text-blue-300 mb-8">
-                                            Trust built on 2000+ global partnerships.
-                                          </h3>
-                                          <div
-                                            class="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-60 grayscale dark:invert dark:opacity-40"
-                                            >
-                                            <div class="flex items-center gap-2 text-xl font-bold font-display">
-                                              <i class="pi pi-briefcase"></i> Apex Fusion
-                                            </div>
-                                            <div class="flex items-center gap-2 text-xl font-bold font-display">
-                                              <i class="pi pi-globe"></i> Nexura
-                                            </div>
-                                            <div class="flex items-center gap-2 text-xl font-bold font-display">
-                                              <i class="pi pi-shield"></i> Virtuoso
-                                            </div>
-                                            <div class="flex items-center gap-2 text-xl font-bold font-display">
-                                              <i class="pi pi-bolt"></i> Quantum
-                                            </div>
-                                            <div class="flex items-center gap-2 text-xl font-bold font-display">
-                                              <i class="pi pi-star"></i> Pinnacle
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </section>
+          <!-- Khung cửa sổ ứng dụng (App Window Mockup) -->
+          <div
+            class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200/50 dark:border-slate-800/80 overflow-hidden relative h-[480px] flex flex-col transform hover:-translate-y-1 transition-transform duration-500"
+          >
+            <!-- Thanh Topbar giả lập kiểu macOS -->
+            <div
+              class="flex items-center px-4 h-10 border-b bg-slate-100 dark:bg-slate-800/50 border-slate-200 dark:border-slate-800 shrink-0"
+            >
+              <div class="flex gap-1.5">
+                <div class="w-3 h-3 bg-red-400 rounded-full"></div>
+                <div class="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                <div class="w-3 h-3 bg-green-400 rounded-full"></div>
+              </div>
+              <!-- Đường dẫn ảo trên TopBar để đánh lừa thị giác (Mock URL) -->
+              <div
+                class="flex gap-2 justify-center items-center px-3 py-1 mx-auto w-1/2 bg-white rounded-md border shadow-sm dark:bg-slate-900 border-slate-200 dark:border-slate-700"
+              >
+                <i
+                  class="pi pi-lock text-[10px] text-green-600 dark:text-green-400"
+                ></i>
+                <span
+                  class="text-[11px] text-slate-500 dark:text-slate-400 font-mono tracking-wide"
+                  >app.zenithhr.com/dashboard</span
+                >
+              </div>
+            </div>
 
-                                      <!-- Features -->
-                                      <section class="py-20 lg:py-28 bg-background-light dark:bg-background-dark">
-                                        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                                          <div class="text-center mb-16">
-                                            <h2
-                                              class="font-display text-3xl md:text-4xl font-bold text-brand-blue dark:text-white mb-4"
-                                              >
-                                              Key Features
-                                            </h2>
-                                            <div class="w-20 h-1.5 bg-primary mx-auto rounded-full"></div>
-                                          </div>
-                                          <div class="grid md:grid-cols-3 gap-10">
-                                            <div
-                                              class="flex flex-col items-center text-center group hover:bg-slate-50 dark:hover:bg-slate-800 p-6 rounded-2xl transition-colors duration-300"
-                                              >
-                                              <div
-                                                class="w-16 h-16 bg-orange-100 dark:bg-orange-900/30 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300"
-                                                >
-                                                <i class="pi pi-user-plus text-primary text-3xl"></i>
-                                              </div>
-                                              <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">
-                                                Candidate Tracking
-                                              </h3>
-                                              <p class="text-slate-500 dark:text-slate-400 leading-relaxed">
-                                                Effortlessly manage your hiring process with real-time candidate
-                                                tracking. Streamline applications and feedback.
-                                              </p>
-                                            </div>
-                                            <div
-                                              class="flex flex-col items-center text-center group hover:bg-slate-50 dark:hover:bg-slate-800 p-6 rounded-2xl transition-colors duration-300"
-                                              >
-                                              <div
-                                                class="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300"
-                                                >
-                                                <i class="pi pi-chart-bar text-blue-600 text-3xl"></i>
-                                              </div>
-                                              <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">
-                                                Analytics Dashboard
-                                              </h3>
-                                              <p class="text-slate-500 dark:text-slate-400 leading-relaxed">
-                                                Make data-driven decisions fast. Foster professional growth with our
-                                                performance analytics dashboard.
-                                              </p>
-                                            </div>
-                                            <div
-                                              class="flex flex-col items-center text-center group hover:bg-slate-50 dark:hover:bg-slate-800 p-6 rounded-2xl transition-colors duration-300"
-                                              >
-                                              <div
-                                                class="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300"
-                                                >
-                                                <i class="pi pi-users text-green-600 text-3xl"></i>
-                                              </div>
-                                              <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">
-                                                Employee Management
-                                              </h3>
-                                              <p class="text-slate-500 dark:text-slate-400 leading-relaxed">
-                                                Simplify HR tasks with efficient employee information management
-                                                through our centralized database.
-                                              </p>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </section>
+            <!-- Khu vực chứa nội dung hình ảnh thực tế (App Viewport) -->
+            <div class="relative flex-1 p-1 bg-slate-50 dark:bg-slate-900/40">
+              @for (feature of features; track feature.id) {
+                <img
+                  [src]="feature.imageUrl"
+                  [alt]="feature.title"
+                  [ngClass]="
+                    activeFeatureId() === feature.id
+                      ? 'opacity-100 translate-y-0 z-10 scale-100'
+                      : 'opacity-0 translate-y-4 z-0 scale-[0.98]'
+                  "
+                  class="absolute inset-0 w-full h-full object-cover rounded-xl transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] shadow-inner"
+                />
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-                                      <!-- Testimonials -->
-                                      <section class="py-16 px-4">
-                                        <div class="max-w-6xl mx-auto">
-                                          <h2
-                                            class="font-display text-3xl md:text-4xl font-bold text-brand-blue dark:text-white text-center mb-12"
-                                            >
-                                            What Our Clients Say
-                                          </h2>
-                                          <div
-                                            class="bg-surface-light dark:bg-slate-800 rounded-3xl overflow-hidden shadow-xl border border-orange-100 dark:border-slate-700"
-                                            >
-                                            <div class="grid md:grid-cols-2">
-                                              <div
-                                                class="relative bg-white dark:bg-slate-900 h-80 md:h-auto overflow-hidden flex items-end justify-center"
-                                                >
-                                                <div
-                                                  class="absolute bottom-0 left-0 w-full h-full bg-cyan-100 dark:bg-cyan-900/20"
-                                                ></div>
-                                                <div
-                                                  class="absolute bottom-0 left-0 w-48 h-48 bg-brand-blue rounded-tr-full"
-                                                ></div>
-                                                <div
-                                                  class="absolute top-0 right-0 w-32 h-64 bg-primary rounded-bl-full opacity-90"
-                                                ></div>
-                                                <img
-                                                  alt="Happy Client"
-                                                  class="relative z-10 h-5/6 object-contain drop-shadow-xl transform translate-y-2"
-                                                  src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=600"
-                                                  />
-                                                </div>
-                                                <div class="p-8 md:p-12 lg:p-16 flex flex-col justify-center">
-                                                  <i
-                                                    class="pi pi-megaphone text-primary text-5xl mb-6 opacity-30"
-                                                  ></i>
-                                                  <blockquote
-                                                    class="text-xl md:text-2xl font-medium text-slate-800 dark:text-slate-200 leading-relaxed mb-8"
-                                                    >
-                                                    "Since using HRMagnet, our HR processes have become more efficient
-                                                    and organized. It's a game-changer!"
-                                                  </blockquote>
-                                                  <div class="flex items-center justify-between">
-                                                    <div>
-                                                      <div class="font-bold text-brand-blue dark:text-white text-lg">
-                                                        John Anderson
-                                                      </div>
-                                                      <div class="text-slate-500 dark:text-slate-400 text-sm">
-                                                        Apex Solutions
-                                                      </div>
-                                                    </div>
-                                                    <div class="flex gap-3">
-                                                      <button
-                                                        class="w-10 h-10 rounded-full border border-primary text-primary hover:bg-primary hover:text-white transition-colors flex items-center justify-center"
-                                                        >
-                                                        <i class="pi pi-arrow-left"></i>
-                                                      </button>
-                                                      <button
-                                                        class="w-10 h-10 rounded-full bg-primary text-white shadow-lg shadow-orange-500/30 hover:bg-orange-600 transition-colors flex items-center justify-center"
-                                                        >
-                                                        <i class="pi pi-arrow-right"></i>
-                                                      </button>
-                                                    </div>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                            </div>
-                                          </div>
-                                        </section>
+  <!-- Horizontal Module Slider (Centered & Grid-Aligned) -->
+  <section
+    class="py-10 bg-white border-b dark:bg-slate-900 border-slate-100 dark:border-slate-800 reveal-on-scroll reveal-up"
+    #revealElement
+  >
+    <div class="relative px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+      <div
+        id="module-slider"
+        class="flex overflow-x-auto gap-6 justify-center items-center md:gap-12 no-scrollbar scroll-smooth snap-x"
+      >
+        @for (module of moduleFeatures; track module.id; let i = $index) {
+          <div
+            class="flex flex-col flex-shrink-0 items-center transition-all duration-300 cursor-pointer module-item snap-center group/item"
+            (click)="activeModuleIndex.set(i)"
+          >
+            <span
+              class="text-[16px] font-bold whitespace-nowrap px-1 py-4 transition-all"
+              [ngClass]="{
+                'text-[#16a34a] scale-110': i === activeModuleIndex(),
+                'text-slate-400 dark:text-slate-500 group-hover/item:text-slate-900 dark:group-hover/item:text-slate-200':
+                  i !== activeModuleIndex(),
+              }"
+            >
+              {{ module.name }}
+            </span>
+            <!-- Indicator Line -->
+            <div
+              class="h-[3px] bg-[#16a34a] transition-all duration-300 rounded-full"
+              [ngClass]="{
+                'w-full opacity-100': i === activeModuleIndex(),
+                'w-0 opacity-0': i !== activeModuleIndex(),
+              }"
+            ></div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
 
-                                        <!-- CTA Section -->
-                                        <section class="py-20 bg-white dark:bg-background-dark overflow-hidden">
-                                          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                                            <div class="grid lg:grid-cols-2 gap-12 items-center">
-                                              <div class="order-2 lg:order-1">
-                                                <h2
-                                                  class="font-display text-4xl font-bold text-brand-blue dark:text-white mb-6"
-                                                  >
-                                                  Let's grow together
-                                                </h2>
-                                                <p class="text-slate-600 dark:text-slate-400 mb-8 max-w-lg">
-                                                  Discover the complete capabilities of our platform with a
-                                                  complimentary 15-day trial. Manage job postings, attract candidates,
-                                                  and facilitate employee onboarding, all within a single, integrated
-                                                  space.
-                                                </p>
-                                                <div class="flex flex-col sm:flex-row gap-4">
-                                                  <a
-                                                    class="bg-primary hover:bg-orange-600 text-white px-8 py-3.5 rounded-lg font-bold text-center transition-all shadow-lg shadow-orange-500/30"
-                                                    routerLink="/login"
-                                                    >
-                                                    Get started today
-                                                  </a>
-                                                  <a
-                                                    class="bg-orange-50 dark:bg-slate-800 text-primary border border-orange-200 dark:border-slate-600 px-8 py-3.5 rounded-lg font-bold text-center hover:bg-orange-100 dark:hover:bg-slate-700 transition-all font-bold"
-                                                    href="#"
-                                                    >
-                                                    Book a demo
-                                                  </a>
-                                                </div>
-                                              </div>
-                                              <div class="order-1 lg:order-2 relative flex justify-end">
-                                                <div class="relative w-full max-w-md aspect-square">
-                                                  <div
-                                                    class="absolute inset-0 bg-surface-light dark:bg-slate-800 rounded-tl-[100px] rounded-br-[100px] rounded-tr-[40px] rounded-bl-[40px]"
-                                                  ></div>
-                                                  <div
-                                                    class="absolute bottom-0 right-0 w-2/3 h-2/3 bg-brand-blue rounded-tl-full opacity-90"
-                                                  ></div>
-                                                  <img
-                                                    alt="Growth"
-                                                    class="absolute bottom-0 left-10 w-3/4 h-auto object-contain rounded-b-3xl"
-                                                    src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=600"
-                                                    />
-                                                  </div>
-                                                </div>
-                                              </div>
-                                            </div>
-                                          </section>
+  <!-- Active Module Content Area (Grid-Balanced & Polished) -->
+  <section
+    class="py-20 lg:py-32 bg-[#0e172a] overflow-hidden relative reveal-on-scroll reveal-up delay-100"
+    #revealElement
+  >
+    <!-- Refined Organic Green Shape - More balanced spotlight with float animation -->
+    <div
+      class="absolute left-[calc(50%-450px)] top-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-[#16a34a] rounded-[100px] rotate-12 z-0 hidden lg:block opacity-80 blur-[2px] animate-float"
+    ></div>
 
-                                          <!-- Footer -->
-                                          <footer
-                                            class="bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 pt-16 pb-8"
-                                            >
-                                            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                                              <div class="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
-                                                <div class="col-span-2 md:col-span-2">
-                                                  <div class="flex items-center gap-2 mb-4">
-                                                    <div class="relative w-8 h-8">
-                                                      <i
-                                                        class="pi pi-infinity text-brand-blue dark:text-white text-3xl"
-                                                      ></i>
-                                                    </div>
-                                                    <span
-                                                      class="font-display font-bold text-2xl text-slate-900 dark:text-white"
-                                                      >HRMagnet</span
-                                                      >
-                                                    </div>
-                                                    <p class="text-sm text-slate-500 dark:text-slate-400 mb-6 max-w-xs">
-                                                      Your partner in simplifying HR processes and boosting workplace
-                                                      productivity.
-                                                    </p>
-                                                  </div>
+    <div class="relative z-10 px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+      <div
+        class="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:items-center lg:gap-24"
+      >
+        <!-- Left Content: Typography & Navigation -->
+        <div
+          class="flex relative flex-col items-center text-center lg:items-start lg:text-left"
+        >
+          @for (module of moduleFeatures; track module.id; let i = $index) {
+            <div
+              class="transition-all duration-700 ease-in-out transform"
+              [ngClass]="{
+                'opacity-100 translate-y-0 relative z-10':
+                  i === activeModuleIndex(),
+                'opacity-0 translate-y-12 absolute inset-0 pointer-events-none z-0':
+                  i !== activeModuleIndex(),
+              }"
+            >
+              <!-- Text Animations with Stagger -->
+              <h3
+                class="text-6xl md:text-7xl lg:text-8xl font-black text-white font-display leading-[0.9] tracking-tighter mb-4"
+                [class.animate-fade-in-up]="i === activeModuleIndex()"
+              >
+                {{ module.title }}
+              </h3>
+              <p
+                class="mx-auto max-w-md text-xl font-bold md:text-2xl text-white/80 lg:mx-0 stagger-1"
+                [class.animate-fade-in-up]="i === activeModuleIndex()"
+              >
+                {{ module.subtitle }}
+              </p>
 
-                                                  <div>
-                                                    <h4 class="font-bold text-slate-900 dark:text-white mb-4">Product</h4>
-                                                    <ul class="space-y-2 text-sm text-slate-600 dark:text-slate-400">
-                                                      <li><a class="hover:text-primary" href="#">Features</a></li>
-                                                      <li><a class="hover:text-primary" href="#">Pricing</a></li>
-                                                    </ul>
-                                                  </div>
+              <!-- Navigation Control within the text cluster -->
+              <div
+                class="flex gap-4 justify-center items-center mt-8 lg:justify-start stagger-2"
+                [class.animate-fade-in-up]="i === activeModuleIndex()"
+              >
+                <button
+                  (click)="scrollModules('left')"
+                  class="w-12 h-12 rounded-full bg-white text-[#16a34a] flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-all"
+                >
+                  <i class="text-xl font-bold pi pi-chevron-left"></i>
+                </button>
+                <button
+                  (click)="scrollModules('right')"
+                  class="w-12 h-12 rounded-full bg-white text-[#16a34a] flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-all"
+                >
+                  <i class="text-xl font-bold pi pi-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
 
-                                                  <div>
-                                                    <h4 class="font-bold text-slate-900 dark:text-white mb-4">
-                                                      Resources
-                                                    </h4>
-                                                    <ul class="space-y-2 text-sm text-slate-600 dark:text-slate-400">
-                                                      <li><a class="hover:text-primary" href="#">Blog</a></li>
-                                                      <li><a class="hover:text-primary" href="#">User guides</a></li>
-                                                      <li><a class="hover:text-primary" href="#">Webinars</a></li>
-                                                    </ul>
-                                                  </div>
+        <!-- Right Content: Application Mockup (Controlled Size) -->
+        <div class="flex relative justify-center lg:justify-end">
+          <div
+            class="relative w-full max-w-[600px] aspect-[16/11] rounded-2xl shadow-[0_40px_80px_-20px_rgba(0,0,0,0.6)] border border-slate-700/50 bg-[#1e293b] overflow-hidden"
+          >
+            @for (module of moduleFeatures; track module.id; let i = $index) {
+              <img
+                [src]="module.imageUrl"
+                [alt]="module.title"
+                class="absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]"
+                [ngClass]="{
+                  'opacity-100 scale-100 z-10 animate-scale-in':
+                    i === activeModuleIndex(),
+                  'opacity-0 scale-105 z-0 pointer-events-none':
+                    i !== activeModuleIndex(),
+                }"
+              />
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-                                                  <div>
-                                                    <h4 class="font-bold text-slate-900 dark:text-white mb-4">Company</h4>
-                                                    <ul class="space-y-2 text-sm text-slate-600 dark:text-slate-400">
-                                                      <li><a class="hover:text-primary" href="#">About</a></li>
-                                                      <li><a class="hover:text-primary" href="#">Join us</a></li>
-                                                    </ul>
-                                                  </div>
-                                                </div>
+  <!-- Mobile Experience Section (BetterHR inspired) -->
+  <section class="overflow-hidden py-20 bg-white dark:bg-slate-800">
+    <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+      <div class="flex flex-col gap-16 items-center lg:flex-row">
+        <div class="lg:w-1/2 reveal-on-scroll reveal-left" #revealElement>
+          <h2 class="mb-6 text-4xl font-extrabold dark:text-white">
+            Gói gọn cả phòng Nhân sự <br /><span class="text-primary"
+              >trong túi áo bạn</span
+            >
+          </h2>
+          <p class="mb-8 text-lg text-slate-600 dark:text-slate-400">
+            Không còn rào cản về không gian và thời gian. ZenithHR App giúp nhân
+            viên chủ động trong mọi tác vụ, từ chấm công đến nhận lương.
+          </p>
 
-                                                <div
-                                                  class="border-t border-slate-200 dark:border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-slate-400 gap-4"
-                                                  >
-                                                  <div class="flex flex-wrap gap-4 justify-center md:justify-start">
-                                                    <span>© 2024 HRMagnet, Inc.</span>
-                                                    <a class="hover:text-slate-600 dark:hover:text-slate-300" href="#"
-                                                      >Privacy</a
-                                                      >
-                                                      <a class="hover:text-slate-600 dark:hover:text-slate-300" href="#"
-                                                        >Terms</a
-                                                        >
-                                                        <a class="hover:text-slate-600 dark:hover:text-slate-300" href="#"
-                                                          >Sitemap</a
-                                                          >
-                                                        </div>
-                                                        <div
-                                                          class="bg-slate-200 dark:bg-slate-800 px-3 py-1 rounded flex items-center gap-2 cursor-pointer"
-                                                          >
-                                                          <span>English</span>
-                                                          <i class="pi pi-chevron-down text-xs"></i>
-                                                        </div>
-                                                      </div>
-                                                    </div>
-                                                  </footer>
-                                                </div>
+          <ul class="space-y-6">
+            <li class="flex gap-4 items-start">
+              <div
+                class="flex justify-center items-center w-12 h-12 bg-green-100 rounded-full dark:bg-green-900/30 shrink-0"
+              >
+                <i class="text-green-600 pi pi-qrcode"></i>
+              </div>
+              <div>
+                <h4 class="font-bold dark:text-white">Chấm công QR & GPS</h4>
+                <p class="text-sm text-slate-500">
+                  Check-in nhanh chóng tại văn phòng qua mã QR hoặc từ xa qua
+                  định vị GPS bảo mật.
+                </p>
+              </div>
+            </li>
+            <li class="flex gap-4 items-start">
+              <div
+                class="flex justify-center items-center w-12 h-12 bg-blue-100 rounded-full dark:bg-blue-900/30 shrink-0"
+              >
+                <i class="text-blue-600 pi pi-file-pdf"></i>
+              </div>
+              <div>
+                <h4 class="font-bold dark:text-white">Tra cứu Bảng lương</h4>
+                <p class="text-sm text-slate-500">
+                  Xem và tải phiếu lương (Payslip) hàng tháng ngay khi có thông
+                  báo, bảo mật bằng lớp khóa thứ 2.
+                </p>
+              </div>
+            </li>
+            <li class="flex gap-4 items-start">
+              <div
+                class="flex justify-center items-center w-12 h-12 bg-orange-100 rounded-full dark:bg-orange-900/30 shrink-0"
+              >
+                <i class="text-orange-600 pi pi-send"></i>
+              </div>
+              <div>
+                <h4 class="font-bold dark:text-white">Duyệt phép thần tốc</h4>
+                <p class="text-sm text-slate-500">
+                  Tạo yêu cầu và nhận kết quả phê duyệt trong chưa đầy 1 phút.
+                  Quản lý quỹ phép minh bạch.
+                </p>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div
+          class="flex relative justify-center lg:w-1/2 reveal-on-scroll reveal-right"
+          #revealElement
+        >
+          <!-- Background Decor -->
+          <div
+            class="absolute inset-0 rounded-full blur-3xl transform scale-150 bg-primary/10 -z-10"
+          ></div>
+
+          <!-- Mobile Phone Mockup (Visual emphasis) -->
+          <div
+            class="relative w-[300px] h-[600px] bg-slate-900 rounded-[3rem] border-8 border-slate-800 shadow-2xl overflow-hidden"
+          >
+            <div
+              class="absolute top-0 left-1/2 z-20 w-1/3 h-6 rounded-b-xl -translate-x-1/2 bg-slate-800"
+            ></div>
+            <img
+              src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&q=80&w=400"
+              alt="App Screen"
+              class="object-cover w-full h-full"
+            />
+          </div>
+
+          <!-- Floating stats badge -->
+          <div
+            class="absolute -bottom-6 -left-6 p-6 bg-white rounded-2xl border shadow-xl animate-bounce dark:bg-slate-900 dark:border-slate-700"
+          >
+            <div class="flex gap-3 items-center">
+              <div
+                class="flex justify-center items-center w-10 h-10 text-white bg-green-500 rounded-full"
+              >
+                <i class="text-xl pi pi-check"></i>
+              </div>
+              <div>
+                <div class="text-2xl font-black dark:text-white">99.9%</div>
+                <div class="text-xs text-slate-400">Employee Adoption Rate</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Marketing Bento Box Segment -->
+  <section
+    class="py-10 border-t bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800"
+  >
+    <div
+      class="px-4 mx-auto max-w-7xl delay-150 sm:px-6 lg:px-8 reveal-on-scroll reveal-zoom"
+      #revealElement
+    >
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[250px]">
+        <!-- Bento Item 1: Large -->
+        <div
+          class="flex overflow-hidden relative flex-col justify-center p-8 rounded-3xl shadow-xl md:col-span-2 bg-brand-blue group"
+        >
+          <div
+            class="absolute right-0 bottom-0 w-64 h-64 rounded-tl-full pointer-events-none bg-white/10"
+          ></div>
+          <h3
+            class="relative z-10 mb-4 text-3xl font-bold text-white font-display"
+          >
+            Tự động hoá Onboarding
+          </h3>
+          <p class="relative z-10 max-w-md text-lg text-blue-100">
+            Mạch luồng ký kết hợp đồng 100% không giấy tờ.
+          </p>
+          <div
+            class="absolute right-[-20px] bottom-[-20px] opacity-50 group-hover:opacity-100 group-hover:rotate-12 transition-all duration-500"
+          >
+            <i class="pi pi-file-edit text-[150px] text-white/20"></i>
+          </div>
+        </div>
+
+        <!-- Bento Item 2: Small Stats -->
+        <div
+          class="flex overflow-hidden flex-col justify-center items-center p-8 text-center text-white rounded-3xl shadow-xl transition-transform duration-300 transform bg-primary group hover:-translate-y-2"
+        >
+          <div class="flex items-baseline mb-2 text-5xl font-black">
+            80 <span class="text-2xl">%</span>
+          </div>
+          <p class="font-medium text-orange-100">
+            Tiết kiệm thời gian xử lý thủ công
+          </p>
+        </div>
+
+        <!-- Bento Item 3: Deep Dark mode mockup -->
+        <div
+          class="overflow-hidden relative p-8 rounded-3xl border shadow-xl bg-slate-900 border-slate-800 group"
+        >
+          <h3 class="mb-2 text-xl font-bold text-white">Dark Mode Sẵn Sàng</h3>
+          <p class="text-sm text-slate-400">Giao diện bảo vệ mắt 24/7.</p>
+          <div
+            class="absolute -right-10 -bottom-10 w-40 h-40 bg-gradient-to-tr to-orange-400 rounded-full opacity-20 blur-2xl transition-opacity from-primary group-hover:opacity-40"
+          ></div>
+          <i
+            class="absolute right-6 bottom-6 text-6xl pi pi-moon text-slate-700"
+          ></i>
+        </div>
+
+        <!-- Bento Item 4: Long Text -->
+        <div
+          class="flex overflow-hidden justify-between items-center p-8 bg-white rounded-3xl border shadow-lg md:col-span-2 dark:bg-slate-800 border-slate-100 dark:border-slate-700 group"
+        >
+          <div>
+            <i class="mb-4 text-3xl text-green-500 pi pi-shield"></i>
+            <h3 class="mb-2 text-xl font-bold text-slate-800 dark:text-white">
+              Bảo mật cấp doanh nghiệp
+            </h3>
+            <p class="max-w-sm text-slate-500 dark:text-slate-400">
+              Dữ liệu được mã hoá AES-256. Hạ tầng đám mây tin cậy.
+            </p>
+          </div>
+          <div class="hidden sm:block">
+            <div
+              class="flex flex-col justify-center items-center w-32 h-32 rounded-full border-8 border-green-50 transition-transform duration-500 dark:border-green-900/20 group-hover:scale-110"
+            >
+              <i class="text-4xl text-green-500 pi pi-check"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROI Section -->
+  <section class="overflow-hidden relative py-16 text-white bg-brand-blue">
+    <!-- Interactive Background pattern -->
+    <div
+      class="absolute inset-0 opacity-10"
+      style="
+        background-image: radial-gradient(
+          circle at 2px 2px,
+          white 1px,
+          transparent 0
+        );
+        background-size: 32px 32px;
+      "
+    ></div>
+
+    <div
+      class="relative z-10 px-4 mx-auto max-w-7xl delay-100 sm:px-6 lg:px-8 reveal-on-scroll reveal-up"
+      #revealElement
+    >
+      <div class="mb-12 text-center">
+        <h2 class="mb-4 text-3xl font-bold font-display md:text-4xl">
+          Khoản đầu tư sinh lời ngay từ tháng đầu tiên
+        </h2>
+        <p class="text-blue-200">
+          Cam kết bằng số liệu từ hơn 500 khách hàng đã triển khai ZenithHR.
+        </p>
+      </div>
+
+      <div
+        class="grid grid-cols-2 gap-8 divide-x md:grid-cols-4 divide-blue-500/50"
+      >
+        <div class="px-4 text-center">
+          <div class="mb-2 text-5xl font-black text-orange-400">100%</div>
+          <p class="text-sm font-medium text-blue-100">
+            Tự động hóa luồng tính lương, loại bỏ sai sót số liệu
+          </p>
+        </div>
+        <div class="px-4 text-center">
+          <div class="mb-2 text-5xl font-black text-white">-50%</div>
+          <p class="text-sm font-medium text-blue-100">
+            Thời gian tuyển dụng ứng viên nhờ hệ thống Pipeline thông minh
+          </p>
+        </div>
+        <div class="px-4 text-center">
+          <div class="mb-2 text-5xl font-black text-white">3x</div>
+          <p class="text-sm font-medium text-blue-100">
+            Tăng tốc độ Onboarding nhân sự mới với hồ sơ số hóa tập trung
+          </p>
+        </div>
+        <div class="px-4 text-center">
+          <div class="mb-2 text-5xl font-black text-white">24/7</div>
+          <p class="text-sm font-medium text-blue-100">
+            Hệ thống Tracking & Portal nhân sự trực tuyến liên tục
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="py-20 bg-background-light dark:bg-background-dark">
+    <div
+      class="px-4 mx-auto max-w-4xl delay-200 reveal-on-scroll reveal-up"
+      #revealElement
+    >
+      <div class="mb-12 text-center">
+        <h2
+          class="mb-4 text-3xl font-bold font-display md:text-4xl text-brand-blue dark:text-white"
+        >
+          Câu hỏi thường gặp (FAQ)
+        </h2>
+        <p class="text-slate-500 dark:text-slate-400">
+          Mọi thắc mắc của bạn trước khi đưa ra quyết định chuyển đổi số.
+        </p>
+      </div>
+
+      <div class="space-y-4">
+        @for (faq of faqs(); track faq.id) {
+          <div
+            class="overflow-hidden bg-white rounded-2xl border transition-all duration-300 border-slate-200 dark:border-slate-700 dark:bg-slate-800"
+          >
+            <button
+              (click)="toggleFaq(faq.id)"
+              class="flex justify-between items-center p-6 w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            >
+              <span
+                class="text-lg font-bold text-slate-800 dark:text-slate-200"
+                >{{ faq.question }}</span
+              >
+              <i
+                class="transition-transform duration-300 transform pi pi-chevron-down text-slate-400"
+                [ngClass]="{ 'rotate-180': faq.isOpen }"
+              ></i>
+            </button>
+
+            <div
+              class="px-6 transition-all duration-300 ease-in-out text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-900/50"
+              [ngClass]="
+                faq.isOpen
+                  ? 'max-h-40 py-4 opacity-100'
+                  : 'max-h-0 py-0 opacity-0 overflow-hidden'
+              "
+            >
+              {{ faq.answer }}
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="overflow-hidden py-20 bg-white dark:bg-background-dark">
+    <div
+      class="px-4 mx-auto max-w-7xl delay-200 sm:px-6 lg:px-8 reveal-on-scroll reveal-zoom"
+      #revealElement
+    >
+      <div class="grid gap-12 items-center lg:grid-cols-2">
+        <div class="order-2 lg:order-1">
+          <h2
+            class="mb-6 text-4xl font-bold font-display text-brand-blue dark:text-white"
+          >
+            Sẵn sàng để thiết lập lại chuẩn mực Doanh nghiệp?
+          </h2>
+          <p class="mb-8 max-w-lg text-slate-600 dark:text-slate-400">
+            Trải nghiệm toàn bộ những tính năng cao cấp nhất của nền tảng với
+            bản dùng thử 14 ngày. Tư vấn trực tiếp bởi kỹ sư vận hành hệ thống.
+          </p>
+          <div class="flex flex-col gap-4 sm:flex-row">
+            <a
+              class="px-8 py-3.5 font-bold text-center text-white rounded-lg shadow-lg transition-all bg-primary hover:bg-orange-600 shadow-orange-500/30"
+              routerLink="/login"
+            >
+              Bắt đầu dùng thử Miễn phí
+            </a>
+            <a
+              class="px-8 py-3.5 font-bold text-center bg-orange-50 rounded-lg border border-orange-200 transition-all dark:bg-slate-800 text-primary dark:border-slate-600 hover:bg-orange-100 dark:hover:bg-slate-700"
+              href="#"
+            >
+              Trò chuyện với Chuyên gia
+            </a>
+          </div>
+        </div>
+        <div class="flex relative order-1 justify-end lg:order-2">
+          <div class="relative w-full max-w-md aspect-square">
+            <div
+              class="absolute inset-0 bg-surface-light dark:bg-slate-800 rounded-tl-[100px] rounded-br-[100px] rounded-tr-[40px] rounded-bl-[40px]"
+            ></div>
+            <div
+              class="absolute right-0 bottom-0 w-2/3 h-2/3 rounded-tl-full opacity-90 bg-brand-blue"
+            ></div>
+            <img
+              alt="Team Growth"
+              class="object-contain absolute bottom-0 left-10 w-3/4 h-auto rounded-b-3xl"
+              src="https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&q=80&w=600"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer
+    class="pt-16 pb-8 border-t bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800"
+  >
+    <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+      <div class="flex flex-col justify-center items-center mb-12 text-center">
+        <div class="flex gap-2 items-center mb-4">
+          <div class="relative w-8 h-8">
+            <i
+              class="text-3xl pi pi-infinity text-brand-blue dark:text-white"
+            ></i>
+          </div>
+          <span
+            class="text-2xl font-bold font-display text-slate-900 dark:text-white"
+            >ZenithHR</span
+          >
+        </div>
+        <p class="max-w-xs text-sm text-slate-500 dark:text-slate-400">
+          Your partner in simplifying HR processes and boosting workplace
+          productivity.
+        </p>
+      </div>
+
+      <div
+        class="flex flex-col gap-4 justify-between items-center pt-8 text-xs border-t border-slate-200 dark:border-slate-800 md:flex-row text-slate-400"
+      >
+        <div class="flex flex-wrap gap-4 justify-center md:justify-start">
+          <span>© 2024 ZenithHR, Inc.</span>
+          <a class="hover:text-slate-600 dark:hover:text-slate-300" href="#"
+            >Privacy</a
+          >
+          <a class="hover:text-slate-600 dark:hover:text-slate-300" href="#"
+            >Terms</a
+          >
+          <a class="hover:text-slate-600 dark:hover:text-slate-300" href="#"
+            >Sitemap</a
+          >
+        </div>
+        <div
+          class="flex gap-2 items-center px-3 py-1 rounded cursor-pointer bg-slate-200 dark:bg-slate-800"
+        >
+          <span>English</span>
+          <i class="text-xs pi pi-chevron-down"></i>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>

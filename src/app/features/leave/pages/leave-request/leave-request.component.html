@@ -32,13 +32,13 @@
     <div class="w-full lg:w-[400px] space-y-6 form-section">
       <!-- Balances Card -->
       <div
-        class="bg-gradient-to-br from-[#0d0820] to-zinc-900 rounded-2xl p-6 text-white shadow-xl overflow-hidden relative group"
+        class="glass-panel rounded-2xl border border-zinc-100 dark:border-zinc-800 p-6 overflow-hidden relative group"
       >
         <div
-          class="absolute -right-8 -top-8 w-32 h-32 bg-white/10 rounded-full blur-2xl group-hover:scale-125 transition-transform duration-500"
+          class="absolute -right-8 -top-8 w-32 h-32 bg-violet-500/10 dark:bg-violet-500/20 rounded-full blur-2xl group-hover:scale-125 transition-transform duration-500"
         ></div>
-        <h3 class="text-base font-black mb-4 flex items-center gap-2">
-          <span class="material-symbols-outlined text-violet-400"
+        <h3 class="text-base font-black text-zinc-900 dark:text-white mb-4 flex items-center gap-2">
+          <span class="material-symbols-outlined text-violet-600 dark:text-violet-400"
             >account_balance_wallet</span
           >
           Leave Balances
@@ -46,21 +46,21 @@
         <div class="space-y-4">
           @for (type of leaveTypes; track trackByLeaveTypeId($index, type)) {
             <div
-              class="bg-white/5 rounded-xl p-3 border border-white/10 hover:bg-white/10 transition-colors"
+              class="bg-zinc-50 dark:bg-zinc-800/50 rounded-xl p-3 border border-zinc-100 dark:border-zinc-700/50 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
             >
               <div class="flex justify-between items-center mb-2">
-                <span class="text-sm font-bold text-zinc-100">{{
+                <span class="text-sm font-bold text-zinc-800 dark:text-zinc-100">{{
                   type.name
                 }}</span>
-                <span class="text-sm font-bold"
+                <span class="text-sm font-bold text-zinc-900 dark:text-white"
                   >{{ balances[type.id] || 0 }} Days</span
                 >
               </div>
               <div
-                class="w-full bg-white/10 rounded-full h-1.5 overflow-hidden"
+                class="w-full bg-zinc-200 dark:bg-zinc-700 rounded-full h-1.5 overflow-hidden"
               >
                 <div
-                  class="bg-violet-400 h-full transition-all"
+                  class="bg-violet-600 dark:bg-violet-400 h-full transition-all"
                   [style.width.%]="(balances[type.id] / 20) * 100"
                 ></div>
               </div>

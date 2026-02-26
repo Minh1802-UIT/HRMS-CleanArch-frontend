@@ -48,20 +48,36 @@
       <div
         class="flex flex-col gap-4 justify-between items-center p-4 bg-white border-b border-gray-200 dark:border-gray-700 sm:flex-row dark:bg-gray-800"
       >
-        <!-- Filter Controls -->
-        <div class="relative w-full sm:w-64">
-          <select
-            [(ngModel)]="selectedDepartmentId"
-            (change)="onDepartmentChange()"
-            class="block py-2 pr-10 pl-3 w-full text-base rounded-md border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-          >
-            <option value="">All Departments</option>
-            @for (dept of departments; track trackByDeptId($index, dept)) {
-              <option [value]="dept.id">
-                {{ dept.name }} ({{ dept.code }})
-              </option>
-            }
-          </select>
+        <!-- Filter & Search Controls -->
+        <div class="flex flex-col gap-4 w-full sm:flex-row sm:w-auto">
+          <div class="relative w-full sm:w-64">
+            <select
+              [(ngModel)]="selectedDepartmentId"
+              (change)="onDepartmentChange()"
+              class="block py-2.5 pr-10 pl-3 w-full text-base rounded-md shadow-sm border-gray-300 focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            >
+              <option value="">All Departments</option>
+              @for (dept of departments; track trackByDeptId($index, dept)) {
+                <option [value]="dept.id">
+                  {{ dept.name }}
+                </option>
+              }
+            </select>
+          </div>
+          
+          <div class="relative w-full sm:w-80">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+              <i class="text-gray-400 pi pi-search font-light text-lg"></i>
+            </span>
+            <input
+              type="text"
+              class="block py-2.5 pr-3 pl-10 w-full rounded-md shadow-sm border-gray-300 focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+              placeholder="Search by name, title..."
+              [(ngModel)]="searchTerm"
+              (keyup.enter)="onSearch()"
+              (blur)="onSearch()"
+            />
+          </div>
         </div>
 
         <!-- Zoom Controls -->
@@ -131,14 +147,36 @@
             </div>
           }
 
-          <!-- Empty -->
-          @if (!orgData && !loading && !errorMessage) {
+          <!-- Default State (No Filter applied) -->
+          @if (!orgData && !loading && !errorMessage && !isFiltering) {
+            <div class="flex flex-col justify-center items-center h-96 text-center max-w-md mx-auto">
+              <div class="w-24 h-24 bg-violet-100 dark:bg-violet-900/30 rounded-full flex items-center justify-center mb-6 shadow-inner ring-4 ring-white dark:ring-gray-800">
+                <span class="text-5xl text-violet-600 dark:text-violet-400 font-light material-symbols-outlined">
+                  hub
+                </span>
+              </div>
+              <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Explore Organization</h3>
+              <p class="text-gray-500 dark:text-gray-400 mb-6">
+                Type an employee's name or select a department from the filters above to visualize their position in the company hierarchy.
+              </p>
+              <!-- Shortcut pointers -->
+              <div class="flex gap-4">
+                  <span class="flex items-center gap-1.5 px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-full text-xs font-medium text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700">
+                      <i class="pi pi-search text-[10px]"></i> Quick Search
+                  </span>
+                  <span class="flex items-center gap-1.5 px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-full text-xs font-medium text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700">
+                      <i class="pi pi-building text-[10px]"></i> By Department
+                  </span>
+              </div>
+            </div>
+          }
+
+          <!-- Empty Result (Filtered but no matches) -->
+          @if (!orgData && !loading && !errorMessage && isFiltering) {
             <div class="flex flex-col justify-center items-center h-64">
-              <span
-                class="mb-4 text-4xl text-gray-300 material-symbols-outlined"
-                >groups</span
-              >
-              <p class="text-gray-500">No organizational data found.</p>
+              <span class="mb-4 text-4xl text-gray-300 material-symbols-outlined">person_off</span>
+              <p class="text-gray-500">No matching employees found in the hierarchy.</p>
+              <button (click)="searchTerm=''; selectedDepartmentId=''; applyFilters()" class="text-violet-500 mt-2 hover:underline text-sm font-medium">Clear filters</button>
             </div>
           }
         </div>
@@ -157,8 +195,11 @@
 
     <!-- Employee Card -->
     <div
-      [ngClass]="isRoot ? 'p-3 min-w-[160px]' : 'p-2 min-w-[140px]'"
-      class="flex relative flex-col items-center rounded-lg border border-gray-200 shadow-sm transition-all bg-white dark:bg-gray-800 dark:border-gray-700 group hover:shadow-md hover:-translate-y-0.5 text-center max-w-[180px]"
+      [ngClass]="[
+        isRoot ? 'p-3 min-w-[160px]' : 'p-2 min-w-[140px]',
+        node.isMatch ? 'ring-2 ring-violet-500 shadow-violet-500/30 shadow-lg scale-105 bg-violet-50 dark:bg-violet-900/20' : 'bg-white dark:bg-gray-800'
+      ]"
+      class="flex relative flex-col items-center rounded-lg border border-gray-200 shadow-sm transition-all dark:border-gray-700 group hover:shadow-md hover:-translate-y-0.5 text-center max-w-[180px] z-10"
     >
       <!-- Avatar -->
       <div

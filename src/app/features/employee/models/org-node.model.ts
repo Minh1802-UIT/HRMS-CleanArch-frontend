@@ -4,5 +4,6 @@ export interface OrgNode {
   title: string;
   avatarUrl: string;
   departmentId?: string;
+  isMatch?: boolean;
   children: OrgNode[];
 }

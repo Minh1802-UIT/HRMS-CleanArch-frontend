@@ -1,1 +1,42 @@
 /* Component styles are mostly handled via Tailwind and global styles.scss */
+
+/* Cơ chế Base cho mọi phần tử chờ Reveal */
+.reveal-on-scroll {
+  opacity: 0;
+  will-change: opacity, transform, filter;
+  transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Các biến thể hướng cuộn (Modifiers) - Phải kết hợp cùng reveal-on-scroll */
+.reveal-up { transform: translateY(60px); }
+.reveal-down { transform: translateY(-60px); }
+.reveal-left { transform: translateX(-60px); }
+.reveal-right { transform: translateX(60px); }
+.reveal-zoom { transform: scale(0.9); }
+.reveal-blur { filter: blur(10px); }
+
+/* Trạng thái Kích hoạt chung (Active State do IntersectionObserver gán) */
+.reveal-active {
+  opacity: 1 !important;
+  transform: translate(0, 0) scale(1) !important;
+  filter: blur(0) !important;
+}
+
+/* Các khoảng Delay để tạo hiệu ứng Cascading (rơi từng nhịp) */
+.delay-100 { transition-delay: 100ms; }
+.delay-150 { transition-delay: 150ms; }
+.delay-200 { transition-delay: 200ms; }
+.delay-250 { transition-delay: 250ms; }
+.delay-300 { transition-delay: 300ms; }
+.delay-400 { transition-delay: 400ms; }
+.delay-500 { transition-delay: 500ms; }
+
+/* Utility to hide scrollbar but keep functionality */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+

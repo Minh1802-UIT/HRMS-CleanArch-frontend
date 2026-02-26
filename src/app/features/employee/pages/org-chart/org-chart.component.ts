@@ -23,13 +23,8 @@ export class OrgChartComponent implements OnInit, OnDestroy {
   zoomLevel: number = 1;
   loading: boolean = false;
   orgData: OrgNode | null = null;
-  rawOrgData: OrgNode[] = []; // Store raw list for client-side filtering
-  // Assuming getOrgChart returns the Root Node (or list of roots).
-  // If it returns a single root, client-side filtering of a tree is hard.
-  // Let's assume we fetch all and rely on API or just show full tree for now, 
-  // BUT the user asked for filtering. 
-  // If getOrgChart() returns a Tree structure directly, filtering a Tree "by department" 
-  // usually means "Show me the sub-tree of this department".
+  rawOrgData: OrgNode | null = null; // Store raw root for client-side filtering
+  isFiltering: boolean = false;
   
   departments: Department[] = [];
   selectedDepartmentId: string = '';
@@ -62,28 +57,11 @@ export class OrgChartComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.employeeService.getOrgChart().pipe(takeUntil(this.destroy$)).subscribe({
       next: (data) => {
-        // Data is likely an array of roots or a single root.
-        // If we want to filter by department, we might need to filter the *nodes* and rebuild the tree?
-        // Or if the API supports it. The current API call is `getOrgChart()`.
-        
-        // For now, let's load the full chart. 
-        // If filtering is selected, we might search for the top-most node of that department?
-        // Or maybe just filter distinct subtrees.
-        
         if (data && data.length > 0) {
-            // If filtering is enabled
-            if (this.selectedDepartmentId) {
-                // Client-side filter: Find nodes matching department, and show them as roots? 
-                // This is complex with a pre-built tree. 
-                // Let's just implement the UI for now and keep logical filtering simple (or standard).
-                // Actually, if we filter by department, maybe we just highlight them or show that subtree.
-                
-                // Let's stick to standard behavior: Load all.
-                this.orgData = this.mapToOrgNode(data[0]);
-            } else {
-                this.orgData = this.mapToOrgNode(data[0]);
-            }
+            this.rawOrgData = data[0]; // Lưu lại cây gốc chưa qua xử lý
+            this.applyFilters();
         } else {
+            this.rawOrgData = null;
             this.orgData = null;
         }
         this.loading = false;
@@ -105,10 +83,83 @@ export class OrgChartComponent implements OnInit, OnDestroy {
 
   onDepartmentChange() {
       this.zoomLevel = 1;
-      this.loadOrgChart(); // Reload (or re-filter if we had raw data)
-      // Since existing getOrgChart probably returns the whole company tree, 
-      // strict filtering might require backend support which we might not have yet. 
-      // I will add the UI control first.
+      this.applyFilters();
+  }
+
+  onSearch() {
+      this.applyFilters();
+  }
+
+  applyFilters() {
+      // Nếu không có dữ liệu gốc, bỏ qua
+      if (!this.rawOrgData) {
+          this.orgData = null;
+          this.isFiltering = false;
+          return;
+      }
+
+      const hasSearch = !!this.searchTerm && this.searchTerm.trim().length > 0;
+      const hasDept = !!this.selectedDepartmentId;
+      
+      this.isFiltering = hasSearch || hasDept;
+
+      // Nếu KHÔNG có tìm kiếm VÀ KHÔNG lọc phòng ban -> Ẩn toàn bộ cây (Yêu cầu của USER)
+      if (!this.isFiltering) {
+          this.orgData = null;
+          return;
+      }
+
+      // Xử lý bộ lọc
+      const clonedRoot = JSON.parse(JSON.stringify(this.rawOrgData)) as OrgNode; // clone deeply
+      const filteredRoot = this.filterTreeNode(clonedRoot, this.searchTerm.trim().toLowerCase(), this.selectedDepartmentId);
+      
+      // Nếu root bị loại do không có node con nào khớp và cũng không tự khớp, filterTreeNode sẽ return null
+      // Tuy nhiên hàm trả về node, nếu return null nghĩa là không tìm thấy
+      this.orgData = filteredRoot;
+  }
+
+  /**
+   * Đệ quy cắt tỉa cây. Giữ lại node nếu node đó khớp (isMatch) HOẶC có ít nhất 1 node con bên dưới khớp.
+   */
+  filterTreeNode(node: OrgNode, searchWord: string, deptId: string): OrgNode | null {
+      // 1. Kiểm tra node hiện tại có thỏa mãn điều kiện không
+      let matchSearch = true;
+      let matchDept = true;
+
+      if (searchWord) {
+          matchSearch = node.name.toLowerCase().includes(searchWord) || 
+                        (node.title ? node.title.toLowerCase().includes(searchWord) : false);
+      }
+      
+      if (deptId) {
+          // Lưu ý: data trả về từ API có thể không có departmentId ở orgNode nếu DTO không map, 
+          // Nếu không map departmentId, ta chỉ có thể tìm kiếm theo text.
+          matchDept = node.departmentId === deptId;
+      }
+
+      const isSelfMatch = matchSearch && matchDept;
+      node.isMatch = isSelfMatch;
+
+      // 2. Lọc tất cả các node con
+      let filteredChildren: OrgNode[] = [];
+      if (node.children && node.children.length > 0) {
+          for (let child of node.children) {
+              const result = this.filterTreeNode(child, searchWord, deptId);
+              if (result) {
+                  filteredChildren.push(result);
+              }
+          }
+      }
+      node.children = filteredChildren;
+
+      // 3. Quyết định giữ lại nhánh này hay không
+      // Giữ lại nếu bản thân nó là mục tiêu tìm thấy (isSelfMatch), 
+      // HOẶC có con cái của nó chứa mục tiêu tìm thấy (filteredChildren.length > 0)
+      if (isSelfMatch || filteredChildren.length > 0) {
+          return node;
+      }
+
+      return null;
   }
 
   mapToOrgNode(node: OrgNode): OrgNode {
@@ -133,10 +184,6 @@ export class OrgChartComponent implements OnInit, OnDestroy {
     if (this.zoomLevel > 0.5) {
       this.zoomLevel -= 0.1;
     }
-  }
-
-  onSearch() {
-    // Search is currently hidden in new layout, but kept for future use
   }
 
   trackByDeptId(index: number, dept: Department): string { return dept.id ?? String(index); }
