@@ -108,14 +108,16 @@ export class AttendanceService {
 
   getDailyStats(): Observable<DailyStats> {
       const today = this.formatDate(new Date());
-      return this.http.post<ApiResponse<{ status: string }[]>>(`${this.apiUrl}/daily/${today}`, { pageSize: 999, pageNumber: 1 }).pipe(
+      return this.http.post<ApiResponse<any>>(`${this.apiUrl}/daily/${today}`, { pageSize: 999, pageNumber: 1 }).pipe(
           map(response => {
-              const records = response.data || [];
+              const data = response.data;
+              // Backend returns PagedResult with items array, not a flat array
+              const records: { status: string }[] = data?.items || data || [];
               return {
-                  present: records.filter((r: { status: string }) => r.status === 'Present').length,
-                  late: records.filter((r: { status: string }) => r.status === 'Late').length,
-                  absent: records.filter((r: { status: string }) => r.status === 'Absent').length,
-                  onLeave: records.filter((r: { status: string }) => r.status === 'OnLeave' || r.status === 'On Leave').length
+                  present: records.filter(r => r.status === 'Present').length,
+                  late: records.filter(r => r.status === 'Late').length,
+                  absent: records.filter(r => r.status === 'Absent').length,
+                  onLeave: records.filter(r => r.status === 'OnLeave' || r.status === 'On Leave').length
               };
           }),
           catchError(err => {
