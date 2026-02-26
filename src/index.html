@@ -14,11 +14,11 @@
       http-equiv="Content-Security-Policy"
       content="
         default-src 'self';
-        script-src 'self';
+        script-src 'self' 'unsafe-inline' 'unsafe-eval';
         style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-        font-src 'self' https://fonts.gstatic.com data:;
+        font-src 'self' https://fonts.gstatic.com data: http://localhost:5055 https://hrms-clean-arch-frontend*.vercel.app https://hrms-*.vercel.app;
         img-src 'self' data: blob: https:;
-        connect-src 'self' http://localhost:5055 https://localhost:5055;
+        connect-src 'self' http://localhost:5055 https://localhost:5055 https://hrms-*.onrender.com;
         worker-src 'self' blob:;
         object-src 'none';
         base-uri 'self';
