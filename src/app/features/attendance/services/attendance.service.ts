@@ -34,7 +34,7 @@ export class AttendanceService {
   ) { }
 
   getDailyRecords(date: Date, params: { pageSize: number; pageNumber: number } = { pageSize: 10, pageNumber: 1 }): Observable<PagedResult<AttendanceRecord>> {
-    const dateStr = date.toISOString();
+    const dateStr = this.formatDate(date);
     return this.http.post<ApiResponse<PagedResult<AttendanceRawDto>>>(`${this.apiUrl}/daily/${dateStr}`, params).pipe(
         map(response => {
             const data = response.data;
@@ -107,8 +107,8 @@ export class AttendanceService {
   }
 
   getDailyStats(): Observable<DailyStats> {
-      const today = new Date().toISOString();
-      return this.http.get<ApiResponse<{ status: string }[]>>(`${this.apiUrl}/daily/${today}`).pipe(
+      const today = this.formatDate(new Date());
+      return this.http.post<ApiResponse<{ status: string }[]>>(`${this.apiUrl}/daily/${today}`, { pageSize: 999, pageNumber: 1 }).pipe(
           map(response => {
               const records = response.data || [];
               return {
@@ -123,6 +123,14 @@ export class AttendanceService {
               return of({ present: 0, late: 0, absent: 0, onLeave: 0 });
           })
       );
+  }
+
+  /** Format Date to yyyy-MM-dd string for URL-safe usage */
+  private formatDate(date: Date): string {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
   }
 
   getMyAttendanceRange(from: string, to: string): Observable<AttendanceRecord[]> {
