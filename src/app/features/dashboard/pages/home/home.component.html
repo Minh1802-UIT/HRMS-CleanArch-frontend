@@ -223,6 +223,8 @@
               alt="Professional HR"
               class="w-full h-full object-cover rounded-[50px] shadow-2xl bg-white"
               src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=600"
+              decoding="async"
+              fetchpriority="high"
             />
           </div>
 
@@ -467,8 +469,9 @@
             <div class="relative flex-1 p-1 bg-slate-50 dark:bg-slate-900/40">
               @for (feature of features; track feature.id) {
                 <img
-                  [src]="feature.imageUrl"
+                  [src]="loadedFeatureIds().has(feature.id) ? feature.imageUrl : ''"
                   [alt]="feature.title"
+                  decoding="async"
                   [ngClass]="
                     activeFeatureId() === feature.id
                       ? 'opacity-100 translate-y-0 z-10 scale-100'
@@ -497,7 +500,7 @@
         @for (module of moduleFeatures; track module.id; let i = $index) {
           <div
             class="flex flex-col flex-shrink-0 items-center transition-all duration-300 cursor-pointer module-item snap-center group/item"
-            (click)="activeModuleIndex.set(i)"
+            (click)="setActiveModule(i)"
           >
             <span
               class="text-[16px] font-bold whitespace-nowrap px-1 py-4 transition-all"
@@ -594,8 +597,9 @@
           >
             @for (module of moduleFeatures; track module.id; let i = $index) {
               <img
-                [src]="module.imageUrl"
+                [src]="loadedModuleIndices().has(i) ? module.imageUrl : ''"
                 [alt]="module.title"
+                decoding="async"
                 class="absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]"
                 [ngClass]="{
                   'opacity-100 scale-100 z-10 animate-scale-in':
@@ -692,6 +696,8 @@
               src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&q=80&w=400"
               alt="App Screen"
               class="object-cover w-full h-full"
+              loading="lazy"
+              decoding="async"
             />
           </div>
 
@@ -953,6 +959,8 @@
               alt="Team Growth"
               class="object-contain absolute bottom-0 left-10 w-3/4 h-auto rounded-b-3xl"
               src="https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&q=80&w=600"
+              loading="lazy"
+              decoding="async"
             />
           </div>
         </div>
