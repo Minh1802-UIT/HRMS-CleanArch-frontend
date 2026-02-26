@@ -66,3 +66,4 @@ build_error.log
 .env.*
 !.env.example
 .vercel
+.env*.local
