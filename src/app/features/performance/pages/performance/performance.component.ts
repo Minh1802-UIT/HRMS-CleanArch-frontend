@@ -57,9 +57,14 @@ export class PerformanceComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.performanceService.getEmployeeReviews(this.currentUserId).pipe(takeUntil(this.destroy$)).subscribe(reviews => {
-      this.reviews = reviews;
-      this.cdr.markForCheck();
+    this.performanceService.getEmployeeReviews(this.currentUserId).pipe(takeUntil(this.destroy$)).subscribe({
+      next: reviews => {
+        this.reviews = reviews;
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.cdr.markForCheck();
+      }
     });
   }
 

@@ -183,7 +183,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private getChartColors() {
-    const isDark = document.documentElement.classList.contains('dark');
+    const isDark = this.themeService.isDark();
     const colors = {
       textColor:          isDark ? '#e4e4e7' : '#3f3f46',
       textColorSecondary: isDark ? '#a1a1aa' : '#71717a',
@@ -294,7 +294,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       };
     }
 
-    const isDark = document.documentElement.classList.contains('dark');
+    const isDark = this.themeService.isDark();
     this.distributionOptions = {
         cutout: '62%',
         layout: { padding: 8 },

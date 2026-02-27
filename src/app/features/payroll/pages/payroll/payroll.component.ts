@@ -11,6 +11,7 @@ import { ToastService } from '@core/services/toast.service';
 import { LoggerService } from '@core/services/logger.service';
 import { UploadService } from '@features/employee/services/upload.service';
 import { CsvExportService } from '@core/services/csv-export.service';
+import { formatMonthYear } from '@shared/utils/date.utils';
 
 @Component({
   selector: 'app-payroll',
@@ -148,7 +149,7 @@ export class PayrollComponent implements OnInit, OnDestroy {
 
   onExport() {
     this.logger.info('Exporting payroll data');
-    const monthYear = this.formatMonthYear(this.selectedMonth, this.selectedYear);
+    const monthYear = formatMonthYear(this.selectedMonth, this.selectedYear);
     this.toastService.showInfo('Exporting', `Generating Payroll_${monthYear}.xlsx...`);
 
     this.payrollService.exportPayroll(monthYear).pipe(takeUntil(this.destroy$)).subscribe({
@@ -192,9 +193,9 @@ export class PayrollComponent implements OnInit, OnDestroy {
   }
 
   formatCurrency(value: number | undefined): string {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('vi-VN', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'VND',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0
     }).format(value || 0);
@@ -205,18 +206,7 @@ export class PayrollComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  private formatMonthYear(monthName: string, year: number): string {
-    const monthNum = this.getMonthNumber(monthName);
-    return `${monthNum}-${year}`;
-  }
 
-  private getMonthNumber(monthName: string): string {
-    const months: { [key: string]: string } = {
-      'January': '01', 'February': '02', 'March': '03', 'April': '04', 'May': '05', 'June': '06',
-      'July': '07', 'August': '08', 'September': '09', 'October': '10', 'November': '11', 'December': '12'
-    };
-    return months[monthName] || '01';
-  }
 
   exportPayrollCsv(): void {
     if (!this.payrollRecords.length) {

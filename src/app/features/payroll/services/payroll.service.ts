@@ -6,6 +6,7 @@ import { environment } from '@env/environment';
 import { ApiResponse, PagedResult } from '@core/models/api-response';
 import { Payroll, AnnualTaxReport } from '../models/payroll.model';
 import { LoggerService } from '@core/services/logger.service';
+import { formatMonthYear } from '@shared/utils/date.utils';
 
 export { Payroll, PayrollRecord } from '../models/payroll.model';
 
@@ -18,7 +19,7 @@ export class PayrollService {
   constructor(private http: HttpClient, private logger: LoggerService) { }
 
   getPayrollData(month: string, year: number): Observable<Payroll[]> {
-    const monthYear = this.formatMonthYear(month, year);
+    const monthYear = formatMonthYear(month, year);
     return this.http.get<ApiResponse<PagedResult<Payroll>>>(`${this.apiUrl}?month=${monthYear}`).pipe(
       map(response => {
         if (response.data && response.data.items) {
@@ -31,7 +32,7 @@ export class PayrollService {
   }
 
   calculatePayroll(month: string, year: number): Observable<Payroll[]> {
-     const monthYear = this.formatMonthYear(month, year);
+     const monthYear = formatMonthYear(month, year);
      return this.http.post<ApiResponse<Payroll[]>>(`${this.apiUrl}/generate`, { month: monthYear }).pipe(
        map(response => response.data || []),
        catchError(err => { this.logger.error('PayrollService: calculatePayroll failed', err); return throwError(() => err); })
@@ -61,16 +62,4 @@ export class PayrollService {
     );
   }
 
-  private formatMonthYear(monthName: string, year: number): string {
-    const monthNum = this.getMonthNumber(monthName);
-    return `${monthNum}-${year}`;
-  }
-
-  private getMonthNumber(monthName: string): string {
-    const months: { [key: string]: string } = {
-      'January': '01', 'February': '02', 'March': '03', 'April': '04', 'May': '05', 'June': '06',
-      'July': '07', 'August': '08', 'September': '09', 'October': '10', 'November': '11', 'December': '12'
-    };
-    return months[monthName] || '01';
-  }
 }

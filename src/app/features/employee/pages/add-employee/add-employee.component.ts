@@ -156,10 +156,13 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
   }
   
   patchForm(emp: Employee) {
+      const nameParts = (emp.fullName || '').trim().split(/\s+/);
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
       this.employeeForm.patchValue({
           personalInfo: {
-              firstName: emp.fullName.split(' ')[0],
-              lastName: emp.fullName.split(' ').slice(1).join(' '),
+              firstName,
+              lastName,
               email: emp.email,
               phone: emp.personalInfo?.phoneNumber,
               dob: emp.personalInfo?.dateOfBirth ? new Date(emp.personalInfo.dateOfBirth).toISOString().split('T')[0] : '',
@@ -302,7 +305,10 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
        });
 
     } else {
-        const generatedCode = `EMP-${Math.floor(Math.random() * 10000)}`;
+        const now = new Date();
+        const datePart = `${String(now.getFullYear()).slice(-2)}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
+        const randomPart = Array.from(crypto.getRandomValues(new Uint8Array(2)), b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
+        const generatedCode = `EMP-${datePart}-${randomPart}`;
         
         const createPayload = {
             employeeCode: generatedCode,

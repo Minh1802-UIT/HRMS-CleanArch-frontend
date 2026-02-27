@@ -21,7 +21,6 @@ export const routes: Routes = [
       { path: 'org-chart', loadComponent: () => import('./features/employee/pages/org-chart/org-chart.component').then(m => m.OrgChartComponent), data: { activePage: 'employees' } },
 
       // Create/Edit Employees -> Admin/HR
-      { path: 'add-employee', loadComponent: () => import('./features/employee/pages/add-employee/add-employee.component').then(m => m.AddEmployeeComponent), canActivate: [roleGuard], data: { roles: ['Admin', 'HR'], activePage: 'employees' } },
       { path: 'employees/add', loadComponent: () => import('./features/employee/pages/add-employee/add-employee.component').then(m => m.AddEmployeeComponent), canActivate: [roleGuard], data: { roles: ['Admin', 'HR'], activePage: 'employees' } },
 
       { path: 'employee-profile/:id', loadComponent: () => import('./features/employee/pages/employee-profile/employee-profile.component').then(m => m.EmployeeProfileComponent), canActivate: [roleGuard], data: { roles: ['Admin', 'HR', 'Manager'], activePage: 'employees' } },
@@ -41,7 +40,7 @@ export const routes: Routes = [
       { path: 'attendance/shifts/add', loadComponent: () => import('./features/attendance/pages/attendance/shift-form/shift-form.component').then(m => m.ShiftFormComponent), canActivate: [roleGuard], data: { roles: ['Admin', 'HR', 'Manager'], activePage: 'shifts' } },
       { path: 'attendance/shifts/edit/:id', loadComponent: () => import('./features/attendance/pages/attendance/shift-form/shift-form.component').then(m => m.ShiftFormComponent), canActivate: [roleGuard], data: { roles: ['Admin', 'HR', 'Manager'], activePage: 'shifts' } },
 
-      { path: 'departments', loadComponent: () => import('./features/organization/pages/departments/departments.component').then(m => m.DepartmentsComponent), canActivate: [roleGuard], data: { roles: ['Admin', 'HR'], activePage: 'Departments' } },
+      { path: 'departments', loadComponent: () => import('./features/organization/pages/departments/departments.component').then(m => m.DepartmentsComponent), canActivate: [roleGuard], data: { roles: ['Admin', 'HR'], activePage: 'departments' } },
 
       // Payroll -> Admin/HR/Manager
       { path: 'payroll', loadComponent: () => import('./features/payroll/pages/payroll/payroll.component').then(m => m.PayrollComponent), canActivate: [roleGuard], data: { roles: ['Admin', 'HR', 'Manager'], activePage: 'payroll' } },
@@ -62,6 +61,6 @@ export const routes: Routes = [
     ]
   },
 
-  // 404 - Redirect unknown routes to dashboard
-  { path: '**', redirectTo: '/dashboard' }
+  // 404 - Show Not Found page for unknown routes
+  { path: '**', loadComponent: () => import('./features/not-found/not-found.component').then(m => m.NotFoundComponent) }
 ];
