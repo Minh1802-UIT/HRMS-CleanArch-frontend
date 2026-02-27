@@ -131,6 +131,25 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     this.selectedRoles[role] = !this.selectedRoles[role];
   }
 
+  sendResetPasswordEmail(user: User) {
+    if (!user.email) {
+      this.toastService.showError('Action Failed', 'User does not have an email address.');
+      return;
+    }
+    
+    if (confirm(`Are you sure you want to send a password reset email to ${user.email}?`)) {
+      this.authService.forgotPassword(user.email).pipe(takeUntil(this.destroy$)).subscribe({
+        next: () => {
+          this.toastService.showSuccess('Email Sent', `Password reset instructions have been sent to ${user.email}.`);
+        },
+        error: (err) => {
+          this.logger.error('Failed to send reset email', err);
+          this.toastService.showError('Error', err?.error?.message || 'Failed to send password reset email.');
+        }
+      });
+    }
+  }
+
   saveRoles() {
     if (!this.selectedUser) return;
     
