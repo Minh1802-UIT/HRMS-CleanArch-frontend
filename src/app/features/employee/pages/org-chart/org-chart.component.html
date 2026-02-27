@@ -257,37 +257,60 @@
 
     <!-- Children Container -->
     @if (node.children && node.children.length > 0) {
-      <div class="flex relative justify-center">
-        <!-- Render child nodes recursively -->
-        @for (child of node.children; track trackByIndex($index, child); let first = $first; let last = $last; let count = $count) {
-          <div class="flex relative flex-col items-center px-4">
-            
-            <!-- Horizontal and vertical connectors for multiple children -->
-            @if (count > 1) {
-               @if (first) {
-                  <div class="absolute top-0 left-1/2 right-0 h-px bg-gray-300 dark:bg-gray-600"></div>
-               } @else if (last) {
-                  <div class="absolute top-0 left-0 right-1/2 h-px bg-gray-300 dark:bg-gray-600"></div>
-               } @else {
-                  <div class="absolute top-0 left-0 right-0 h-px bg-gray-300 dark:bg-gray-600"></div>
-               }
-
-               <!-- Top connector for child -->
-               <div class="absolute top-0 w-px h-6 bg-gray-300 dark:bg-gray-600"></div>
-               
-               <!-- Spacer to push content down below the connector -->
-               <div class="h-6"></div>
+      @if (node.children.length > 5) {
+        <!-- Mixed Vertical/Wrap Layout for many children -->
+        <div class="flex flex-col items-center pt-6">
+          <!-- Single vertical line from parent extending down -->
+          <div class="w-px h-6 bg-gray-300 dark:bg-gray-600 -mt-6"></div>
+          
+          <!-- Wrap container -->
+          <div class="flex flex-wrap justify-center gap-6 max-w-[1200px] px-4">
+            @for (child of node.children; track trackByIndex($index, child)) {
+              <div class="flex relative flex-col items-center">
+                <ng-container
+                  *ngTemplateOutlet="
+                    nodeTemplate;
+                    context: { $implicit: child, isRoot: false }
+                  "
+                ></ng-container>
+              </div>
             }
-
-            <ng-container
-              *ngTemplateOutlet="
-                nodeTemplate;
-                context: { $implicit: child, isRoot: false }
-              "
-            ></ng-container>
           </div>
-        }
-      </div>
+        </div>
+      } @else {
+        <!-- Existing Horizontal Tree Layout for few children -->
+        <div class="flex relative justify-center">
+          <!-- Render child nodes recursively -->
+          @for (child of node.children; track trackByIndex($index, child); let first = $first; let last = $last; let count = $count) {
+            <div class="flex relative flex-col items-center px-4">
+              
+              <!-- Horizontal and vertical connectors for multiple children -->
+              @if (count > 1) {
+                 @if (first) {
+                    <div class="absolute top-0 left-1/2 right-0 h-px bg-gray-300 dark:bg-gray-600"></div>
+                 } @else if (last) {
+                    <div class="absolute top-0 left-0 right-1/2 h-px bg-gray-300 dark:bg-gray-600"></div>
+                 } @else {
+                    <div class="absolute top-0 left-0 right-0 h-px bg-gray-300 dark:bg-gray-600"></div>
+                 }
+
+                 <!-- Top connector for child -->
+                 <div class="absolute top-0 w-px h-6 bg-gray-300 dark:bg-gray-600"></div>
+                 
+                 <!-- Spacer to push content down below the connector -->
+                 <div class="h-6"></div>
+              }
+
+              <ng-container
+                *ngTemplateOutlet="
+                  nodeTemplate;
+                  context: { $implicit: child, isRoot: false }
+                "
+              ></ng-container>
+            </div>
+          }
+        </div>
+      }
     }
   </div>
 </ng-template>
