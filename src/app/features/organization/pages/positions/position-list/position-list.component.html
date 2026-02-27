@@ -311,33 +311,32 @@
         <!-- Vertical Line Down -->
         <div class="w-px h-6 bg-gray-300 dark:bg-gray-600"></div>
         <!-- Children Container -->
-        <div class="flex relative gap-4 pt-6">
-          <!-- Horizontal bar connecting children -->
-          @if (node.children.length > 1) {
-            <div
-              class="absolute top-0 right-1/2 left-1/2 h-px bg-gray-300 dark:bg-gray-600"
-              [style.left]="
-                'calc(' + 100 / (node.children.length * 2) + '% + 1px)'
-              "
-              [style.right]="
-                'calc(' + 100 / (node.children.length * 2) + '% + 1px)'
-              "
-            ></div>
-          }
-          <!-- Vertical lines up to bar for each child -->
+        <div class="flex relative justify-center">
           @for (
             child of node.children;
             track trackByIndex($index, child);
             let first = $first;
-            let last = $last
+            let last = $last;
+            let count = $count
           ) {
-            <div class="flex relative flex-col items-center">
-              <!-- Top connector for child -->
-              @if (node.children.length > 1) {
-                <div
-                  class="absolute -top-6 w-px h-6 bg-gray-300 dark:bg-gray-600"
-                ></div>
+            <div class="flex relative flex-col items-center px-4">
+              <!-- Horizontal and vertical connectors for multiple children -->
+              @if (count > 1) {
+                 @if (first) {
+                    <div class="absolute top-0 left-1/2 right-0 h-px bg-gray-300 dark:bg-gray-600"></div>
+                 } @else if (last) {
+                    <div class="absolute top-0 left-0 right-1/2 h-px bg-gray-300 dark:bg-gray-600"></div>
+                 } @else {
+                    <div class="absolute top-0 left-0 right-0 h-px bg-gray-300 dark:bg-gray-600"></div>
+                 }
+
+                 <!-- Top connector for child -->
+                 <div class="absolute top-0 w-px h-6 bg-gray-300 dark:bg-gray-600"></div>
+                 
+                 <!-- Spacer to push content down below the connector -->
+                 <div class="h-6"></div>
               }
+
               <ng-container
                 *ngTemplateOutlet="positionRef; context: { $implicit: child }"
               ></ng-container>
