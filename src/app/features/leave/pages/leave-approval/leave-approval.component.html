@@ -15,6 +15,7 @@
       </p>
     </div>
     <button
+      (click)="downloadReport()"
       class="flex gap-2 items-center px-5 py-2.5 text-sm font-bold text-white rounded-xl shadow-lg transition-all bg-violet-600 hover:bg-violet-500 shadow-violet-600/25 btn-glow whitespace-nowrap"
     >
       <span class="text-lg material-symbols-outlined">download</span>
@@ -155,7 +156,7 @@
               <th class="px-4 py-4">Employee</th>
               <th class="px-4 py-4">Leave Type</th>
               <th class="px-4 py-4">Duration</th>
-              <th class="px-4 py-4">Balance</th>
+              <th class="px-4 py-4">Requested On</th>
               <th class="px-4 py-4">Reason</th>
               <th class="px-4 py-4 text-center">Attachment</th>
               <th class="px-4 py-4 text-right">Action</th>
@@ -214,20 +215,9 @@
                   <div class="text-xs text-slate-600">{{ req.days }} days</div>
                 </td>
                 <td class="px-4 py-4">
-                  <div class="flex gap-2 items-center">
-                    <div
-                      class="overflow-hidden w-16 h-1.5 rounded-full bg-slate-100 dark:bg-gray-600"
-                    >
-                      <div
-                        class="bg-blue-600 h-full w-[65%]"
-                        [style.width.%]="65"
-                      ></div>
-                    </div>
-                    <span
-                      class="text-xs font-semibold text-slate-700 dark:text-gray-300"
-                      >Shared</span
-                    >
-                  </div>
+                  <span class="text-xs text-slate-600 dark:text-slate-400">
+                    {{ req.requestDate | date: 'MMM dd, yyyy' }}
+                  </span>
                 </td>
                 <td class="px-4 py-4">
                   <div class="max-w-[200px]">

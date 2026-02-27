@@ -52,7 +52,7 @@ const ALL_GROUPS: NavGroup[] = [
         label: 'Departments',
         icon: 'corporate_fare',
         route: '/departments',
-        activePage: 'Departments',
+        activePage: 'departments',
         roles: ['Admin', 'HR'],
       },
       {
@@ -144,7 +144,7 @@ const ALL_GROUPS: NavGroup[] = [
         label: 'Users',
         icon: 'manage_accounts',
         route: '/system/users',
-        activePage: 'users',
+        activePage: 'user-management',
         roles: ['Admin'],
       },
       {
@@ -170,7 +170,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   collapsed = signal(false);
 
-  private userRoles: string[] = [];
   private userRoles$ = signal<string[]>([]);
   private destroy$ = new Subject<void>();
 
@@ -212,7 +211,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     const routeMap: Record<string, string> = {
       dashboard: '/dashboard',
       employees: '/employees',
-      Departments: '/departments',
+      departments: '/departments',
       positions: '/system/positions',
       'org-chart': '/org-chart',
       attendance: '/attendance',
@@ -223,7 +222,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
       performance: '/performance',
       recruitment: '/recruitment',
       payroll: '/payroll',
-      users: '/system/users',
+      'user-management': '/system/users',
       'audit-logs': '/system/audit-logs',
     };
     const route = routeMap[activePage];

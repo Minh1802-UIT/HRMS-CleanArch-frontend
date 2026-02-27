@@ -61,7 +61,7 @@
               >
                 <div
                   class="bg-violet-600 dark:bg-violet-400 h-full transition-all"
-                  [style.width.%]="(balances[type.id] / 20) * 100"
+                  [style.width.%]="totalDays[type.id] ? (balances[type.id] / totalDays[type.id]) * 100 : 0"
                 ></div>
               </div>
             </div>

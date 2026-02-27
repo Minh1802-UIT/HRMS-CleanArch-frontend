@@ -21,7 +21,6 @@ import { formatMonthYear } from '@shared/utils/date.utils';
 })
 export class PayrollComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-  // ... properties
   selectedMonth: string = new Date().toLocaleString('en-US', { month: 'long' });
   selectedYear: number = new Date().getFullYear();
   

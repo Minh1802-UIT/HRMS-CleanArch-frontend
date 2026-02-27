@@ -70,7 +70,8 @@ export class LeaveRequestComponent implements OnInit, OnDestroy {
           error: (err: any) => this.logger.error('Failed to load leave types', err)
       });
   }
-  balances: { [key: string]: number } = {}; // Map: TypeId -> Balance
+  balances: { [key: string]: number } = {}; // Map: TypeId -> remaining days
+  totalDays: { [key: string]: number } = {}; // Map: TypeId -> total allocated days
 
   loadBalances() {
       const empId = this.authService.currentUserValue?.employeeId;
@@ -93,9 +94,10 @@ export class LeaveRequestComponent implements OnInit, OnDestroy {
 
               // Map allocations to balances
               this.balances = {};
+              this.totalDays = {};
               allocations.forEach((alloc: LeaveAllocationDto) => {
-                  const days = alloc.remainingDays ?? 0;
-                  this.balances[alloc.leaveTypeId] = days ?? 0;
+                  this.balances[alloc.leaveTypeId] = alloc.remainingDays ?? 0;
+                  this.totalDays[alloc.leaveTypeId] = alloc.totalDays ?? 0;
               });
               this.cdr.markForCheck();
           },

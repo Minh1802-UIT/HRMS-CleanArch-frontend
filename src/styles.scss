@@ -110,6 +110,7 @@ body {
   100% { background-position: -200% 0; }
 }
 
+.animate-fade-in     { animation: fadeInUp  0.25s cubic-bezier(0.16,1,0.3,1) both; }
 .animate-fade-in-up  { animation: fadeInUp  0.55s cubic-bezier(0.16,1,0.3,1) both; }
 .animate-slide-in-left{ animation: slideInLeft 0.5s cubic-bezier(0.16,1,0.3,1) both; }
 .animate-scale-in    { animation: scaleIn   0.45s cubic-bezier(0.16,1,0.3,1) both; }

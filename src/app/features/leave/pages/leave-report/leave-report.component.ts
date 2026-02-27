@@ -25,7 +25,7 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
   pageNumber = 1;
   pageSize = 10;
   totalCount = 0;
-  Math = Math; // Make Math available in template
+  protected readonly Math = Math;
 
   keyword: string = ''; // Search keyword
 

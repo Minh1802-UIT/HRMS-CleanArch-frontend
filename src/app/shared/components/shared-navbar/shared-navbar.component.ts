@@ -25,7 +25,7 @@ const PAGE_TITLES: Record<string, string> = {
   performance:   'Performance',
   recruitment:   'Recruitment',
   payroll:       'Payroll',
-  users:         'User Management',
+  'user-management': 'User Management',
   'audit-logs':  'Audit Logs',
   profile:       'My Profile',
 };

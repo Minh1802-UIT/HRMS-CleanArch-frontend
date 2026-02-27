@@ -32,10 +32,10 @@ export class OrgChartComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   constructor(
-      private employeeService: EmployeeService,
-      private departmentService: DepartmentService
-      , private toast: ToastService,
-      private cdr: ChangeDetectorRef
+    private employeeService: EmployeeService,
+    private departmentService: DepartmentService,
+    private toast: ToastService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {

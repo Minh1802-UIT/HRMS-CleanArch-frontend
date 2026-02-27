@@ -17,7 +17,6 @@ import { takeUntil } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserManagementComponent implements OnInit, OnDestroy {
-  // ... properties
   users: User[] = [];
   filteredUsers: User[] = [];
   loading = false;
@@ -34,7 +33,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   pageSize = 10;
   totalItems = 0;
   totalPages = 0;
-  Math = Math;
+  protected readonly Math = Math;
 
   constructor(
     private authService: AuthService,
@@ -92,7 +91,6 @@ export class UserManagementComponent implements OnInit, OnDestroy {
       error: (err) => {
         this.logger.error('Failed to load users', err);
         this.toastService.showError('Load Error', err?.error?.message || 'Could not load users');
-        this.toastService.showError('Error', 'Failed to load users');
         this.loading = false;
         this.cdr.markForCheck();
       }

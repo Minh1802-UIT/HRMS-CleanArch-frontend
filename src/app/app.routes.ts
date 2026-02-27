@@ -18,7 +18,7 @@ export const routes: Routes = [
       { path: 'dashboard', loadComponent: () => import('./features/dashboard/pages/dashboard/dashboard.component').then(m => m.DashboardComponent), data: { activePage: 'dashboard' } },
       { path: 'employees', loadComponent: () => import('./features/employee/pages/employee-list/employee-list.component').then(m => m.EmployeeListComponent), data: { activePage: 'employees' } },
       { path: 'directory', loadComponent: () => import('./features/employee/pages/employee-directory/employee-directory.component').then(m => m.EmployeeDirectoryComponent), data: { activePage: 'employees' } },
-      { path: 'org-chart', loadComponent: () => import('./features/employee/pages/org-chart/org-chart.component').then(m => m.OrgChartComponent), data: { activePage: 'employees' } },
+      { path: 'org-chart', loadComponent: () => import('./features/employee/pages/org-chart/org-chart.component').then(m => m.OrgChartComponent), data: { activePage: 'org-chart' } },
 
       // Create/Edit Employees -> Admin/HR
       { path: 'employees/add', loadComponent: () => import('./features/employee/pages/add-employee/add-employee.component').then(m => m.AddEmployeeComponent), canActivate: [roleGuard], data: { roles: ['Admin', 'HR'], activePage: 'employees' } },
@@ -47,9 +47,9 @@ export const routes: Routes = [
       // Annual PIT Tax Report -> Admin/HR
       { path: 'payroll/tax-report', loadComponent: () => import('./features/payroll/pages/tax-report/tax-report.component').then(m => m.TaxReportComponent), canActivate: [roleGuard], data: { roles: ['Admin', 'HR'], activePage: 'payroll' } },
 
-      { path: 'leaves', loadComponent: () => import('./features/leave/pages/leave-request/leave-request.component').then(m => m.LeaveRequestComponent), data: { activePage: 'Time & Attendance' } },
-      { path: 'approvals', loadComponent: () => import('./features/leave/pages/leave-approval/leave-approval.component').then(m => m.LeaveApprovalComponent), canActivate: [roleGuard], data: { roles: ['Admin', 'HR', 'Manager'], activePage: 'Management' } },
-      { path: 'admin/leave-reports', loadComponent: () => import('./features/leave/pages/leave-report/leave-report.component').then(m => m.LeaveReportComponent), canActivate: [roleGuard], data: { roles: ['Admin', 'HR'], activePage: 'Leave Reports' } },
+      { path: 'leaves', loadComponent: () => import('./features/leave/pages/leave-request/leave-request.component').then(m => m.LeaveRequestComponent), data: { activePage: 'leaves' } },
+      { path: 'approvals', loadComponent: () => import('./features/leave/pages/leave-approval/leave-approval.component').then(m => m.LeaveApprovalComponent), canActivate: [roleGuard], data: { roles: ['Admin', 'HR', 'Manager'], activePage: 'approvals' } },
+      { path: 'admin/leave-reports', loadComponent: () => import('./features/leave/pages/leave-report/leave-report.component').then(m => m.LeaveReportComponent), canActivate: [roleGuard], data: { roles: ['Admin', 'HR'], activePage: 'leave-reports' } },
 
       // Navigation aliases
       { path: 'time-tracking', redirectTo: 'attendance', pathMatch: 'full' },

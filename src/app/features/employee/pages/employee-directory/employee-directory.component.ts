@@ -31,7 +31,7 @@ export class EmployeeDirectoryComponent implements OnInit, OnDestroy {
   pageSize: number = 8;
   totalItems: number = 0;
 
-  Math = Math;
+  protected readonly Math = Math;
 
   constructor(
     private employeeService: EmployeeService,

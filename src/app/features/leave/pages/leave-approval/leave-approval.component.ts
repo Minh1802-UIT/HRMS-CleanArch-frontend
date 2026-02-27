@@ -200,6 +200,10 @@ export class LeaveApprovalComponent implements OnInit, OnDestroy {
       return 'bg-gray-100 text-gray-800';
   }
 
+  downloadReport() {
+    this.toastService.showInfo('Coming Soon', 'Report export feature is coming soon.');
+  }
+
   trackByValue(index: number, value: string): string { return value; }
   trackByRequestId(index: number, req: LeaveRequest): string { return req.id; }
 }

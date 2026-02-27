@@ -25,7 +25,6 @@ import { CsvExportService } from '@core/services/csv-export.service';
 })
 export class EmployeeListComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-  // ... properties (omitted for brevity)
   employees: Employee[] = [];
   filteredEmployees: Employee[] = [];
   loading: boolean = false;
@@ -46,7 +45,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
   activeEmployees: number = 0;
   newHires: number = 0;
 
-  Math = Math;
+  protected readonly Math = Math;
 
   // Master Data Maps
   deptMap: { [key: string]: string } = {}; // Renamed from departmentsMap

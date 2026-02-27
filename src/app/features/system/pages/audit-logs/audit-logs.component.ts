@@ -28,7 +28,7 @@ export class AuditLogsComponent implements OnInit, OnDestroy {
   pageSize = 10;
   totalItems = 0;
   totalPages = 0;
-  Math = Math;
+  protected readonly Math = Math;
 
   actionTypes = ['Create', 'Update', 'Delete', 'Login', 'Logout', 'RoleAssignment'];
   private destroy$ = new Subject<void>();

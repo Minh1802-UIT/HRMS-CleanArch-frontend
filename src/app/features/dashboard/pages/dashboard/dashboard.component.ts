@@ -61,7 +61,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('attendanceChart') chartCanvas!: ElementRef<HTMLCanvasElement>;
 
   readonly today = new Date();
-  readonly Math = Math;
+  protected readonly Math = Math;
   
   summaryCards: SummaryCard[] = [];
   auditLogs: AuditLog[] = [];
