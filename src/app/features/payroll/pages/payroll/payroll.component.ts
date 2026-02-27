@@ -1,12 +1,10 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subject, forkJoin, of, Observable } from 'rxjs';
+import { takeUntil, catchError, map } from 'rxjs/operators';
 import { PayrollService, PayrollRecord, Payroll } from '@features/payroll/services/payroll.service';
 import { EmployeeService, Employee } from '@features/employee/services/employee.service';
-import { forkJoin, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
 import { ToastService } from '@core/services/toast.service';
 import { LoggerService } from '@core/services/logger.service';
 import { UploadService } from '@features/employee/services/upload.service';
@@ -59,7 +57,7 @@ export class PayrollComponent implements OnInit, OnDestroy {
     // 1. Fetch Employees (to get Names/Avatars)
     // 2. Fetch Payroll Data (Backend DTO)
     forkJoin({
-      employees: this.employeeService.getLookup(),
+      employees: this.employeeService.getLookup().pipe(map(res => res as any[])), // Returns LookupDto[] (id, label, secondaryLabel)
       payrolls: this.payrollService.getPayrollData(this.selectedMonth, this.selectedYear).pipe(
           catchError(err => {
               this.logger.warn('No payroll data found', err);
@@ -85,19 +83,23 @@ export class PayrollComponent implements OnInit, OnDestroy {
     });
   }
 
-  mapPayrollData(employees: Employee[], payrolls: Payroll[]): PayrollRecord[] {
+  mapPayrollData(employees: any[], payrolls: Payroll[]): PayrollRecord[] {
     // If no payrolls exist yet, we can optionally show potential employees or just empty list.
     // Let's show all employees, and fill payroll info if available, or mark as 'Pending' if not.
     
     return employees.map(emp => {
-      const payroll = payrolls.find(p => p.employeeCode === emp.employeeCode);
+      // LookupDto uses 'secondaryLabel' for employeeCode and 'label' for fullName
+      const code = emp.secondaryLabel || emp.employeeCode || 'Unknown';
+      const name = emp.label || emp.fullName || 'Unknown';
+      
+      const payroll = payrolls.find(p => p.employeeCode === code);
       
       if (payroll) {
         // Found calculated payroll
         return {
           ...payroll,
-          employeeName: emp.fullName,
-          avatar: emp.avatarUrl ? this.uploadService.getFileUrl(emp.avatarUrl) : `https://ui-avatars.com/api/?name=${emp.fullName}&background=random`,
+          employeeName: name,
+          avatar: emp.avatarUrl ? this.uploadService.getFileUrl(emp.avatarUrl) : `https://ui-avatars.com/api/?name=${name}&background=random`,
           displayNetSalary: payroll.finalNetSalary,
           displayWorkingHours: payroll.actualWorkingDays * 8
         } as PayrollRecord;
@@ -105,8 +107,8 @@ export class PayrollComponent implements OnInit, OnDestroy {
         // Not yet calculated
         return {
           id: '',
-          employeeCode: emp.employeeCode || 'Unknown',
-          employeeName: emp.fullName,
+          employeeCode: code,
+          employeeName: name,
           month: `${this.selectedMonth}-${this.selectedYear}`,
           grossIncome: 0,
           baseSalary: 0,
@@ -115,7 +117,7 @@ export class PayrollComponent implements OnInit, OnDestroy {
           totalDeductions: 0,
           finalNetSalary: 0,
           status: 'Pending',
-          avatar: emp.avatarUrl ? this.uploadService.getFileUrl(emp.avatarUrl) : `https://ui-avatars.com/api/?name=${emp.fullName}&background=random`,
+          avatar: emp.avatarUrl ? this.uploadService.getFileUrl(emp.avatarUrl) : `https://ui-avatars.com/api/?name=${name}&background=random`,
           displayNetSalary: 0,
           displayWorkingHours: 0
         } as PayrollRecord;
