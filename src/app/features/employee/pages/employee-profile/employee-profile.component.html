@@ -200,7 +200,7 @@
                       <h2
                         class="mt-2 text-4xl font-bold text-slate-900 dark:text-white"
                       >
-                        {{ latestPayroll?.finalNetSalary | currency }}
+                        {{ latestPayroll?.finalNetSalary | currency:'VND':'symbol-narrow':'1.0-0' }}
                       </h2>
                     </div>
                     <button
@@ -797,7 +797,7 @@
                         >Standard Base Salary</span
                       >
                       <span class="text-sm font-bold">{{
-                        latestPayroll?.baseSalary | currency
+                        latestPayroll?.baseSalary | currency:'VND':'symbol-narrow':'1.0-0'
                       }}</span>
                     </div>
                     <div
@@ -807,7 +807,7 @@
                         >Accumulated Allowances</span
                       >
                       <span class="text-sm font-bold text-emerald-400"
-                        >+ {{ latestPayroll?.allowances | currency }}</span
+                        >+ {{ latestPayroll?.allowances | currency:'VND':'symbol-narrow':'1.0-0' }}</span
                       >
                     </div>
                     <div
@@ -817,7 +817,7 @@
                         >Statutory Deductions</span
                       >
                       <span class="text-sm font-bold text-rose-400"
-                        >- {{ totalStatutoryDeductions | currency }}</span
+                        >- {{ totalStatutoryDeductions | currency:'VND':'symbol-narrow':'1.0-0' }}</span
                       >
                     </div>
                     <div class="pt-6">
@@ -829,7 +829,7 @@
                       <h2
                         class="text-5xl font-bold tracking-tighter text-white"
                       >
-                        {{ latestPayroll?.finalNetSalary | currency }}
+                        {{ latestPayroll?.finalNetSalary | currency:'VND':'symbol-narrow':'1.0-0' }}
                       </h2>
                     </div>
                   </div>

@@ -217,8 +217,8 @@ export class AttendanceComponent implements OnInit, OnDestroy {
   }
 
 
-  onDateChange(date: Date) {
-    this.selectedDate = date;
+  onDateChange(event: string | Date) {
+    this.selectedDate = new Date(event);
     this.loadData();
   }
 
