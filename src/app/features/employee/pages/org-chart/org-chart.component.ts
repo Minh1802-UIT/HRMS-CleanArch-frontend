@@ -58,7 +58,18 @@ export class OrgChartComponent implements OnInit, OnDestroy {
     this.employeeService.getOrgChart().pipe(takeUntil(this.destroy$)).subscribe({
       next: (data) => {
         if (data && data.length > 0) {
-            this.rawOrgData = data[0]; // Lưu lại cây gốc chưa qua xử lý
+            if (data.length === 1) {
+                this.rawOrgData = data[0]; // Cây có duy nhất 1 node gốc (vd: CEO)
+            } else {
+                // Có nhiều người không có Manager, tạo 1 node ảo để chứa tất cả
+                this.rawOrgData = {
+                    id: 'root-company',
+                    name: 'Company',
+                    title: 'Organization Hierarchy',
+                    avatarUrl: '', // Avatar rỗng sẽ hiện dummy avatar
+                    children: data,
+                } as OrgNode;
+            }
             this.applyFilters();
         } else {
             this.rawOrgData = null;
