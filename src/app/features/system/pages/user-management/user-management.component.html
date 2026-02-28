@@ -114,7 +114,7 @@
           <tbody
             class="divide-y divide-gray-200 bg-surface-light dark:bg-surface-dark dark:divide-gray-700"
           >
-            @for (user of filteredUsers; track trackByUser($index, user)) {
+            @for (user of users; track trackByUser($index, user)) {
               <tr
                 class="transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50 group"
               >
@@ -192,7 +192,7 @@
               </tr>
             }
             <!-- Empty State -->
-            @if (filteredUsers.length === 0 && !loading) {
+            @if (users.length === 0 && !loading) {
               <tr>
                 <td
                   colspan="4"

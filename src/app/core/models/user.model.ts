@@ -40,6 +40,9 @@ export interface RegisterData {
 export interface PaginationParams {
   pageNumber: number;
   pageSize: number;
+  searchTerm?: string;
+  sortBy?: string;
+  isDescending?: boolean;
 }
 
 /**

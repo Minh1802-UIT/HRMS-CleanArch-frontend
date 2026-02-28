@@ -40,7 +40,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     private toastService: ToastService,
     private logger: LoggerService,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.loadUsers();
@@ -77,14 +77,6 @@ export class UserManagementComponent implements OnInit, OnDestroy {
         this.users = result.items;
         this.totalItems = result.totalCount;
         this.totalPages = result.totalPages;
-        
-        // Internal filtering for the current page if needed, 
-        // but server-side search is better. However, the backend 
-        // doesn't have a keyword parameter for GetUsers yet. 
-        // I will add [AsParameters] keyword if I want to search server-side.
-        // For now, I'll keep it simple or implement keyword on backend if I have time.
-        // Actually, let's keep it simple as per plan.
-        this.filteredUsers = [...this.users];
         this.loading = false;
         this.cdr.markForCheck();
       },
@@ -106,7 +98,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   getPageNumbers(): number[] {
     const pages = [];
     for (let i = 1; i <= this.totalPages; i++) {
-        pages.push(i);
+      pages.push(i);
     }
     return pages;
   }
@@ -134,7 +126,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
       this.toastService.showError('Action Failed', 'User does not have an email address.');
       return;
     }
-    
+
     if (confirm(`Are you sure you want to send a password reset email to ${user.email}?`)) {
       this.authService.forgotPassword(user.email).pipe(takeUntil(this.destroy$)).subscribe({
         next: () => {
@@ -150,26 +142,26 @@ export class UserManagementComponent implements OnInit, OnDestroy {
 
   saveRoles() {
     if (!this.selectedUser) return;
-    
+
     this.saving = true;
     const newRoles = Object.keys(this.selectedRoles).filter(key => this.selectedRoles[key]);
     const username = this.selectedUser.username;
 
     this.authService.updateUserRoles(this.selectedUser.id, newRoles).pipe(takeUntil(this.destroy$)).subscribe({
       next: () => {
-          if (this.selectedUser) {
-             this.selectedUser.roles = newRoles;
-          }
-          this.saving = false;
-          this.closeDrawer();
-          this.toastService.showSuccess('Updated', `Roles updated for ${username}`);
-          this.cdr.markForCheck();
+        if (this.selectedUser) {
+          this.selectedUser.roles = newRoles;
+        }
+        this.saving = false;
+        this.closeDrawer();
+        this.toastService.showSuccess('Updated', `Roles updated for ${username}`);
+        this.cdr.markForCheck();
       },
       error: (err) => {
-          this.logger.error('Failed to update user roles', err);
-          this.saving = false;
-          this.toastService.showError('Update Failed', 'Failed to update roles');
-          this.cdr.markForCheck();
+        this.logger.error('Failed to update user roles', err);
+        this.saving = false;
+        this.toastService.showError('Update Failed', 'Failed to update roles');
+        this.cdr.markForCheck();
       }
     });
   }
@@ -179,7 +171,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   trackByPage(index: number, page: number): number { return page; }
 
   getRoleBadgeClass(role: string): string {
-    switch(role) {
+    switch (role) {
       case 'Admin': return 'bg-purple-100 text-purple-700 border-purple-200';
       case 'HR': return 'bg-pink-100 text-pink-700 border-pink-200';
       case 'Manager': return 'bg-blue-100 text-blue-700 border-blue-200';

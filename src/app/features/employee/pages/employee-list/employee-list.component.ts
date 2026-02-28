@@ -29,12 +29,12 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
   filteredEmployees: Employee[] = [];
   loading: boolean = false;
   searchTerm: string = '';
-  
+
   // Modal/Drawer State
   showEditDrawer = false;
   showViewDrawer = false;
   selectedEmployeeId: string | null = null;
-  
+
   currentPage: number = 1;
   pageSize: number = 10;
   totalItems: number = 0;
@@ -60,7 +60,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
     private uploadService: UploadService,
     private csvExport: CsvExportService,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.loadMasterData();
@@ -101,11 +101,11 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
     // 1. Try flattened DTO property (Backend Paged List)
     const name = employee.departmentName || employee.DepartmentName;
     if (name && name !== 'N/A') return name;
-    
+
     // 2. Try lookup map (Backend Full DTO / Local Master Data)
     const id = employee.jobDetails?.departmentId;
     if (id && this.deptMap[id]) return this.deptMap[id];
-    
+
     // 3. Fallback
     return name || '-';
   }
@@ -114,11 +114,11 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
     // 1. Try flattened DTO property
     const name = employee.positionName || employee.PositionName;
     if (name && name !== 'N/A') return name;
-    
+
     // 2. Try lookup map
     const id = employee.jobDetails?.positionId;
     if (id && this.posMap[id]) return this.posMap[id];
-    
+
     // 3. Fallback
     return name || '-';
   }
@@ -135,12 +135,16 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
 
   onEmployeeSaved() {
     this.closeEditDrawer();
-    this.loadEmployees(); 
+    this.loadEmployees();
   }
 
   loadEmployees() {
     this.loading = true;
-    this.employeeService.getEmployees({ pageSize: this.pageSize, pageNumber: this.currentPage }).pipe(takeUntil(this.destroy$)).subscribe({
+    this.employeeService.getEmployees({
+      pageSize: this.pageSize,
+      pageNumber: this.currentPage,
+      searchTerm: this.searchTerm
+    }).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data) => {
         this.employees = data.items;
         this.totalItems = data.totalCount;
@@ -166,20 +170,20 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
   calculateStats() {
     this.totalEmployees = this.totalItems;
     this.activeEmployees = this.employees.filter(e => (e.status || e.jobDetails?.status) === 'Active').length;
-    
+
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
     this.newHires = this.employees.filter(e => {
-        const joinDate = e.jobDetails?.joinDate ? new Date(e.jobDetails.joinDate) : null;
-        return joinDate && joinDate > thirtyDaysAgo;
+      const joinDate = e.jobDetails?.joinDate ? new Date(e.jobDetails.joinDate) : null;
+      return joinDate && joinDate > thirtyDaysAgo;
     }).length;
   }
 
   updatePagination() {
-     this.totalItems = this.filteredEmployees.length;
-     if (this.currentPage > this.totalPages) {
-         this.currentPage = 1;
-     }
+    this.totalItems = this.filteredEmployees.length;
+    if (this.currentPage > this.totalPages) {
+      this.currentPage = 1;
+    }
   }
 
   onSearch() {
@@ -205,21 +209,21 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
   getPageNumbers(): number[] {
     const pages: number[] = [];
     const maxPagesToShow = 5;
-    
+
     let startPage = Math.max(1, this.currentPage - Math.floor(maxPagesToShow / 2));
     let endPage = Math.min(this.totalPages, startPage + maxPagesToShow - 1);
-    
+
     if (endPage - startPage + 1 < maxPagesToShow) {
       startPage = Math.max(1, endPage - maxPagesToShow + 1);
     }
-    
+
     for (let i = startPage; i <= endPage; i++) {
       pages.push(i);
     }
-    
+
     return pages;
   }
-  
+
 
 
   getStatus(employee: Employee): string {
@@ -229,11 +233,11 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
   getStatusClass(employee: Employee): string {
     const status = this.getStatus(employee);
     switch (status) {
-        case 'Active': return 'status-active';
-        case 'Resigned': return 'status-resigned';
-        case 'Terminated': return 'status-terminated';
-        case 'On Leave': return 'status-orange';
-        default: return 'status-resigned';
+      case 'Active': return 'status-active';
+      case 'Resigned': return 'status-resigned';
+      case 'Terminated': return 'status-terminated';
+      case 'On Leave': return 'status-orange';
+      default: return 'status-resigned';
     }
   }
 

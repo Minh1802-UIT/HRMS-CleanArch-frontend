@@ -39,7 +39,7 @@ export class EmployeeDirectoryComponent implements OnInit, OnDestroy {
     private logger: LoggerService,
     private toast: ToastService,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.loadEmployees();
@@ -52,7 +52,11 @@ export class EmployeeDirectoryComponent implements OnInit, OnDestroy {
 
   loadEmployees() {
     this.loading = true;
-    this.employeeService.getEmployees({ pageSize: this.pageSize, pageNumber: this.currentPage }).pipe(takeUntil(this.destroy$)).subscribe({
+    this.employeeService.getEmployees({
+      pageSize: this.pageSize,
+      pageNumber: this.currentPage,
+      searchTerm: this.searchTerm
+    }).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data) => {
         this.employees = data.items;
         this.totalItems = data.totalCount;
@@ -73,32 +77,21 @@ export class EmployeeDirectoryComponent implements OnInit, OnDestroy {
   }
 
   applyFilters() {
-    let result = this.employees;
-
-    if (this.searchTerm.trim()) {
-      const term = this.searchTerm.toLowerCase();
-      result = result.filter(emp =>
-        emp.fullName.toLowerCase().includes(term) ||
-        emp.employeeCode.toLowerCase().includes(term)
-      );
-    }
-
-    this.filteredEmployees = result;
-    this.updatePagination();
     this.currentPage = 1;
+    this.loadEmployees();
   }
 
   clearFilters() {
     this.searchTerm = '';
     this.selectedOffice = '';
     this.selectedDepartment = '';
-    this.filteredEmployees = this.employees;
-    this.updatePagination();
     this.currentPage = 1;
+    this.loadEmployees();
   }
 
   updatePagination() {
-    this.totalItems = this.filteredEmployees.length;
+    // Total items is directly retrieved from the Backend API response, 
+    // no need to re-assign from a filtered array
   }
 
   get paginatedEmployees(): Employee[] {

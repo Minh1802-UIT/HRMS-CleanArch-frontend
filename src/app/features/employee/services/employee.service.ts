@@ -19,7 +19,7 @@ export class EmployeeService {
 
   constructor(private http: HttpClient, private logger: LoggerService) { }
 
-  getEmployees(params: { pageSize: number; pageNumber: number } = { pageSize: 10, pageNumber: 1 }): Observable<PagedResult<Employee>> {
+  getEmployees(params: { pageSize: number; pageNumber: number; searchTerm?: string; sortBy?: string } = { pageSize: 10, pageNumber: 1 }): Observable<PagedResult<Employee>> {
     return this.http.post<ApiResponse<PagedResult<Employee>>>(`${this.apiUrl}/list`, params).pipe(
       map(response => response.data),
       catchError(err => { this.logger.error('EmployeeService: getEmployees failed', err); return throwError(() => err); })
@@ -27,8 +27,8 @@ export class EmployeeService {
   }
 
   getLookup(keyword: string = ''): Observable<Employee[]> {
-    return this.http.get<ApiResponse<Employee[]>>(`${this.apiUrl}/lookup`, { 
-      params: keyword ? { keyword } : {} 
+    return this.http.get<ApiResponse<Employee[]>>(`${this.apiUrl}/lookup`, {
+      params: keyword ? { keyword } : {}
     }).pipe(
       map(response => response.data || []),
       catchError(err => { this.logger.error('EmployeeService: getLookup failed', err); return throwError(() => err); })
