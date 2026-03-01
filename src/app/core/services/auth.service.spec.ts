@@ -205,7 +205,8 @@ describe('AuthService', () => {
 
       // Verify state was updated
       expect(service.currentUserValue).toBeTruthy();
-      expect(service.currentUserValue!.token).toBe(token);
+      expect(service.currentUserValue!.token).toBeUndefined();
+      expect(service.getToken()).toBe(token);
       // refreshToken is NOT stored in user object — lives in httpOnly cookie
       expect(service.currentUserValue!.refreshToken).toBeUndefined();
       expect(service.currentUserValue!.roles).toEqual(['Employee']);
@@ -298,13 +299,12 @@ describe('AuthService', () => {
     it('should return true when token is expired — interceptor handles refresh', () => {
       // With httpOnly cookie pattern, isLoggedIn() returns true even on expired token.
       // The JWT interceptor handles the 401 and triggers /auth/refresh-token automatically.
-      const user = storedUser({
-        token: makeJwt({ exp: pastExp(), nameid: '1', unique_name: 'a' })
-      });
+      const user = storedUser();
       (service as any).currentUserSubject.next(user);
+      (service as any)._accessToken = makeJwt({ exp: pastExp(), nameid: '1', unique_name: 'a' });
       // Should return true — defer to interceptor, not isLoggedIn()
       expect(service.isLoggedIn()).toBeTrue();
-      expect(loggerSpy.warn).toHaveBeenCalledWith('Access token expired – interceptor will handle refresh on next request');
+      expect(loggerSpy.warn).toHaveBeenCalledWith('Access token expired – interceptor will refresh on next request');
     });
 
     it('should return false when no user at all', () => {
@@ -328,14 +328,12 @@ describe('AuthService', () => {
     });
 
     it('should return false when token expires far in future', () => {
-      const user = storedUser({ token: makeJwt({ exp: futureExp(60) }) });
-      (service as any).currentUserSubject.next(user);
+      (service as any)._accessToken = makeJwt({ exp: futureExp(60) });
       expect(service.isTokenExpiringSoon()).toBeFalse();
     });
 
     it('should return true when token expires within 2 minutes', () => {
-      const user = storedUser({ token: makeJwt({ exp: futureExp(1) }) }); // 1 minute
-      (service as any).currentUserSubject.next(user);
+      (service as any)._accessToken = makeJwt({ exp: futureExp(1) });
       expect(service.isTokenExpiringSoon()).toBeTrue();
     });
   });
@@ -346,7 +344,10 @@ describe('AuthService', () => {
   describe('refreshAccessToken', () => {
     it('should call /auth/refresh-token and update stored user', () => {
       const user = storedUser();
+      const oldToken = user.token;
+      delete user.token;
       (service as any).currentUserSubject.next(user);
+      (service as any)._accessToken = oldToken;
       sessionStorage.setItem('currentUser', JSON.stringify(user));
 
       const newToken = makeJwt({ exp: futureExp(), nameid: '1' });
@@ -357,7 +358,7 @@ describe('AuthService', () => {
 
       const req = httpMock.expectOne(`${apiUrl}/refresh-token`);
       expect(req.request.method).toBe('POST');
-      expect(req.request.body.accessToken).toBe(user.token);
+      expect(req.request.body.accessToken).toBe(oldToken);
       // refreshToken is sent automatically via httpOnly cookie (withCredentials: true)
       // NOT via request body — so body should NOT include refreshToken
       expect(req.request.body.refreshToken).toBeUndefined();
@@ -368,7 +369,8 @@ describe('AuthService', () => {
         data: { accessToken: newToken, refreshToken: 'new-rt-456' }
       });
 
-      expect(service.currentUserValue!.token).toBe(newToken);
+      expect(service.currentUserValue!.token).toBeUndefined();
+      expect(service.getToken()).toBe(newToken);
       // refreshToken lives in httpOnly cookie — NOT stored in user object
       expect(service.currentUserValue!.refreshToken).toBeUndefined();
     });
