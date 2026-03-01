@@ -297,7 +297,8 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
   }
 
   getAvatarUrl(path: string | undefined): string {
-    return this.uploadService.getFileUrl(path);
+    const url = this.uploadService.getFileUrl(path);
+    return url || 'assets/images/defaults/avatar-1.png';
   }
 
   setActiveTab(tabId: string) {

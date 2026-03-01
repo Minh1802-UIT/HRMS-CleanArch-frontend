@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, Input, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { NgClass, DatePipe, CurrencyPipe } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { EmployeeService, Employee } from '@features/employee/services/employee.service';
 import { ContractService, Contract, ContractStatus } from '@features/employee/services/contract.service';
 import { Department } from '@features/organization/models/department.model';
@@ -81,7 +81,7 @@ export class EmployeeDetailComponent implements OnInit, OnDestroy {
       this.employeeId = this.employeeIdInput;
       this.loadData();
     } else {
-      this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe(params => {
+      this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe((params: ParamMap) => {
         const id = params.get('id');
         if (id) {
           this.employeeId = id;
@@ -103,24 +103,24 @@ export class EmployeeDetailComponent implements OnInit, OnDestroy {
   loadMasterData() {
       // Load Departments from MasterDataService
       this.masterData.getDepartments$().pipe(takeUntil(this.destroy$)).subscribe({
-          next: (data) => {
-              data.forEach(d => {
+          next: (data: Department[]) => {
+              data.forEach((d: Department) => {
                   if (d.id) this.departmentsMap[d.id] = d.name;
               });
               this.cdr.markForCheck();
           },
-          error: (err) => this.logger.error('Error loading departments', err)
+          error: (err: unknown) => this.logger.error('Error loading departments', err)
       });
 
       // Load Positions from MasterDataService
       this.masterData.getPositions$().pipe(takeUntil(this.destroy$)).subscribe({
-          next: (data) => {
-              data.forEach(p => {
+          next: (data: Position[]) => {
+              data.forEach((p: Position) => {
                   if (p.id) this.positionsMap[p.id] = p.title;
               });
               this.cdr.markForCheck();
           },
-          error: (err) => this.logger.error('Error loading positions', err)
+          error: (err: unknown) => this.logger.error('Error loading positions', err)
       });
   }
 
@@ -146,13 +146,13 @@ export class EmployeeDetailComponent implements OnInit, OnDestroy {
   loadData() {
     this.loading = true;
     this.empService.getEmployeeById(this.employeeId).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (emp) => {
+      next: (emp: Employee) => {
         this.employee = emp;
         this.loading = false;
         this.loadContracts();
         this.cdr.markForCheck();
       },
-      error: (err) => {
+      error: (err: any) => {
         this.logger.error('Employee not found', err);
         this.toastService.showError('Load Error', err?.error?.message || 'Employee not found');
         this.loading = false;
@@ -164,12 +164,12 @@ export class EmployeeDetailComponent implements OnInit, OnDestroy {
   loadContracts() {
     this.loadingContracts = true;
     this.contractService.getContractsByEmployee(this.employeeId).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (data) => {
-        this.contracts = data.sort((a,b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime());
+      next: (data: Contract[]) => {
+        this.contracts = data.sort((a: Contract, b: Contract) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime());
         this.loadingContracts = false;
         this.cdr.markForCheck();
       },
-      error: (err) => {
+      error: (err: any) => {
         this.logger.error('Error loading contracts', err);
         this.toastService.showError('Load Error', 'Could not load contracts');
         this.loadingContracts = false;
@@ -228,7 +228,7 @@ export class EmployeeDetailComponent implements OnInit, OnDestroy {
         this.toastService.showSuccess('Contract Renewed', 'Contract renewed successfully!');
         this.cdr.markForCheck();
       },
-      error: (err) => {
+      error: (err: any) => {
         this.logger.error('Failed to create contract', err);
         this.toastService.showError('Error', err?.error?.message || 'Failed to save contract');
       }
@@ -243,7 +243,7 @@ export class EmployeeDetailComponent implements OnInit, OnDestroy {
             this.toastService.showSuccess('Success', 'Contract terminated successfully');
             this.loadContracts();
           },
-          error: (err) => {
+          error: (err: any) => {
             this.logger.error('Failed to terminate contract', err);
             this.toastService.showError('Error', err?.error?.message || 'Failed to terminate contract');
           }
@@ -277,7 +277,7 @@ export class EmployeeDetailComponent implements OnInit, OnDestroy {
               this.initializingLeave = false;
               this.cdr.markForCheck();
           },
-          error: (err) => {
+          error: (err: any) => {
               this.logger.error('Leave initialization failed', err);
               this.toastService.showError('Error', 'Failed to initialize leave');
               this.initializingLeave = false;
@@ -303,7 +303,7 @@ export class EmployeeDetailComponent implements OnInit, OnDestroy {
       this.isUploadingDoc = true;
       
       this.uploadService.uploadFile(file, folder).pipe(takeUntil(this.destroy$)).subscribe({
-        next: (path) => {
+        next: (path: string) => {
           // Update employee via service
           const updatePayload: Partial<Employee> = {
             id: this.employee!.id,
@@ -323,7 +323,7 @@ export class EmployeeDetailComponent implements OnInit, OnDestroy {
               this.isUploadingDoc = false;
               this.cdr.markForCheck();
             },
-            error: (err) => {
+            error: (err: any) => {
               this.logger.error('Update employee after upload failed', err);
               this.toastService.showError('Update Failed', 'File uploaded but could not update employee record');
               this.isUploadingDoc = false;
@@ -331,7 +331,7 @@ export class EmployeeDetailComponent implements OnInit, OnDestroy {
             }
           });
         },
-        error: (err) => {
+        error: (err: any) => {
           this.logger.error('File upload failed', err);
           this.toastService.showError('Upload Failed', 'Failed to upload document');
           this.isUploadingDoc = false;
@@ -359,7 +359,8 @@ export class EmployeeDetailComponent implements OnInit, OnDestroy {
   }
 
   getAvatarUrl(): string {
-    return this.uploadService.getFileUrl(this.employee?.avatarUrl);
+    const url = this.uploadService.getFileUrl(this.employee?.avatarUrl);
+    return url || 'assets/images/defaults/avatar-1.png';
   }
 
   trackByIndex(index: number, item?: unknown): number {

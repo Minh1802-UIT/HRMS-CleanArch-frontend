@@ -64,11 +64,15 @@ export class UploadService {
   private readonly apiUrl = `${environment.apiUrl}/files`;
 
   /**
-   * The origin of the API server (e.g. "http://localhost:5055").
-   * Used in getFileUrl() to reject absolute URLs from foreign origins.
+   * Trusted origins for absolute file URLs.
+   * Includes the API server and Supabase Storage CDN.
    */
-  private readonly apiOrigin: string = (() => {
-    try { return new URL(environment.apiUrl).origin; } catch { return ''; }
+  private readonly trustedOrigins: string[] = (() => {
+    const origins: string[] = [];
+    try { origins.push(new URL(environment.apiUrl).origin); } catch { /* ignore */ }
+    // Supabase Storage public URLs (*.supabase.co)
+    origins.push('supabase.co');
+    return origins;
   })();
 
   constructor(private http: HttpClient) {}
@@ -130,25 +134,27 @@ export class UploadService {
    *
    * - Relative paths  (e.g. /uploads/avatars/file.jpg) are prefixed with
    *   the API server base URL.
-   * - Absolute URLs are accepted ONLY when their origin matches the known
-   *   API server origin.  All other absolute URLs are rejected and '' is
-   *   returned — preventing open-redirect and javascript: injection attacks.
+   * - Absolute URLs are accepted when their origin matches the API server
+   *   or a trusted cloud storage provider (Supabase).
+   * - All other absolute URLs are rejected (returns '') to prevent
+   *   open-redirect and javascript: injection attacks.
    */
   getFileUrl(path: string | undefined): string {
     if (!path) return '';
 
     if (!path.startsWith('http')) {
-      // Relative server path
+      // Relative server path (legacy local uploads)
       const baseUrl = environment.apiUrl.split('/api')[0];
       return `${baseUrl}${path}`;
     }
 
-    // Absolute URL — only accept from the known API origin
+    // Absolute URL — accept from trusted origins only
     try {
       const url = new URL(path);
-      if (this.apiOrigin && url.origin === this.apiOrigin) {
-        return path;
-      }
+      const isTrusted = this.trustedOrigins.some(
+        origin => url.origin === origin || url.hostname.endsWith(origin)
+      );
+      if (isTrusted) return path;
     } catch {
       // Malformed URL — fall through to empty return
     }
