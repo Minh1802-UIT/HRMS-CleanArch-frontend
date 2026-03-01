@@ -15,7 +15,10 @@ describe('jwtInterceptor', () => {
       'getToken', 'refreshAccessToken', 'logout'
     ], {
       isRefreshInProgress: false,
-      onRefreshComplete: new BehaviorSubject<string | null>(null).asObservable()
+      onRefreshComplete: new BehaviorSubject<string | null>(null).asObservable(),
+      // currentUserValue must be null so the proactive-reload-refresh path is not
+      // triggered when getToken() returns null in tests.
+      currentUserValue: null
     });
 
     TestBed.configureTestingModule({
