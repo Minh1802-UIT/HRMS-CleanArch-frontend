@@ -85,6 +85,7 @@
                           [src]="candidate.avatar"
                           [alt]="candidate.name"
                           class="object-cover w-32 h-32 rounded-full border-4 border-white shadow-xl dark:border-gray-700"
+                          onerror="this.onerror=null;this.src='assets/images/defaults/avatar-1.png'"
                           />
                           <div
                             class="absolute right-1 bottom-1 w-6 h-6 bg-green-500 rounded-full border-4 border-white shadow-sm dark:border-gray-800"
@@ -370,6 +371,7 @@
                                                         <img
                                                           [src]="note.authorAvatar"
                                                           class="w-11 h-11 rounded-full border-2 border-white shadow-sm dark:border-gray-700"
+                                                          onerror="this.onerror=null;this.src='assets/images/defaults/avatar-1.png'"
                                                           />
                                                           <div>
                                                             <h4
