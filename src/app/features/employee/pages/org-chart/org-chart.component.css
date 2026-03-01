@@ -1,11 +1,147 @@
-.org-chart {
-  /* Hide scrollbar for cleaner look */
+/* Base layout structure */
+.org-chart-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px;
+  overflow: auto;
 }
 
-.org-chart::-webkit-scrollbar {
+/* Tree Structure */
+.tree {
+  display: inline-flex;
+  margin: 0;
+  padding: 0;
+}
+
+.tree * {
+  box-sizing: border-box;
+}
+
+.tree ul {
+  padding-top: 20px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  padding-left: 0;
+}
+
+.tree li {
+  float: left;
+  text-align: center;
+  list-style-type: none;
+  position: relative;
+  padding: 20px 5px 0 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Connecting lines */
+.tree li::before,
+.tree li::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 50%;
+  border-top: 1px solid #d1d5db; /* gray-300 */
+  width: 50%;
+  height: 20px;
+}
+
+.tree li::after {
+  right: auto;
+  left: 50%;
+  border-left: 1px solid #d1d5db; /* gray-300 */
+}
+
+/* Remove connectors for root element */
+.tree > ul > li::before,
+.tree > ul > li::after {
   display: none;
 }
 
+/* Single child connection: Need no top connectors, just vertical line from parent */
+.tree li:only-child::after,
+.tree li:only-child::before {
+  display: none;
+}
+
+.tree li:only-child {
+  padding-top: 0;
+}
+
+/* Remove left connector for first child and right connector for last child */
+.tree li:first-child::before,
+.tree li:last-child::after {
+  border: 0 none;
+}
+
+/* Add back the vertical connector to the last node */
+.tree li:last-child::before {
+  border-right: 1px solid #d1d5db; /* gray-300 */
+  border-radius: 0 5px 0 0;
+}
+.tree li:first-child::after {
+  border-radius: 5px 0 0 0;
+}
+
+/* Dropdown connector from parent */
+.tree ul::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  border-left: 1px solid #d1d5db; /* gray-300 */
+  width: 0;
+  height: 20px;
+  /* Shift slightly to center aligns perfectly with the node */
+  margin-left: -0.5px;
+}
+
+/* Remove top connector when no parent (root node children) */
+/* Wait, the root ul should have no top connector */
+.tree > ul::before {
+  display: none;
+}
+
+/* Node card styles */
+.node-card {
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+  position: relative;
+  z-index: 10;
+}
+
+/* Highlighted node */
+.node-match {
+  box-shadow: 0 10px 15px -3px rgba(139, 92, 246, 0.3);
+  border-color: #8b5cf6;
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .tree li::before,
+  .tree li::after,
+  .tree li:last-child::before,
+  .tree ul::before {
+    border-color: #4b5563; /* gray-600 */
+  }
+}
+.dark .tree li::before,
+.dark .tree li::after,
+.dark .tree li:last-child::before,
+.dark .tree ul::before {
+  border-color: #4b5563; /* gray-600 */
+}
+
+/* Hide scrollbar */
+.org-chart::-webkit-scrollbar {
+  display: none;
+}
 .org-chart {
   -ms-overflow-style: none;
   scrollbar-width: none;

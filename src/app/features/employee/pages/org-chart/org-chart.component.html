@@ -4,9 +4,7 @@
     <!-- Page Header -->
     <div class="mb-4 shrink-0">
       <p class="mb-1 text-violet-500 label-overline">Workforce</p>
-      <h1
-        class="text-2xl font-black tracking-tight text-zinc-900 dark:text-white"
-      >
+      <h1 class="text-2xl font-black tracking-tight text-zinc-900 dark:text-white">
         Employee Management
       </h1>
       <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
@@ -14,93 +12,64 @@
       </p>
     </div>
     <!-- Sub-navigation tabs -->
-    <div
-      class="flex mb-4 space-x-6 border-b border-zinc-200 dark:border-zinc-800 shrink-0"
-    >
-      <a
-        routerLink="/employees"
-        routerLinkActive="border-violet-600 text-violet-600"
+    <div class="flex mb-4 space-x-6 border-b border-zinc-200 dark:border-zinc-800 shrink-0">
+      <a routerLink="/employees" routerLinkActive="border-violet-600 text-violet-600"
         [routerLinkActiveOptions]="{ exact: true }"
-        class="px-1 pb-3 text-xs font-bold tracking-widest uppercase border-b-2 border-transparent transition-all cursor-pointer text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 hover:border-zinc-300"
-        >Team Members</a
-      >
-      <a
-        routerLink="/directory"
-        routerLinkActive="border-violet-600 text-violet-600"
+        class="px-1 pb-3 text-xs font-bold tracking-widest uppercase border-b-2 border-transparent transition-all cursor-pointer text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 hover:border-zinc-300">Team
+        Members</a>
+      <a routerLink="/directory" routerLinkActive="border-violet-600 text-violet-600"
         [routerLinkActiveOptions]="{ exact: true }"
-        class="px-1 pb-3 text-xs font-bold tracking-widest uppercase border-b-2 border-transparent transition-all cursor-pointer text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 hover:border-zinc-300"
-        >Directory</a
-      >
-      <a
-        routerLink="/org-chart"
-        routerLinkActive="border-violet-600 text-violet-600"
+        class="px-1 pb-3 text-xs font-bold tracking-widest uppercase border-b-2 border-transparent transition-all cursor-pointer text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 hover:border-zinc-300">Directory</a>
+      <a routerLink="/org-chart" routerLinkActive="border-violet-600 text-violet-600"
         [routerLinkActiveOptions]="{ exact: true }"
-        class="px-1 pb-3 text-xs font-bold tracking-widest uppercase border-b-2 border-transparent transition-all cursor-pointer text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 hover:border-zinc-300"
-        >Org Chart</a
-      >
+        class="px-1 pb-3 text-xs font-bold tracking-widest uppercase border-b-2 border-transparent transition-all cursor-pointer text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 hover:border-zinc-300">Org
+        Chart</a>
     </div>
 
     <!-- Content Card -->
     <div
-      class="flex overflow-hidden flex-col flex-1 bg-white rounded-lg border border-gray-200 shadow-sm dark:bg-gray-800 dark:border-gray-700"
-    >
+      class="flex overflow-hidden flex-col flex-1 bg-white rounded-lg border border-gray-200 shadow-sm dark:bg-gray-800 dark:border-gray-700">
       <!-- Toolbar (Inside Card) -->
       <div
-        class="flex flex-col gap-4 justify-between items-center p-4 bg-white border-b border-gray-200 dark:border-gray-700 sm:flex-row dark:bg-gray-800"
-      >
+        class="flex flex-col gap-4 justify-between items-center p-4 bg-white border-b border-gray-200 dark:border-gray-700 sm:flex-row dark:bg-gray-800">
         <!-- Filter & Search Controls -->
         <div class="flex flex-col gap-4 w-full sm:flex-row sm:w-auto">
           <div class="relative w-full sm:w-64">
-            <select
-              [(ngModel)]="selectedDepartmentId"
-              (change)="onDepartmentChange()"
-              class="block py-2.5 pr-10 pl-3 w-full text-base rounded-md border-gray-300 shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-            >
+            <select [(ngModel)]="selectedDepartmentId" (change)="onDepartmentChange()"
+              class="block py-2.5 pr-10 pl-3 w-full text-base rounded-md border-gray-300 shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
               <option value="">All Departments</option>
               @for (dept of departments; track trackByDeptId($index, dept)) {
-                <option [value]="dept.id">
-                  {{ dept.name }}
-                </option>
+              <option [value]="dept.id">
+                {{ dept.name }}
+              </option>
               }
             </select>
           </div>
-          
+
           <div class="relative w-full sm:w-80">
             <span class="flex absolute inset-y-0 left-0 items-center pl-3">
               <i class="text-lg font-light text-gray-400 pi pi-search"></i>
             </span>
-            <input
-              type="text"
+            <input type="text"
               class="block py-2.5 pr-3 pl-10 w-full rounded-md border-gray-300 shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
-              placeholder="Search by name, title..."
-              [(ngModel)]="searchTerm"
-              (keyup.enter)="onSearch()"
-              (blur)="onSearch()"
-            />
+              placeholder="Search by name, title..." [(ngModel)]="searchTerm" (keyup.enter)="onSearch()"
+              (blur)="onSearch()" />
           </div>
         </div>
 
         <!-- Zoom Controls -->
         <div class="flex gap-4 items-center">
-          <div
-            class="flex pr-4 space-x-1 border-r border-gray-200 dark:border-gray-600"
-          >
-            <button
-              (click)="zoomOut()"
+          <div class="flex pr-4 space-x-1 border-r border-gray-200 dark:border-gray-600">
+            <button (click)="zoomOut()"
               class="flex justify-center items-center w-8 h-8 text-gray-600 bg-gray-100 rounded transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-              title="Zoom Out"
-            >
+              title="Zoom Out">
               <span class="text-lg material-symbols-outlined">remove</span>
             </button>
-            <span
-              class="flex justify-center items-center w-10 font-mono text-xs text-gray-500"
-              >{{ zoomLevel * 100 | number: "1.0-0" }}%</span
-            >
-            <button
-              (click)="zoomIn()"
+            <span class="flex justify-center items-center w-10 font-mono text-xs text-gray-500">{{ zoomLevel * 100 |
+              number: "1.0-0" }}%</span>
+            <button (click)="zoomIn()"
               class="flex justify-center items-center w-8 h-8 text-gray-600 bg-gray-100 rounded transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-              title="Zoom In"
-            >
+              title="Zoom In">
               <span class="text-lg material-symbols-outlined">add</span>
             </button>
           </div>
@@ -108,76 +77,74 @@
       </div>
 
       <!-- Org Chart Tree Container -->
-      <div
-        class="overflow-auto relative flex-1 bg-gray-50/50 dark:bg-gray-900/50"
-      >
-        <div
-          class="flex flex-col items-center p-10 min-w-max transition-transform duration-200 origin-top"
-          [style.transform]="'scale(' + zoomLevel + ')'"
-        >
+      <div class="overflow-auto relative flex-1 bg-gray-50/50 dark:bg-gray-900/50">
+        <div class="flex flex-col items-center p-10 min-w-max transition-transform duration-200 origin-top"
+          [style.transform]="'scale(' + zoomLevel + ')'">
           <!-- Loading -->
           @if (loading) {
-            <div class="flex flex-col justify-center items-center h-64">
-              <div
-                class="mb-4 w-10 h-10 rounded-full border-t-2 border-b-2 animate-spin border-primary"
-              ></div>
-              <p class="text-gray-500">Loading organization structure...</p>
-            </div>
+          <div class="flex flex-col justify-center items-center h-64">
+            <div class="mb-4 w-10 h-10 rounded-full border-t-2 border-b-2 animate-spin border-primary"></div>
+            <p class="text-gray-500">Loading organization structure...</p>
+          </div>
           }
 
           <!-- Error -->
           @if (errorMessage) {
-            <div
-              class="flex items-center p-4 mb-6 text-red-600 bg-red-50 rounded-lg dark:bg-red-900/20 dark:text-red-400"
-            >
-              <span class="mr-2 material-symbols-outlined">error</span>
-              {{ errorMessage }}
-            </div>
+          <div
+            class="flex items-center p-4 mb-6 text-red-600 bg-red-50 rounded-lg dark:bg-red-900/20 dark:text-red-400">
+            <span class="mr-2 material-symbols-outlined">error</span>
+            {{ errorMessage }}
+          </div>
           }
 
           <!-- Tree View -->
           @if (orgData && !loading) {
-            <div>
-              <ng-container
-                *ngTemplateOutlet="
-                  nodeTemplate;
-                  context: { $implicit: orgData, isRoot: true }
-                "
-              ></ng-container>
-            </div>
+          <div class="tree org-chart-container">
+            <ul>
+              <ng-container *ngTemplateOutlet="
+                    nodeTemplate;
+                    context: { $implicit: orgData, isRoot: true }
+                  "></ng-container>
+            </ul>
+          </div>
           }
 
           <!-- Default State (No Filter applied) -->
           @if (!orgData && !loading && !errorMessage && !isFiltering) {
-            <div class="flex flex-col justify-center items-center mx-auto max-w-md h-96 text-center">
-              <div class="flex justify-center items-center mb-6 w-24 h-24 bg-violet-100 rounded-full ring-4 ring-white shadow-inner dark:bg-violet-900/30 dark:ring-gray-800">
-                <span class="text-5xl font-light text-violet-600 dark:text-violet-400 material-symbols-outlined">
-                  hub
-                </span>
-              </div>
-              <h3 class="mb-2 text-lg font-bold text-gray-900 dark:text-white">Explore Organization</h3>
-              <p class="mb-6 text-gray-500 dark:text-gray-400">
-                Type an employee's name or select a department from the filters above to visualize their position in the company hierarchy.
-              </p>
-              <!-- Shortcut pointers -->
-              <div class="flex gap-4">
-                  <span class="flex gap-1.5 items-center px-3 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-full border border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700">
-                      <i class="pi pi-search text-[10px]"></i> Quick Search
-                  </span>
-                  <span class="flex gap-1.5 items-center px-3 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-full border border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700">
-                      <i class="pi pi-building text-[10px]"></i> By Department
-                  </span>
-              </div>
+          <div class="flex flex-col justify-center items-center mx-auto max-w-md h-96 text-center">
+            <div
+              class="flex justify-center items-center mb-6 w-24 h-24 bg-violet-100 rounded-full ring-4 ring-white shadow-inner dark:bg-violet-900/30 dark:ring-gray-800">
+              <span class="text-5xl font-light text-violet-600 dark:text-violet-400 material-symbols-outlined">
+                hub
+              </span>
             </div>
+            <h3 class="mb-2 text-lg font-bold text-gray-900 dark:text-white">Explore Organization</h3>
+            <p class="mb-6 text-gray-500 dark:text-gray-400">
+              Type an employee's name or select a department from the filters above to visualize their position in the
+              company hierarchy.
+            </p>
+            <!-- Shortcut pointers -->
+            <div class="flex gap-4">
+              <span
+                class="flex gap-1.5 items-center px-3 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-full border border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700">
+                <i class="pi pi-search text-[10px]"></i> Quick Search
+              </span>
+              <span
+                class="flex gap-1.5 items-center px-3 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-full border border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700">
+                <i class="pi pi-building text-[10px]"></i> By Department
+              </span>
+            </div>
+          </div>
           }
 
           <!-- Empty Result (Filtered but no matches) -->
           @if (!orgData && !loading && !errorMessage && isFiltering) {
-            <div class="flex flex-col justify-center items-center h-64">
-              <span class="mb-4 text-4xl text-gray-300 material-symbols-outlined">person_off</span>
-              <p class="text-gray-500">No matching employees found in the hierarchy.</p>
-              <button (click)="searchTerm=''; selectedDepartmentId=''; applyFilters()" class="mt-2 text-sm font-medium text-violet-500 hover:underline">Clear filters</button>
-            </div>
+          <div class="flex flex-col justify-center items-center h-64">
+            <span class="mb-4 text-4xl text-gray-300 material-symbols-outlined">person_off</span>
+            <p class="text-gray-500">No matching employees found in the hierarchy.</p>
+            <button (click)="searchTerm=''; selectedDepartmentId=''; applyFilters()"
+              class="mt-2 text-sm font-medium text-violet-500 hover:underline">Clear filters</button>
+          </div>
           }
         </div>
       </div>
@@ -185,132 +152,61 @@
   </main>
 </div>
 
-<!-- Recursive Node Template (COMPACT) -->
+<!-- Recursive Node Template using ul/li -->
 <ng-template #nodeTemplate let-node let-isRoot="isRoot">
-  <div class="flex relative flex-col items-center" [class.z-10]="isRoot">
-    <!-- Vertical connector to parent (not for root) -->
-    @if (!isRoot) {
-      <div class="w-px h-6 bg-gray-300 dark:bg-gray-600"></div>
-    }
-
+  <li>
     <!-- Employee Card -->
-    <div
-      [ngClass]="[
+    <div [ngClass]="[
         isRoot ? 'p-3 min-w-[160px]' : 'p-2 min-w-[140px]',
-        node.isMatch ? 'ring-2 ring-violet-500 shadow-violet-500/30 shadow-lg scale-105 bg-violet-50 dark:bg-violet-900/20' : 'bg-white dark:bg-gray-800'
+        node.isMatch ? 'ring-2 ring-violet-500 shadow-violet-500/30 shadow-lg scale-105 bg-violet-50 dark:bg-violet-900/20' : 'bg-white dark:bg-gray-800',
+        node.isMatch ? 'node-match' : ''
       ]"
-      class="flex relative flex-col items-center rounded-lg border border-gray-200 shadow-sm transition-all dark:border-gray-700 group hover:shadow-md hover:-translate-y-0.5 text-center max-w-[180px] z-10"
-    >
+      class="node-card flex flex-col items-center rounded-lg border border-gray-200 dark:border-gray-700 group hover:shadow-md hover:-translate-y-0.5 text-center max-w-[180px] bg-white dark:bg-gray-800 shadow-sm transition-all">
       <!-- Avatar -->
-      <div
-        [ngClass]="isRoot ? 'w-12 h-12' : 'w-10 h-10'"
-        class="overflow-hidden mb-2 rounded-full ring-2 ring-offset-1 ring-primary/20"
-      >
-        <img
-          [src]="node.avatarUrl"
-          [alt]="node.name"
-          class="object-cover w-full h-full"
-          onerror="
-            this.onerror = null;
-            this.src =
-              'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjZTVlN2ViIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzljYTNhZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPj88L3RleHQ+PC9zdmc+';
-          "
-        />
+      <div [ngClass]="isRoot ? 'w-12 h-12' : 'w-10 h-10'"
+        class="overflow-hidden mb-2 rounded-full ring-2 ring-offset-1 ring-primary/20 bg-gray-100 dark:bg-gray-700 flex items-center justify-center shrink-0">
+        @if (node.avatarUrl) {
+        <img [src]="node.avatarUrl" [alt]="node.name" class="object-cover w-full h-full" onerror="
+                this.onerror = null;
+                this.src =
+                  'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjZTVlN2ViIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzljYTNhZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPj88L3RleHQ+PC9zdmc+';
+              " />
+        } @else {
+        <span class="text-gray-400 font-bold text-sm">{{ node.name.charAt(0).toUpperCase() }}</span>
+        }
       </div>
 
       <!-- Info -->
-      <h3
-        class="px-1 w-full font-bold text-gray-900 truncate dark:text-white"
-        [class.text-sm]="isRoot"
-        [class.text-xs]="!isRoot"
-      >
+      <h3 class="px-1 w-full font-bold text-gray-900 truncate dark:text-white" [class.text-sm]="isRoot"
+        [class.text-xs]="!isRoot" [title]="node.name">
         {{ node.name }}
       </h3>
-      <p
-        class="px-1 w-full text-gray-500 truncate dark:text-gray-400"
-        [class.text-xs]="isRoot"
-        [class.text-xs]="!isRoot"
-      >
+      <p class="px-1 w-full text-gray-500 truncate dark:text-gray-400" [class.text-xs]="isRoot"
+        [class.text-[10px]]="!isRoot" [title]="node.title">
         {{ node.title }}
       </p>
 
       <!-- Actions (Hover) -->
       <div
-        class="absolute inset-0 bg-black/5 dark:bg-white/5 backdrop-blur-[1px] rounded-lg flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity"
-      >
-        <button
-          [routerLink]="['/employees', node.id]"
-          class="p-1.5 bg-white rounded-full shadow dark:bg-gray-800 text-primary hover:text-primary-dark"
-          title="View Profile"
-        >
+        class="absolute inset-0 bg-black/5 dark:bg-white/5 backdrop-blur-[1px] rounded-lg flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+        <button [routerLink]="['/employees', node.id]"
+          class="p-1.5 bg-white rounded-full shadow dark:bg-gray-800 text-violet-600 hover:text-violet-800 dark:text-violet-400 dark:hover:text-violet-300"
+          title="View Profile">
           <span class="text-base material-symbols-outlined">visibility</span>
         </button>
       </div>
     </div>
 
-    <!-- Expand/Collapse Button -->
-    <!-- Only show if children exist -->
-    <!-- Connecting line to children -->
+    <!-- Children -->
     @if (node.children && node.children.length > 0) {
-      <div class="w-px h-6 bg-gray-300 dark:bg-gray-600"></div>
-    }
-
-    <!-- Children Container -->
-    @if (node.children && node.children.length > 0) {
-      @if (node.children.length > 5) {
-        <!-- Mixed Vertical/Wrap Layout for many children -->
-        <div class="flex flex-col items-center pt-6">
-          <!-- Single vertical line from parent extending down -->
-          <div class="-mt-6 w-px h-6 bg-gray-300 dark:bg-gray-600"></div>
-          
-          <!-- Wrap container -->
-          <div class="flex flex-wrap justify-center gap-6 max-w-[1200px] px-4">
-            @for (child of node.children; track trackByIndex($index, child)) {
-              <div class="flex relative flex-col items-center">
-                <ng-container
-                  *ngTemplateOutlet="
-                    nodeTemplate;
-                    context: { $implicit: child, isRoot: false }
-                  "
-                ></ng-container>
-              </div>
-            }
-          </div>
-        </div>
-      } @else {
-        <!-- Existing Horizontal Tree Layout for few children -->
-        <div class="flex relative justify-center">
-          <!-- Render child nodes recursively -->
-          @for (child of node.children; track trackByIndex($index, child); let first = $first; let last = $last; let count = $count) {
-            <div class="flex relative flex-col items-center px-4">
-              
-              <!-- Horizontal and vertical connectors for multiple children -->
-              @if (count > 1) {
-                 @if (first) {
-                    <div class="absolute top-0 right-0 left-1/2 h-px bg-gray-300 dark:bg-gray-600"></div>
-                 } @else if (last) {
-                    <div class="absolute top-0 left-0 right-1/2 h-px bg-gray-300 dark:bg-gray-600"></div>
-                 } @else {
-                    <div class="absolute top-0 right-0 left-0 h-px bg-gray-300 dark:bg-gray-600"></div>
-                 }
-
-                 <!-- Top connector for child -->
-                 <div class="absolute top-0 left-1/2 -ml-[0.5px] w-px h-6 bg-gray-300 dark:bg-gray-600"></div>
-                 
-                 <!-- Spacer to push content down below the connector -->
-                 <div class="w-full h-6"></div>
-              }
-
-              <ng-container
-                *ngTemplateOutlet="
+    <ul>
+      @for (child of node.children; track trackByIndex($index, child)) {
+      <ng-container *ngTemplateOutlet="
                   nodeTemplate;
                   context: { $implicit: child, isRoot: false }
-                "
-              ></ng-container>
-            </div>
-          }
-        </div>
+                "></ng-container>
       }
+    </ul>
     }
-  </div>
+  </li>
 </ng-template>
