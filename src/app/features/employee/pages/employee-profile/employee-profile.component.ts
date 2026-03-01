@@ -43,8 +43,8 @@ import { AuthService } from '@core/services/auth.service';
   standalone: true,
   imports: [
     NgClass, CurrencyPipe, SlicePipe,
-    FormsModule, 
-    RouterModule, 
+    FormsModule,
+    RouterModule,
     AddEmployeeComponent,
     ContractManagementComponent
   ],
@@ -62,6 +62,8 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
   editStep = 1;
   canEdit = false; // Permission flag
   private destroy$ = new Subject<void>();
+
+  private loadedTabs = new Set<string>();
 
   // Master Data Maps
   departmentsMap: { [key: string]: string } = {};
@@ -102,12 +104,12 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
     private leaveAllocationService: LeaveAllocationService,
     private leaveRequestService: LeaveRequestService,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.checkPermissions();
     this.loadMasterData();
-    
+
     this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe(params => {
       // /profile route has no :id — fall back to the current user's own employeeId
       const routeId = params.get('id');
@@ -129,10 +131,10 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
   }
 
   checkPermissions() {
-      const user = this.authService.currentUserValue;
-      if (user && user.roles) {
-          this.canEdit = user.roles.includes('Admin') || user.roles.includes('HR');
-      }
+    const user = this.authService.currentUserValue;
+    if (user && user.roles) {
+      this.canEdit = user.roles.includes('Admin') || user.roles.includes('HR');
+    }
   }
 
   loadMasterData() {
@@ -156,9 +158,8 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
       next: (data: Employee) => {
         this.employee = data;
         this.loading = false;
-        // Load additional employee data
-        this.loadPayroll(); 
-        this.loadLeaveData();
+        // The first tab is overview
+        this.loadedTabs.add('overview');
         this.cdr.markForCheck();
       },
       error: (err: Error) => {
@@ -188,15 +189,13 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
         error: (err) => this.logger.warn('Could not load own payroll data', err)
       });
     } else {
-      // Admin/HR viewing another employee — use the full monthly list
-      this.payrollService.getPayrollData(currentMonth, currentYear).pipe(takeUntil(this.destroy$)).subscribe({
+      // Admin/HR viewing another employee — use the specific employee endpoint
+      this.payrollService.getEmployeePayrolls(this.employeeId).pipe(takeUntil(this.destroy$)).subscribe({
         next: (payrolls) => {
-          if (payrolls && this.employee) {
-            this.latestPayroll = payrolls.find(p => p.employeeCode === this.employee?.employeeCode) || null;
-          }
+          this.latestPayroll = (payrolls && payrolls.length > 0) ? payrolls[0] as PayrollRecord : null;
           this.cdr.markForCheck();
         },
-        error: (err) => this.logger.warn('Could not load payroll data', err)
+        error: (err) => this.logger.warn('Could not load payroll data for employee', err)
       });
     }
   }
@@ -236,18 +235,14 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
 
     // 2. Load Leave Requests
     // Own profile → use /api/leaves/me (no elevated role needed).
-    // Admin/HR/Manager viewing another employee → use /api/leaves/list (role-restricted)
-    //   and filter the result by this employee's id.
+    // Admin/HR/Manager viewing another employee → use /api/leaves/employee/:id
     const leaveRequests$ = this.isOwnProfile
       ? this.leaveRequestService.getLeaveHistory()
-      : this.leaveRequestService.getAllRequests();
+      : this.leaveRequestService.getEmployeeLeaves(this.employeeId);
 
     leaveRequests$.pipe(takeUntil(this.destroy$)).subscribe({
       next: (requests) => {
-        const relevant = this.isOwnProfile
-          ? requests   // /me already returns only own requests
-          : requests.filter(r => r.employeeId === this.employeeId);
-        this.leaveRequests = relevant.map(r => ({
+        this.leaveRequests = requests.map(r => ({
           id: r.id,
           dateFrom: this.formatDate(r.startDate),
           dateTo: this.formatDate(r.endDate),
@@ -264,8 +259,8 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
 
   public getLeaveIcon(typeName: string): string {
     const name = typeName.toLowerCase();
-    if (name.includes('annual'))  return 'calendar_month';
-    if (name.includes('sick'))    return 'health_and_safety';
+    if (name.includes('annual')) return 'calendar_month';
+    if (name.includes('sick')) return 'health_and_safety';
     if (name.includes('wedding')) return 'favorite';
     if (name.includes('funeral')) return 'sentiment_sad';
     if (name.includes('maternity')) return 'child_care';
@@ -327,6 +322,16 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
 
   setActiveTab(tabId: string) {
     this.activeTab = tabId;
+
+    if (!this.loadedTabs.has(tabId) && this.employeeId) {
+      if (tabId === 'financial') {
+        this.loadPayroll();
+        this.loadedTabs.add(tabId);
+      } else if (tabId === 'timeoff') {
+        this.loadLeaveData();
+        this.loadedTabs.add(tabId);
+      }
+    }
   }
 
   formatDate(dateStr: string | Date | undefined): string {

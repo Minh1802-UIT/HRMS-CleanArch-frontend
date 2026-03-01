@@ -32,11 +32,11 @@ export class PayrollService {
   }
 
   calculatePayroll(month: string, year: number): Observable<Payroll[]> {
-     const monthYear = formatMonthYear(month, year);
-     return this.http.post<ApiResponse<Payroll[]>>(`${this.apiUrl}/generate`, { month: monthYear }).pipe(
-       map(response => response.data || []),
-       catchError(err => { this.logger.error('PayrollService: calculatePayroll failed', err); return throwError(() => err); })
-     );
+    const monthYear = formatMonthYear(month, year);
+    return this.http.post<ApiResponse<Payroll[]>>(`${this.apiUrl}/generate`, { month: monthYear }).pipe(
+      map(response => response.data || []),
+      catchError(err => { this.logger.error('PayrollService: calculatePayroll failed', err); return throwError(() => err); })
+    );
   }
 
   downloadPayslip(id: string): Observable<Blob> {
@@ -71,6 +71,16 @@ export class PayrollService {
       map(res => res.data || []),
       catchError(err => {
         this.logger.error('PayrollService: getMyPayrolls failed', err);
+        return throwError(() => err);
+      })
+    );
+  }
+
+  getEmployeePayrolls(employeeId: string): Observable<Payroll[]> {
+    return this.http.get<ApiResponse<Payroll[]>>(`${this.apiUrl}/employee/${employeeId}`).pipe(
+      map(res => res.data || []),
+      catchError(err => {
+        this.logger.error(`PayrollService: getEmployeePayrolls(${employeeId}) failed`, err);
         return throwError(() => err);
       })
     );
