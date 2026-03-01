@@ -41,7 +41,18 @@ interface RefreshSuccessData {
 })
 export class AuthService {
   private apiUrl = `${environment.apiUrl}/auth`;
-  
+
+  // ─── In-memory access token (never persisted to storage) ─────────────────
+  // Access tokens in sessionStorage/localStorage are readable by any JS code
+  // running on the page (XSS). Keeping the token in a private class field means
+  // it is inaccessible to third-party scripts. On page reload the field is null;
+  // the JWT interceptor triggers refreshAccessToken() which uses the httpOnly
+  // refresh-token cookie to silently obtain a new access token.
+  private _accessToken: string | null = null;
+
+  // Timer ID for the proactive background refresh scheduled ~2 min before expiry.
+  private _refreshTimer: ReturnType<typeof setTimeout> | null = null;
+
   // State management with Signals
   private currentUserSignal = signal<User | null>(this.getInitialUser());
   public readonly user = this.currentUserSignal.asReadonly();
@@ -65,23 +76,34 @@ export class AuthService {
     this.currentUser = this.currentUserSubject.asObservable();
   }
 
+  /**
+   * Reads non-sensitive user metadata from sessionStorage (name, roles, employeeId etc.).
+   * The access token is NOT stored in sessionStorage — it lives in _accessToken (memory only).
+   * Returns null if no session exists.
+   */
   private getInitialUser(): User | null {
-    // User metadata stored in sessionStorage (cleared on tab close)
     const storedUser = sessionStorage.getItem('currentUser');
     try {
       return storedUser ? JSON.parse(storedUser) : null;
-    } catch (e) {
+    } catch {
       return null;
     }
+  }
+
+  /** Persist non-sensitive user metadata to sessionStorage, stripping the token. */
+  private storeUserMetadata(user: User): void {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { token: _stripped, refreshToken: _rt, ...metadata } = user;
+    sessionStorage.setItem('currentUser', JSON.stringify(metadata));
   }
 
   public get currentUserValue(): User | null {
     return this.currentUserSubject.value;
   }
 
+  /** Returns the in-memory access token. Null on page reload until silent refresh completes. */
   getToken(): string | null {
-    const user = this.currentUserValue;
-    return user?.token || null;
+    return this._accessToken;
   }
 
   /** Refresh token is stored as httpOnly cookie — not accessible via JS */
@@ -94,7 +116,7 @@ export class AuthService {
     return this.http.post<ApiResponse<void>>(`${this.apiUrl}/register`, userData);
   }
 
-  // Login — access token stored in sessionStorage; refresh token received as httpOnly cookie
+  // Login — access token stored in memory only; refresh token received as httpOnly cookie
   login(loginData: LoginCredentials): Observable<LoginSuccessData> {
     return this.http.post<ApiResponse<LoginSuccessData>>(`${this.apiUrl}/login`, loginData, { withCredentials: true }).pipe(
       map(response => response.data),
@@ -104,36 +126,44 @@ export class AuthService {
 
         this.logger.debug('Login response received', { expiresIn: data.expiresIn, userId: data.user?.id });
 
-        // Trust the typed user object from the response body — no JWT claim digging needed.
         const user: User = {
           id:                 data.user.id,
           username:           data.user.username,
           email:              data.user.email,
           fullName:           data.user.fullName,
-          token,
-          // refreshToken intentionally NOT stored — lives in httpOnly cookie
+          // token intentionally NOT set — lives in _accessToken (memory only)
           roles:              data.user.roles?.length ? data.user.roles : ['User'],
           avatar:             'assets/images/defaults/avatar-1.png',
           employeeId:         data.user.employeeId,
           mustChangePassword: data.user.mustChangePassword
         };
 
-        this.logger.debug('User object created', user);
-        // sessionStorage clears on tab close, unlike localStorage
-        sessionStorage.setItem('currentUser', JSON.stringify(user));
+        // Store access token in memory (not sessionStorage)
+        this._accessToken = token;
+
+        this.logger.debug('User object created (token in memory only)', user);
+        this.storeUserMetadata(user);
         this.currentUserSignal.set(user);
         this.currentUserSubject.next(user);
+
+        // Schedule proactive background refresh ~2 min before expiry
+        this.scheduleProactiveRefresh(data.expiresIn);
       })
     );
   }
 
   logout(reason: string = 'session_expired') {
-    // Clear local state immediately
+    // Clear in-memory token and cancel any scheduled refresh
+    this._accessToken = null;
+    this.cancelRefreshTimer();
+
+    // Clear local state
     sessionStorage.removeItem('currentUser');
     this.currentUserSignal.set(null);
     this.currentUserSubject.next(null);
     this.isRefreshing = false;
     this.refreshTokenSubject.next(null);
+
     // Fire-and-forget: clear httpOnly refresh token cookie on backend
     this.http.post(`${this.apiUrl}/logout`, {}, { withCredentials: true }).pipe(
       catchError(() => of(null))
@@ -142,21 +172,25 @@ export class AuthService {
   }
 
   /**
-   * Refresh the access token using the stored refresh token.
-   * Returns an Observable that emits the new access token on success.
-   * Handles concurrent refresh requests by queuing them.
+   * Refresh the access token using the httpOnly refresh-token cookie.
+   *
+   * Two modes:
+   *  - Normal (token in memory): sends current access token in body for validation.
+   *  - Silent re-auth on page reload: _accessToken is null; sends empty string.
+   *    The backend locates the user via the refresh-token hash alone.
    */
   refreshAccessToken(): Observable<string> {
-    const currentToken = this.getToken();
+    const currentToken = this._accessToken;
+    const hasUserSession = this.currentUserValue !== null;
 
-    if (!currentToken) {
+    // No token AND no user session — nothing to refresh.
+    if (!currentToken && !hasUserSession) {
       this.logout();
       return throwError(() => new Error('No tokens available'));
     }
 
     if (this.isRefreshing) {
-      // Queue this request — wait until refreshTokenSubject emits a non-null value
-      // Use switchMap to emit the token or propagate error on null (refresh failure)
+      // Another request already triggered a refresh — queue and wait
       return this.refreshTokenSubject.pipe(
         filter(token => token !== null),
         take(1),
@@ -167,32 +201,37 @@ export class AuthService {
     this.isRefreshing = true;
     this.refreshTokenSubject.next(null);
 
-    // withCredentials sends the httpOnly refresh token cookie automatically
-    return this.http.post<ApiResponse<RefreshSuccessData>>(`${this.apiUrl}/refresh-token`,
-      { accessToken: currentToken },
+    // Send current token (or empty string for silent page-reload refresh)
+    return this.http.post<ApiResponse<RefreshSuccessData>>(
+      `${this.apiUrl}/refresh-token`,
+      { accessToken: currentToken ?? '' },
       { withCredentials: true }
     ).pipe(
       map(response => response.data),
       tap(data => {
         const newAccessToken = data.accessToken;
 
-        // Update stored user with new access token
+        // Update in-memory token
+        this._accessToken = newAccessToken;
+
+        // Update stored user metadata (no token in storage)
         const user = this.currentUserValue;
         if (user) {
-          const updatedUser: User = { ...user, token: newAccessToken };
-          sessionStorage.setItem('currentUser', JSON.stringify(updatedUser));
-          this.currentUserSignal.set(updatedUser);
-          this.currentUserSubject.next(updatedUser);
+          this.storeUserMetadata(user);
+          this.currentUserSignal.set(user);
+          this.currentUserSubject.next(user);
         }
 
         this.isRefreshing = false;
         this.refreshTokenSubject.next(newAccessToken);
         this.logger.debug('Token refreshed successfully');
+
+        // Re-schedule proactive refresh
+        this.scheduleProactiveRefresh(data.expiresIn);
       }),
       map(data => data.accessToken as string),
       catchError(err => {
         this.isRefreshing = false;
-        // Emit a sentinel value so queued requests unblock, then error out
         this.refreshTokenSubject.next('REFRESH_FAILED');
         this.refreshTokenSubject.next(null); // Reset for next cycle
         this.logger.error('Token refresh failed', err);
@@ -203,13 +242,42 @@ export class AuthService {
   }
 
   /**
+   * Schedule a background token refresh ~2 minutes before the access token expires.
+   * @param expiresInSeconds - token lifetime from the server response (seconds)
+   */
+  private scheduleProactiveRefresh(expiresInSeconds: number): void {
+    this.cancelRefreshTimer();
+    const twoMinutesMs = 2 * 60 * 1000;
+    const refreshInMs = Math.max((expiresInSeconds * 1000) - twoMinutesMs, 0);
+
+    this.logger.debug(`Proactive refresh scheduled in ${Math.round(refreshInMs / 1000)}s`);
+
+    this._refreshTimer = setTimeout(() => {
+      this.logger.debug('Proactive refresh triggered');
+      this.refreshAccessToken().pipe(
+        catchError(err => {
+          // Ignore — logout is already called inside refreshAccessToken on failure
+          this.logger.warn('Proactive refresh failed', err);
+          return of(null);
+        })
+      ).subscribe();
+    }, refreshInMs);
+  }
+
+  private cancelRefreshTimer(): void {
+    if (this._refreshTimer !== null) {
+      clearTimeout(this._refreshTimer);
+      this._refreshTimer = null;
+    }
+  }
+
+  /**
    * Check if the token is about to expire (within 2 minutes).
    */
   isTokenExpiringSoon(): boolean {
-    const user = this.currentUserValue;
-    if (!user?.token) return true;
+    if (!this._accessToken) return true;
 
-    const decoded = this.decodeJwtToken(user.token);
+    const decoded = this.decodeJwtToken(this._accessToken);
     if (!decoded.exp) return false;
 
     const expiresAt = decoded.exp * 1000;
@@ -241,7 +309,7 @@ export class AuthService {
         const user = this.currentUserValue;
         if (user?.mustChangePassword) {
           const updatedUser: User = { ...user, mustChangePassword: false };
-          sessionStorage.setItem('currentUser', JSON.stringify(updatedUser));
+          this.storeUserMetadata(updatedUser);
           this.currentUserSignal.set(updatedUser);
           this.currentUserSubject.next(updatedUser);
         }
@@ -309,28 +377,21 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     const user = this.currentUserValue;
-    if (!user || !user.token) {
-      return false;
-    }
+    if (!user) return false;
 
-    const decoded = this.decodeJwtToken(user.token);
-    if (!decoded.exp) {
-      return true;
-    }
+    // If no in-memory token (e.g. page reload), treat the user as logged in and
+    // let the JWT interceptor trigger a silent refresh on the first API call.
+    if (!this._accessToken) return true;
+
+    const decoded = this.decodeJwtToken(this._accessToken);
+    if (!decoded.exp) return true;
 
     const isExpired = decoded.exp * 1000 < Date.now();
     if (isExpired) {
-      // The refresh token lives in an httpOnly cookie, so it is never accessible via
-      // JavaScript. Do NOT check user.refreshToken here — it will always be absent.
-      // Return true and let the JWT interceptor attempt the next API call; if the
-      // server responds with 401 the interceptor will trigger /auth/refresh, which
-      // sends the httpOnly cookie automatically. If refresh also fails, the interceptor
-      // clears the session and redirects to login.
-      this.logger.warn('Access token expired – interceptor will handle refresh on next request');
-      return true;
+      // Access token expired — interceptor will handle refresh on next API call.
+      this.logger.warn('Access token expired – interceptor will refresh on next request');
     }
-
-    return true;
+    return true; // Always let the interceptor attempt refresh
   }
 
   // ✅ Helper to decode JWT token
