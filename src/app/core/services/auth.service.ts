@@ -74,6 +74,23 @@ export class AuthService {
     const user = this.currentUserSignal();
     this.currentUserSubject = new BehaviorSubject<User | null>(user);
     this.currentUser = this.currentUserSubject.asObservable();
+
+    // ── One-time migration ────────────────────────────────────────────────────
+    // Old sessions (before in-memory token implementation) stored the JWT inside
+    // the currentUser object in sessionStorage.  Promote it into _accessToken so
+    // the first round of API calls after a page reload works without a 401 trip.
+    if (user?.token) {
+      this._accessToken = user.token;
+      // Re-save metadata without the token so future reloads go through the
+      // normal silent-refresh path instead of reading a now-stale value.
+      this.storeUserMetadata(user);
+      // Sanitise the in-memory signal/subject too (keeps the model coherent).
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { token: _t, refreshToken: _rt, ...clean } = user;
+      this.currentUserSignal.set(clean as User);
+      this.currentUserSubject.next(clean as User);
+      this.logger.debug('[AuthService] Token migrated from sessionStorage → memory');
+    }
   }
 
   /**

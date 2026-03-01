@@ -82,7 +82,7 @@ describe('EmployeeListComponent', () => {
     fixture.detectChanges();
     tick();
 
-    expect(mockEmployeeService.getEmployees).toHaveBeenCalledWith({ pageSize: 10, pageNumber: 1 });
+    expect(mockEmployeeService.getEmployees).toHaveBeenCalledWith({ pageSize: 10, pageNumber: 1, searchTerm: '' });
     expect(component.employees.length).toBe(1);
     expect(component.employees[0].id).toBe('emp-1');
   }));

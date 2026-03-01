@@ -62,4 +62,18 @@ export class PayrollService {
     );
   }
 
+  /**
+   * GET /api/payrolls/me — returns the current user's own payroll history.
+   * Available to all authenticated users (no Admin/HR role required).
+   */
+  getMyPayrolls(): Observable<Payroll[]> {
+    return this.http.get<ApiResponse<Payroll[]>>(`${this.apiUrl}/me`).pipe(
+      map(res => res.data || []),
+      catchError(err => {
+        this.logger.error('PayrollService: getMyPayrolls failed', err);
+        return throwError(() => err);
+      })
+    );
+  }
+
 }

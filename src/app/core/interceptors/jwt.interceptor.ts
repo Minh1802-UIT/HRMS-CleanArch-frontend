@@ -22,6 +22,32 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
   }
 
   const token = authService.getToken();
+
+  // ── Proactive silent refresh on page reload ───────────────────────────────
+  // When _accessToken is null but there IS a user session (page reload after
+  // in-memory token was lost), refresh BEFORE sending the request so we never
+  // hit the backend without credentials (avoids a needless 401 round-trip).
+  if (!token && authService.currentUserValue !== null) {
+    if (authService.isRefreshInProgress) {
+      // Another request already started the refresh — queue and wait
+      return authService.onRefreshComplete.pipe(
+        filter(t => t !== null),
+        take(1),
+        switchMap(t => {
+          if (t === 'REFRESH_FAILED') {
+            return throwError(() => new HttpErrorResponse({ status: 401, statusText: 'Token refresh failed' }));
+          }
+          return next(addTokenToRequest(req, t!));
+        })
+      );
+    }
+    // First request after reload — trigger refresh then send with new token
+    return authService.refreshAccessToken().pipe(
+      switchMap(newToken => next(addTokenToRequest(req, newToken))),
+      catchError(err => throwError(() => err))
+    );
+  }
+
   const authedReq = token ? addTokenToRequest(req, token) : req;
 
   return next(authedReq).pipe(

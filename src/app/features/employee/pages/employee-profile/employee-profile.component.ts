@@ -73,6 +73,10 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
   // Leave Requests
   leaveRequests: DisplayLeaveRequest[] = [];
 
+  // Whether this component is rendering the current user's own profile.
+  // Set to true for the /profile route; false for /employees/:id (admin/HR view).
+  isOwnProfile: boolean = false;
+
   // Real Payroll Data
   latestPayroll: PayrollRecord | null = null; // Changed from hardcoded object
 
@@ -106,7 +110,11 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
     
     this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe(params => {
       // /profile route has no :id — fall back to the current user's own employeeId
-      this.employeeId = params.get('id') || this.authService.currentUserValue?.employeeId || '';
+      const routeId = params.get('id');
+      const currentUserEmployeeId = this.authService.currentUserValue?.employeeId;
+      this.employeeId = routeId || currentUserEmployeeId || '';
+      // Own profile = no :id in route OR the :id matches the current user's employee
+      this.isOwnProfile = !routeId || this.employeeId === currentUserEmployeeId;
       if (this.employeeId) {
         this.loadEmployee();
         this.loadContracts();
@@ -163,22 +171,34 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
   }
 
   loadPayroll() {
-      if (!this.employee) return;
-      
-      const now = new Date();
-      const currentMonth = now.toLocaleString('default', { month: 'long' }); // e.g. "February"
-      const currentYear = now.getFullYear();
+    if (!this.employee) return;
 
-      // Fetch payrolls for current month to see if this employee has one
-      this.payrollService.getPayrollData(currentMonth, currentYear).pipe(takeUntil(this.destroy$)).subscribe({
-          next: (payrolls) => {
-              if (payrolls && this.employee) {
-                  this.latestPayroll = payrolls.find(p => p.employeeCode === this.employee?.employeeCode) || null;
-              }
-              this.cdr.markForCheck();
-          },
-          error: (err) => this.logger.warn('Could not load payroll data', err)
+    const now = new Date();
+    const currentMonth = now.toLocaleString('default', { month: 'long' }); // e.g. "February"
+    const currentYear = now.getFullYear();
+
+    if (this.isOwnProfile) {
+      // /api/payrolls/me — accessible to all authenticated users
+      this.payrollService.getMyPayrolls().pipe(takeUntil(this.destroy$)).subscribe({
+        next: (payrolls) => {
+          // /me returns the most-recent records; take the first one
+          this.latestPayroll = (payrolls && payrolls.length > 0) ? payrolls[0] as PayrollRecord : null;
+          this.cdr.markForCheck();
+        },
+        error: (err) => this.logger.warn('Could not load own payroll data', err)
       });
+    } else {
+      // Admin/HR viewing another employee — use the full monthly list
+      this.payrollService.getPayrollData(currentMonth, currentYear).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (payrolls) => {
+          if (payrolls && this.employee) {
+            this.latestPayroll = payrolls.find(p => p.employeeCode === this.employee?.employeeCode) || null;
+          }
+          this.cdr.markForCheck();
+        },
+        error: (err) => this.logger.warn('Could not load payroll data', err)
+      });
+    }
   }
 
   loadContracts() {
@@ -214,27 +234,31 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
       error: (err) => this.logger.error('Failed to load leave balances', err)
     });
 
-    // 2. Load Leave Requests (All History for this employee)
-    // Note: RequestService usually fetches "me", but managers/admins need to see this employee's specifically
-    // We'll use the getAllRequests() which might be filtered by the backend if role allows, 
-    // or we might need a specific getByEmployee if available.
-    // For now, let's filter the list if it returns all.
-    this.leaveRequestService.getAllRequests().pipe(takeUntil(this.destroy$)).subscribe({
-        next: (requests) => {
-            this.leaveRequests = requests
-                .filter(r => r.employeeId === this.employeeId)
-                .map(r => ({
-                    id: r.id,
-                    dateFrom: this.formatDate(r.startDate),
-                    dateTo: this.formatDate(r.endDate),
-                    duration: `${r.days} day${r.days > 1 ? 's' : ''}`,
-                    leaveType: r.type,
-                    status: r.status,
-                    hasAttachment: false
-                }));
-            this.cdr.markForCheck();
-        },
-        error: (err) => this.logger.error('Failed to load leave requests', err)
+    // 2. Load Leave Requests
+    // Own profile → use /api/leaves/me (no elevated role needed).
+    // Admin/HR/Manager viewing another employee → use /api/leaves/list (role-restricted)
+    //   and filter the result by this employee's id.
+    const leaveRequests$ = this.isOwnProfile
+      ? this.leaveRequestService.getLeaveHistory()
+      : this.leaveRequestService.getAllRequests();
+
+    leaveRequests$.pipe(takeUntil(this.destroy$)).subscribe({
+      next: (requests) => {
+        const relevant = this.isOwnProfile
+          ? requests   // /me already returns only own requests
+          : requests.filter(r => r.employeeId === this.employeeId);
+        this.leaveRequests = relevant.map(r => ({
+          id: r.id,
+          dateFrom: this.formatDate(r.startDate),
+          dateTo: this.formatDate(r.endDate),
+          duration: `${r.days} day${r.days > 1 ? 's' : ''}`,
+          leaveType: r.type,
+          status: r.status,
+          hasAttachment: false
+        }));
+        this.cdr.markForCheck();
+      },
+      error: (err) => this.logger.error('Failed to load leave requests', err)
     });
   }
 
