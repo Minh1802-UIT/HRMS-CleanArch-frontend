@@ -5,9 +5,11 @@ import { map, catchError } from 'rxjs/operators';
 import { environment } from '@env/environment';
 import { ApiResponse, PagedResult } from '@core/models/api-response';
 import { Department } from '../models/department.model';
+import { DeptTreeNode } from '../models/dept-tree-node.model';
 import { LoggerService } from '@core/services/logger.service';
 
 export { Department } from '../models/department.model';
+export { DeptTreeNode } from '../models/dept-tree-node.model';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +23,13 @@ export class DepartmentService {
     return this.http.get<ApiResponse<PagedResult<Department>>>(this.apiUrl).pipe(
       map(response => response.data?.items || []),
       catchError(err => { this.logger.error('DepartmentService: getDepartments failed', err); return throwError(() => err); })
+    );
+  }
+
+  getDepartmentTree(): Observable<DeptTreeNode[]> {
+    return this.http.get<ApiResponse<DeptTreeNode[]>>(`${this.apiUrl}/tree`).pipe(
+      map(response => response.data || []),
+      catchError(err => { this.logger.error('DepartmentService: getDepartmentTree failed', err); return throwError(() => err); })
     );
   }
 
