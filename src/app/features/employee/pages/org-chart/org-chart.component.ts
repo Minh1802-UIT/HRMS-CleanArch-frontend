@@ -25,6 +25,7 @@ export class OrgChartComponent implements OnInit, OnDestroy {
   orgData: OrgNode | null = null;
   rawOrgData: OrgNode | null = null; // Store raw root for client-side filtering
   isFiltering: boolean = false;
+  matchCount: number = 0;
   
   departments: Department[] = [];
   selectedDepartmentId: string = '';
@@ -106,6 +107,7 @@ export class OrgChartComponent implements OnInit, OnDestroy {
       if (!this.rawOrgData) {
           this.orgData = null;
           this.isFiltering = false;
+          this.matchCount = 0;
           return;
       }
 
@@ -113,27 +115,71 @@ export class OrgChartComponent implements OnInit, OnDestroy {
       const hasDept = !!this.selectedDepartmentId;
       
       this.isFiltering = hasSearch || hasDept;
+      this.matchCount = 0;
 
-      // Nếu KHÔNG có tìm kiếm VÀ KHÔNG lọc phòng ban -> Ẩn toàn bộ cây (Yêu cầu của USER)
       if (!this.isFiltering) {
           this.orgData = null;
           return;
       }
 
-      // Xử lý bộ lọc
-      const clonedRoot = JSON.parse(JSON.stringify(this.rawOrgData)) as OrgNode; // clone deeply
-      const filteredRoot = this.filterTreeNode(clonedRoot, this.searchTerm.trim().toLowerCase(), this.selectedDepartmentId);
-      
-      // Nếu root bị loại do không có node con nào khớp và cũng không tự khớp, filterTreeNode sẽ return null
-      // Tuy nhiên hàm trả về node, nếu return null nghĩa là không tìm thấy
-      this.orgData = filteredRoot;
+      const clonedRoot = JSON.parse(JSON.stringify(this.rawOrgData)) as OrgNode;
+
+      if (hasDept && !hasSearch) {
+          // Department-only: prune tree to only that department's nodes
+          const filteredRoot = this.filterTreeNode(clonedRoot, '', this.selectedDepartmentId);
+          this.orgData = filteredRoot;
+          if (filteredRoot) this.matchCount = this.countMatches(filteredRoot);
+      } else {
+          // Search active (with or without dept): show FULL tree, just highlight matches
+          // This preserves hierarchy context so users can see where the person sits in the org
+          this.markMatchingNodes(clonedRoot, this.searchTerm.trim().toLowerCase(), this.selectedDepartmentId);
+          this.orgData = clonedRoot;
+          this.matchCount = this.countMatches(clonedRoot);
+      }
+      this.cdr.markForCheck();
   }
 
   /**
-   * Đệ quy cắt tỉa cây. Giữ lại node nếu node đó khớp (isMatch) HOẶC có ít nhất 1 node con bên dưới khớp.
+   * Traverses the FULL tree (no pruning) and marks each node with:
+   *   isMatch            — this node itself matches the search
+   *   hasMatchInSubtree  — this node or any descendant matches (used to highlight ancestor path)
+   */
+  markMatchingNodes(node: OrgNode, searchWord: string, deptId: string): boolean {
+      let matchSearch = !searchWord ||
+          node.name.toLowerCase().includes(searchWord) ||
+          (node.title ? node.title.toLowerCase().includes(searchWord) : false);
+
+      let matchDept = !deptId || node.departmentId === deptId;
+
+      node.isMatch = matchSearch && matchDept;
+
+      let anyDescendantMatch = false;
+      if (node.children && node.children.length > 0) {
+          for (const child of node.children) {
+              if (this.markMatchingNodes(child, searchWord, deptId)) {
+                  anyDescendantMatch = true;
+              }
+          }
+      }
+
+      node.hasMatchInSubtree = node.isMatch || anyDescendantMatch;
+      return node.hasMatchInSubtree;
+  }
+
+  /** Count nodes where isMatch === true */
+  countMatches(node: OrgNode): number {
+      let count = node.isMatch ? 1 : 0;
+      if (node.children) {
+          for (const child of node.children) count += this.countMatches(child);
+      }
+      return count;
+  }
+
+  /**
+   * Đệ quy cắt tỉa cây — dùng CHỈ cho lọc theo phòng ban (không có search).
+   * Giữ lại node nếu node đó khớp HOẶC có ít nhất 1 node con bên dưới khớp.
    */
   filterTreeNode(node: OrgNode, searchWord: string, deptId: string): OrgNode | null {
-      // 1. Kiểm tra node hiện tại có thỏa mãn điều kiện không
       let matchSearch = true;
       let matchDept = true;
 
@@ -143,29 +189,25 @@ export class OrgChartComponent implements OnInit, OnDestroy {
       }
       
       if (deptId) {
-          // Lưu ý: data trả về từ API có thể không có departmentId ở orgNode nếu DTO không map, 
-          // Nếu không map departmentId, ta chỉ có thể tìm kiếm theo text.
           matchDept = node.departmentId === deptId;
       }
 
       const isSelfMatch = matchSearch && matchDept;
       node.isMatch = isSelfMatch;
+      node.hasMatchInSubtree = isSelfMatch;
 
-      // 2. Lọc tất cả các node con
       let filteredChildren: OrgNode[] = [];
       if (node.children && node.children.length > 0) {
           for (let child of node.children) {
               const result = this.filterTreeNode(child, searchWord, deptId);
               if (result) {
                   filteredChildren.push(result);
+                  node.hasMatchInSubtree = true;
               }
           }
       }
       node.children = filteredChildren;
 
-      // 3. Quyết định giữ lại nhánh này hay không
-      // Giữ lại nếu bản thân nó là mục tiêu tìm thấy (isSelfMatch), 
-      // HOẶC có con cái của nó chứa mục tiêu tìm thấy (filteredChildren.length > 0)
       if (isSelfMatch || filteredChildren.length > 0) {
           return node;
       }

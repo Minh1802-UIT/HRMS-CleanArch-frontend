@@ -51,11 +51,26 @@
               <i class="text-lg font-light text-gray-400 pi pi-search"></i>
             </span>
             <input type="text"
-              class="block py-2.5 pr-3 pl-10 w-full rounded-md border-gray-300 shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+              class="block py-2.5 pr-10 pl-10 w-full rounded-md border-gray-300 shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
               placeholder="Search by name, title..." [(ngModel)]="searchTerm" (keyup.enter)="onSearch()"
-              (blur)="onSearch()" />
+              (input)="onSearch()" />
+            @if (searchTerm) {
+            <button (click)="searchTerm=''; onSearch()"
+              class="flex absolute inset-y-0 right-0 items-center pr-3 text-gray-400 hover:text-gray-600">
+              <i class="text-sm pi pi-times"></i>
+            </button>
+            }
           </div>
         </div>
+
+        <!-- Match counter badge -->
+        @if (searchTerm && isFiltering) {
+        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold"
+          [ngClass]="matchCount > 0 ? 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300' : 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400'">
+          <i [ngClass]="matchCount > 0 ? 'pi pi-check-circle' : 'pi pi-times-circle'" class="text-xs"></i>
+          {{ matchCount > 0 ? matchCount + ' result' + (matchCount > 1 ? 's' : '') + ' found' : 'No results' }}
+        </div>
+        }
 
         <!-- Zoom Controls -->
         <div class="flex gap-4 items-center">
@@ -158,8 +173,8 @@
     <!-- Employee Card -->
     <div [ngClass]="[
         isRoot ? 'p-3 min-w-[160px]' : 'p-2 min-w-[140px]',
-        node.isMatch ? 'ring-2 ring-violet-500 shadow-violet-500/30 shadow-lg scale-105 bg-violet-50 dark:bg-violet-900/20' : 'bg-white dark:bg-gray-800',
-        node.isMatch ? 'node-match' : ''
+        node.isMatch ? 'ring-2 ring-violet-500 shadow-violet-500/30 shadow-lg scale-105 bg-violet-50 dark:bg-violet-900/20 node-match' : 'bg-white dark:bg-gray-800',
+        (isFiltering && searchTerm && !node.hasMatchInSubtree) ? 'opacity-30' : ''
       ]"
       class="node-card flex flex-col items-center rounded-lg border border-gray-200 dark:border-gray-700 group hover:shadow-md hover:-translate-y-0.5 text-center max-w-[180px] bg-white dark:bg-gray-800 shadow-sm transition-all">
       <!-- Avatar -->
