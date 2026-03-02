@@ -51,6 +51,8 @@ type Step = 1 | 2 | 3;
 })
 export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('mapContainer') mapContainer!: ElementRef<HTMLDivElement>;
+  @ViewChild('videoEl') videoEl!: ElementRef<HTMLVideoElement>;
+  @ViewChild('canvasEl') canvasEl!: ElementRef<HTMLCanvasElement>;
 
   currentStep: Step = 1;
   currentTime = new Date();
@@ -74,9 +76,14 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
   locationError: string | null = null;
   locationLoading = false;
 
-  // Step 2: Face capture (optional placeholder)
+  // Step 2: Webcam selfie
   faceCaptured = false;
   skipFace = false;
+  capturedPhoto: string | null = null;    // base64 data URI
+  cameraStream: MediaStream | null = null;
+  cameraLoading = false;
+  cameraError: string | null = null;
+  cameraActive = false;                   // true while <video> is live
 
   // Processing
   loading = false;
@@ -113,6 +120,7 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
     this.map?.remove();
+    this.stopCamera();
   }
 
   private initMap(): void {
@@ -231,30 +239,112 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.cdr.markForCheck();
   }
 
+  // ─── Camera ────────────────────────────────────────────────────────────────
+
+  async startCamera(): Promise<void> {
+    this.cameraLoading = true;
+    this.cameraError = null;
+    this.capturedPhoto = null;
+    this.cameraActive = false;
+    this.cdr.markForCheck();
+
+    try {
+      this.cameraStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } },
+        audio: false,
+      });
+      // Assign srcObject after view updates
+      this.cameraLoading = false;
+      this.cameraActive = true;
+      this.cdr.markForCheck();
+
+      // Use setTimeout so the <video> element is rendered before we set srcObject
+      setTimeout(() => {
+        if (this.videoEl?.nativeElement && this.cameraStream) {
+          this.videoEl.nativeElement.srcObject = this.cameraStream;
+          this.videoEl.nativeElement.play().catch(() => {});
+        }
+      }, 50);
+    } catch (err) {
+      this.cameraLoading = false;
+      this.cameraError =
+        (err as DOMException).name === 'NotAllowedError'
+          ? 'Camera access denied. Please allow camera in browser settings.'
+          : 'Could not open camera. Try a different browser or device.';
+      this.cdr.markForCheck();
+    }
+  }
+
+  capturePhoto(): void {
+    const video = this.videoEl?.nativeElement;
+    const canvas = this.canvasEl?.nativeElement;
+    if (!video || !canvas) return;
+
+    canvas.width  = video.videoWidth  || 640;
+    canvas.height = video.videoHeight || 480;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    this.capturedPhoto = canvas.toDataURL('image/jpeg', 0.85);
+    this.stopCamera();
+    this.faceCaptured = true;
+    this.cdr.markForCheck();
+  }
+
+  retakePhoto(): void {
+    this.capturedPhoto = null;
+    this.faceCaptured = false;
+    this.startCamera();
+  }
+
+  stopCamera(): void {
+    if (this.cameraStream) {
+      this.cameraStream.getTracks().forEach((t) => t.stop());
+      this.cameraStream = null;
+    }
+    this.cameraActive = false;
+  }
+
+  // ───────────────────────────────────────────────────────────────────────────
+
   goToStep2(): void {
     if (!this.selectedPointId) return;
     this.currentStep = 2;
     this.cdr.markForCheck();
+    // Start camera after view renders step 2
+    setTimeout(() => this.startCamera(), 100);
   }
 
   skipFaceCapture(): void {
+    this.stopCamera();
     this.skipFace = true;
+    this.capturedPhoto = null;
     this.currentStep = 3;
     this.cdr.markForCheck();
   }
 
   captureAndContinue(): void {
-    this.faceCaptured = true;
+    if (!this.capturedPhoto && this.cameraActive) {
+      this.capturePhoto();
+    }
+    this.stopCamera();
     this.currentStep = 3;
     this.cdr.markForCheck();
   }
 
   goBack(): void {
     if (this.currentStep > 1) {
+      // Leaving step 2 → stop camera
+      if (this.currentStep === 2) this.stopCamera();
       this.currentStep = (this.currentStep - 1) as Step;
       // Re-invalidate map size when returning to step 1
       if (this.currentStep === 1) {
         setTimeout(() => this.map?.invalidateSize(), 150);
+      }
+      // Re-entering step 2 from step 3 → restart camera
+      if (this.currentStep === 2) {
+        setTimeout(() => this.startCamera(), 100);
       }
       this.cdr.markForCheck();
     }
@@ -267,6 +357,7 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
       deviceId: 'WebApp',
       latitude: this.userLat ?? undefined,
       longitude: this.userLng ?? undefined,
+      photoBase64: this.capturedPhoto ?? undefined,
     };
     const action$ =
       this.checkType === 'CheckIn'
@@ -297,12 +388,14 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   reset(): void {
+    this.stopCamera();
     this.currentStep = 1;
     this.submitted = false;
     this.resultMessage = '';
     this.selectedPointId = null;
     this.faceCaptured = false;
     this.skipFace = false;
+    this.capturedPhoto = null;
     setTimeout(() => this.map?.invalidateSize(), 150);
     this.cdr.markForCheck();
   }
