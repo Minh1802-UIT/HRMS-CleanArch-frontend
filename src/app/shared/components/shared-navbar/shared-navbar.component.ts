@@ -9,7 +9,6 @@ import { takeUntil } from 'rxjs/operators';
 import { User } from '../../../core/models/user.model';
 import { NotificationItem } from '../../../core/models/notification.model';
 
-import { AttendanceSimulatorComponent } from '../attendance-simulator/attendance-simulator.component';
 
 const PAGE_TITLES: Record<string, string> = {
   dashboard:     'Dashboard',
@@ -33,7 +32,7 @@ const PAGE_TITLES: Record<string, string> = {
 @Component({
   selector: 'app-shared-navbar',
   standalone: true,
-  imports: [CommonModule, RouterModule, AttendanceSimulatorComponent],
+  imports: [CommonModule, RouterModule],
   templateUrl: './shared-navbar.component.html',
   styleUrl: './shared-navbar.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -48,7 +47,6 @@ export class SharedNavbarComponent implements OnInit, OnDestroy {
   currentUser$: Observable<User | null>;
   unreadCount$: Observable<number>;
 
-  showSimulator: boolean = false;
   showNotifPanel: boolean = false;
   notifications: NotificationItem[] = [];
 
@@ -70,14 +68,6 @@ export class SharedNavbarComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.notificationService.refreshUnreadCount();
-  }
-
-  openSimulator() {
-    this.showSimulator = true;
-  }
-
-  closeSimulator() {
-    this.showSimulator = false;
   }
 
   toggleNotifPanel(): void {

@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRe
 import { NgClass, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AttendanceService, AttendanceRecord, DailyStats } from '@features/attendance/services/attendance.service';
-import { EmployeeService, Employee } from '@features/employee/services/employee.service';
 import { LoggerService } from '@core/services/logger.service';
 import { ToastService } from '@core/services/toast.service';
 import { PagedResult } from '@core/models/api-response';
@@ -24,17 +23,6 @@ export class AttendanceComponent implements OnInit, OnDestroy {
   selectedDate: Date = new Date();
   private destroy$ = new Subject<void>();
 
-  // Simulator State
-  showSimulator = false;
-  employees: Employee[] = [];
-  filteredEmployees: Employee[] = [];
-  searchTerm = '';
-  selectedEmployeeId = '';
-  currentTime = new Date();
-  clockInterval: ReturnType<typeof setInterval> | null = null;
-  simulatorMessage = '';
-  simulatorStatus: 'success' | 'error' | '' = '';
-
   // Pagination
   currentPage: number = 1;
   pageSize: number = 10;
@@ -45,7 +33,6 @@ export class AttendanceComponent implements OnInit, OnDestroy {
 
   constructor(
       private attendanceService: AttendanceService,
-      private employeeService: EmployeeService,
       private logger: LoggerService,
       private toast: ToastService,
       private cdr: ChangeDetectorRef
@@ -53,98 +40,11 @@ export class AttendanceComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.loadData();
-    this.loadEmployees();
   }
 
   ngOnDestroy() {
-      if (this.clockInterval) clearInterval(this.clockInterval);
       this.destroy$.next();
       this.destroy$.complete();
-  }
-
-  loadEmployees() {
-      this.logger.debug('Loading employees for attendance simulator lookup');
-      this.employeeService.getLookup().pipe(takeUntil(this.destroy$)).subscribe({
-          next: (employees) => {
-              this.logger.debug('Employees loaded for attendance lookup', employees);
-              this.employees = employees || [];
-              this.filteredEmployees = [...this.employees];
-              this.cdr.markForCheck();
-          },
-          error: (err) => {
-              this.logger.error('Failed to load employees for simulator', err);
-              this.toast.showError('Load Error', err?.error?.message || 'Failed to load employees');
-              this.simulatorMessage = 'Failed to load employees: ' + (err.statusText || 'Unknown Error');
-              this.simulatorStatus = 'error';
-              this.cdr.markForCheck();
-          }
-      });
-  }
-
-  filterEmployees() {
-      if (!this.searchTerm.trim()) {
-          this.filteredEmployees = [...this.employees];
-      } else {
-          const term = this.searchTerm.toLowerCase();
-          this.filteredEmployees = this.employees.filter(emp => 
-              emp.fullName?.toLowerCase().includes(term) ||
-              emp.employeeCode?.toLowerCase().includes(term) ||
-              emp.jobDetails?.departmentId?.toLowerCase().includes(term)
-          );
-      }
-  }
-
-  openSimulator() {
-      this.showSimulator = true;
-      this.simulatorMessage = '';
-      this.clockInterval = setInterval(() => {
-          this.currentTime = new Date();
-      }, 1000);
-  }
-
-  closeSimulator() {
-      this.showSimulator = false;
-      if (this.clockInterval) clearInterval(this.clockInterval);
-  }
-
-  simulateCheckIn() {
-      if (!this.selectedEmployeeId) return;
-      this.simulatorMessage = 'Processing...';
-      this.attendanceService.checkIn(this.selectedEmployeeId).pipe(takeUntil(this.destroy$)).subscribe({
-          next: (msg) => {
-              this.simulatorMessage = msg;
-              this.simulatorStatus = 'success';
-              this.toast.showSuccess('Checked In', msg || 'Checked in successfully');
-              this.loadData(); // Refresh table
-              this.cdr.markForCheck();
-          },
-          error: (err) => {
-              this.simulatorMessage = err;
-              this.simulatorStatus = 'error';
-              this.toast.showError('Check-in Failed', err?.error?.message || 'Failed to check in');
-              this.cdr.markForCheck();
-          }
-      });
-  }
-
-  simulateCheckOut() {
-      if (!this.selectedEmployeeId) return;
-      this.simulatorMessage = 'Processing...';
-      this.attendanceService.checkOut(this.selectedEmployeeId).pipe(takeUntil(this.destroy$)).subscribe({
-          next: (msg) => {
-              this.simulatorMessage = msg;
-              this.simulatorStatus = 'success';
-              this.toast.showSuccess('Checked Out', msg || 'Checked out successfully');
-              this.loadData(); // Refresh table
-              this.cdr.markForCheck();
-          },
-          error: (err) => {
-              this.simulatorMessage = err;
-              this.simulatorStatus = 'error';
-              this.toast.showError('Check-out Failed', err?.error?.message || 'Failed to check out');
-              this.cdr.markForCheck();
-          }
-      });
   }
 
   processLogs() {
@@ -236,5 +136,4 @@ export class AttendanceComponent implements OnInit, OnDestroy {
 
   trackByIndex(index: number, item?: unknown): number { return index; }
   trackByPage(index: number, page: number): number { return page; }
-  trackByEmployeeId(index: number, emp: Employee): string { return emp.id; }
 }

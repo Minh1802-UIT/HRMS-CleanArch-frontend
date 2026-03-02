@@ -24,15 +24,6 @@
       }
     </button>
 
-    <!-- Attendance Simulator -->
-    <button
-      (click)="openSimulator()"
-      class="flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-[#a78bfa] hover:bg-zinc-800 transition-colors"
-      title="Attendance Simulator"
-    >
-      <span class="material-symbols-outlined text-[20px]">verified_user</span>
-    </button>
-
     <!-- Notification Bell -->
     <div class="relative">
       <button
@@ -221,7 +212,3 @@
   </div>
 </header>
 
-<app-attendance-simulator
-  [isVisible]="showSimulator"
-  (close)="closeSimulator()"
-></app-attendance-simulator>
