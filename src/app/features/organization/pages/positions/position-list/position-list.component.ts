@@ -22,6 +22,7 @@ export class PositionListComponent implements OnInit, OnDestroy {
   rawPositions: PositionTreeNode[] = [];
   departments: Department[] = [];
   selectedDepartmentId: string = '';
+  searchQuery: string = '';
 
   // Stats
   totalPositions = 0;
@@ -88,12 +89,47 @@ export class PositionListComponent implements OnInit, OnDestroy {
   }
 
   onDepartmentChange() {
-    this.zoomLevel = 0.9;
     this.selectedNode = null;
-    const filtered = this.selectedDepartmentId
+    this.zoomLevel = 0.9;
+    this.applyFilters();
+  }
+
+  onSearchChange() {
+    this.selectedNode = null;
+    this.applyFilters();
+  }
+
+  applyFilters() {
+    // Step 1: filter by department
+    const byDept = this.selectedDepartmentId
       ? this.rawPositions.filter(p => p.departmentId === this.selectedDepartmentId)
       : this.rawPositions;
-    this.buildTreeFromFlat(filtered);
+
+    // Step 2: build full tree from dept-filtered set
+    this.buildTreeFromFlat(byDept);
+
+    // Step 3: apply search on top (tree-aware — keeps ancestors of matches)
+    const q = this.searchQuery.trim().toLowerCase();
+    if (q) {
+      this.treeData = this.filterTreeByQuery(this.treeData, q);
+      this.positions = this.positions.filter(p =>
+        p.title.toLowerCase().includes(q) || p.code.toLowerCase().includes(q)
+      );
+    }
+    this.cdr.markForCheck();
+  }
+
+  /** Returns a new tree keeping only nodes that match OR have a matching descendant. */
+  filterTreeByQuery(nodes: PositionTreeNode[], q: string): PositionTreeNode[] {
+    const result: PositionTreeNode[] = [];
+    for (const node of nodes) {
+      const filteredChildren = this.filterTreeByQuery(node.children ?? [], q);
+      const selfMatches = node.title.toLowerCase().includes(q) || node.code.toLowerCase().includes(q);
+      if (selfMatches || filteredChildren.length > 0) {
+        result.push({ ...node, children: filteredChildren });
+      }
+    }
+    return result;
   }
 
   buildTreeFromFlat(items: PositionTreeNode[]) {
