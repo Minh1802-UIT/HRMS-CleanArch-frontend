@@ -163,12 +163,8 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
       next: (data: Employee) => {
         this.employee = data;
         this.loading = false;
-        // The first tab is overview — also prefetch data shown on the overview card
+        // Overview only uses data from the employee object — no extra API calls needed
         this.loadedTabs.add('overview');
-        this.loadPayroll();
-        this.loadedTabs.add('financial');
-        this.loadLeaveData();
-        this.loadedTabs.add('timeoff');
         this.cdr.markForCheck();
       },
       error: (err: Error) => {
