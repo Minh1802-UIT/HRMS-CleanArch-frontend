@@ -1,1 +1,12 @@
-/* checkin-page.component.css */
+/* Leaflet map tile is bright by default; invert in dark mode for a dark map style */
+:host-context(.dark) .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(0.9);
+}
+
+/* Keep the user marker green and unaffected by the dark-mode filter */
+:host-context(.dark) .leaflet-marker-icon,
+:host-context(.dark) .leaflet-marker-shadow,
+:host-context(.dark) .leaflet-popup,
+:host-context(.dark) .leaflet-control {
+  filter: invert(1) hue-rotate(180deg);
+}
