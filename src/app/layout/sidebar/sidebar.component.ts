@@ -74,10 +74,23 @@ const ALL_GROUPS: NavGroup[] = [
     title: 'Time & Leave',
     items: [
       {
+        label: 'Check In/Out',
+        icon: 'login',
+        route: '/attendance/check-in',
+        activePage: 'checkin',
+      },
+      {
+        label: 'My History',
+        icon: 'history',
+        route: '/attendance/my-history',
+        activePage: 'my-history',
+      },
+      {
         label: 'Attendance',
         icon: 'fingerprint',
         route: '/attendance',
         activePage: 'attendance',
+        roles: ['Admin', 'HR', 'Manager'],
       },
       {
         label: 'Shifts',
@@ -214,6 +227,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
       departments: '/departments',
       positions: '/system/positions',
       'org-chart': '/org-chart',
+      checkin: '/attendance/check-in',
+      'my-history': '/attendance/my-history',
       attendance: '/attendance',
       shifts: '/attendance/shifts',
       leaves: '/leaves',

@@ -39,6 +39,9 @@ export const routes: Routes = [
       { path: 'attendance/shifts', loadComponent: () => import('./features/attendance/pages/attendance/shift-list/shift-list.component').then(m => m.ShiftListComponent), canActivate: [roleGuard], data: { roles: ['Admin', 'HR', 'Manager'], activePage: 'shifts' } },
       { path: 'attendance/shifts/add', loadComponent: () => import('./features/attendance/pages/attendance/shift-form/shift-form.component').then(m => m.ShiftFormComponent), canActivate: [roleGuard], data: { roles: ['Admin', 'HR', 'Manager'], activePage: 'shifts' } },
       { path: 'attendance/shifts/edit/:id', loadComponent: () => import('./features/attendance/pages/attendance/shift-form/shift-form.component').then(m => m.ShiftFormComponent), canActivate: [roleGuard], data: { roles: ['Admin', 'HR', 'Manager'], activePage: 'shifts' } },
+      // Attendance self-service (all authenticated employees)
+      { path: 'attendance/check-in', loadComponent: () => import('./features/attendance/pages/checkin-page/checkin-page.component').then(m => m.CheckinPageComponent), canActivate: [authGuard], data: { activePage: 'checkin' } },
+      { path: 'attendance/my-history', loadComponent: () => import('./features/attendance/pages/my-history/my-history.component').then(m => m.MyHistoryComponent), canActivate: [authGuard], data: { activePage: 'my-history' } },
 
       { path: 'departments', loadComponent: () => import('./features/organization/pages/departments/departments.component').then(m => m.DepartmentsComponent), canActivate: [roleGuard], data: { roles: ['Admin', 'HR'], activePage: 'departments' } },
 
