@@ -16,8 +16,8 @@ import { catchError, switchMap, filter, take, throwError, map } from 'rxjs';
 export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
 
-  // Don't attach token to auth endpoints (login, register, refresh-token)
-  if (isAuthRequest(req.url)) {
+  // Don't attach token to auth/public endpoints (login, register, refresh-token, health)
+  if (isPublicEndpoint(req.url)) {
     return next(req);
   }
 
@@ -52,7 +52,7 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(authedReq).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (error.status === 401 && !isAuthRequest(req.url)) {
+      if (error.status === 401 && !isPublicEndpoint(req.url)) {
         return handleUnauthorized(req, next, authService);
       }
       return throwError(() => error);
@@ -91,9 +91,11 @@ function addTokenToRequest(req: HttpRequest<unknown>, token: string): HttpReques
   });
 }
 
-function isAuthRequest(url: string): boolean {
+/** URLs that should pass through without auth token or refresh attempts. */
+function isPublicEndpoint(url: string): boolean {
   return url.includes('/auth/login') ||
          url.includes('/auth/register') ||
          url.includes('/auth/refresh-token') ||
-         url.includes('/auth/logout'); // logout clears cookie — no token needed
+         url.includes('/auth/logout') || // logout clears cookie — no token needed
+         url.endsWith('/health');         // public health-check (warmup ping)
 }

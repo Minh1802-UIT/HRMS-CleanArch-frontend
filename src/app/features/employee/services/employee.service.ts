@@ -21,11 +21,26 @@ export class EmployeeService {
   private employeeCache = new Map<string, { data: Employee; expiry: number }>();
   private readonly CACHE_TTL_MS = 5 * 60 * 1000;
 
+  /** sessionStorage key prefix for persisted employee detail (survives F5 within same session) */
+  private readonly SS_KEY_PREFIX = 'emp_';
+  private readonly SS_CACHE_TTL_MS = 10 * 60 * 1000; // 10 min
+
+  /** In-memory cache for list queries (30 s — covers back-navigation without extra API calls) */
+  private listCache = new Map<string, { data: PagedResult<Employee>; expiry: number }>();
+  private readonly LIST_CACHE_TTL_MS = 30 * 1000;
+
   constructor(private http: HttpClient, private logger: LoggerService) { }
 
   getEmployees(params: { pageSize: number; pageNumber: number; searchTerm?: string; sortBy?: string } = { pageSize: 10, pageNumber: 1 }): Observable<PagedResult<Employee>> {
+    const cacheKey = JSON.stringify(params);
+    const listCached = this.listCache.get(cacheKey);
+    if (listCached && Date.now() < listCached.expiry) {
+      this.logger.debug('EmployeeService: list cache hit');
+      return of(listCached.data);
+    }
     return this.http.post<ApiResponse<PagedResult<Employee>>>(`${this.apiUrl}/list`, params).pipe(
       map(response => response.data),
+      tap(data => this.listCache.set(cacheKey, { data, expiry: Date.now() + this.LIST_CACHE_TTL_MS })),
       catchError(err => { this.logger.error('EmployeeService: getEmployees failed', err); return throwError(() => err); })
     );
   }
@@ -40,26 +55,56 @@ export class EmployeeService {
   }
 
   getEmployeeById(id: string): Observable<Employee> {
-    const cached = this.employeeCache.get(id);
-    if (cached && Date.now() < cached.expiry) {
-      this.logger.debug(`EmployeeService: cache hit for ${id}`);
-      return of(cached.data);
+    // 1. Memory cache (fastest — same Angular session)
+    const memoryCached = this.employeeCache.get(id);
+    if (memoryCached && Date.now() < memoryCached.expiry) {
+      this.logger.debug(`EmployeeService: memory cache hit for ${id}`);
+      return of(memoryCached.data);
     }
+
+    // 2. sessionStorage cache (survives F5 within same browser session)
+    try {
+      const ssRaw = sessionStorage.getItem(this.SS_KEY_PREFIX + id);
+      if (ssRaw) {
+        const ss = JSON.parse(ssRaw) as { data: Employee; expiry: number };
+        if (Date.now() < ss.expiry) {
+          this.logger.debug(`EmployeeService: sessionStorage cache hit for ${id}`);
+          // Repopulate memory cache so subsequent calls are even faster
+          this.employeeCache.set(id, { data: ss.data, expiry: ss.expiry });
+          return of(ss.data);
+        }
+        sessionStorage.removeItem(this.SS_KEY_PREFIX + id);
+      }
+    } catch { /* sessionStorage unavailable (private mode, quota, etc.) */ }
+
+    // 3. Fetch from API
     return this.http.get<ApiResponse<Employee>>(`${this.apiUrl}/${id}`).pipe(
       map(response => response.data),
-      tap(employee => this.employeeCache.set(id, { data: employee, expiry: Date.now() + this.CACHE_TTL_MS })),
+      tap(employee => {
+        const memExpiry = Date.now() + this.CACHE_TTL_MS;
+        this.employeeCache.set(id, { data: employee, expiry: memExpiry });
+        try {
+          sessionStorage.setItem(
+            this.SS_KEY_PREFIX + id,
+            JSON.stringify({ data: employee, expiry: Date.now() + this.SS_CACHE_TTL_MS })
+          );
+        } catch { /* sessionStorage full or unavailable */ }
+      }),
       catchError(err => { this.logger.error(`EmployeeService: getEmployeeById(${id}) failed`, err); return throwError(() => err); })
     );
   }
 
-  /** Call after updating an employee to ensure next load fetches fresh data */
+  /** Call after updating/deleting an employee to ensure next load fetches fresh data */
   invalidateEmployeeCache(id: string): void {
     this.employeeCache.delete(id);
+    this.listCache.clear(); // list counts/statuses may have changed
+    try { sessionStorage.removeItem(this.SS_KEY_PREFIX + id); } catch { /* ignore */ }
   }
 
   addEmployee(employee: Omit<Employee, 'id' | 'version'>): Observable<Employee> {
     return this.http.post<ApiResponse<Employee>>(this.apiUrl, employee).pipe(
       map(response => response.data),
+      tap(() => this.listCache.clear()),
       catchError(err => { this.logger.error('EmployeeService: addEmployee failed', err); return throwError(() => err); })
     );
   }
