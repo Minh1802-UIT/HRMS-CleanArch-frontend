@@ -36,7 +36,8 @@ export class LeaveApprovalComponent implements OnInit, OnDestroy {
   searchTerm = '';
   selectedDepartment = 'All Departments';
   selectedLeaveType = 'Leave Type';
-  dateRange = '';
+  startDate = '';
+  endDate = '';
 
   // Lookups
   departments: string[] = ['All Departments'];
@@ -102,8 +103,35 @@ export class LeaveApprovalComponent implements OnInit, OnDestroy {
           // The leave request model doesn't carry department info, so skip filtering for specific departments
           const matchDept = this.selectedDepartment === 'All Departments' || !this.selectedDepartment;
 
-          return matchStatus && matchSearch && matchType && matchDept;
+          // Date range filtering
+          let matchDate = true;
+          if (this.startDate) {
+            matchDate = matchDate && new Date(r.startDate) >= new Date(this.startDate);
+          }
+          if (this.endDate) {
+            matchDate = matchDate && new Date(r.endDate) <= new Date(this.endDate + 'T23:59:59');
+          }
+
+          return matchStatus && matchSearch && matchType && matchDept && matchDate;
       });
+  }
+
+  get hasActiveFilters(): boolean {
+    return !!(
+      this.searchTerm ||
+      this.selectedDepartment !== 'All Departments' ||
+      this.selectedLeaveType !== 'Leave Type' ||
+      this.startDate ||
+      this.endDate
+    );
+  }
+
+  resetFilters(): void {
+    this.searchTerm = '';
+    this.selectedDepartment = 'All Departments';
+    this.selectedLeaveType = 'Leave Type';
+    this.startDate = '';
+    this.endDate = '';
   }
 
   get pendingCount(): number {

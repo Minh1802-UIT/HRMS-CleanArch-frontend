@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { EmployeeService, Employee } from '@features/employee/services/employee.service';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subject, EMPTY } from 'rxjs';
+import { takeUntil, debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';
 import { ToastService } from '@core/services/toast.service';
 import { MasterDataService } from '@features/organization/services/master-data.service';
 import { LoggerService } from '@core/services/logger.service';
@@ -19,6 +19,7 @@ import { LoggerService } from '@core/services/logger.service';
 })
 export class EmployeeDirectoryComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
+  private searchInput$ = new Subject<string>();
   employees: Employee[] = [];
   filteredEmployees: Employee[] = [];
   loading: boolean = false;
@@ -43,6 +44,26 @@ export class EmployeeDirectoryComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.loadEmployees();
+    this.searchInput$.pipe(
+      debounceTime(350),
+      distinctUntilChanged(),
+      switchMap(() => {
+        this.currentPage = 1;
+        this.loading = true;
+        this.cdr.markForCheck();
+        return this.employeeService.getEmployees({
+          pageSize: this.pageSize,
+          pageNumber: this.currentPage,
+          searchTerm: this.searchTerm
+        }).pipe(catchError(() => EMPTY));
+      }),
+      takeUntil(this.destroy$)
+    ).subscribe(data => {
+      this.employees = data.items;
+      this.totalItems = data.totalCount;
+      this.loading = false;
+      this.cdr.markForCheck();
+    });
   }
 
   ngOnDestroy(): void {
@@ -72,6 +93,10 @@ export class EmployeeDirectoryComponent implements OnInit, OnDestroy {
     });
   }
 
+  onSearchInput(): void {
+    this.searchInput$.next(this.searchTerm);
+  }
+
   onSearch() {
     this.applyFilters();
   }
@@ -95,7 +120,14 @@ export class EmployeeDirectoryComponent implements OnInit, OnDestroy {
   }
 
   get paginatedEmployees(): Employee[] {
-    return this.employees;
+    let result = this.employees;
+    if (this.selectedDepartment) {
+      const dept = this.selectedDepartment.toLowerCase();
+      result = result.filter(e =>
+        (e.departmentName || e.DepartmentName || '').toLowerCase() === dept
+      );
+    }
+    return result;
   }
 
   get totalPages(): number {

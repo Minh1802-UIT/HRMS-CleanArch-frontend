@@ -3,8 +3,8 @@ import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRe
 import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subject, EMPTY } from 'rxjs';
+import { takeUntil, debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';
 import { EmployeeService, Employee } from '@features/employee/services/employee.service';
 import { Department } from '@features/organization/models/department.model';
 import { Position } from '@features/organization/models/position.model';
@@ -25,6 +25,7 @@ import { CsvExportService } from '@core/services/csv-export.service';
 })
 export class EmployeeListComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
+  private searchInput$ = new Subject<string>();
   employees: Employee[] = [];
   filteredEmployees: Employee[] = [];
   loading: boolean = false;
@@ -65,6 +66,28 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.loadMasterData();
     this.loadEmployees();
+    this.searchInput$.pipe(
+      debounceTime(350),
+      distinctUntilChanged(),
+      switchMap(() => {
+        this.currentPage = 1;
+        this.loading = true;
+        this.cdr.markForCheck();
+        return this.employeeService.getEmployees({
+          pageSize: this.pageSize,
+          pageNumber: this.currentPage,
+          searchTerm: this.searchTerm
+        }).pipe(catchError(() => EMPTY));
+      }),
+      takeUntil(this.destroy$)
+    ).subscribe(data => {
+      this.employees = data.items;
+      this.totalItems = data.totalCount;
+      this.totalPagesCount = data.totalPages;
+      this.loading = false;
+      this.calculateStats();
+      this.cdr.markForCheck();
+    });
   }
 
   loadMasterData() {
@@ -187,6 +210,10 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
     }
   }
 
+  onSearchInput(): void {
+    this.searchInput$.next(this.searchTerm);
+  }
+
   onSearch() {
     this.currentPage = 1;
     this.loadEmployees();
@@ -266,9 +293,8 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
 
   clearFilters(): void {
     this.searchTerm = '';
-    this.filteredEmployees = this.employees;
-    this.updatePagination();
     this.currentPage = 1;
+    this.loadEmployees();
   }
 
   getAvatarUrl(path: string | undefined): string {

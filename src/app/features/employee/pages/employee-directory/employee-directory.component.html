@@ -57,19 +57,32 @@
         <input
           type="text"
           [(ngModel)]="searchTerm"
-          (input)="onSearch()"
-          class="block w-full pl-10 pr-3 py-2.5 bg-gray-100 dark:bg-gray-800 border-none rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary"
+          (input)="onSearchInput()"
+          (keyup.enter)="onSearch()"
+          class="block w-full pl-10 pr-8 py-2.5 bg-gray-100 dark:bg-gray-800 border-none rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary"
           placeholder="Search"
         />
+        @if (searchTerm) {
+          <button
+            type="button"
+            (click)="clearFilters()"
+            class="absolute inset-y-0 right-0 flex items-center pr-2.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            aria-label="Clear search"
+          >
+            <i class="pi pi-times text-xs"></i>
+          </button>
+        }
       </div>
       <div class="relative w-full md:w-64">
         <select
+          [(ngModel)]="selectedOffice"
+          (change)="applyFilters()"
           class="block w-full pl-4 pr-10 py-2.5 bg-gray-100 dark:bg-gray-800 border-none rounded-lg text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-primary appearance-none cursor-pointer"
         >
-          <option>All Offices</option>
-          <option>Axis Building</option>
-          <option>Elevate Complex</option>
-          <option>Innovate Tower</option>
+          <option value="">All Offices</option>
+          <option value="Axis Building">Axis Building</option>
+          <option value="Elevate Complex">Elevate Complex</option>
+          <option value="Innovate Tower">Innovate Tower</option>
         </select>
         <span
           class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none"
@@ -79,13 +92,15 @@
       </div>
       <div class="relative w-full md:w-64">
         <select
+          [(ngModel)]="selectedDepartment"
+          (change)="applyFilters()"
           class="block w-full pl-4 pr-10 py-2.5 bg-gray-100 dark:bg-gray-800 border-none rounded-lg text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-primary appearance-none cursor-pointer"
         >
-          <option>All Departments</option>
-          <option>Engineering</option>
-          <option>Design</option>
-          <option>Sales</option>
-          <option>Marketing</option>
+          <option value="">All Departments</option>
+          <option value="Engineering">Engineering</option>
+          <option value="Design">Design</option>
+          <option value="Sales">Sales</option>
+          <option value="Marketing">Marketing</option>
         </select>
         <span
           class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none"
