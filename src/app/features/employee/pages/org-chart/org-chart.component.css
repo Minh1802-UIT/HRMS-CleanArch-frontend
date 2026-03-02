@@ -190,11 +190,6 @@
   to   { opacity: 1; transform: translateX(0); }
 }
 
-  align-items: flex-start;
-  padding: 20px;
-  overflow: auto;
-}
-
 /* Tree Structure */
 .tree {
   display: inline-flex;
