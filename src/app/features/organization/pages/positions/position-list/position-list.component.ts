@@ -37,6 +37,9 @@ export class PositionListComponent implements OnInit, OnDestroy {
   showModal = false;
   selectedPositionId?: string;
   selectedNode: PositionTreeNode | null = null;
+  confirmDelete = false;
+  confirmDeleteNode: PositionTreeNode | null = null;
+  deleting = false;
 
   private destroy$ = new Subject<void>();
 
@@ -206,12 +209,36 @@ export class PositionListComponent implements OnInit, OnDestroy {
   openEditModal(pos: PositionTreeNode) { this.selectedPositionId = pos.id; this.showModal = true; this.cdr.markForCheck(); }
 
   deletePosition(pos: PositionTreeNode) {
-    if (confirm(`Delete "${pos.title}"?`)) {
-      this.positionService.deletePosition(pos.id).pipe(takeUntil(this.destroy$)).subscribe({
-        next: () => { this.toast.showSuccess('Success', 'Position deleted'); this.selectedNode = null; this.loadData(); },
-        error: (err: any) => this.toast.showError('Error', err.error?.message || 'Failed to delete')
-      });
-    }
+    this.confirmDeleteNode = pos;
+    this.confirmDelete = true;
+    this.cdr.markForCheck();
+  }
+
+  cancelDelete() {
+    this.confirmDelete = false;
+    this.confirmDeleteNode = null;
+    this.cdr.markForCheck();
+  }
+
+  confirmDeleteAction() {
+    if (!this.confirmDeleteNode) return;
+    this.deleting = true;
+    this.cdr.markForCheck();
+    this.positionService.deletePosition(this.confirmDeleteNode.id).pipe(takeUntil(this.destroy$)).subscribe({
+      next: () => {
+        this.toast.showSuccess('Success', `"${this.confirmDeleteNode!.title}" deleted`);
+        this.selectedNode = null;
+        this.confirmDelete = false;
+        this.confirmDeleteNode = null;
+        this.deleting = false;
+        this.loadData();
+      },
+      error: (err: any) => {
+        this.toast.showError('Error', err.error?.message || 'Failed to delete');
+        this.deleting = false;
+        this.cdr.markForCheck();
+      }
+    });
   }
 
   closeModal() { this.showModal = false; this.selectedPositionId = undefined; this.loadData(); this.cdr.markForCheck(); }

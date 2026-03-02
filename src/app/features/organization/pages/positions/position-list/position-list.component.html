@@ -321,6 +321,36 @@
 </ng-template>
 
 @if (showModal) {
-<app-position-form [positionId]="selectedPositionId" (saved)="onSaved()" (close)="closeModal()"></app-position-form>
+<div class="flex fixed inset-0 z-50 justify-end items-center">
+  <div class="absolute inset-0 backdrop-blur-sm transition-opacity bg-zinc-900/50" (click)="closeModal()"></div>
+  <div class="overflow-hidden relative w-full max-w-lg h-full bg-white border-l border-zinc-200 shadow-2xl dark:bg-zinc-900 dark:border-zinc-800">
+    <app-position-form [positionId]="selectedPositionId" (saved)="onSaved()" (close)="closeModal()"></app-position-form>
+  </div>
+</div>
+}
+
+@if (confirmDelete) {
+<div class="flex fixed inset-0 z-50 items-center justify-center">
+  <div class="absolute inset-0 backdrop-blur-sm bg-zinc-900/50" (click)="cancelDelete()"></div>
+  <div class="relative bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 p-6 w-full max-w-sm mx-4">
+    <div class="flex items-center justify-center w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 mx-auto mb-4">
+      <i class="pi pi-trash text-red-600 dark:text-red-400 text-xl"></i>
+    </div>
+    <h3 class="text-center text-base font-bold text-gray-900 dark:text-white mb-1">Delete Position</h3>
+    <p class="text-center text-sm text-gray-500 dark:text-gray-400 mb-6">
+      Are you sure you want to delete <span class="font-semibold text-gray-800 dark:text-white">"{{ confirmDeleteNode?.title }}"</span>? This action cannot be undone.
+    </p>
+    <div class="flex gap-3">
+      <button (click)="cancelDelete()"
+        class="flex-1 py-2 text-sm font-semibold text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl transition-colors">
+        Cancel
+      </button>
+      <button (click)="confirmDeleteAction()" [disabled]="deleting"
+        class="flex-1 py-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-500 disabled:opacity-60 rounded-xl transition-colors">
+        {{ deleting ? 'Deleting…' : 'Delete' }}
+      </button>
+    </div>
+  </div>
+</div>
 }
 
