@@ -85,7 +85,7 @@
             </span>
             <span
               class="px-3 py-1 rounded-full bg-purple-100 text-purple-700 text-xs font-bold uppercase tracking-widest">
-              {{ contracts.length > 0 ? "Contracted" : "Uncontracted" }}
+              {{ loadedTabs.has('career') ? (contracts.length > 0 ? "Contracted" : "Uncontracted") : "..." }}
             </span>
           </div>
         </div>
@@ -227,7 +227,7 @@
                     </p>
                     <p class="text-sm font-bold truncate text-slate-900 dark:text-white">
                       {{
-                      employee.personalInfo?.phoneNumber || "No phone set"
+                      employee.personalInfo.phoneNumber || "No phone set"
                       }}
                     </p>
                   </div>
@@ -321,7 +321,7 @@
                   Gender
                 </p>
                 <p class="text-sm font-bold text-slate-700 dark:text-slate-200">
-                  {{ employee.personalInfo?.gender || "-" }}
+                  {{ employee.personalInfo.gender || "-" }}
                 </p>
               </div>
               <div>
@@ -329,7 +329,7 @@
                   Marital Status
                 </p>
                 <p class="text-sm font-bold text-slate-700 dark:text-slate-200">
-                  {{ employee.personalInfo?.maritalStatus || "-" }}
+                  {{ employee.personalInfo.maritalStatus || "-" }}
                 </p>
               </div>
               <div>
@@ -337,7 +337,7 @@
                   Date of Birth
                 </p>
                 <p class="text-sm font-bold text-slate-700 dark:text-slate-200">
-                  {{ formatDate(employee.personalInfo?.dateOfBirth) }}
+                  {{ formatDate(employee.personalInfo.dateOfBirth) }}
                 </p>
               </div>
               <div>
@@ -345,7 +345,7 @@
                   Nationality
                 </p>
                 <p class="text-sm font-bold text-slate-700 dark:text-slate-200">
-                  {{ employee.personalInfo?.nationality || "-" }}
+                  {{ employee.personalInfo.nationality || "-" }}
                 </p>
               </div>
               <div class="col-span-2">
@@ -353,7 +353,7 @@
                   Identity Card / Passport
                 </p>
                 <p class="text-sm font-bold tracking-wider text-slate-700 dark:text-slate-200">
-                  {{ employee.personalInfo?.identityCard || "-" }}
+                  {{ employee.personalInfo.identityCard || "-" }}
                 </p>
               </div>
             </div>
@@ -374,7 +374,7 @@
                   Residential Address
                 </p>
                 <p class="text-sm font-bold leading-relaxed text-slate-700 dark:text-slate-200">
-                  {{ employee.personalInfo?.address || "-" }}
+                  {{ employee.personalInfo.address || "-" }}
                 </p>
               </div>
               <div>
@@ -382,7 +382,7 @@
                   City / Province
                 </p>
                 <p class="text-sm font-bold text-slate-700 dark:text-slate-200">
-                  {{ employee.personalInfo?.city || "-" }}
+                  {{ employee.personalInfo.city || "-" }}
                 </p>
               </div>
               <div>
@@ -390,7 +390,7 @@
                   Postal Code
                 </p>
                 <p class="text-sm font-bold text-slate-700 dark:text-slate-200">
-                  {{ employee.personalInfo?.postalCode || "-" }}
+                  {{ employee.personalInfo.postalCode || "-" }}
                 </p>
               </div>
               <div>
@@ -398,7 +398,7 @@
                   Country
                 </p>
                 <p class="text-sm font-bold text-slate-700 dark:text-slate-200">
-                  {{ employee.personalInfo?.country || "-" }}
+                  {{ employee.personalInfo.country || "-" }}
                 </p>
               </div>
               <div>
@@ -406,7 +406,7 @@
                   Hometown
                 </p>
                 <p class="text-sm font-bold text-slate-700 dark:text-slate-200">
-                  {{ employee.personalInfo?.hometown || "-" }}
+                  {{ employee.personalInfo.hometown || "-" }}
                 </p>
               </div>
             </div>

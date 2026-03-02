@@ -16,7 +16,7 @@ import { ContractManagementComponent } from './contract-management/contract-mana
 import { LeaveAllocationService } from '@features/leave/services/leave-allocation.service';
 import { LeaveRequestService } from '@features/leave/services/leave-request.service';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, distinctUntilChanged } from 'rxjs/operators';
 
 interface LeaveBalance {
   type: string;
@@ -63,7 +63,7 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
   canEdit = false; // Permission flag
   private destroy$ = new Subject<void>();
 
-  private loadedTabs = new Set<string>();
+  protected loadedTabs = new Set<string>();
 
   // Master Data Maps
   departmentsMap: { [key: string]: string } = {};
@@ -110,16 +110,21 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
     this.checkPermissions();
     this.loadMasterData();
 
-    this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe(params => {
+    this.route.paramMap.pipe(
+      takeUntil(this.destroy$),
+      distinctUntilChanged((a, b) => a.get('id') === b.get('id'))
+    ).subscribe(params => {
       // /profile route has no :id — fall back to the current user's own employeeId
       const routeId = params.get('id');
       const currentUserEmployeeId = this.authService.currentUserValue?.employeeId;
       this.employeeId = routeId || currentUserEmployeeId || '';
       // Own profile = no :id in route OR the :id matches the current user's employee
       this.isOwnProfile = !routeId || this.employeeId === currentUserEmployeeId;
+      // Reset lazy-tab state and contracts when navigating to a different employee
+      this.loadedTabs.clear();
+      this.contracts = [];
       if (this.employeeId) {
         this.loadEmployee();
-        this.loadContracts();
       }
       this.cdr.markForCheck();
     });
@@ -312,6 +317,8 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
 
   onEmployeeUpdated() {
     this.showEditModal = false;
+    // Invalidate cache so next load always fetches fresh data
+    this.employeeService.invalidateEmployeeCache(this.employeeId);
     this.loadEmployee();
   }
 
@@ -329,6 +336,9 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
         this.loadedTabs.add(tabId);
       } else if (tabId === 'timeoff') {
         this.loadLeaveData();
+        this.loadedTabs.add(tabId);
+      } else if (tabId === 'career') {
+        this.loadContracts();
         this.loadedTabs.add(tabId);
       }
     }
