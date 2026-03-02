@@ -13,6 +13,7 @@ import { DepartmentService, Department } from '@features/organization/services/d
   standalone: true,
   imports: [DecimalPipe, NgClass, PositionFormComponent, FormsModule, NgTemplateOutlet],
   templateUrl: './position-list.component.html',
+  styleUrl: './position-list.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PositionListComponent implements OnInit, OnDestroy {
