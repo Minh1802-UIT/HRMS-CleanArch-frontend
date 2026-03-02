@@ -33,6 +33,7 @@
           type="date"
           [(ngModel)]="startDate"
           (change)="onFilterChange()"
+          [class.border-red-400]="!!dateError"
           class="block px-3 py-2 w-full text-sm bg-gray-50 rounded-md border border-gray-300 dark:bg-gray-800 dark:border-gray-600 focus:ring-primary focus:border-primary dark:text-white"
         />
       </div>
@@ -45,8 +46,12 @@
           type="date"
           [(ngModel)]="endDate"
           (change)="onFilterChange()"
+          [class.border-red-400]="!!dateError"
           class="block px-3 py-2 w-full text-sm bg-gray-50 rounded-md border border-gray-300 dark:bg-gray-800 dark:border-gray-600 focus:ring-primary focus:border-primary dark:text-white"
         />
+        @if (dateError) {
+          <p class="text-xs text-red-500">{{ dateError }}</p>
+        }
       </div>
 
       <!-- Action Type -->
@@ -71,10 +76,18 @@
 
       <!-- Search -->
       <div class="space-y-1 lg:col-span-2 xl:col-span-2">
-        <label
-          class="text-xs font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400"
-          >Search</label
-        >
+        <div class="flex justify-between items-center">
+          <label
+            class="text-xs font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400"
+            >Search</label
+          >
+          @if (hasActiveFilters) {
+            <button
+              (click)="clearFilters()"
+              class="text-xs font-medium text-primary hover:underline"
+            >Clear all</button>
+          }
+        </div>
         <div class="relative">
           <span
             class="flex absolute inset-y-0 left-0 items-center pl-3 text-gray-400 pointer-events-none"
@@ -84,10 +97,20 @@
           <input
             type="text"
             [(ngModel)]="searchTerm"
-            (input)="onFilterChange()"
+            (input)="onSearchInput()"
+            (keyup.enter)="onFilterChange()"
             placeholder="Search by user, table or activity..."
-            class="block py-2 pr-3 pl-10 w-full text-sm bg-gray-50 rounded-md border border-gray-300 dark:bg-gray-800 dark:border-gray-600 focus:ring-primary focus:border-primary dark:text-white"
+            class="block py-2 pr-8 pl-10 w-full text-sm bg-gray-50 rounded-md border border-gray-300 dark:bg-gray-800 dark:border-gray-600 focus:ring-primary focus:border-primary dark:text-white"
           />
+          @if (searchTerm) {
+            <button
+              (click)="searchTerm = ''; onFilterChange()"
+              class="flex absolute inset-y-0 right-0 items-center pr-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+              title="Clear search"
+            >
+              <span class="text-sm material-symbols-outlined">close</span>
+            </button>
+          }
         </div>
       </div>
     </div>

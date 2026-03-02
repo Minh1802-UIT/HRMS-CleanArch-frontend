@@ -21,14 +21,24 @@
         <input
           type="text"
           [(ngModel)]="keyword"
+          (input)="onSearchInput()"
           (keyup.enter)="onSearch()"
           placeholder="Search employee..."
-          class="pl-10 pr-4 py-2 border border-slate-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-200 w-64"
+          class="pl-10 pr-8 py-2 border border-slate-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-200 w-64"
         />
         <span
           class="material-symbols-outlined absolute left-3 top-2.5 text-slate-500 text-sm"
           >search</span
         >
+        @if (keyword) {
+          <button
+            (click)="clearSearch()"
+            class="absolute right-2 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-gray-200"
+            title="Clear"
+          >
+            <span class="material-symbols-outlined text-sm">close</span>
+          </button>
+        }
       </div>
 
       <button

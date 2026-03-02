@@ -3,8 +3,8 @@ import { NgClass, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuditLogService } from '@features/system/services/audit-log.service';
 import { AuditLog } from '@core/models/audit-log.model';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subject, EMPTY } from 'rxjs';
+import { takeUntil, debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';
 import { ToastService } from '@core/services/toast.service';
 
 @Component({
@@ -32,11 +32,40 @@ export class AuditLogsComponent implements OnInit, OnDestroy {
 
   actionTypes = ['Create', 'Update', 'Delete', 'Login', 'Logout', 'RoleAssignment'];
   private destroy$ = new Subject<void>();
+  private searchInput$ = new Subject<string>();
 
   constructor(private auditLogService: AuditLogService, private toast: ToastService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.loadLogs();
+    // Debounce text search: wait 400ms after user stops typing
+    this.searchInput$.pipe(
+      debounceTime(400),
+      distinctUntilChanged(),
+      switchMap(term => {
+        this.loading = true;
+        this.currentPage = 1;
+        this.cdr.markForCheck();
+        return this.auditLogService.getAuditLogs(
+          this.currentPage, this.pageSize, term,
+          this.startDate, this.endDate, this.actionType
+        ).pipe(
+          catchError(err => {
+            this.toast.showError('Load Error', err?.error?.message || 'Failed to load audit logs');
+            this.loading = false;
+            this.cdr.markForCheck();
+            return EMPTY;
+          })
+        );
+      }),
+      takeUntil(this.destroy$)
+    ).subscribe(result => {
+      this.logs = result.items;
+      this.totalItems = result.totalCount;
+      this.totalPages = result.totalPages;
+      this.loading = false;
+      this.cdr.markForCheck();
+    });
   }
 
   ngOnDestroy(): void {
@@ -70,6 +99,30 @@ export class AuditLogsComponent implements OnInit, OnDestroy {
   }
 
   onFilterChange() {
+    this.currentPage = 1;
+    this.loadLogs();
+  }
+
+  onSearchInput() {
+    this.searchInput$.next(this.searchTerm);
+  }
+
+  get hasActiveFilters(): boolean {
+    return !!(this.searchTerm || this.startDate || this.endDate || this.actionType);
+  }
+
+  get dateError(): string | null {
+    if (this.startDate && this.endDate && this.endDate < this.startDate) {
+      return 'End date must be after start date';
+    }
+    return null;
+  }
+
+  clearFilters() {
+    this.searchTerm = '';
+    this.startDate = '';
+    this.endDate = '';
+    this.actionType = '';
     this.currentPage = 1;
     this.loadLogs();
   }

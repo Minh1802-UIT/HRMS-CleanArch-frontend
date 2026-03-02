@@ -2,7 +2,8 @@ import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRe
 import { NgClass, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';
+import { EMPTY } from 'rxjs';
 import { LeaveAllocationService } from '@features/leave/services/leave-allocation.service';
 import { LeaveAllocationDto } from '@features/leave/models/leave-allocation.model';
 import { PagedResult } from '@core/models/api-response';
@@ -17,22 +18,49 @@ import { LoggerService } from '@core/services/logger.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LeaveReportComponent implements OnInit, OnDestroy {
-  private destroy$ = new Subject<void>();
   allocations: LeaveAllocationDto[] = [];
   loading = false;
-  
+
   // Pagination
   pageNumber = 1;
   pageSize = 10;
   totalCount = 0;
   protected readonly Math = Math;
 
-  keyword: string = ''; // Search keyword
+  keyword: string = '';
+  private destroy$ = new Subject<void>();
+  private searchInput$ = new Subject<string>();
 
   constructor(private leaveAllocationService: LeaveAllocationService, private logger: LoggerService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.loadData();
+    // Debounce text search: wait 350ms after user stops typing
+    this.searchInput$.pipe(
+      debounceTime(350),
+      distinctUntilChanged(),
+      switchMap(term => {
+        this.loading = true;
+        this.pageNumber = 1;
+        this.cdr.markForCheck();
+        return this.leaveAllocationService.getAllAllocations(
+          { pageNumber: this.pageNumber, pageSize: this.pageSize }, term
+        ).pipe(
+          catchError(err => {
+            this.logger.error('Failed to load leave reports', err);
+            this.loading = false;
+            this.cdr.markForCheck();
+            return EMPTY;
+          })
+        );
+      }),
+      takeUntil(this.destroy$)
+    ).subscribe((res: PagedResult<LeaveAllocationDto>) => {
+      this.allocations = res.items || [];
+      this.totalCount = res.totalCount || 0;
+      this.loading = false;
+      this.cdr.markForCheck();
+    });
   }
 
   loadData(): void {
@@ -58,7 +86,17 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
   }
 
   onSearch(): void {
-    this.pageNumber = 1; // Reset to first page
+    this.pageNumber = 1;
+    this.loadData();
+  }
+
+  onSearchInput(): void {
+    this.searchInput$.next(this.keyword);
+  }
+
+  clearSearch(): void {
+    this.keyword = '';
+    this.pageNumber = 1;
     this.loadData();
   }
 

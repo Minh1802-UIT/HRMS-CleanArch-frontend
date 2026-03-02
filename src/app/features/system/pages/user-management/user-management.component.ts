@@ -7,7 +7,8 @@ import { ToastService } from '@core/services/toast.service';
 import { LoggerService } from '@core/services/logger.service';
 import { ConfirmDialogService } from '@core/services/confirm-dialog.service';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';
+import { EMPTY } from 'rxjs';
 
 @Component({
   selector: 'app-user-management',
@@ -28,6 +29,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   saving = false;
   searchTerm = '';
   private destroy$ = new Subject<void>();
+  private searchInput$ = new Subject<string>();
 
   // Pagination
   currentPage = 1;
@@ -47,6 +49,32 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.loadUsers();
     this.loadRoles();
+    // Debounce search: wait 350ms after user stops typing before calling the API
+    this.searchInput$.pipe(
+      debounceTime(350),
+      distinctUntilChanged(),
+      switchMap(term => {
+        this.loading = true;
+        this.currentPage = 1;
+        this.cdr.markForCheck();
+        return this.authService.getAllUsers(this.currentPage, this.pageSize, term).pipe(
+          catchError(err => {
+            this.logger.error('Failed to load users', err);
+            this.toastService.showError('Load Error', err?.error?.message || 'Could not load users');
+            this.loading = false;
+            this.cdr.markForCheck();
+            return EMPTY;
+          })
+        );
+      }),
+      takeUntil(this.destroy$)
+    ).subscribe(result => {
+      this.users = result.items;
+      this.totalItems = result.totalCount;
+      this.totalPages = result.totalPages;
+      this.loading = false;
+      this.cdr.markForCheck();
+    });
   }
 
   ngOnDestroy(): void {
@@ -68,6 +96,16 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   }
 
   onSearch() {
+    this.currentPage = 1;
+    this.loadUsers();
+  }
+
+  onSearchInput() {
+    this.searchInput$.next(this.searchTerm);
+  }
+
+  clearSearch() {
+    this.searchTerm = '';
     this.currentPage = 1;
     this.loadUsers();
   }
