@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { LoggerService } from './logger.service';
-import { MessageService } from 'primeng/api';
+import { ToastService } from './toast.service';
 
 export interface ErrorMessage {
   title: string;
@@ -15,7 +15,7 @@ export interface ErrorMessage {
 export class ErrorHandlerService {
   constructor(
     private logger: LoggerService,
-    private messageService: MessageService
+    private toast: ToastService
   ) {}
 
   /**
@@ -112,47 +112,33 @@ export class ErrorHandlerService {
    * Show error toast notification
    */
   private showErrorToast(errorMessage: ErrorMessage): void {
-    this.messageService.add({
-      severity: errorMessage.severity,
-      summary: errorMessage.title,
-      detail: errorMessage.detail,
-      life: 5000
-    });
+    if (errorMessage.severity === 'warn') {
+      this.toast.showWarn(errorMessage.title, errorMessage.detail);
+    } else if (errorMessage.severity === 'info') {
+      this.toast.showInfo(errorMessage.title, errorMessage.detail);
+    } else {
+      this.toast.showError(errorMessage.title, errorMessage.detail);
+    }
   }
 
   /**
    * Show success toast notification
    */
   showSuccess(title: string, message: string): void {
-    this.messageService.add({
-      severity: 'success',
-      summary: title,
-      detail: message,
-      life: 3000
-    });
+    this.toast.showSuccess(title, message);
   }
 
   /**
    * Show warning toast notification
    */
   showWarning(title: string, message: string): void {
-    this.messageService.add({
-      severity: 'warn',
-      summary: title,
-      detail: message,
-      life: 4000
-    });
+    this.toast.showWarn(title, message);
   }
 
   /**
    * Show info toast notification
    */
   showInfo(title: string, message: string): void {
-    this.messageService.add({
-      severity: 'info',
-      summary: title,
-      detail: message,
-      life: 3000
-    });
+    this.toast.showInfo(title, message);
   }
 }

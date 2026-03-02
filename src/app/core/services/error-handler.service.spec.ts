@@ -2,22 +2,22 @@ import { TestBed } from '@angular/core/testing';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorHandlerService } from './error-handler.service';
 import { LoggerService } from './logger.service';
-import { MessageService } from 'primeng/api';
+import { ToastService } from './toast.service';
 
 describe('ErrorHandlerService', () => {
   let service: ErrorHandlerService;
   let loggerSpy: jasmine.SpyObj<LoggerService>;
-  let messageServiceSpy: jasmine.SpyObj<MessageService>;
+  let toastSpy: jasmine.SpyObj<ToastService>;
 
   beforeEach(() => {
     loggerSpy = jasmine.createSpyObj('LoggerService', ['debug', 'info', 'warn', 'error']);
-    messageServiceSpy = jasmine.createSpyObj('MessageService', ['add']);
+    toastSpy = jasmine.createSpyObj('ToastService', ['showSuccess', 'showError', 'showWarn', 'showInfo']);
 
     TestBed.configureTestingModule({
       providers: [
         ErrorHandlerService,
         { provide: LoggerService, useValue: loggerSpy },
-        { provide: MessageService, useValue: messageServiceSpy }
+        { provide: ToastService, useValue: toastSpy }
       ]
     });
 
@@ -37,9 +37,7 @@ describe('ErrorHandlerService', () => {
       service.handleHttpError(error, 'test');
 
       expect(loggerSpy.error).toHaveBeenCalled();
-      expect(messageServiceSpy.add).toHaveBeenCalledWith(
-        jasmine.objectContaining({ summary: 'Connection Error' })
-      );
+      expect(toastSpy.showError).toHaveBeenCalledWith('Connection Error', jasmine.any(String));
     });
 
     it('should show validation error for 400 with errors array', () => {
@@ -49,12 +47,7 @@ describe('ErrorHandlerService', () => {
       });
       service.handleHttpError(error);
 
-      expect(messageServiceSpy.add).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          summary: 'Validation Error',
-          severity: 'warn'
-        })
-      );
+      expect(toastSpy.showWarn).toHaveBeenCalledWith('Validation Error', jasmine.any(String));
     });
 
     it('should show validation error for 400 with message', () => {
@@ -64,38 +57,28 @@ describe('ErrorHandlerService', () => {
       });
       service.handleHttpError(error);
 
-      expect(messageServiceSpy.add).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          detail: 'Bad input!'
-        })
-      );
+      expect(toastSpy.showWarn).toHaveBeenCalledWith(jasmine.any(String), 'Bad input!');
     });
 
     it('should show unauthorized for 401', () => {
       const error = new HttpErrorResponse({ status: 401, statusText: 'Unauthorized' });
       service.handleHttpError(error);
 
-      expect(messageServiceSpy.add).toHaveBeenCalledWith(
-        jasmine.objectContaining({ summary: 'Unauthorized' })
-      );
+      expect(toastSpy.showError).toHaveBeenCalledWith('Unauthorized', jasmine.any(String));
     });
 
     it('should show forbidden for 403', () => {
       const error = new HttpErrorResponse({ status: 403, statusText: 'Forbidden' });
       service.handleHttpError(error);
 
-      expect(messageServiceSpy.add).toHaveBeenCalledWith(
-        jasmine.objectContaining({ summary: 'Forbidden' })
-      );
+      expect(toastSpy.showError).toHaveBeenCalledWith('Forbidden', jasmine.any(String));
     });
 
     it('should show not found for 404', () => {
       const error = new HttpErrorResponse({ status: 404, statusText: 'Not Found' });
       service.handleHttpError(error);
 
-      expect(messageServiceSpy.add).toHaveBeenCalledWith(
-        jasmine.objectContaining({ summary: 'Not Found' })
-      );
+      expect(toastSpy.showError).toHaveBeenCalledWith('Not Found', jasmine.any(String));
     });
 
     it('should show server error for 500', () => {
@@ -105,27 +88,21 @@ describe('ErrorHandlerService', () => {
       });
       service.handleHttpError(error);
 
-      expect(messageServiceSpy.add).toHaveBeenCalledWith(
-        jasmine.objectContaining({ summary: 'Server Error' })
-      );
+      expect(toastSpy.showError).toHaveBeenCalledWith('Server Error', jasmine.any(String));
     });
 
     it('should show service unavailable for 503', () => {
       const error = new HttpErrorResponse({ status: 503, statusText: 'Service Unavailable' });
       service.handleHttpError(error);
 
-      expect(messageServiceSpy.add).toHaveBeenCalledWith(
-        jasmine.objectContaining({ summary: 'Service Unavailable' })
-      );
+      expect(toastSpy.showError).toHaveBeenCalledWith('Service Unavailable', jasmine.any(String));
     });
 
     it('should show generic error for unknown status', () => {
       const error = new HttpErrorResponse({ status: 418, statusText: "I'm a teapot" });
       service.handleHttpError(error);
 
-      expect(messageServiceSpy.add).toHaveBeenCalledWith(
-        jasmine.objectContaining({ summary: 'Error 418' })
-      );
+      expect(toastSpy.showError).toHaveBeenCalledWith('Error 418', jasmine.any(String));
     });
 
     it('should handle client-side ErrorEvent', () => {
@@ -133,7 +110,7 @@ describe('ErrorHandlerService', () => {
       const error = new HttpErrorResponse({ error: errorEvent, status: 0 });
       service.handleHttpError(error);
 
-      expect(messageServiceSpy.add).toHaveBeenCalled();
+      expect(toastSpy.showError).toHaveBeenCalled();
     });
 
     it('should include context in log when provided', () => {
@@ -158,22 +135,13 @@ describe('ErrorHandlerService', () => {
         jasmine.stringContaining('Dashboard'),
         jasmine.anything()
       );
-      expect(messageServiceSpy.add).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          severity: 'error',
-          detail: 'Something broke'
-        })
-      );
+      expect(toastSpy.showError).toHaveBeenCalledWith('Error', 'Something broke');
     });
 
     it('should handle null/undefined errors gracefully', () => {
       service.handleError(null);
 
-      expect(messageServiceSpy.add).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          detail: 'An unexpected error occurred'
-        })
-      );
+      expect(toastSpy.showError).toHaveBeenCalledWith('Error', 'An unexpected error occurred');
     });
   });
 
@@ -181,25 +149,19 @@ describe('ErrorHandlerService', () => {
   // Toast helpers
   // --------------------------------------------------
   describe('toast helpers', () => {
-    it('showSuccess should call messageService.add', () => {
+    it('showSuccess should call toast.showSuccess', () => {
       service.showSuccess('OK', 'Done');
-      expect(messageServiceSpy.add).toHaveBeenCalledWith(
-        jasmine.objectContaining({ severity: 'success', summary: 'OK', detail: 'Done' })
-      );
+      expect(toastSpy.showSuccess).toHaveBeenCalledWith('OK', 'Done');
     });
 
-    it('showWarning should call messageService.add', () => {
+    it('showWarning should call toast.showWarn', () => {
       service.showWarning('Watch out', 'Careful');
-      expect(messageServiceSpy.add).toHaveBeenCalledWith(
-        jasmine.objectContaining({ severity: 'warn', summary: 'Watch out' })
-      );
+      expect(toastSpy.showWarn).toHaveBeenCalledWith('Watch out', 'Careful');
     });
 
-    it('showInfo should call messageService.add', () => {
+    it('showInfo should call toast.showInfo', () => {
       service.showInfo('FYI', 'Note');
-      expect(messageServiceSpy.add).toHaveBeenCalledWith(
-        jasmine.objectContaining({ severity: 'info', summary: 'FYI' })
-      );
+      expect(toastSpy.showInfo).toHaveBeenCalledWith('FYI', 'Note');
     });
   });
 });
