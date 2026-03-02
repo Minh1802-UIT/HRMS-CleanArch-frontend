@@ -202,20 +202,20 @@ export class PositionListComponent implements OnInit, OnDestroy {
     return val >= 1_000_000 ? (val / 1_000_000).toFixed(0) + 'M' : (val / 1_000).toFixed(0) + 'K';
   }
 
-  openAddModal() { this.selectedPositionId = undefined; this.showModal = true; }
-  openEditModal(pos: PositionTreeNode) { this.selectedPositionId = pos.id; this.showModal = true; }
+  openAddModal() { this.selectedPositionId = undefined; this.showModal = true; this.cdr.markForCheck(); }
+  openEditModal(pos: PositionTreeNode) { this.selectedPositionId = pos.id; this.showModal = true; this.cdr.markForCheck(); }
 
   deletePosition(pos: PositionTreeNode) {
     if (confirm(`Delete "${pos.title}"?`)) {
       this.positionService.deletePosition(pos.id).pipe(takeUntil(this.destroy$)).subscribe({
-        next: () => { this.toast.showSuccess('Success', 'Position deleted'); this.loadData(); },
+        next: () => { this.toast.showSuccess('Success', 'Position deleted'); this.selectedNode = null; this.loadData(); },
         error: (err: any) => this.toast.showError('Error', err.error?.message || 'Failed to delete')
       });
     }
   }
 
-  closeModal() { this.showModal = false; this.selectedPositionId = undefined; this.loadData(); }
-  onSaved() { this.closeModal(); }
+  closeModal() { this.showModal = false; this.selectedPositionId = undefined; this.loadData(); this.cdr.markForCheck(); }
+  onSaved() { this.showModal = false; this.selectedPositionId = undefined; this.loadData(); this.cdr.markForCheck(); }
 
   trackByDeptId(index: number, dept: Department): string { return dept.id ?? String(index); }
   trackByPosId(index: number, pos: PositionTreeNode): string { return pos.id; }

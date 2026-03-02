@@ -321,6 +321,6 @@
 </ng-template>
 
 @if (showModal) {
-<app-position-form [positionId]="selectedPositionId" (saved)="onSaved()" (cancelled)="closeModal()"></app-position-form>
+<app-position-form [positionId]="selectedPositionId" (saved)="onSaved()" (close)="closeModal()"></app-position-form>
 }
 
