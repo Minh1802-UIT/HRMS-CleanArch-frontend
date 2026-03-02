@@ -6,6 +6,8 @@ export interface PositionTreeNode {
   children?: PositionTreeNode[];
   departmentId?: string;
   parentId?: string;
+  salaryRangeMin?: number;
+  salaryRangeMax?: number;
 }
 
 export interface Position {
