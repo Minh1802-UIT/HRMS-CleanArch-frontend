@@ -1,21 +1,13 @@
-import { TestBed } from '@angular/core/testing';
-import { ToastService } from './toast.service';
-import { MessageService } from 'primeng/api';
+import { TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ToastService, Toast } from './toast.service';
 
 describe('ToastService', () => {
   let service: ToastService;
-  let messageServiceSpy: jasmine.SpyObj<MessageService>;
 
   beforeEach(() => {
-    messageServiceSpy = jasmine.createSpyObj('MessageService', ['add']);
-
     TestBed.configureTestingModule({
-      providers: [
-        ToastService,
-        { provide: MessageService, useValue: messageServiceSpy }
-      ]
+      providers: [ToastService]
     });
-
     service = TestBed.inject(ToastService);
   });
 
@@ -23,43 +15,68 @@ describe('ToastService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should call messageService.add with success severity', () => {
+  it('should add a toast with success type', fakeAsync(() => {
     service.showSuccess('Title', 'Detail');
-    expect(messageServiceSpy.add).toHaveBeenCalledWith({
-      severity: 'success',
-      summary: 'Title',
-      detail: 'Detail',
-      life: 3000
-    });
-  });
+    let toasts: Toast[] = [];
+    service.toasts.subscribe(t => (toasts = t));
+    expect(toasts.length).toBe(1);
+    expect(toasts[0].type).toBe('success');
+    expect(toasts[0].title).toBe('Title');
+    expect(toasts[0].detail).toBe('Detail');
+    tick(5000);
+  }));
 
-  it('should call messageService.add with error severity', () => {
+  it('should add a toast with error type', fakeAsync(() => {
     service.showError('Error Title', 'Error Detail');
-    expect(messageServiceSpy.add).toHaveBeenCalledWith({
-      severity: 'error',
-      summary: 'Error Title',
-      detail: 'Error Detail',
-      life: 3000
-    });
-  });
+    let toasts: Toast[] = [];
+    service.toasts.subscribe(t => (toasts = t));
+    expect(toasts.length).toBe(1);
+    expect(toasts[0].type).toBe('error');
+    expect(toasts[0].title).toBe('Error Title');
+    expect(toasts[0].detail).toBe('Error Detail');
+    tick(5000);
+  }));
 
-  it('should call messageService.add with info severity', () => {
+  it('should add a toast with info type', fakeAsync(() => {
     service.showInfo('Info', 'Info Detail');
-    expect(messageServiceSpy.add).toHaveBeenCalledWith({
-      severity: 'info',
-      summary: 'Info',
-      detail: 'Info Detail',
-      life: 3000
-    });
-  });
+    let toasts: Toast[] = [];
+    service.toasts.subscribe(t => (toasts = t));
+    expect(toasts.length).toBe(1);
+    expect(toasts[0].type).toBe('info');
+    expect(toasts[0].title).toBe('Info');
+    expect(toasts[0].detail).toBe('Info Detail');
+    tick(5000);
+  }));
 
-  it('should call messageService.add with warn severity', () => {
+  it('should add a toast with warn type', fakeAsync(() => {
     service.showWarn('Warning', 'Warn Detail');
-    expect(messageServiceSpy.add).toHaveBeenCalledWith({
-      severity: 'warn',
-      summary: 'Warning',
-      detail: 'Warn Detail',
-      life: 3000
-    });
-  });
+    let toasts: Toast[] = [];
+    service.toasts.subscribe(t => (toasts = t));
+    expect(toasts.length).toBe(1);
+    expect(toasts[0].type).toBe('warn');
+    expect(toasts[0].title).toBe('Warning');
+    expect(toasts[0].detail).toBe('Warn Detail');
+    tick(5000);
+  }));
+
+  it('should remove a toast by id', fakeAsync(() => {
+    service.showSuccess('A', 'B');
+    let toasts: Toast[] = [];
+    service.toasts.subscribe(t => (toasts = t));
+    const id = toasts[0].id;
+    service.remove(id);
+    service.toasts.subscribe(t => (toasts = t));
+    expect(toasts.length).toBe(0);
+    tick(5000);
+  }));
+
+  it('should auto-remove toast after 4500ms', fakeAsync(() => {
+    service.showSuccess('Auto', 'Remove');
+    let toasts: Toast[] = [];
+    service.toasts.subscribe(t => (toasts = t));
+    expect(toasts.length).toBe(1);
+    tick(4500);
+    service.toasts.subscribe(t => (toasts = t));
+    expect(toasts.length).toBe(0);
+  }));
 });
