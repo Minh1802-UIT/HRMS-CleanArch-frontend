@@ -161,6 +161,7 @@
             ) {
               <tr
                 class="group transition-colors hover:bg-violet-50/30 dark:hover:bg-zinc-800/40 cursor-default"
+                (mouseenter)="prefetchEmployee(employee.id)"
               >
                 <!-- Avatar + Name merged -->
                 <td class="px-6 py-4 whitespace-nowrap" colspan="1">

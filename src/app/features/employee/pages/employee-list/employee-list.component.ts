@@ -163,6 +163,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    if (this.prefetchTimer) clearTimeout(this.prefetchTimer);
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -295,6 +296,18 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
 
   trackByEmployeeId(index: number, employee: Employee): string {
     return employee.id;
+  }
+
+  /**
+   * Prefetch employee detail on row hover so the cache is warm by the time
+   * the user clicks "View". A 150 ms debounce avoids firing during fast scrolls.
+   */
+  private prefetchTimer: ReturnType<typeof setTimeout> | null = null;
+  prefetchEmployee(id: string): void {
+    if (this.prefetchTimer) clearTimeout(this.prefetchTimer);
+    this.prefetchTimer = setTimeout(() => {
+      this.employeeService.getEmployeeById(id).pipe(takeUntil(this.destroy$)).subscribe();
+    }, 150);
   }
 
   trackByPage(index: number, page: number): number {
