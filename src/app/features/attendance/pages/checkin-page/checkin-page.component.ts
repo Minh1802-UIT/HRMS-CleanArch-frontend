@@ -5,6 +5,7 @@
   AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ApplicationRef,
   ElementRef,
   ViewChild,
   NgZone,
@@ -63,6 +64,7 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
   private map: L.Map | null = null;
   private userMarker: L.Marker | null = null;
   private mapInitialized = false;
+  private isDestroyed = false;
 
   // Step 1: Location
   checkInPoints: CheckInPoint[] = [
@@ -98,6 +100,7 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
     private logger: LoggerService,
     readonly cdr: ChangeDetectorRef,
     private ngZone: NgZone,
+    private appRef: ApplicationRef,
   ) {}
 
   ngOnInit(): void {
@@ -116,6 +119,7 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.isDestroyed = true;
     if (this.clockInterval) clearInterval(this.clockInterval);
     this.destroy$.next();
     this.destroy$.complete();
@@ -150,30 +154,29 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private placeUserMarker(lat: number, lng: number): void {
-    if (!this.map) return;
+    if (!this.map || this.isDestroyed) return;
+    try {
+      // Pulsing circle for user location
+      const pulseIcon = L.divIcon({
+        className: '',
+        html: '<div style="width:18px;height:18px;border-radius:50%;background:#22c55e;border:3px solid #fff;box-shadow:0 0 0 4px rgba(34,197,94,0.35)"></div>',
+        iconSize: [18, 18],
+        iconAnchor: [9, 9],
+      });
 
-    // Pulsing circle for user location
-    const pulseIcon = L.divIcon({
-      className: '',
-      html: `<div style="
-        width:18px;height:18px;border-radius:50%;
-        background:#22c55e;border:3px solid #fff;
-        box-shadow:0 0 0 4px rgba(34,197,94,0.35);
-      "></div>`,
-      iconSize: [18, 18],
-      iconAnchor: [9, 9],
-    });
+      if (this.userMarker) {
+        this.userMarker.setLatLng([lat, lng]);
+      } else {
+        this.userMarker = L.marker([lat, lng], { icon: pulseIcon })
+          .addTo(this.map)
+          .bindPopup('<strong>My Location</strong>')
+          .openPopup();
+      }
 
-    if (this.userMarker) {
-      this.userMarker.setLatLng([lat, lng]);
-    } else {
-      this.userMarker = L.marker([lat, lng], { icon: pulseIcon })
-        .addTo(this.map)
-        .bindPopup('<strong>My Location</strong>')
-        .openPopup();
+      this.map.setView([lat, lng], 15);
+    } catch (e) {
+      // Map or pane not ready — silently ignore
     }
-
-    this.map.setView([lat, lng], 15);
   }
 
   detectLocation(): void {
@@ -190,6 +193,7 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
     navigator.geolocation.getCurrentPosition(
       (pos) => {
+        if (this.isDestroyed) return;
         this.userLat = pos.coords.latitude;
         this.userLng = pos.coords.longitude;
         this.locationLoading = false;
@@ -198,15 +202,17 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
         this.ngZone.run(() => { this.cdr.markForCheck(); });
         // Update map outside Angular zone
         this.ngZone.runOutsideAngular(() => {
+          if (this.isDestroyed) return;
           if (this.map) {
             this.placeUserMarker(this.userLat!, this.userLng!);
           } else {
             // Map not yet initialized, it will pick up coords in initMap
-            setTimeout(() => this.initMap(), 200);
+            setTimeout(() => { if (!this.isDestroyed) this.initMap(); }, 200);
           }
         });
       },
       () => {
+        if (this.isDestroyed) return;
         this.locationError = 'Could not detect your location. Please allow location access.';
         this.locationLoading = false;
         this.cdr.markForCheck();
@@ -253,18 +259,17 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
         video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } },
         audio: false,
       });
-      // Assign srcObject after view updates
+
       this.cameraLoading = false;
       this.cameraActive = true;
-      this.cdr.markForCheck();
+      // Force Angular to flush DOM so <video> becomes visible before we touch it
+      this.cdr.detectChanges();
 
-      // Use setTimeout so the <video> element is rendered before we set srcObject
-      setTimeout(() => {
-        if (this.videoEl?.nativeElement && this.cameraStream) {
-          this.videoEl.nativeElement.srcObject = this.cameraStream;
-          this.videoEl.nativeElement.play().catch(() => {});
-        }
-      }, 50);
+      const video = this.videoEl?.nativeElement;
+      if (video && this.cameraStream) {
+        video.srcObject = this.cameraStream;
+        video.onloadedmetadata = () => video.play().catch(() => {});
+      }
     } catch (err) {
       this.cameraLoading = false;
       this.cameraError =

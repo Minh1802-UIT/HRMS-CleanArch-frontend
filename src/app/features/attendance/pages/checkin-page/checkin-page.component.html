@@ -300,45 +300,26 @@
             class="relative rounded-xl overflow-hidden bg-zinc-950 border border-zinc-700 mx-auto"
             style="height: 280px; max-width: 380px"
           >
-            <!-- Hidden canvas used for capture only -->
-            <canvas #canvasEl class="hidden"></canvas>
+            <!-- Canvas: always in DOM for capture, invisible -->
+            <canvas #canvasEl class="absolute -top-full -left-full w-0 h-0"></canvas>
 
-            <!-- Loading state -->
-            @if (cameraLoading) {
-              <div class="absolute inset-0 flex flex-col items-center justify-center gap-2">
-                <div class="w-8 h-8 border-2 border-green-500 border-t-transparent rounded-full animate-spin"></div>
-                <p class="text-xs text-zinc-400">Starting camera…</p>
-              </div>
-            }
+            <!-- Video: always in DOM, hidden when not streaming or photo taken -->
+            <video
+              #videoEl
+              autoplay
+              playsinline
+              muted
+              class="absolute inset-0 w-full h-full object-cover"
+              style="transform: scaleX(-1)"
+              [hidden]="!cameraActive || !!capturedPhoto"
+            ></video>
 
-            <!-- Error state -->
-            @if (cameraError && !cameraLoading) {
-              <div class="absolute inset-0 flex flex-col items-center justify-center gap-3 px-6 text-center">
-                <span class="material-symbols-outlined text-4xl text-amber-400">no_photography</span>
-                <p class="text-xs text-amber-300">{{ cameraError }}</p>
-                <button (click)="startCamera()"
-                  class="px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white text-xs font-bold rounded-lg transition-colors">
-                  Retry
-                </button>
-              </div>
-            }
-
-            <!-- Live video feed -->
+            <!-- Face guide overlay (only while live) -->
             @if (cameraActive && !capturedPhoto) {
-              <video
-                #videoEl
-                autoplay
-                playsinline
-                muted
-                class="w-full h-full object-cover"
-                style="transform: scaleX(-1)"
-              ></video>
-              <!-- Face guide overlay -->
-              <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
                 <div class="w-36 h-44 rounded-full border-2 border-dashed border-white/50"></div>
               </div>
-              <!-- Capture hint -->
-              <div class="absolute bottom-3 left-0 right-0 flex justify-center">
+              <div class="absolute bottom-3 left-0 right-0 flex justify-center z-10">
                 <span class="px-3 py-1 bg-black/50 backdrop-blur-sm text-white text-xs rounded-full">
                   Center your face in the oval
                 </span>
@@ -350,15 +331,43 @@
               <img
                 [src]="capturedPhoto"
                 alt="Captured selfie"
-                class="w-full h-full object-cover"
+                class="absolute inset-0 w-full h-full object-cover"
                 style="transform: scaleX(-1)"
               />
               <!-- OK badge -->
-              <div class="absolute top-3 right-3">
+              <div class="absolute top-3 right-3 z-10">
                 <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-green-500 text-white text-xs font-bold rounded-full shadow">
                   <span class="material-symbols-outlined text-sm">check_circle</span>
                   Photo captured
                 </span>
+              </div>
+            }
+
+            <!-- Loading state -->
+            @if (cameraLoading) {
+              <div class="absolute inset-0 z-20 flex flex-col items-center justify-center gap-2 bg-zinc-950">
+                <div class="w-8 h-8 border-2 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+                <p class="text-xs text-zinc-400">Starting camera…</p>
+              </div>
+            }
+
+            <!-- Error state -->
+            @if (cameraError && !cameraLoading) {
+              <div class="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 px-6 text-center bg-zinc-950">
+                <span class="material-symbols-outlined text-4xl text-amber-400">no_photography</span>
+                <p class="text-xs text-amber-300">{{ cameraError }}</p>
+                <button (click)="startCamera()"
+                  class="px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white text-xs font-bold rounded-lg transition-colors">
+                  Retry
+                </button>
+              </div>
+            }
+
+            <!-- Idle state: camera not yet started & no error -->
+            @if (!cameraActive && !cameraLoading && !cameraError && !capturedPhoto) {
+              <div class="absolute inset-0 z-20 flex flex-col items-center justify-center gap-2 bg-zinc-950">
+                <span class="material-symbols-outlined text-4xl text-zinc-600">photo_camera</span>
+                <p class="text-xs text-zinc-500">Camera initializing…</p>
               </div>
             }
           </div>
