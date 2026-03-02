@@ -8,6 +8,7 @@ import { ContractService, Contract } from '@features/employee/services/contract.
 import { MasterDataService } from '@features/organization/services/master-data.service';
 import { LoggerService } from '@core/services/logger.service';
 import { ToastService } from '@core/services/toast.service';
+import { ConfirmDialogService } from '@core/services/confirm-dialog.service';
 import { AddEmployeeComponent } from '../add-employee/add-employee.component';
 import { Department } from '@features/organization/models/department.model';
 import { Position } from '@features/organization/models/position.model';
@@ -103,7 +104,8 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private leaveAllocationService: LeaveAllocationService,
     private leaveRequestService: LeaveRequestService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private confirmService: ConfirmDialogService
   ) { }
 
   ngOnInit() {
@@ -296,7 +298,13 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
   }
 
   deleteEmployee() {
-    if (confirm(`Are you sure you want to delete ${this.employee?.fullName}? This action cannot be undone.`)) {
+    this.confirmService.confirm({
+      title: 'Delete Employee',
+      message: `Are you sure you want to delete <strong>${this.employee?.fullName}</strong>? This action cannot be undone.`,
+      type: 'danger',
+      confirmLabel: 'Delete'
+    }).subscribe(ok => {
+      if (!ok) return;
       this.employeeService.deleteEmployee(this.employeeId).pipe(takeUntil(this.destroy$)).subscribe({
         next: () => {
           this.toastService.showSuccess('Deleted', 'Employee deleted successfully');
@@ -307,7 +315,7 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
           this.toastService.showError('Delete Failed', 'Could not delete employee');
         }
       });
-    }
+    });
   }
 
   openEditModal(step: number = 1) {

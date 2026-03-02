@@ -5,6 +5,7 @@ import { AuthService } from '@core/services/auth.service';
 import { User } from '@core/models/user.model';
 import { ToastService } from '@core/services/toast.service';
 import { LoggerService } from '@core/services/logger.service';
+import { ConfirmDialogService } from '@core/services/confirm-dialog.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -39,7 +40,8 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private toastService: ToastService,
     private logger: LoggerService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private confirmService: ConfirmDialogService
   ) { }
 
   ngOnInit() {
@@ -127,7 +129,13 @@ export class UserManagementComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (confirm(`Are you sure you want to send a password reset email to ${user.email}?`)) {
+    this.confirmService.confirm({
+      title: 'Send Reset Email',
+      message: `Send a password reset email to <strong>${user.email}</strong>?`,
+      type: 'info',
+      confirmLabel: 'Send Email'
+    }).subscribe(ok => {
+      if (!ok) return;
       this.authService.forgotPassword(user.email).pipe(takeUntil(this.destroy$)).subscribe({
         next: () => {
           this.toastService.showSuccess('Email Sent', `Password reset instructions have been sent to ${user.email}.`);
@@ -137,7 +145,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
           this.toastService.showError('Error', err?.error?.message || 'Failed to send password reset email.');
         }
       });
-    }
+    });
   }
 
   saveRoles() {

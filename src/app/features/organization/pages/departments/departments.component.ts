@@ -5,6 +5,7 @@ import { DepartmentService, Department } from '@features/organization/services/d
 import { PositionService, Position } from '@features/organization/services/position.service';
 import { LoggerService } from '@core/services/logger.service';
 import { ToastService } from '@core/services/toast.service';
+import { ConfirmDialogService } from '@core/services/confirm-dialog.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MasterDataService } from '@features/organization/services/master-data.service';
@@ -45,7 +46,8 @@ export class DepartmentsComponent implements OnInit, OnDestroy {
     private logger: LoggerService,
     private masterData: MasterDataService,
     private toastService: ToastService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private confirmService: ConfirmDialogService
   ) {
     this.deptForm = this.fb.group({
       id: [''], 
@@ -168,8 +170,14 @@ export class DepartmentsComponent implements OnInit, OnDestroy {
   deleteDepartment(dept: Department, event: Event) {
     event.stopPropagation();
     if (!dept.id) return;
-    if (confirm(`Delete department ${dept.name}?`)) {
-      this.deptService.deleteDepartment(dept.id).pipe(takeUntil(this.destroy$)).subscribe({
+    this.confirmService.confirm({
+      title: 'Delete Department',
+      message: `Are you sure you want to delete <strong>${dept.name}</strong>? This action cannot be undone.`,
+      type: 'danger',
+      confirmLabel: 'Delete'
+    }).subscribe(ok => {
+      if (!ok) return;
+      this.deptService.deleteDepartment(dept.id!).pipe(takeUntil(this.destroy$)).subscribe({
         next: () => {
           this.loadDepartments();
           if (this.selectedDepartment?.id === dept.id) {
@@ -181,7 +189,7 @@ export class DepartmentsComponent implements OnInit, OnDestroy {
         },
         error: (err) => this.logger.error('Error deleting department', err)
       });
-    }
+    });
   }
 
   // --- Position Logic ---
@@ -273,8 +281,14 @@ export class DepartmentsComponent implements OnInit, OnDestroy {
   
   deletePosition(pos: Position) {
       if(!pos.id) return;
-      if(confirm(`Delete position ${pos.title}?`)) {
-          this.posService.deletePosition(pos.id).pipe(takeUntil(this.destroy$)).subscribe({
+      this.confirmService.confirm({
+        title: 'Delete Position',
+        message: `Are you sure you want to delete <strong>${pos.title}</strong>? This action cannot be undone.`,
+        type: 'danger',
+        confirmLabel: 'Delete'
+      }).subscribe(ok => {
+        if (!ok) return;
+          this.posService.deletePosition(pos.id!).pipe(takeUntil(this.destroy$)).subscribe({
               next: () => {
                   if (this.selectedDepartment && this.selectedDepartment.id) this.loadPositions(this.selectedDepartment.id);
                   this.toastService.showSuccess('Success', 'Position deleted successfully');
@@ -285,7 +299,7 @@ export class DepartmentsComponent implements OnInit, OnDestroy {
                   this.toastService.showError('Delete Error', err?.error?.message || 'Failed to delete position');
               }
           });
-      }
+      });
   }
 
   trackByDeptId(index: number, dept: Department): string { return dept.id ?? String(index); }

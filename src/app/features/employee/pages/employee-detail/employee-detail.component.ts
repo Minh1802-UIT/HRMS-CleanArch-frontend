@@ -9,6 +9,7 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
 import { LeaveAllocationService } from '@features/leave/services/leave-allocation.service';
 import { ToastService } from '@core/services/toast.service';
 import { LoggerService } from '@core/services/logger.service';
+import { ConfirmDialogService } from '@core/services/confirm-dialog.service';
 import { MasterDataService } from '@features/organization/services/master-data.service';
 import { UploadService } from '@features/employee/services/upload.service';
 import { Subject } from 'rxjs';
@@ -57,7 +58,8 @@ export class EmployeeDetailComponent implements OnInit, OnDestroy {
     private toastService: ToastService,
     private logger: LoggerService,
     private uploadService: UploadService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private confirmService: ConfirmDialogService
   ) {
     this.minStartDate = new Date().toISOString().split('T')[0];
     
@@ -236,20 +238,25 @@ export class EmployeeDetailComponent implements OnInit, OnDestroy {
   }
   
   terminateContract(contract: Contract) {
-    if (confirm(`Are you sure you want to terminate contract ${contract.contractCode}?`)) {
-      if (contract.id) {
-        this.contractService.terminateContract(contract.id).pipe(takeUntil(this.destroy$)).subscribe({
-          next: () => {
-            this.toastService.showSuccess('Success', 'Contract terminated successfully');
-            this.loadContracts();
-          },
-          error: (err: any) => {
-            this.logger.error('Failed to terminate contract', err);
-            this.toastService.showError('Error', err?.error?.message || 'Failed to terminate contract');
-          }
-        });
-      }
-    }
+    if (!contract.id) return;
+    this.confirmService.confirm({
+      title: 'Terminate Contract',
+      message: `Are you sure you want to terminate contract <strong>${contract.contractCode}</strong>? This action cannot be undone.`,
+      type: 'warning',
+      confirmLabel: 'Terminate'
+    }).subscribe(ok => {
+      if (!ok) return;
+      this.contractService.terminateContract(contract.id!).pipe(takeUntil(this.destroy$)).subscribe({
+        next: () => {
+          this.toastService.showSuccess('Success', 'Contract terminated successfully');
+          this.loadContracts();
+        },
+        error: (err: any) => {
+          this.logger.error('Failed to terminate contract', err);
+          this.toastService.showError('Error', err?.error?.message || 'Failed to terminate contract');
+        }
+      });
+    });
   }
 
   get activeContract(): Contract | undefined {
@@ -268,21 +275,27 @@ export class EmployeeDetailComponent implements OnInit, OnDestroy {
   initializeLeave() {
       if (!this.employeeId) return;
       const currentYear = new Date().getFullYear();
-      if (!confirm(`Initialize leave allocation for this year (${currentYear})?`)) return;
-
-      this.initializingLeave = true;
-      this.leaveAllocationService.initializeAllocation(this.employeeId, currentYear).pipe(takeUntil(this.destroy$)).subscribe({
-          next: () => {
-              this.toastService.showSuccess('Initialized', 'Leave allocation initialized successfully');
-              this.initializingLeave = false;
-              this.cdr.markForCheck();
-          },
-          error: (err: any) => {
-              this.logger.error('Leave initialization failed', err);
-              this.toastService.showError('Error', 'Failed to initialize leave');
-              this.initializingLeave = false;
-              this.cdr.markForCheck();
-          }
+      this.confirmService.confirm({
+        title: 'Initialize Leave',
+        message: `Initialize leave allocation for <strong>${currentYear}</strong>? This will set up the annual leave balance for this employee.`,
+        type: 'info',
+        confirmLabel: 'Initialize'
+      }).subscribe(ok => {
+        if (!ok) return;
+        this.initializingLeave = true;
+        this.leaveAllocationService.initializeAllocation(this.employeeId, currentYear).pipe(takeUntil(this.destroy$)).subscribe({
+            next: () => {
+                this.toastService.showSuccess('Initialized', 'Leave allocation initialized successfully');
+                this.initializingLeave = false;
+                this.cdr.markForCheck();
+            },
+            error: (err: any) => {
+                this.logger.error('Leave initialization failed', err);
+                this.toastService.showError('Error', 'Failed to initialize leave');
+                this.initializingLeave = false;
+                this.cdr.markForCheck();
+            }
+        });
       });
   }
 

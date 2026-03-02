@@ -3,6 +3,7 @@ import { DecimalPipe, NgClass, NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PositionService, PositionTreeNode } from '@features/organization/services/position.service';
 import { ToastService } from '@core/services/toast.service';
+import { ConfirmDialogService } from '@core/services/confirm-dialog.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { PositionFormComponent } from '../position-form/position-form.component';
@@ -37,17 +38,14 @@ export class PositionListComponent implements OnInit, OnDestroy {
   showModal = false;
   selectedPositionId?: string;
   selectedNode: PositionTreeNode | null = null;
-  confirmDelete = false;
-  confirmDeleteNode: PositionTreeNode | null = null;
-  deleting = false;
-
   private destroy$ = new Subject<void>();
 
   constructor(
     private positionService: PositionService,
     private departmentService: DepartmentService,
     private toast: ToastService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private confirmService: ConfirmDialogService
   ) {}
 
   ngOnInit(): void { this.loadData(); }
@@ -209,35 +207,21 @@ export class PositionListComponent implements OnInit, OnDestroy {
   openEditModal(pos: PositionTreeNode) { this.selectedPositionId = pos.id; this.showModal = true; this.cdr.markForCheck(); }
 
   deletePosition(pos: PositionTreeNode) {
-    this.confirmDeleteNode = pos;
-    this.confirmDelete = true;
-    this.cdr.markForCheck();
-  }
-
-  cancelDelete() {
-    this.confirmDelete = false;
-    this.confirmDeleteNode = null;
-    this.cdr.markForCheck();
-  }
-
-  confirmDeleteAction() {
-    if (!this.confirmDeleteNode) return;
-    this.deleting = true;
-    this.cdr.markForCheck();
-    this.positionService.deletePosition(this.confirmDeleteNode.id).pipe(takeUntil(this.destroy$)).subscribe({
-      next: () => {
-        this.toast.showSuccess('Success', `"${this.confirmDeleteNode!.title}" deleted`);
-        this.selectedNode = null;
-        this.confirmDelete = false;
-        this.confirmDeleteNode = null;
-        this.deleting = false;
-        this.loadData();
-      },
-      error: (err: any) => {
-        this.toast.showError('Error', err.error?.message || 'Failed to delete');
-        this.deleting = false;
-        this.cdr.markForCheck();
-      }
+    this.confirmService.confirm({
+      title: 'Delete Position',
+      message: `Are you sure you want to delete <strong>${pos.title}</strong>? This action cannot be undone.`,
+      type: 'danger',
+      confirmLabel: 'Delete'
+    }).subscribe(ok => {
+      if (!ok) return;
+      this.positionService.deletePosition(pos.id).pipe(takeUntil(this.destroy$)).subscribe({
+        next: () => {
+          this.toast.showSuccess('Deleted', `"${pos.title}" deleted`);
+          this.selectedNode = null;
+          this.loadData();
+        },
+        error: (err: any) => this.toast.showError('Error', err.error?.message || 'Failed to delete')
+      });
     });
   }
 

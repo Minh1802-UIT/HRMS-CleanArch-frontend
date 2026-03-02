@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { LeaveRequestService, LeaveRequest } from '@features/leave/services/leave-request.service';
 import { ToastService } from '@core/services/toast.service';
 import { LoggerService } from '@core/services/logger.service';
+import { ConfirmDialogService } from '@core/services/confirm-dialog.service';
 import { MasterDataService } from '@features/organization/services/master-data.service';
 import { Department } from '@features/organization/models/department.model';
 import { LeaveType } from '@features/leave/models/leave-type.model';
@@ -46,7 +47,8 @@ export class LeaveApprovalComponent implements OnInit, OnDestroy {
       private toastService: ToastService,
       private logger: LoggerService,
       private masterData: MasterDataService,
-      private cdr: ChangeDetectorRef
+      private cdr: ChangeDetectorRef,
+      private confirmService: ConfirmDialogService
   ) {}
 
   ngOnInit() {
@@ -165,10 +167,15 @@ export class LeaveApprovalComponent implements OnInit, OnDestroy {
   }
 
   approve(req: LeaveRequest) {
-      if (!confirm('Approve this request?')) return;
-      
-      this.processingId = req.id;
-      this.leaveService.approveRequest(req.id).pipe(takeUntil(this.destroy$)).subscribe({
+      this.confirmService.confirm({
+        title: 'Approve Request',
+        message: 'Are you sure you want to <strong>approve</strong> this leave request?',
+        type: 'success',
+        confirmLabel: 'Approve'
+      }).subscribe(ok => {
+        if (!ok) return;
+        this.processingId = req.id;
+        this.leaveService.approveRequest(req.id).pipe(takeUntil(this.destroy$)).subscribe({
           next: (success) => {
               if (success) {
                   this.toastService.showSuccess('Success', 'Request Approved');
@@ -185,6 +192,7 @@ export class LeaveApprovalComponent implements OnInit, OnDestroy {
               this.processingId = null;
               this.cdr.markForCheck();
           }
+        });
       });
   }
 

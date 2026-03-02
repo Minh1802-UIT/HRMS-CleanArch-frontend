@@ -7,6 +7,7 @@ import { takeUntil } from 'rxjs/operators';
 import { Shift, ShiftService } from '@features/attendance/services/shift.service';
 import { ToastService } from '@core/services/toast.service';
 import { LoggerService } from '@core/services/logger.service';
+import { ConfirmDialogService } from '@core/services/confirm-dialog.service';
 
 @Component({
   selector: 'app-shift-list',
@@ -34,7 +35,8 @@ export class ShiftListComponent implements OnInit, OnDestroy {
     private toastService: ToastService,
     private logger: LoggerService,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private confirmService: ConfirmDialogService
   ) {}
 
   ngOnInit() {
@@ -88,7 +90,13 @@ export class ShiftListComponent implements OnInit, OnDestroy {
   }
 
   deleteShift(id: string) {
-    if (confirm('Are you sure you want to delete this shift?')) {
+    this.confirmService.confirm({
+      title: 'Delete Shift',
+      message: 'Are you sure you want to delete this shift? This action cannot be undone.',
+      type: 'danger',
+      confirmLabel: 'Delete'
+    }).subscribe(ok => {
+      if (!ok) return;
       this.shiftService.deleteShift(id).pipe(takeUntil(this.destroy$)).subscribe({
         next: () => {
           this.toastService.showSuccess('Success', 'Shift deleted successfully');
@@ -99,7 +107,7 @@ export class ShiftListComponent implements OnInit, OnDestroy {
           this.toastService.showError('Error', 'Failed to delete shift');
         }
       });
-    }
+    });
   }
 
   getPages(): number[] {
