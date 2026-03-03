@@ -15,7 +15,7 @@ import { RouterModule } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import * as L from 'leaflet';
-import { MyAttendanceService } from '@features/attendance/services/my-attendance.service';
+import { MyAttendanceService, TodayAttendanceStatus } from '@features/attendance/services/my-attendance.service';
 import { ToastService } from '@core/services/toast.service';
 import { LoggerService } from '@core/services/logger.service';
 
@@ -94,6 +94,13 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
   resultType: 'success' | 'error' = 'success';
   checkType: 'CheckIn' | 'CheckOut' = 'CheckIn';
 
+  // Today's attendance gating
+  todayStatusLoading = true;
+  checkedInToday = false;
+  checkedOutToday = false;
+  todayCheckInTime: string | null = null;
+  todayCheckOutTime: string | null = null;
+
   constructor(
     private myAttendanceService: MyAttendanceService,
     private toast: ToastService,
@@ -109,6 +116,28 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
       this.cdr.markForCheck();
     }, 1000);
     this.detectLocation();
+    this.loadTodayStatus();
+  }
+
+  private loadTodayStatus(): void {
+    this.todayStatusLoading = true;
+    this.myAttendanceService
+      .getTodayStatus()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((status: TodayAttendanceStatus) => {
+        this.checkedInToday  = status.hasCheckedIn;
+        this.checkedOutToday = status.hasCheckedOut;
+        this.todayCheckInTime  = status.checkInTime;
+        this.todayCheckOutTime = status.checkOutTime;
+        this.todayStatusLoading = false;
+        // Auto-select the correct action tab
+        if (status.hasCheckedIn && !status.hasCheckedOut) {
+          this.checkType = 'CheckOut';
+        } else {
+          this.checkType = 'CheckIn';
+        }
+        this.cdr.markForCheck();
+      });
   }
 
   ngAfterViewInit(): void {
@@ -379,6 +408,8 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
           this.checkType === 'CheckIn' ? 'Checked In' : 'Checked Out',
           msg
         );
+        // Refresh today's status so buttons re-lock on next action
+        this.loadTodayStatus();
         this.cdr.markForCheck();
       },
       error: (err: Error) => {

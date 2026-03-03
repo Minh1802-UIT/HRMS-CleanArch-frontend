@@ -31,6 +31,7 @@ export class MyHistoryComponent implements OnInit, OnDestroy {
 
   loading = false;
   report: MonthlyAttendanceReport | null = null;
+  isUnlinkedAccount = false;  // true when backend returns AUTH_UNLINKED_ACCOUNT
 
   // Currently selected month in "MM-yyyy" format
   selectedMonth: string;
@@ -63,6 +64,7 @@ export class MyHistoryComponent implements OnInit, OnDestroy {
 
   loadReport(): void {
     this.loading = true;
+    this.isUnlinkedAccount = false;
     this.cdr.markForCheck();
     this.myAttendanceService
       .getMyMonthlyReport(this.selectedMonth)
@@ -75,8 +77,13 @@ export class MyHistoryComponent implements OnInit, OnDestroy {
           this.cdr.markForCheck();
         },
         error: (err) => {
-          this.logger.error('MyHistory: load failed', err);
-          this.toast.showError('Error', err?.error?.message || 'Failed to load attendance history');
+          const errorCode: string = err?.error?.errorCode ?? '';
+          const isUnlinked = errorCode === 'AUTH_UNLINKED_ACCOUNT';
+          this.isUnlinkedAccount = isUnlinked;
+          if (!isUnlinked) {
+            this.logger.error('MyHistory: load failed', err);
+            this.toast.showError('Error', err?.error?.message || 'Failed to load attendance history');
+          }
           this.report = null;
           this.loading = false;
           this.cdr.markForCheck();

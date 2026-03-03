@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { Observable, throwError, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { environment } from '@env/environment';
 import { ApiResponse } from '@core/models/api-response';
@@ -46,6 +46,13 @@ export interface CheckInRequest {
   longitude?: number;
 }
 
+export interface TodayAttendanceStatus {
+  hasCheckedIn: boolean;
+  hasCheckedOut: boolean;
+  checkInTime: string | null;   // ISO local-time string (UTC+7)
+  checkOutTime: string | null;  // ISO local-time string (UTC+7)
+}
+
 @Injectable({ providedIn: 'root' })
 export class MyAttendanceService {
   private apiUrl = `${environment.apiUrl}/attendance`;
@@ -55,9 +62,22 @@ export class MyAttendanceService {
     private logger: LoggerService
   ) {}
 
-  /** Check-in for the currently logged-in employee */
-  checkIn(req: CheckInRequest = { type: 'CheckIn', deviceId: 'WebApp' }): Observable<string> {
+  /** Returns today's check-in / check-out status for the logged-in employee. */
+  getTodayStatus(): Observable<TodayAttendanceStatus> {
     return this.http
+      .get<ApiResponse<TodayAttendanceStatus>>(`${this.apiUrl}/me/today-status`)
+      .pipe(
+        map(res => res.data ?? { hasCheckedIn: false, hasCheckedOut: false, checkInTime: null, checkOutTime: null }),
+        catchError(err => {
+          this.logger.error('MyAttendanceService: getTodayStatus failed', err);
+          // On error, return a safe default so the page still renders
+          return of({ hasCheckedIn: false, hasCheckedOut: false, checkInTime: null, checkOutTime: null });
+        })
+      );
+  }
+
+  /** Check-in for the currently logged-in employee */
+  checkIn(req: CheckInRequest = { type: 'CheckIn', deviceId: 'WebApp' }): Observable<string> {    return this.http
       .post<ApiResponse<string>>(`${this.apiUrl}/check-in`, { ...req, Type: 'CheckIn' })
       .pipe(
         map(res => res.message || res.data || 'Checked in successfully'),

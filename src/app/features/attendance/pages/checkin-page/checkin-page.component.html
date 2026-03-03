@@ -43,34 +43,103 @@
       <span class="material-symbols-outlined text-base">qr_code_2</span>
       QR
     </button>
-    <div class="ml-auto flex gap-2">
+    <div class="ml-auto flex items-center gap-2">
+      <!-- Status badge shown while loading -->
+      @if (todayStatusLoading) {
+        <span class="text-xs text-zinc-400 flex items-center gap-1">
+          <span class="w-3 h-3 border border-zinc-400 border-t-transparent rounded-full animate-spin inline-block"></span>
+          Checking status…
+        </span>
+      }
+      <!-- Checked-in badge -->
+      @if (!todayStatusLoading && checkedInToday && todayCheckInTime) {
+        <span class="flex items-center gap-1 px-2.5 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-bold rounded-full border border-green-200 dark:border-green-700">
+          <span class="material-symbols-outlined text-sm">check_circle</span>
+          In {{ todayCheckInTime | date:'HH:mm' }}
+        </span>
+      }
+      <!-- Checked-out badge -->
+      @if (!todayStatusLoading && checkedOutToday && todayCheckOutTime) {
+        <span class="flex items-center gap-1 px-2.5 py-1 bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400 text-xs font-bold rounded-full border border-rose-200 dark:border-rose-700">
+          <span class="material-symbols-outlined text-sm">logout</span>
+          Out {{ todayCheckOutTime | date:'HH:mm' }}
+        </span>
+      }
+      <!-- Check-In tab button -->
       <button
         (click)="checkType = 'CheckIn'; cdr.markForCheck()"
+        [disabled]="checkedInToday || todayStatusLoading"
         class="px-3 py-1.5 text-xs font-bold rounded-full border transition-all"
         [ngClass]="
-          checkType === 'CheckIn'
-            ? 'bg-green-500 text-white border-green-500'
-            : 'bg-white dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:border-green-400'
+          checkedInToday
+            ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-400 dark:text-zinc-600 border-zinc-200 dark:border-zinc-700 cursor-not-allowed opacity-60'
+            : checkType === 'CheckIn'
+              ? 'bg-green-500 text-white border-green-500'
+              : 'bg-white dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:border-green-400'
         "
       >
-        Check-In
+        <span class="flex items-center gap-1">
+          @if (checkedInToday) {
+            <span class="material-symbols-outlined text-xs leading-none">lock</span>
+          }
+          Check-In
+        </span>
       </button>
+      <!-- Check-Out tab button -->
       <button
         (click)="checkType = 'CheckOut'; cdr.markForCheck()"
+        [disabled]="!checkedInToday || checkedOutToday || todayStatusLoading"
         class="px-3 py-1.5 text-xs font-bold rounded-full border transition-all"
         [ngClass]="
-          checkType === 'CheckOut'
-            ? 'bg-rose-500 text-white border-rose-500'
-            : 'bg-white dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:border-rose-400'
+          !checkedInToday || checkedOutToday
+            ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-400 dark:text-zinc-600 border-zinc-200 dark:border-zinc-700 cursor-not-allowed opacity-60'
+            : checkType === 'CheckOut'
+              ? 'bg-rose-500 text-white border-rose-500'
+              : 'bg-white dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:border-rose-400'
         "
       >
-        Check-Out
+        <span class="flex items-center gap-1">
+          @if (!checkedInToday || checkedOutToday) {
+            <span class="material-symbols-outlined text-xs leading-none">lock</span>
+          }
+          Check-Out
+        </span>
       </button>
     </div>
   </div>
 
+  <!-- All done for today banner -->
+  @if (!submitted && !todayStatusLoading && checkedInToday && checkedOutToday) {
+    <div class="glass-panel rounded-2xl border border-green-100 dark:border-green-800 p-8 flex flex-col items-center text-center gap-4">
+      <div class="w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+        <span class="material-symbols-outlined text-3xl text-green-500">task_alt</span>
+      </div>
+      <div>
+        <h2 class="text-xl font-black text-zinc-900 dark:text-white mb-1">All Done for Today!</h2>
+        <p class="text-sm text-zinc-500 dark:text-zinc-400">
+          You have already checked in and checked out today.
+        </p>
+        <div class="flex justify-center gap-4 mt-3 text-sm">
+          <span class="flex items-center gap-1 font-bold text-green-600 dark:text-green-400">
+            <span class="material-symbols-outlined text-base">login</span>
+            {{ todayCheckInTime | date:'HH:mm' }}
+          </span>
+          <span class="text-zinc-400">→</span>
+          <span class="flex items-center gap-1 font-bold text-rose-600 dark:text-rose-400">
+            <span class="material-symbols-outlined text-base">logout</span>
+            {{ todayCheckOutTime | date:'HH:mm' }}
+          </span>
+        </div>
+      </div>
+      <a routerLink="/attendance/my-history"
+        class="px-5 py-2.5 bg-green-500 hover:bg-green-600 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-green-500/20">
+        View My History
+      </a>
+    </div>
+  }
+
   <!-- Main Card -->
-  @if (!submitted) {
+  @if (!submitted && !(checkedInToday && checkedOutToday)) {
     <div
       class="glass-panel rounded-2xl border border-zinc-100 dark:border-zinc-800 overflow-hidden"
     >
