@@ -63,7 +63,7 @@ export class PayrollComponent implements OnInit, OnDestroy {
     // 1. Fetch Employees (to get Names/Avatars)
     // 2. Fetch Payroll Data (Backend DTO)
     forkJoin({
-      employees: this.employeeService.getLookup().pipe(map(res => res as any[])), // Returns LookupDto[] (id, label, secondaryLabel)
+      employees: this.employeeService.getLookup('', 500).pipe(map(res => res as any[])), // limit=500 — lấy toàn bộ nhân viên
       payrolls: this.payrollService.getPayrollData(this.selectedMonth, this.selectedYear).pipe(
           catchError(err => {
               this.logger.warn('No payroll data found', err);
