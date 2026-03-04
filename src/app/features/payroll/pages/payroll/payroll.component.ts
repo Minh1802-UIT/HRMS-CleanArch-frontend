@@ -34,14 +34,67 @@ export class PayrollComponent implements OnInit, OnDestroy {
   payrollRecords: PayrollRecord[] = [];
   loading: boolean = false;
   calculating: boolean = false;
-  markingPaid: string | null = null; // track which record is being marked paid
+  markingPaid: string | null = null;
   totalNetSalary: number = 0;
+
+  // Search
+  searchKeyword: string = '';
+
+  // Pagination
+  currentPage: number = 1;
+  pageSize: number = 10;
+  readonly pageSizeOptions = [10, 20, 50];
 
   // Confirmation dialog state
   showConfirmDialog: boolean = false;
   confirmTitle: string = '';
   confirmMessage: string = '';
   private _pendingAction: (() => void) | null = null;
+
+  get filteredRecords(): PayrollRecord[] {
+    const kw = this.searchKeyword.trim().toLowerCase();
+    if (!kw) return this.payrollRecords;
+    return this.payrollRecords.filter(r =>
+      (r.employeeName?.toLowerCase().includes(kw)) ||
+      (r.employeeCode?.toLowerCase().includes(kw))
+    );
+  }
+
+  get pagedRecords(): PayrollRecord[] {
+    const start = (this.currentPage - 1) * this.pageSize;
+    return this.filteredRecords.slice(start, start + this.pageSize);
+  }
+
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.filteredRecords.length / this.pageSize));
+  }
+
+  get pageNumbers(): number[] {
+    const total = this.totalPages;
+    const current = this.currentPage;
+    const delta = 2;
+    const range: number[] = [];
+    for (let i = Math.max(1, current - delta); i <= Math.min(total, current + delta); i++) {
+      range.push(i);
+    }
+    return range;
+  }
+
+  onSearch() {
+    this.currentPage = 1;
+    this.cdr.markForCheck();
+  }
+
+  goToPage(page: number) {
+    if (page < 1 || page > this.totalPages) return;
+    this.currentPage = page;
+    this.cdr.markForCheck();
+  }
+
+  onPageSizeChange() {
+    this.currentPage = 1;
+    this.cdr.markForCheck();
+  }
 
   constructor(
     private payrollService: PayrollService,
@@ -74,8 +127,8 @@ export class PayrollComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$)
     ).subscribe({
       next: ({ employees, payrolls }) => {
-        // Map data
         this.payrollRecords = this.mapPayrollData(employees, payrolls);
+        this.currentPage = 1;
         this.calculateTotals();
         this.loading = false;
         this.cdr.markForCheck();
@@ -272,11 +325,12 @@ export class PayrollComponent implements OnInit, OnDestroy {
 
 
   exportPayrollCsv(): void {
-    if (!this.payrollRecords.length) {
+    const source = this.filteredRecords; // export theo kết quả search hiện tại
+    if (!source.length) {
       this.toastService.showWarn('No Data', 'No payroll records to export.');
       return;
     }
-    const rows = this.payrollRecords.map(r => ({
+    const rows = source.map(r => ({
       EmployeeCode: r.employeeCode || '',
       Name: r.employeeName || '',
       Month: r.month || `${this.selectedMonth}-${this.selectedYear}`,
