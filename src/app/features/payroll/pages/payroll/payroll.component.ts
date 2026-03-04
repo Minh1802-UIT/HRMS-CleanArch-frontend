@@ -34,7 +34,14 @@ export class PayrollComponent implements OnInit, OnDestroy {
   payrollRecords: PayrollRecord[] = [];
   loading: boolean = false;
   calculating: boolean = false;
+  markingPaid: string | null = null; // track which record is being marked paid
   totalNetSalary: number = 0;
+
+  // Confirmation dialog state
+  showConfirmDialog: boolean = false;
+  confirmTitle: string = '';
+  confirmMessage: string = '';
+  private _pendingAction: (() => void) | null = null;
 
   constructor(
     private payrollService: PayrollService,
@@ -129,15 +136,21 @@ export class PayrollComponent implements OnInit, OnDestroy {
   }
 
   onCalculate() {
+    this.confirmTitle = 'Run Payroll Calculation';
+    this.confirmMessage = `Tính lương lại cho khỳ ${this.selectedMonth} ${this.selectedYear}?\nHành động này sẽ ghi đè tất cả bảng lương chưa thanh toán.`;
+    this._pendingAction = () => this._doCalculate();
+    this.showConfirmDialog = true;
+    this.cdr.markForCheck();
+  }
+
+  private _doCalculate() {
     this.calculating = true;
-    
-    // Call Bulk Calculation
     this.payrollService.calculatePayroll(this.selectedMonth, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
-        next: (res) => {
-             this.loadPayrollData();
-             this.toastService.showSuccess('Calculation Complete', `Payroll calculation completed for ${this.selectedMonth} ${this.selectedYear}`);
+        next: (count) => {
              this.calculating = false;
              this.cdr.markForCheck();
+             this.loadPayrollData();
+             this.toastService.showSuccess('Calculation Complete', `Processed ${count} record(s) for ${this.selectedMonth} ${this.selectedYear}`);
         },
         error: (err) => {
              this.logger.error('Payroll calculation error', err);
@@ -146,6 +159,55 @@ export class PayrollComponent implements OnInit, OnDestroy {
              this.cdr.markForCheck();
         }
     });
+  }
+
+  onMarkAsPaid(record: PayrollRecord) {
+    if (!record.id) {
+      this.toastService.showWarn('Not Calculated', 'Please calculate payroll before marking as paid');
+      return;
+    }
+    if (record.status === 'Paid') {
+      this.toastService.showWarn('Already Paid', 'This payroll record is already marked as Paid');
+      return;
+    }
+    this.confirmTitle = 'Mark as Paid';
+    this.confirmMessage = `Xác nhận đã thanh toán lương cho ${record.employeeName}?\nHanh động này không thể hoàn tác.`;
+    this._pendingAction = () => this._doMarkAsPaid(record);
+    this.showConfirmDialog = true;
+    this.cdr.markForCheck();
+  }
+
+  private _doMarkAsPaid(record: PayrollRecord) {
+    this.markingPaid = record.id;
+    this.payrollService.markAsPaid(record.id).pipe(takeUntil(this.destroy$)).subscribe({
+      next: () => {
+        record.status = 'Paid';
+        this.markingPaid = null;
+        this.cdr.markForCheck();
+        this.toastService.showSuccess('Marked as Paid', `Lương của ${record.employeeName} đã được thanh toán.`);
+      },
+      error: (err) => {
+        this.logger.error('Mark as paid error', err);
+        this.toastService.showError('Failed', 'Could not mark payroll as Paid');
+        this.markingPaid = null;
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  confirmExecute() {
+    this.showConfirmDialog = false;
+    this.cdr.markForCheck();
+    if (this._pendingAction) {
+      this._pendingAction();
+      this._pendingAction = null;
+    }
+  }
+
+  confirmCancel() {
+    this.showConfirmDialog = false;
+    this._pendingAction = null;
+    this.cdr.markForCheck();
   }
 
   onExport() {

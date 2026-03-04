@@ -20,7 +20,7 @@ export class PayrollService {
 
   getPayrollData(month: string, year: number): Observable<Payroll[]> {
     const monthYear = formatMonthYear(month, year);
-    return this.http.get<ApiResponse<PagedResult<Payroll>>>(`${this.apiUrl}?month=${monthYear}`).pipe(
+    return this.http.get<ApiResponse<PagedResult<Payroll>>>(`${this.apiUrl}?month=${monthYear}&pageSize=200`).pipe(
       map(response => {
         if (response.data && response.data.items) {
           return response.data.items;
@@ -31,11 +31,21 @@ export class PayrollService {
     );
   }
 
-  calculatePayroll(month: string, year: number): Observable<Payroll[]> {
+  calculatePayroll(month: string, year: number): Observable<number> {
     const monthYear = formatMonthYear(month, year);
-    return this.http.post<ApiResponse<Payroll[]>>(`${this.apiUrl}/generate`, { month: monthYear }).pipe(
-      map(response => response.data || []),
+    return this.http.post<ApiResponse<string>>(`${this.apiUrl}/generate`, { month: monthYear }).pipe(
+      map(response => {
+        const match = (response.data || '').match(/(\d+)/);
+        return match ? parseInt(match[1], 10) : 0;
+      }),
       catchError(err => { this.logger.error('PayrollService: calculatePayroll failed', err); return throwError(() => err); })
+    );
+  }
+
+  markAsPaid(id: string): Observable<void> {
+    return this.http.put<ApiResponse<void>>(`${this.apiUrl}/${id}/status`, { id, status: 'Paid' }).pipe(
+      map(() => void 0),
+      catchError(err => { this.logger.error(`PayrollService: markAsPaid(${id}) failed`, err); return throwError(() => err); })
     );
   }
 
