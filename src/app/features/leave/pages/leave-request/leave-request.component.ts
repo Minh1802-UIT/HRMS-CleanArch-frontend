@@ -132,7 +132,7 @@ export class LeaveRequestComponent implements OnInit, OnDestroy {
 
     const start = new Date(this.startDate);
     const end = new Date(this.endDate);
-    
+
     if (end < start) {
       this.toastService.showWarn('Invalid Date', 'End date cannot be before start date.');
       return;
@@ -141,9 +141,16 @@ export class LeaveRequestComponent implements OnInit, OnDestroy {
     const diffTime = Math.abs(end.getTime() - start.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
+    // Resolve the category code ("Annual" / "Sick" / "Unpaid") for the backend validator
+    const selectedType = this.leaveTypes.find(t => t.id === this.selectedTypeId);
+    if (!selectedType?.code) {
+      this.toastService.showWarn('Validation Error', 'Could not resolve leave type category. Please refresh and try again.');
+      return;
+    }
+
     this.submitting = true;
     this.leaveService.submitRequest({
-      type: this.selectedTypeId,
+      type: selectedType.code,  // Send "Annual" / "Sick" / "Unpaid" — NOT the GUID
       startDate: start,
       endDate: end,
       days: diffDays,
