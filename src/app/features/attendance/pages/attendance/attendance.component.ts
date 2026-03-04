@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { AttendanceService, AttendanceRecord, DailyStats } from '@features/attendance/services/attendance.service';
 import { LoggerService } from '@core/services/logger.service';
 import { ToastService } from '@core/services/toast.service';
-import { PagedResult } from '@core/models/api-response';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -17,6 +16,7 @@ import { takeUntil } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AttendanceComponent implements OnInit, OnDestroy {
+  /** All records for the selected date (loaded once, no server-side paging). */
   records: AttendanceRecord[] = [];
   stats: DailyStats = { present: 0, late: 0, absent: 0, onLeave: 0 };
   loading: boolean = false;
@@ -35,6 +35,7 @@ export class AttendanceComponent implements OnInit, OnDestroy {
     { value: 'Leave', label: 'On Leave' },
   ];
 
+  /** All records after applying search + status filter. */
   get filteredRecords(): AttendanceRecord[] {
     const kw = this.searchKeyword.toLowerCase().trim();
     return this.records.filter(r => {
@@ -47,11 +48,18 @@ export class AttendanceComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Pagination
+  /** Slice of filteredRecords for the current page. */
+  get pagedRecords(): AttendanceRecord[] {
+    const start = (this.currentPage - 1) * this.pageSize;
+    return this.filteredRecords.slice(start, start + this.pageSize);
+  }
+
+  get totalFilteredItems(): number { return this.filteredRecords.length; }
+  get totalFilteredPages(): number { return Math.max(1, Math.ceil(this.filteredRecords.length / this.pageSize)); }
+
+  // Pagination (client-side)
   currentPage: number = 1;
-  pageSize: number = 10;
-  totalItems: number = 0;
-  totalPagesCount: number = 0;
+  readonly pageSize: number = 10;
 
   protected readonly Math = Math;
 
@@ -89,25 +97,25 @@ export class AttendanceComponent implements OnInit, OnDestroy {
 
   loadData() {
     this.loading = true;
+    this.currentPage = 1;
+
     // Load Stats
     this.attendanceService.getDailyStats().pipe(takeUntil(this.destroy$)).subscribe({
       next: (stats) => {
         this.stats = stats;
         this.cdr.markForCheck();
       },
-      error: (err: any) => this.toast.showError('Error', 'Failed to load daily stats')
+      error: () => this.toast.showError('Error', 'Failed to load daily stats')
     });
 
-    // Load Records
-    this.attendanceService.getDailyRecords(this.selectedDate, { pageSize: this.pageSize, pageNumber: this.currentPage }).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (data: PagedResult<AttendanceRecord>) => {
+    // Load ALL records at once so client-side search/filter works across the full dataset
+    this.attendanceService.getDailyRecords(this.selectedDate, { pageSize: 9999, pageNumber: 1 }).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data) => {
         this.records = data.items;
-        this.totalItems = data.totalCount;
-        this.totalPagesCount = data.totalPages;
         this.loading = false;
         this.cdr.markForCheck();
       },
-      error: (err: any) => {
+      error: () => {
         this.toast.showError('Error', 'Failed to load daily records');
         this.loading = false;
         this.cdr.markForCheck();
@@ -115,34 +123,41 @@ export class AttendanceComponent implements OnInit, OnDestroy {
     });
   }
 
+  /** Call from template when search keyword or status filter changes. */
+  onFilterChange() {
+    this.currentPage = 1;
+    this.cdr.markForCheck();
+  }
+
   goToPage(page: number) {
-    if (page >= 1 && page <= this.totalPagesCount) {
+    if (page >= 1 && page <= this.totalFilteredPages) {
       this.currentPage = page;
-      this.loadData();
+      this.cdr.markForCheck();
     }
   }
 
   getPageNumbers(): number[] {
     const pages: number[] = [];
     const maxPagesToShow = 5;
-    
+    const total = this.totalFilteredPages;
+
     let startPage = Math.max(1, this.currentPage - Math.floor(maxPagesToShow / 2));
-    let endPage = Math.min(this.totalPagesCount, startPage + maxPagesToShow - 1);
-    
+    let endPage = Math.min(total, startPage + maxPagesToShow - 1);
+
     if (endPage - startPage + 1 < maxPagesToShow) {
       startPage = Math.max(1, endPage - maxPagesToShow + 1);
     }
-    
+
     for (let i = startPage; i <= endPage; i++) {
       pages.push(i);
     }
-    
     return pages;
   }
 
-
   onDateChange(event: string | Date) {
     this.selectedDate = new Date(event);
+    this.searchKeyword = '';
+    this.selectedStatusFilter = '';
     this.loadData();
   }
 

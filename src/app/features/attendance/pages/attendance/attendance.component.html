@@ -96,6 +96,7 @@
         <input
           type="text"
           [(ngModel)]="searchKeyword"
+          (ngModelChange)="onFilterChange()"
           placeholder="Search name or code…"
           class="w-full pl-9 pr-4 py-2.5 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-sm text-zinc-900 dark:text-white focus:ring-1 focus:ring-violet-500 focus:border-violet-500 outline-none"
         />
@@ -104,6 +105,7 @@
       <div class="relative w-full sm:w-44">
         <select
           [(ngModel)]="selectedStatusFilter"
+          (ngModelChange)="onFilterChange()"
           class="w-full px-4 py-2.5 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-sm text-zinc-900 dark:text-white focus:ring-1 focus:ring-violet-500 focus:border-violet-500 outline-none appearance-none cursor-pointer"
         >
           @for (opt of statusOptions; track opt.value) {
@@ -238,7 +240,7 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
-            @for (record of filteredRecords; track trackByIndex($index, record)) {
+            @for (record of pagedRecords; track trackByIndex($index, record)) {
               <tr
                 class="group transition-colors hover:bg-violet-50/30 dark:hover:bg-zinc-800/40"
               >
@@ -328,15 +330,15 @@
     <div class="mb-4 text-sm text-zinc-500 dark:text-zinc-400 sm:mb-0">
       Show
       <span class="font-semibold text-zinc-900 dark:text-white">{{
-        (currentPage - 1) * pageSize + 1
+        totalFilteredItems === 0 ? 0 : (currentPage - 1) * pageSize + 1
       }}</span>
       to
       <span class="font-semibold text-zinc-900 dark:text-white">{{
-        Math.min(currentPage * pageSize, totalItems)
+        Math.min(currentPage * pageSize, totalFilteredItems)
       }}</span>
       of
       <span class="font-semibold text-zinc-900 dark:text-white">{{
-        totalItems
+        totalFilteredItems
       }}</span>
       results
     </div>
@@ -363,7 +365,7 @@
       }
       <button
         (click)="goToPage(currentPage + 1)"
-        [disabled]="currentPage === totalPagesCount"
+        [disabled]="currentPage === totalFilteredPages"
         class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-sm font-medium text-zinc-500 border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed"
       >
         <span class="text-sm material-symbols-outlined">chevron_right</span>
