@@ -23,6 +23,30 @@ export class AttendanceComponent implements OnInit, OnDestroy {
   selectedDate: Date = new Date();
   private destroy$ = new Subject<void>();
 
+  // Search & Filter
+  searchKeyword: string = '';
+  selectedStatusFilter: string = '';
+  readonly statusOptions = [
+    { value: '', label: 'All Statuses' },
+    { value: 'Present', label: 'Present' },
+    { value: 'Late', label: 'Late' },
+    { value: 'EarlyLeave', label: 'Early Leave' },
+    { value: 'Absent', label: 'Absent' },
+    { value: 'Leave', label: 'On Leave' },
+  ];
+
+  get filteredRecords(): AttendanceRecord[] {
+    const kw = this.searchKeyword.toLowerCase().trim();
+    return this.records.filter(r => {
+      const matchesSearch = !kw ||
+        r.employee.name.toLowerCase().includes(kw) ||
+        r.employee.employeeCode.toLowerCase().includes(kw);
+      const matchesStatus = !this.selectedStatusFilter ||
+        r.status === this.selectedStatusFilter;
+      return matchesSearch && matchesStatus;
+    });
+  }
+
   // Pagination
   currentPage: number = 1;
   pageSize: number = 10;
@@ -124,11 +148,14 @@ export class AttendanceComponent implements OnInit, OnDestroy {
 
   getStatusClass(status: string): string {
     switch (status) {
-      case 'Present': return 'bg-green-100 text-green-700 border-green-200';
-      case 'Late': return 'bg-orange-100 text-orange-700 border-orange-200';
-      case 'Absent': return 'bg-red-100 text-red-700 border-red-200';
-      case 'On Leave': return 'bg-blue-100 text-blue-700 border-blue-200';
-      default: return 'bg-gray-100 text-gray-600 border-gray-200';
+      case 'Present':    return 'bg-green-100 text-green-700 border-green-200';
+      case 'Late':       return 'bg-orange-100 text-orange-700 border-orange-200';
+      case 'EarlyLeave': return 'bg-amber-100 text-amber-700 border-amber-200';
+      case 'Absent':     return 'bg-red-100 text-red-700 border-red-200';
+      case 'Leave':
+      case 'On Leave':   return 'bg-blue-100 text-blue-700 border-blue-200';
+      case 'Holiday':    return 'bg-purple-100 text-purple-700 border-purple-200';
+      default:           return 'bg-gray-100 text-gray-600 border-gray-200';
     }
   }
 

@@ -114,10 +114,10 @@ export class AttendanceService {
               // Backend returns PagedResult with items array, not a flat array
               const records: { status: string }[] = data?.items || data || [];
               return {
-                  present: records.filter(r => r.status === 'Present').length,
+                  present: records.filter(r => r.status === 'Present' || r.status === 'EarlyLeave').length,
                   late: records.filter(r => r.status === 'Late').length,
                   absent: records.filter(r => r.status === 'Absent').length,
-                  onLeave: records.filter(r => r.status === 'OnLeave' || r.status === 'On Leave').length
+                  onLeave: records.filter(r => r.status === 'Leave' || r.status === 'OnLeave' || r.status === 'On Leave').length
               };
           }),
           catchError(err => {
