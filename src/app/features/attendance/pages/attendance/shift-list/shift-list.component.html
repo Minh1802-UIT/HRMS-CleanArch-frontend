@@ -33,6 +33,7 @@
           <input
             type="text"
             [(ngModel)]="searchTerm"
+            (ngModelChange)="onSearch()"
             (keyup.enter)="onSearch()"
             placeholder="Search shifts..."
             class="block py-2 pr-3 pl-10 w-full placeholder-gray-400 dark:placeholder-zinc-500 rounded-lg border border-gray-200 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-gray-900 dark:text-zinc-100 transition-all outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:focus:ring-violet-500"
@@ -161,7 +162,7 @@
           <span class="text-sm text-gray-500">
             Showing
             <span class="font-medium text-gray-900 dark:text-zinc-100">{{
-              (currentPage - 1) * pageSize + 1
+              totalRecords === 0 ? 0 : (currentPage - 1) * pageSize + 1
             }}</span>
             to
             <span class="font-medium text-gray-900 dark:text-zinc-100">{{

@@ -26,7 +26,7 @@ export class ShiftService {
   }
 
   // Full paged list for management UI
-  getShiftsPaged(pagination: Partial<{ pageNumber: number; pageSize: number }> = {}): Observable<PagedResult<Shift>> {
+  getShiftsPaged(pagination: Partial<{ pageNumber: number; pageSize: number; searchTerm: string }> = {}): Observable<PagedResult<Shift>> {
     return this.http.get<ApiResponse<PagedResult<Shift>>>(this.apiUrl, { params: pagination }).pipe(
       map(response => response.data || { items: [], totalCount: 0, page: 1, pageSize: 10, totalPages: 0, hasNextPage: false, hasPreviousPage: false }),
       catchError(err => { this.logger.error('ShiftService: getShiftsPaged failed', err); return throwError(() => err); })

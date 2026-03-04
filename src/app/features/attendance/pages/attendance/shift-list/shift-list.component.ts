@@ -51,7 +51,7 @@ export class ShiftListComponent implements OnInit, OnDestroy {
   loadShifts() {
     this.loading = true;
     const params = {
-      page: this.currentPage,
+      pageNumber: this.currentPage,
       pageSize: this.pageSize,
       searchTerm: this.searchTerm
     };
