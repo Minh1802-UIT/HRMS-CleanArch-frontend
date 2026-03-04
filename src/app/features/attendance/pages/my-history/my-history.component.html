@@ -43,14 +43,9 @@
         >
           {{ stats.present }}
         </p>
-        @if (report && report.totalPresent > 0) {
+        @if (stats.totalWorkdays > 0) {
           <p class="text-xs text-zinc-400 mt-0.5">
-            {{
-              report.totalPresent > 0
-                ? ((stats.present / report.totalPresent) * 100
-                  | number: "1.0-0")
-                : 0
-            }}%
+            {{ (stats.present / stats.totalWorkdays * 100) | number: '1.0-0' }}%
           </p>
         }
       </div>
@@ -135,29 +130,37 @@
           Attendance Records
         </h2>
       </div>
-      <!-- Month navigator -->
-      <div class="flex items-center gap-2">
-        <button
-          (click)="prevMonth()"
-          class="w-7 h-7 flex items-center justify-center rounded-lg border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+      <!-- Controls: filter + month navigator -->
+      <div class="flex items-center gap-3 flex-wrap">
+        <!-- Status filter -->
+        <select
+          [(ngModel)]="selectedStatus"
+          (ngModelChange)="onStatusFilterChange()"
+          class="text-xs font-semibold rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-200 px-3 py-1.5 h-8 focus:outline-none focus:ring-2 focus:ring-green-500 cursor-pointer"
         >
-          <span class="material-symbols-outlined text-base text-zinc-500"
-            >chevron_left</span
+          <option value="">All Status</option>
+          @for (opt of statusOptions.slice(1); track opt) {
+            <option [value]="opt">{{ opt }}</option>
+          }
+        </select>
+        <!-- Month navigator -->
+        <div class="flex items-center gap-2">
+          <button
+            (click)="prevMonth()"
+            class="w-7 h-7 flex items-center justify-center rounded-lg border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
           >
-        </button>
-        <span
-          class="text-sm font-bold text-zinc-700 dark:text-zinc-200 min-w-[90px] text-center"
-        >
-          {{ displayRange || monthLabel() }}
-        </span>
-        <button
-          (click)="nextMonth()"
-          class="w-7 h-7 flex items-center justify-center rounded-lg border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-        >
-          <span class="material-symbols-outlined text-base text-zinc-500"
-            >chevron_right</span
+            <span class="material-symbols-outlined text-base text-zinc-500">chevron_left</span>
+          </button>
+          <span class="text-sm font-bold text-zinc-700 dark:text-zinc-200 min-w-[130px] text-center">
+            {{ displayRange || monthLabel() }}
+          </span>
+          <button
+            (click)="nextMonth()"
+            class="w-7 h-7 flex items-center justify-center rounded-lg border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
           >
-        </button>
+            <span class="material-symbols-outlined text-base text-zinc-500">chevron_right</span>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -242,45 +245,27 @@
         </div>
       } @else {
         <div class="overflow-x-auto">
+          <!-- Filter empty state -->
+          @if (filteredLogs.length === 0) {
+            <div class="flex flex-col items-center justify-center py-12 gap-2 text-zinc-400">
+              <span class="material-symbols-outlined text-3xl">filter_list_off</span>
+              <p class="text-sm">No records match the selected filter.</p>
+            </div>
+          } @else {
           <table class="w-full text-sm">
             <thead>
-              <tr
-                class="border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50/80 dark:bg-zinc-900/60"
-              >
-                <th
-                  class="px-5 py-3 label-overline text-zinc-500 dark:text-zinc-400 text-left"
-                >
-                  Date
-                </th>
-                <th
-                  class="px-5 py-3 label-overline text-zinc-500 dark:text-zinc-400 text-left"
-                >
-                  Day
-                </th>
-                <th
-                  class="px-5 py-3 label-overline text-zinc-500 dark:text-zinc-400 text-left"
-                >
-                  Check-In
-                </th>
-                <th
-                  class="px-5 py-3 label-overline text-zinc-500 dark:text-zinc-400 text-left"
-                >
-                  Check-Out
-                </th>
-                <th
-                  class="px-5 py-3 label-overline text-zinc-500 dark:text-zinc-400 text-left"
-                >
-                  Working Hours
-                </th>
-                <th
-                  class="px-5 py-3 label-overline text-zinc-500 dark:text-zinc-400 text-left"
-                >
-                  Score
-                </th>
+              <tr class="border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50/80 dark:bg-zinc-900/60">
+                <th class="px-5 py-3 label-overline text-zinc-500 dark:text-zinc-400 text-left">Date</th>
+                <th class="px-5 py-3 label-overline text-zinc-500 dark:text-zinc-400 text-left">Day</th>
+                <th class="px-5 py-3 label-overline text-zinc-500 dark:text-zinc-400 text-left">Status</th>
+                <th class="px-5 py-3 label-overline text-zinc-500 dark:text-zinc-400 text-left">Check-In</th>
+                <th class="px-5 py-3 label-overline text-zinc-500 dark:text-zinc-400 text-left">Check-Out</th>
+                <th class="px-5 py-3 label-overline text-zinc-500 dark:text-zinc-400 text-left">Working Hours</th>
+                <th class="px-5 py-3 label-overline text-zinc-500 dark:text-zinc-400 text-left">Score</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-zinc-50 dark:divide-zinc-800/50">
-              @for (log of report.logs; track trackByDate($index, log)) {
+              @for (log of filteredLogs; track trackByDate($index, log)) {
                 <tr
                   class="transition-colors"
                   [ngClass]="
@@ -305,10 +290,29 @@
                     </div>
                   </td>
                   <!-- Day of week -->
-                  <td
-                    class="px-5 py-3 text-zinc-500 dark:text-zinc-400 font-medium"
-                  >
+                  <td class="px-5 py-3 text-zinc-500 dark:text-zinc-400 font-medium">
                     {{ log.dayOfWeek | slice: 0 : 2 }}
+                  </td>
+                  <!-- Status -->
+                  <td class="px-5 py-3 whitespace-nowrap">
+                    @if (log.isWeekend) {
+                      <span class="text-xs text-zinc-400 dark:text-zinc-600">Weekend</span>
+                    } @else if (log.isHoliday) {
+                      <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold border bg-purple-100 text-purple-700 border-purple-200 dark:bg-purple-900/30 dark:text-purple-400 dark:border-purple-700">Holiday</span>
+                    } @else {
+                      <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold border" [ngClass]="getStatusClass(log.status)">
+                        <span class="w-1.5 h-1.5 rounded-full"
+                          [ngClass]="log.status === 'Present' ? 'bg-green-500' : log.status === 'Late' ? 'bg-amber-500' : log.status === 'EarlyLeave' ? 'bg-orange-500' : log.status === 'Absent' ? 'bg-red-500' : 'bg-blue-500'">
+                        </span>
+                        {{ log.status }}
+                        @if (log.status === 'Late' && log.lateMinutes > 0) {
+                          <span class="opacity-70">(+{{ log.lateMinutes }}m)</span>
+                        }
+                        @if (log.status === 'EarlyLeave' && log.earlyLeaveMinutes > 0) {
+                          <span class="opacity-70">(-{{ log.earlyLeaveMinutes }}m)</span>
+                        }
+                      </span>
+                    }
                   </td>
                   <!-- Check-In -->
                   <td class="px-5 py-3 whitespace-nowrap">
@@ -339,53 +343,32 @@
                   </td>
                   <!-- Working Hours -->
                   <td class="px-5 py-3">
-                    @if (
-                      !log.isWeekend && !log.isHoliday && log.workingHours > 0
-                    ) {
-                      <span class="font-bold text-zinc-700 dark:text-zinc-200">
-                        {{ log.workingHours | number: "1.1-1" }}
-                      </span>
-                    } @else if (log.isWeekend || log.isHoliday) {
+                    @if (log.isWeekend || log.isHoliday) {
                       <span class="text-zinc-300 dark:text-zinc-600">–</span>
                     } @else {
-                      <span class="font-bold text-zinc-700 dark:text-zinc-200"
-                        >0.0</span
-                      >
+                      <div class="flex flex-col">
+                        <span class="font-bold text-zinc-700 dark:text-zinc-200">
+                          {{ log.workingHours | number: '1.1-1' }}
+                        </span>
+                        @if (log.overtimeHours > 0) {
+                          <span class="text-xs text-blue-500">+{{ log.overtimeHours | number: '1.1-1' }}h OT</span>
+                        }
+                      </div>
                     }
                   </td>
                   <!-- Score -->
                   <td class="px-5 py-3 whitespace-nowrap">
-                    @if (log.isWeekend || log.isHoliday) {
-                      <span class="text-zinc-300 dark:text-zinc-600 text-xs"
-                        >–/-</span
-                      >
+                    @if (log.isWeekend || log.isHoliday || log.status === 'Leave' || log.status === 'OnLeave') {
+                      <span class="text-zinc-300 dark:text-zinc-600 text-xs">–</span>
                     } @else {
-                      <span
-                        class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-black border"
-                        [ngClass]="getStatusClass(log.status)"
-                      >
-                        <span
-                          class="w-1.5 h-1.5 rounded-full"
-                          [ngClass]="
-                            log.status === 'Present'
-                              ? 'bg-green-500'
-                              : log.status === 'Late'
-                                ? 'bg-amber-500'
-                                : log.status === 'Absent'
-                                  ? 'bg-red-500'
-                                  : 'bg-blue-500'
-                          "
-                        >
+                      <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-black border"
+                        [ngClass]="getScoreValue(log) === 100 ? 'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-700'
+                                  : getScoreValue(log) > 0  ? 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-700'
+                                                            : 'bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-700'">
+                        <span class="w-1.5 h-1.5 rounded-full"
+                          [ngClass]="getScoreValue(log) === 100 ? 'bg-green-500' : getScoreValue(log) > 0 ? 'bg-amber-500' : 'bg-red-500'">
                         </span>
-                        @if (log.status === "Present") {
-                          100%
-                        } @else if (log.status === "Late") {
-                          50%
-                        } @else if (log.status === "Absent") {
-                          0%
-                        } @else {
-                          {{ log.status }}
-                        }
+                        +{{ getScoreValue(log) < 0 ? 0 : getScoreValue(log) }}%
                       </span>
                     }
                   </td>
@@ -393,6 +376,7 @@
               }
             </tbody>
           </table>
+          } <!-- end @else filteredLogs -->
         </div>
       }
     }

@@ -36,10 +36,14 @@ export class MyHistoryComponent implements OnInit, OnDestroy {
   // Currently selected month in "MM-yyyy" format
   selectedMonth: string;
 
-  // Computed stats
-  stats = { present: 0, avgHours: 0, missing: 0, explanations: '0/0' };
+  // Filter by status ('': all)
+  selectedStatus = '';
+  readonly statusOptions = ['', 'Present', 'Late', 'EarlyLeave', 'Absent', 'Leave', 'Holiday'];
 
-  // Week-range display for the current page (mirrors screenshot "25/02/26 – 24/03/26")
+  // Computed stats
+  stats = { present: 0, avgHours: 0, missing: 0, explanations: '0/0', totalWorkdays: 0 };
+
+  // Month-range display e.g. "01/03/26 – 31/03/26"
   displayRange = '';
 
   constructor(
@@ -96,10 +100,10 @@ export class MyHistoryComponent implements OnInit, OnDestroy {
     const logs = this.report.logs ?? [];
     const workdays = logs.filter((l) => !l.isWeekend && !l.isHoliday);
     const presentDays = workdays.filter(
-      (l) => l.status === 'Present' || l.status === 'Late'
+      (l) => l.status === 'Present' || l.status === 'Late' || l.status === 'EarlyLeave'
     ).length;
     const missingDays = workdays.filter(
-      (l) => !l.checkInTime && l.status !== 'Leave' && l.status !== 'Holiday'
+      (l) => !l.checkInTime && l.status !== 'Leave' && l.status !== 'Holiday' && l.status !== 'OnLeave'
     ).length;
     const totalHrs = logs.reduce((sum, l) => sum + (l.workingHours || 0), 0);
     const avgHrs = presentDays > 0 ? totalHrs / presentDays : 0;
@@ -109,14 +113,26 @@ export class MyHistoryComponent implements OnInit, OnDestroy {
       avgHours: Math.round(avgHrs * 10) / 10,
       missing: missingDays,
       explanations: '0/0',
+      totalWorkdays: workdays.length,
     };
 
-    // Build display range
-    if (logs.length > 0) {
-      const first = new Date(logs[0].date);
-      const last = new Date(logs[logs.length - 1].date);
-      this.displayRange = `${this.fmtDate(first)} – ${this.fmtDate(last)}`;
-    }
+    // Build display range from first/last day of the month
+    const [mm, yyyy] = this.selectedMonth.split('-').map(Number);
+    const firstDay = new Date(yyyy, mm - 1, 1);
+    const lastDay = new Date(yyyy, mm, 0); // last day of month
+    this.displayRange = `${this.fmtDate(firstDay)} – ${this.fmtDate(lastDay)}`;
+  }
+
+  get filteredLogs(): DailyLogEntry[] {
+    const logs = this.report?.logs ?? [];
+    if (!this.selectedStatus) return logs;
+    return logs.filter((l) => l.status === this.selectedStatus ||
+      (this.selectedStatus === 'Leave' && (l.status === 'Leave' || l.status === 'OnLeave')));
+  }
+
+  onStatusFilterChange(): void {
+    // ChangeDetection is OnPush — mark for re-render
+    this.cdr.markForCheck();
   }
 
   prevMonth(): void {
@@ -145,6 +161,8 @@ export class MyHistoryComponent implements OnInit, OnDestroy {
         return 'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-700';
       case 'Late':
         return 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-700';
+      case 'EarlyLeave':
+        return 'bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-900/30 dark:text-orange-400 dark:border-orange-700';
       case 'Absent':
         return 'bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-700';
       case 'Leave':
@@ -162,6 +180,8 @@ export class MyHistoryComponent implements OnInit, OnDestroy {
     if (!log.checkInTime) return 0;
     if (log.status === 'Present') return 100;
     if (log.status === 'Late') return 50;
+    if (log.status === 'EarlyLeave') return 75;
+    if (log.status === 'Leave' || log.status === 'OnLeave') return -1;
     return 0;
   }
 
