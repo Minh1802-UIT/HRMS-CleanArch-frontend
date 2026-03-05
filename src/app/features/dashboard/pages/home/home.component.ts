@@ -124,76 +124,75 @@ export class HomeComponent {
   }
 
   moduleFeatures = [
-    { 
-      name: 'Dashboard', 
-      id: 'dash',
-      title: 'Dashboard',
-      subtitle: 'ZenithHR Software',
-      imageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800' 
+    {
+      name: 'Dashboard', id: 'dash', icon: 'pi-chart-bar',
+      title: 'Tổng quan Doanh nghiệp',
+      description: 'Toàn bộ dữ liệu nhân sự trong một màn hình duy nhất. Theo dõi KPI theo thời gian thực, phát hiện bất thường và ra quyết định nhanh hơn.',
+      bullets: ['Biểu đồ KPI nhân sự cập nhật realtime', 'Cảnh báo thông minh về bất thường', 'Báo cáo tùy chỉnh theo bộ phận/chi nhánh'],
+      imageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=900'
     },
-    { 
-      name: 'Attendance', 
-      id: 'attn',
-      title: 'Attendance',
-      subtitle: 'ZenithHR Software',
-      imageUrl: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&q=80&w=800'
+    {
+      name: 'Chấm công', id: 'attn', icon: 'pi-clock',
+      title: 'Chấm công thông minh',
+      description: 'Ghi nhận giờ làm tự động qua FaceID, QR Code hoặc GPS. Loại bỏ hoàn toàn gian lận chấm công và sai sót đối soát cuối tháng.',
+      bullets: ['Nhận diện khuôn mặt AI trên Mobile', 'Check-in GPS tại nhiều địa điểm', 'Báo cáo chấm công tự động mỗi tháng'],
+      imageUrl: 'https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?auto=format&fit=crop&q=80&w=900'
     },
-    { 
-      name: 'OT', 
-      id: 'ot',
-      title: 'Overtime',
-      subtitle: 'ZenithHR Software',
-      imageUrl: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&q=80&w=800'
+    {
+      name: 'Tăng ca (OT)', id: 'ot', icon: 'pi-moon',
+      title: 'Quản lý Tăng ca',
+      description: 'Hệ thống tự động ghi nhận, tính toán và phê duyệt giờ làm thêm theo đúng Luật lao động. Không còn tranh chấp về OT.',
+      bullets: ['Đơn OT số hóa, duyệt trực tuyến', 'Tự động cộng vào lương cuối tháng', 'Giới hạn OT theo quy định pháp luật'],
+      imageUrl: 'https://images.unsplash.com/photo-1504938547765-f93a21f04c11?auto=format&fit=crop&q=80&w=900'
     },
-    { 
-      name: 'Leave', 
-      id: 'lv',
-      title: 'Leave',
-      subtitle: 'ZenithHR Software',
-      imageUrl: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&q=80&w=800'
+    {
+      name: 'Nghỉ phép', id: 'lv', icon: 'pi-calendar-plus',
+      title: 'Nghỉ phép & Vắng mặt',
+      description: 'Quy trình xin nghỉ phép 100% trực tuyến. Nhân viên theo dõi quỹ phép năm, lãnh đạo duyệt ngay trên điện thoại trong 1 phút.',
+      bullets: ['Theo dõi quỹ phép năm minh bạch', 'Duyệt đơn qua app Mobile tức thì', 'Tích hợp lịch nghỉ lễ theo quy định'],
+      imageUrl: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&q=80&w=900'
     },
-    { 
-      name: 'Payroll', 
-      id: 'pay',
-      title: 'Payroll',
-      subtitle: 'ZenithHR Software',
-      imageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800'
+    {
+      name: 'Bảng lương', id: 'pay', icon: 'pi-dollar',
+      title: 'Bảng lương & Thuế TNCN',
+      description: 'Tự động tính lương, phụ cấp, các khoản khấu trừ và xuất báo cáo Thuế TNCN theo đúng biểu mẫu mới nhất của Bộ Tài chính.',
+      bullets: ['Tính lương tự động 100%, loại bỏ sai sót', 'Báo cáo Thuế TNCN & BHXH đúng chuẩn', 'Phiếu lương số hóa gửi email nhân viên'],
+      imageUrl: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&q=80&w=900'
     },
-    { 
-      name: 'Employee Learning Library', 
-      id: 'learn',
-      title: 'Learning',
-      subtitle: 'ZenithHR Software',
-      imageUrl: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800'
+    {
+      name: 'Đào tạo', id: 'learn', icon: 'pi-book',
+      title: 'Thư viện Đào tạo',
+      description: 'Xây dựng lộ trình phát triển cho từng nhân viên. Theo dõi tiến độ học tập và đo lường hiệu quả đào tạo theo từng vị trí.',
+      bullets: ['Lộ trình học tập cá nhân hóa', 'Theo dõi cert và kỹ năng theo thời gian', 'E-learning tích hợp ngay trong phần mềm'],
+      imageUrl: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=900'
     },
-    { 
-      name: 'Performance Appraisal', 
-      id: 'perf',
-      title: 'Performance',
-      subtitle: 'ZenithHR Software',
-      imageUrl: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=800'
+    {
+      name: 'Đánh giá KPI', id: 'perf', icon: 'pi-star',
+      title: 'Đánh giá Hiệu suất',
+      description: 'Thiết lập chu kỳ đánh giá 360°. Gắn KPI với mục tiêu doanh nghiệp và theo dõi tự động tiến độ của từng cá nhân và nhóm.',
+      bullets: ['Đánh giá 360° từ nhiều chiều', 'KPI liên kết mục tiêu OKR công ty', 'Lịch sử đánh giá lưu trữ đầy đủ'],
+      imageUrl: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=900'
     },
-    { 
-      name: 'Recruitment', 
-      id: 'rec',
-      title: 'Recruitment',
-      subtitle: 'ZenithHR Software',
-      imageUrl: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&q=80&w=800'
+    {
+      name: 'Tuyển dụng', id: 'rec', icon: 'pi-users',
+      title: 'Pipeline Tuyển dụng',
+      description: 'Quản lý toàn bộ phễu tuyển dụng từ đăng tin, sàng lọc CV đến phỏng vấn và offer letter. Rút ngắn thời gian tuyển dụng 50%.',
+      bullets: ['Đăng tin tuyển dụng đa kênh đồng thời', 'Theo dõi ứng viên theo Kanban pipeline', 'Lịch phỏng vấn tự động gửi email/SMS'],
+      imageUrl: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&q=80&w=900'
     },
-    { 
-      name: 'KPI', 
-      id: 'kpi',
-      title: 'KPI Management',
-      subtitle: 'ZenithHR Software',
-      imageUrl: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&q=80&w=800'
+    {
+      name: 'KPI & OKR', id: 'kpi', icon: 'pi-chart-line',
+      title: 'KPI & Mục tiêu OKR',
+      description: 'Kết nối mục tiêu cá nhân với chiến lược công ty. Dashboard KPI giúp lãnh đạo nắm bắt tức thì ai đang vượt và ai cần hỗ trợ.',
+      bullets: ['OKR theo quý liên kết chiến lược', 'Tự động tính điểm KPI cuối kỳ', 'Heatmap hiệu suất toàn công ty'],
+      imageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=900'
     },
-    { 
-      name: 'HR AI Agent', 
-      id: 'ai', 
-      highlight: true,
-      title: 'HR AI Agent',
-      subtitle: 'ZenithHR Intelligence',
-      imageUrl: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=800'
+    {
+      name: 'HR AI Agent', id: 'ai', icon: 'pi-sparkles',
+      title: 'Trợ lý HR bằng AI',
+      description: 'AI phân tích hành vi nghỉ việc, gợi ý nhân viên có nguy cơ rời bỏ và tự động hóa các câu trả lời chính sách nội bộ 24/7.',
+      bullets: ['Dự báo nguy cơ nghỉ việc sớm 3 tháng', 'Chatbot HR trả lời chính sách tự động', 'Phân tích sentiment qua khảo sát nội bộ'],
+      imageUrl: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=900'
     }
   ];
 

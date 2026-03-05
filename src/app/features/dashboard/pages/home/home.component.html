@@ -334,91 +334,144 @@
     </div>
   </section>
 
-  <!-- Module Slider Navigation -->
-  <section class="py-8 bg-white border-b dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 reveal-on-scroll reveal-up" #revealElement>
-    <div class="relative px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-      <div id="module-slider" class="flex overflow-x-auto gap-6 justify-center items-center md:gap-10 no-scrollbar scroll-smooth snap-x">
-        @for (module of moduleFeatures; track module.id; let i = $index) {
-          <div
-            class="flex flex-col flex-shrink-0 items-center cursor-pointer module-item snap-center group/item"
-            (click)="setActiveModule(i)"
-          >
-            <span
-              class="text-[15px] font-semibold whitespace-nowrap px-1 py-4 transition-all"
-              [ngClass]="{
-                'text-violet-600 dark:text-violet-400 scale-110': i === activeModuleIndex(),
-                'text-zinc-400 dark:text-zinc-500 group-hover/item:text-zinc-900 dark:group-hover/item:text-zinc-200': i !== activeModuleIndex()
-              }"
-            >
-              {{ module.name }}
-            </span>
-            <div
-              class="h-[3px] bg-violet-600 transition-all duration-300 rounded-full"
-              [ngClass]="{
-                'w-full opacity-100': i === activeModuleIndex(),
-                'w-0 opacity-0': i !== activeModuleIndex()
-              }"
-            ></div>
-          </div>
-        }
-      </div>
-    </div>
-  </section>
+  <!-- Module Showcase (unified) -->
+  <section class="relative py-16 lg:py-20 bg-zinc-950 overflow-hidden reveal-on-scroll reveal-up" #revealElement>
+    <!-- Subtle corner glows only, not center -->
+    <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-violet-800/10 rounded-full blur-[120px] pointer-events-none"></div>
+    <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-violet-900/10 rounded-full blur-[100px] pointer-events-none"></div>
 
-  <!-- Module Showcase -->
-  <section class="py-20 lg:py-32 bg-zinc-950 overflow-hidden relative reveal-on-scroll reveal-up delay-100" #revealElement>
-    <div class="absolute left-[calc(50%-350px)] top-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-violet-700/20 rounded-full blur-[80px] pointer-events-none hidden lg:block"></div>
     <div class="relative z-10 px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-      <div class="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:items-center lg:gap-24">
-        <div class="flex relative flex-col items-center text-center lg:items-start lg:text-left">
+      <!-- Section header -->
+      <div class="mb-12 text-center">
+        <span class="inline-block mb-3 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-violet-400 bg-violet-900/30 border border-violet-800/50 rounded-full">Khám phá tính năng</span>
+        <h2 class="text-3xl font-extrabold text-white font-display md:text-4xl">
+          Mọi thứ bạn cần, <span class="text-violet-400">trong một nền tảng</span>
+        </h2>
+      </div>
+
+      <!-- Pill Tab Navigation -->
+      <div class="mb-10 relative">
+        <div
+          id="module-slider"
+          class="flex overflow-x-auto gap-2 pb-2 no-scrollbar scroll-smooth"
+        >
+          <!-- left fade -->
+          <div class="absolute left-0 top-0 h-full w-8 bg-gradient-to-r from-zinc-950 to-transparent pointer-events-none z-10"></div>
+          <!-- right fade -->
+          <div class="absolute right-0 top-0 h-full w-8 bg-gradient-to-l from-zinc-950 to-transparent pointer-events-none z-10"></div>
+
+          @for (module of moduleFeatures; track module.id; let i = $index) {
+            <button
+              type="button"
+              class="module-item flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-200"
+              [ngClass]="i === activeModuleIndex()
+                ? 'bg-violet-600 text-white shadow-lg shadow-violet-600/30'
+                : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200 border border-zinc-700'"
+              (click)="setActiveModule(i)"
+            >
+              <i class="pi {{ module.icon }} text-xs"
+                [ngClass]="i === activeModuleIndex() ? 'text-violet-200' : 'text-zinc-500'"
+              ></i>
+              {{ module.name }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Content Area -->
+      <div class="grid grid-cols-1 gap-8 lg:grid-cols-5 lg:items-center lg:gap-12">
+        <!-- Left: Info (2 cols) -->
+        <div class="relative lg:col-span-2">
           @for (module of moduleFeatures; track module.id; let i = $index) {
             <div
-              class="transition-all duration-700 ease-in-out transform"
+              class="transition-all duration-500 ease-in-out"
               [ngClass]="{
-                'opacity-100 translate-y-0 relative z-10': i === activeModuleIndex(),
-                'opacity-0 translate-y-12 absolute inset-0 pointer-events-none z-0': i !== activeModuleIndex()
+                'opacity-100 translate-y-0 relative': i === activeModuleIndex(),
+                'opacity-0 translate-y-6 absolute inset-0 pointer-events-none': i !== activeModuleIndex()
               }"
             >
-              <h3 class="text-6xl md:text-7xl lg:text-8xl font-black text-white font-display leading-[0.9] tracking-tighter mb-4">
-                {{ module.title }}
-              </h3>
-              <p class="mx-auto max-w-md text-xl font-semibold text-white/70 lg:mx-0">{{ module.subtitle }}</p>
-              <div class="flex gap-4 justify-center items-center mt-8 lg:justify-start">
+              <!-- Icon + Title -->
+              <div class="flex items-center gap-3 mb-4">
+                <div class="flex justify-center items-center w-12 h-12 rounded-xl bg-violet-600/20 border border-violet-600/30">
+                  <i class="pi {{ module.icon }} text-xl text-violet-400"></i>
+                </div>
+                <h3 class="text-2xl font-extrabold text-white font-display">{{ module.title }}</h3>
+              </div>
+              <p class="mb-6 text-base leading-relaxed text-zinc-400">{{ module.description }}</p>
+              <!-- Bullet features -->
+              <ul class="space-y-3 mb-8">
+                @for (b of module.bullets; track b) {
+                  <li class="flex items-start gap-3">
+                    <span class="flex justify-center items-center w-5 h-5 rounded-full bg-violet-600/20 border border-violet-500/30 shrink-0 mt-0.5">
+                      <i class="pi pi-check text-[10px] text-violet-400"></i>
+                    </span>
+                    <span class="text-sm text-zinc-300">{{ b }}</span>
+                  </li>
+                }
+              </ul>
+              <!-- Nav arrows -->
+              <div class="flex items-center gap-3">
                 <button
                   type="button"
                   (click)="scrollModules('left')"
-                  class="w-12 h-12 rounded-full bg-white text-violet-700 flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-all"
+                  class="w-10 h-10 rounded-full bg-zinc-800 border border-zinc-700 text-zinc-300 flex items-center justify-center hover:bg-zinc-700 hover:text-white hover:border-zinc-500 active:scale-95 transition-all"
                   aria-label="Module trước"
                 >
-                  <i class="text-xl font-bold pi pi-chevron-left"></i>
+                  <i class="pi pi-chevron-left text-sm"></i>
                 </button>
                 <button
                   type="button"
                   (click)="scrollModules('right')"
-                  class="w-12 h-12 rounded-full bg-white text-violet-700 flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-all"
+                  class="w-10 h-10 rounded-full bg-zinc-800 border border-zinc-700 text-zinc-300 flex items-center justify-center hover:bg-zinc-700 hover:text-white hover:border-zinc-500 active:scale-95 transition-all"
                   aria-label="Module tiếp theo"
                 >
-                  <i class="text-xl font-bold pi pi-chevron-right"></i>
+                  <i class="pi pi-chevron-right text-sm"></i>
                 </button>
+                <span class="text-xs text-zinc-600 ml-1">{{ activeModuleIndex() + 1 }} / {{ moduleFeatures.length }}</span>
               </div>
             </div>
           }
         </div>
-        <div class="flex relative justify-center lg:justify-end">
-          <div class="relative w-full max-w-[600px] aspect-[16/11] rounded-2xl shadow-2xl border border-zinc-700/50 bg-zinc-900 overflow-hidden">
-            @for (module of moduleFeatures; track module.id; let i = $index) {
-              <img
-                [src]="loadedModuleIndices().has(i) ? module.imageUrl : ''"
-                [alt]="module.title"
-                decoding="async"
-                class="absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]"
-                [ngClass]="{
-                  'opacity-100 scale-100 z-10': i === activeModuleIndex(),
-                  'opacity-0 scale-105 z-0 pointer-events-none': i !== activeModuleIndex()
-                }"
-              />
-            }
+
+        <!-- Right: App Mockup (3 cols) -->
+        <div class="relative lg:col-span-3">
+          <!-- macOS window frame -->
+          <div class="rounded-2xl overflow-hidden border border-zinc-700/60 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.8)] bg-zinc-900">
+            <!-- Titlebar -->
+            <div class="flex items-center gap-2 px-4 h-9 bg-zinc-800/80 border-b border-zinc-700/50 shrink-0">
+              <div class="flex gap-1.5">
+                <div class="w-2.5 h-2.5 rounded-full bg-red-500/80"></div>
+                <div class="w-2.5 h-2.5 rounded-full bg-yellow-500/80"></div>
+                <div class="w-2.5 h-2.5 rounded-full bg-green-500/80"></div>
+              </div>
+              <div class="flex-1 flex justify-center">
+                <div class="flex items-center gap-1.5 px-3 py-0.5 rounded bg-zinc-700/50 border border-zinc-600/30">
+                  <i class="pi pi-lock text-[9px] text-green-500"></i>
+                  <span class="text-[10px] font-mono text-zinc-400">app.zenithhr.com</span>
+                </div>
+              </div>
+            </div>
+            <!-- Image viewport (16:10 ratio) -->
+            <div class="relative aspect-[16/10] bg-zinc-800">
+              @for (module of moduleFeatures; track module.id; let i = $index) {
+                <img
+                  [src]="loadedModuleIndices().has(i) ? module.imageUrl : ''"
+                  [alt]="module.title"
+                  decoding="async"
+                  loading="lazy"
+                  class="absolute inset-0 w-full h-full object-cover transition-all duration-600 ease-in-out"
+                  [ngClass]="{
+                    'opacity-100 z-10': i === activeModuleIndex(),
+                    'opacity-0 z-0 pointer-events-none': i !== activeModuleIndex()
+                  }"
+                />
+              }
+              <!-- Overlay shimmer at bottom for depth -->
+              <div class="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-zinc-900/60 to-transparent pointer-events-none z-20"></div>
+            </div>
           </div>
+          <!-- Reflection / glow under frame -->
+          <div class="mx-8 h-4 bg-violet-600/10 blur-xl rounded-full"></div>
         </div>
       </div>
     </div>
