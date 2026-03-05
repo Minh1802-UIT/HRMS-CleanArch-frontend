@@ -223,6 +223,10 @@ export class PayrollComponent implements OnInit, OnDestroy {
       this.toastService.showWarn('Already Paid', 'This payroll record is already marked as Paid');
       return;
     }
+    if (record.status !== 'Approved') {
+      this.toastService.showWarn('Not Approved', `Phiếu lương phải được duyệt (Approved) trước khi thanh toán. Trạng thái hiện tại: ${record.status}.`);
+      return;
+    }
     this.confirmTitle = 'Mark as Paid';
     this.confirmMessage = `Xác nhận đã thanh toán lương cho ${record.employeeName}?\nHanh động này không thể hoàn tác.`;
     this._pendingAction = () => this._doMarkAsPaid(record);
@@ -241,7 +245,8 @@ export class PayrollComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.logger.error('Mark as paid error', err);
-        this.toastService.showError('Failed', 'Could not mark payroll as Paid');
+        const msg = err?.error?.message || err?.error?.error || 'Could not mark payroll as Paid';
+        this.toastService.showError('Failed', msg);
         this.markingPaid = null;
         this.cdr.markForCheck();
       }
