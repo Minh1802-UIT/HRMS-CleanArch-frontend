@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { NgClass, CurrencyPipe, SlicePipe } from '@angular/common';
+import { NgClass, CurrencyPipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { EmployeeService, Employee } from '@features/employee/services/employee.service';
@@ -43,7 +43,7 @@ import { AuthService } from '@core/services/auth.service';
   selector: 'app-employee-profile',
   standalone: true,
   imports: [
-    NgClass, CurrencyPipe, SlicePipe,
+    NgClass, CurrencyPipe,
     FormsModule,
     RouterModule,
     AddEmployeeComponent,
