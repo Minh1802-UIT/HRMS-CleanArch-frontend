@@ -13,6 +13,9 @@ import { User } from '@core/models/user.model';
 import { DashboardData } from '@features/dashboard/services/dashboard.service';
 import { PagedResult } from '@core/models/api-response';
 import { AuditLog } from '@features/system/models/audit-log.model';
+import { MyAttendanceService } from '@features/attendance/services/my-attendance.service';
+import { PayrollService } from '@features/payroll/services/payroll.service';
+import { LeaveRequestService } from '@features/leave/services/leave-request.service';
 
 describe('DashboardComponent', () => {
   let component: DashboardComponent;
@@ -60,6 +63,9 @@ describe('DashboardComponent', () => {
         { provide: AuditLogService, useValue: mockAuditLogService },
         { provide: LoggerService, useValue: mockLogger },
         { provide: AuthService, useValue: mockAuthService },
+        { provide: MyAttendanceService, useValue: { getTodayStatus: () => of({ hasCheckedIn: false, hasCheckedOut: false, checkInTime: null, checkOutTime: null }) } },
+        { provide: PayrollService, useValue: { getMyPayrolls: () => of([]) } },
+        { provide: LeaveRequestService, useValue: { getLeaveHistory: () => of([]) } },
         MessageService,
         provideRouter([]),
         provideAnimations()
