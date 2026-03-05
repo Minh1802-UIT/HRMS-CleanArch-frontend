@@ -199,6 +199,17 @@ export class HomeComponent {
 
   activeModuleIndex = signal<number>(4); // Default to Payroll to match the user's screenshot
 
+  trustedCompanies = [
+    { name: 'Vingroup',       abbr: 'VG',  color: '#1d4ed8' },
+    { name: 'FPT Software',   abbr: 'FPT', color: '#f97316' },
+    { name: 'Viettel',        abbr: 'VТ',  color: '#dc2626' },
+    { name: 'Masan Group',    abbr: 'MSN', color: '#16a34a' },
+    { name: 'Techcombank',    abbr: 'TCB', color: '#ca8a04' },
+    { name: 'VNPT',           abbr: 'VNP', color: '#7c3aed' },
+    { name: 'VinFast',        abbr: 'VF',  color: '#0ea5e9' },
+    { name: 'Sacombank',      abbr: 'STB', color: '#059669' },
+  ];
+
   testimonials = [
     {
       name: 'Nguyễn Thị Lan',
