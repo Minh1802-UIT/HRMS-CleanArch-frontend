@@ -15,7 +15,16 @@ export interface DailyLogEntry {
   workingHours: number;
   lateMinutes: number;
   earlyLeaveMinutes: number;
+  /** Base status from DB: "Present" | "Absent" | "Leave" | "Holiday".
+   *  Legacy records may still hold "Late" or "EarlyLeave" directly.
+   *  Use isLate / isEarlyLeave flags for new records instead. */
   status: string;
+  /** True when the employee arrived after the grace-period threshold. */
+  isLate: boolean;
+  /** True when the employee left before the shift end time. */
+  isEarlyLeave: boolean;
+  /** True when the employee checked in but never checked out (auto-closed by ghost-log). */
+  isMissingPunch: boolean;
   overtimeHours: number;
   isWeekend: boolean;
   isHoliday: boolean;

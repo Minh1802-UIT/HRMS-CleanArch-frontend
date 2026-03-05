@@ -123,11 +123,27 @@ export class MyHistoryComponent implements OnInit, OnDestroy {
     this.displayRange = `${this.fmtDate(firstDay)} – ${this.fmtDate(lastDay)}`;
   }
 
+  /**
+   * Returns the effective display status for a log entry.
+   * New records store base status "Present" with boolean flags (isLate / isEarlyLeave).
+   * Legacy records may still store "Late" or "EarlyLeave" directly as base status.
+   */
+  getDisplayStatus(log: DailyLogEntry): string {
+    if (log.status === 'Present') {
+      if (log.isLate) return 'Late';
+      if (log.isEarlyLeave) return 'EarlyLeave';
+    }
+    return log.status;
+  }
+
   get filteredLogs(): DailyLogEntry[] {
     const logs = this.report?.logs ?? [];
     if (!this.selectedStatus) return logs;
-    return logs.filter((l) => l.status === this.selectedStatus ||
-      (this.selectedStatus === 'Leave' && (l.status === 'Leave' || l.status === 'OnLeave')));
+    return logs.filter((l) => {
+      const display = this.getDisplayStatus(l);
+      return display === this.selectedStatus ||
+        (this.selectedStatus === 'Leave' && (l.status === 'Leave' || l.status === 'OnLeave'));
+    });
   }
 
   onStatusFilterChange(): void {
@@ -178,10 +194,11 @@ export class MyHistoryComponent implements OnInit, OnDestroy {
   getScoreValue(log: DailyLogEntry): number {
     if (log.isWeekend || log.isHoliday) return -1;
     if (!log.checkInTime) return 0;
-    if (log.status === 'Present') return 100;
-    if (log.status === 'Late') return 50;
-    if (log.status === 'EarlyLeave') return 75;
-    if (log.status === 'Leave' || log.status === 'OnLeave') return -1;
+    const status = this.getDisplayStatus(log);
+    if (status === 'Leave' || status === 'OnLeave') return -1;
+    if (status === 'Present') return 100;
+    if (status === 'Late') return 50;
+    if (status === 'EarlyLeave') return 75;
     return 0;
   }
 

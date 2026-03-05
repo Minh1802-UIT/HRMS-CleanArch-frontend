@@ -300,15 +300,15 @@
                     } @else if (log.isHoliday) {
                       <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold border bg-purple-100 text-purple-700 border-purple-200 dark:bg-purple-900/30 dark:text-purple-400 dark:border-purple-700">Holiday</span>
                     } @else {
-                      <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold border" [ngClass]="getStatusClass(log.status)">
+                      <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold border" [ngClass]="getStatusClass(getDisplayStatus(log))">
                         <span class="w-1.5 h-1.5 rounded-full"
-                          [ngClass]="log.status === 'Present' ? 'bg-green-500' : log.status === 'Late' ? 'bg-amber-500' : log.status === 'EarlyLeave' ? 'bg-orange-500' : log.status === 'Absent' ? 'bg-red-500' : 'bg-blue-500'">
+                          [ngClass]="getDisplayStatus(log) === 'Present' ? 'bg-green-500' : getDisplayStatus(log) === 'Late' ? 'bg-amber-500' : getDisplayStatus(log) === 'EarlyLeave' ? 'bg-orange-500' : getDisplayStatus(log) === 'Absent' ? 'bg-red-500' : 'bg-blue-500'">
                         </span>
-                        {{ log.status }}
-                        @if (log.status === 'Late' && log.lateMinutes > 0) {
+                        {{ getDisplayStatus(log) }}
+                        @if (getDisplayStatus(log) === 'Late' && log.lateMinutes > 0) {
                           <span class="opacity-70">(+{{ log.lateMinutes }}m)</span>
                         }
-                        @if (log.status === 'EarlyLeave' && log.earlyLeaveMinutes > 0) {
+                        @if (getDisplayStatus(log) === 'EarlyLeave' && log.earlyLeaveMinutes > 0) {
                           <span class="opacity-70">(-{{ log.earlyLeaveMinutes }}m)</span>
                         }
                       </span>
@@ -358,7 +358,7 @@
                   </td>
                   <!-- Score -->
                   <td class="px-5 py-3 whitespace-nowrap">
-                    @if (log.isWeekend || log.isHoliday || log.status === 'Leave' || log.status === 'OnLeave') {
+                    @if (log.isWeekend || log.isHoliday || getDisplayStatus(log) === 'Leave' || getDisplayStatus(log) === 'OnLeave') {
                       <span class="text-zinc-300 dark:text-zinc-600 text-xs">–</span>
                     } @else {
                       <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-black border"
