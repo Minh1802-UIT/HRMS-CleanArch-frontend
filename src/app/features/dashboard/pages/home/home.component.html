@@ -176,41 +176,44 @@
       <!-- Right fade mask -->
       <div class="absolute right-0 top-0 h-full w-32 bg-gradient-to-l from-zinc-900 to-transparent pointer-events-none z-10"></div>
 
-      <!-- Marquee track -->
-      <div class="trusted-marquee flex gap-6 w-max">
+      <!-- Marquee track: outer has no gap; each copy carries its own gap + matching padding-right -->
+      <div class="trusted-marquee flex w-max">
         <!-- Copy 1 -->
-        @for (company of trustedCompanies; track 'a-' + company.name) {
-          <div
-            class="flex items-center gap-3 px-5 py-3 rounded-xl border border-zinc-800 bg-zinc-800/40 hover:border-zinc-600 hover:bg-zinc-800 transition-all duration-200 cursor-default group shrink-0"
-          >
+        <div class="flex gap-6 pr-6">
+          @for (company of trustedCompanies; track 'a-' + company.name) {
             <div
-              class="flex justify-center items-center w-8 h-8 rounded-lg text-xs font-black text-white shrink-0 shadow-sm"
-              [style.background]="company.color"
+              class="flex items-center gap-3 px-5 py-3 rounded-xl border border-zinc-800 bg-zinc-800/40 hover:border-zinc-600 hover:bg-zinc-800 transition-all duration-200 cursor-default group shrink-0"
             >
-              {{ company.abbr }}
+              <div
+                class="flex justify-center items-center w-8 h-8 rounded-lg text-xs font-black text-white shrink-0 shadow-sm"
+                [style.background]="company.color"
+              >
+                {{ company.abbr }}
+              </div>
+              <span class="text-sm font-semibold text-zinc-400 group-hover:text-zinc-200 transition-colors whitespace-nowrap">
+                {{ company.name }}
+              </span>
             </div>
-            <span class="text-sm font-semibold text-zinc-400 group-hover:text-zinc-200 transition-colors whitespace-nowrap">
-              {{ company.name }}
-            </span>
-          </div>
-        }
+          }
+        </div>
         <!-- Copy 2 (duplicate for seamless loop) -->
-        @for (company of trustedCompanies; track 'b-' + company.name) {
-          <div
-            aria-hidden="true"
-            class="flex items-center gap-3 px-5 py-3 rounded-xl border border-zinc-800 bg-zinc-800/40 hover:border-zinc-600 hover:bg-zinc-800 transition-all duration-200 cursor-default group shrink-0"
-          >
+        <div class="flex gap-6 pr-6" aria-hidden="true">
+          @for (company of trustedCompanies; track 'b-' + company.name) {
             <div
-              class="flex justify-center items-center w-8 h-8 rounded-lg text-xs font-black text-white shrink-0 shadow-sm"
-              [style.background]="company.color"
+              class="flex items-center gap-3 px-5 py-3 rounded-xl border border-zinc-800 bg-zinc-800/40 hover:border-zinc-600 hover:bg-zinc-800 transition-all duration-200 cursor-default group shrink-0"
             >
-              {{ company.abbr }}
+              <div
+                class="flex justify-center items-center w-8 h-8 rounded-lg text-xs font-black text-white shrink-0 shadow-sm"
+                [style.background]="company.color"
+              >
+                {{ company.abbr }}
+              </div>
+              <span class="text-sm font-semibold text-zinc-400 group-hover:text-zinc-200 transition-colors whitespace-nowrap">
+                {{ company.name }}
+              </span>
             </div>
-            <span class="text-sm font-semibold text-zinc-400 group-hover:text-zinc-200 transition-colors whitespace-nowrap">
-              {{ company.name }}
-            </span>
-          </div>
-        }
+          }
+        </div>
       </div>
     </div>
   </section>
@@ -379,41 +382,44 @@
         <!-- Right edge fade -->
         <div class="absolute right-0 top-0 h-full w-24 bg-gradient-to-l from-zinc-950 to-transparent pointer-events-none z-10"></div>
 
-        <!-- Marquee track: 2 identical copies for seamless loop -->
-        <div class="module-marquee flex gap-3 w-max">
+        <!-- Marquee track: outer has no gap; each copy carries its own gap + matching padding-right -->
+        <div class="module-marquee flex w-max">
           <!-- Copy 1 -->
-          @for (module of moduleFeatures; track 'a-' + module.id; let i = $index) {
-            <button
-              type="button"
-              class="module-item flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-200"
-              [ngClass]="i === activeModuleIndex()
-                ? 'bg-violet-600 text-white shadow-lg shadow-violet-600/30'
-                : 'bg-zinc-800/80 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200 border border-zinc-700'"
-              (click)="setActiveModule(i)"
-            >
-              <i class="pi {{ module.icon }} text-xs"
-                [ngClass]="i === activeModuleIndex() ? 'text-violet-200' : 'text-zinc-500'"
-              ></i>
-              {{ module.name }}
-            </button>
-          }
+          <div class="flex gap-3 pr-3">
+            @for (module of moduleFeatures; track 'a-' + module.id; let i = $index) {
+              <button
+                type="button"
+                class="module-item flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-200"
+                [ngClass]="i === activeModuleIndex()
+                  ? 'bg-violet-600 text-white shadow-lg shadow-violet-600/30'
+                  : 'bg-zinc-800/80 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200 border border-zinc-700'"
+                (click)="setActiveModule(i)"
+              >
+                <i class="pi {{ module.icon }} text-xs"
+                  [ngClass]="i === activeModuleIndex() ? 'text-violet-200' : 'text-zinc-500'"
+                ></i>
+                {{ module.name }}
+              </button>
+            }
+          </div>
           <!-- Copy 2 (duplicate for seamless loop) -->
-          @for (module of moduleFeatures; track 'b-' + module.id; let i = $index) {
-            <button
-              type="button"
-              aria-hidden="true"
-              class="module-item flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-200"
-              [ngClass]="i === activeModuleIndex()
-                ? 'bg-violet-600 text-white shadow-lg shadow-violet-600/30'
-                : 'bg-zinc-800/80 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200 border border-zinc-700'"
-              (click)="setActiveModule(i)"
-            >
-              <i class="pi {{ module.icon }} text-xs"
-                [ngClass]="i === activeModuleIndex() ? 'text-violet-200' : 'text-zinc-500'"
-              ></i>
-              {{ module.name }}
-            </button>
-          }
+          <div class="flex gap-3 pr-3" aria-hidden="true">
+            @for (module of moduleFeatures; track 'b-' + module.id; let i = $index) {
+              <button
+                type="button"
+                class="module-item flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-200"
+                [ngClass]="i === activeModuleIndex()
+                  ? 'bg-violet-600 text-white shadow-lg shadow-violet-600/30'
+                  : 'bg-zinc-800/80 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200 border border-zinc-700'"
+                (click)="setActiveModule(i)"
+              >
+                <i class="pi {{ module.icon }} text-xs"
+                  [ngClass]="i === activeModuleIndex() ? 'text-violet-200' : 'text-zinc-500'"
+                ></i>
+                {{ module.name }}
+              </button>
+            }
+          </div>
         </div>
       </div>
 
