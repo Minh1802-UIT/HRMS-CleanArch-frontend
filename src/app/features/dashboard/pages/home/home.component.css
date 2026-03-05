@@ -40,6 +40,20 @@
   scrollbar-width: none;  /* Firefox */
 }
 
+/* Infinite marquee for trusted companies */
+@keyframes trusted-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.trusted-marquee {
+  animation: trusted-scroll 22s linear infinite;
+}
+
+.trusted-marquee:hover {
+  animation-play-state: paused;
+}
+
 /* Infinite marquee ticker for module pills */
 @keyframes marquee-scroll {
   from { transform: translateX(0); }
