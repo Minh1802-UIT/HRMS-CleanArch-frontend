@@ -199,6 +199,27 @@ export class HomeComponent {
 
   activeModuleIndex = signal<number>(4); // Default to Payroll to match the user's screenshot
 
+  testimonials = [
+    {
+      name: 'Nguyễn Thị Lan',
+      role: 'Giám đốc Nhân sự · Công ty CP Phát triển Bắc Á',
+      avatar: 'https://i.pravatar.cc/100?img=47',
+      quote: 'ZenithHR đã giúp chúng tôi rút ngắn thời gian tính lương từ 3 ngày xuống còn 2 giờ. Đội ngũ kế toán không còn lo sai sót nữa.'
+    },
+    {
+      name: 'Trần Minh Đức',
+      role: 'CEO · Startup công nghệ GreenTech Vietnam',
+      avatar: 'https://i.pravatar.cc/100?img=33',
+      quote: 'Onboarding nhân viên mới giờ hoàn toàn tự động. Từ ký hợp đồng điện tử đến cấp tài khoản hệ thống, mọi thứ chỉ mất 15 phút.'
+    },
+    {
+      name: 'Phạm Thu Hương',
+      role: 'Trưởng phòng HR · Tập đoàn Sản xuất MekoPlast',
+      avatar: 'https://i.pravatar.cc/100?img=41',
+      quote: 'Hệ thống chấm công FaceID chính xác tuyệt đối. Không còn gian lận giờ công, nhân viên cũng hài lòng hơn vì minh bạch.'
+    }
+  ];
+
 
   scrollModules(direction: 'left' | 'right') {
     const nextIndex = direction === 'left' 

@@ -1,91 +1,51 @@
-<div
-  class="font-sans transition-colors duration-300 text-slate-600 bg-background-light dark:bg-background-dark dark:text-slate-300"
->
+﻿<div class="font-display transition-colors duration-300 text-zinc-600 bg-background-light dark:bg-background-dark dark:text-zinc-300">
+
   <!-- Top Banner -->
-  <div
-    class="py-2 text-xs font-medium text-center border-b border-slate-800/50 bg-[#050810] sm:text-sm"
-  >
-    <p class="flex gap-2 justify-center items-center text-slate-300">
-      <span class="text-base text-violet-400 pi pi-bolt"
-        ></span
-      >
-      Chấm dứt kỉ nguyên quản lý nhân sự bằng giấy tờ. Chuyển đổi số ngay hôm
-      nay!
-      <span class="hidden font-medium text-orange-400 sm:inline"
-        >Trải nghiệm miễn phí 14 ngày ✨</span
-      >
+  <div class="py-2 text-xs font-medium text-center border-b border-zinc-800/50 bg-zinc-950 sm:text-sm">
+    <p class="flex gap-2 justify-center items-center text-zinc-300">
+      <span class="text-base text-violet-400 pi pi-bolt"></span>
+      Chấm dứt kỷ nguyên quản lý nhân sự bằng giấy tờ. Chuyển đổi số ngay hôm nay!
+      <span class="hidden font-semibold text-violet-300 sm:inline">Trải nghiệm miễn phí 14 ngày ✨</span>
     </p>
   </div>
 
   <!-- Navbar -->
-  <nav
-    class="sticky top-0 z-50 border-b backdrop-blur-md bg-[#0a0f1c]/90 border-slate-800/50"
-  >
+  <nav class="sticky top-0 z-50 border-b backdrop-blur-md bg-zinc-950/90 border-zinc-800/50">
     <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-20">
         <!-- Logo -->
-        <div
-          class="flex flex-1 flex-shrink-0 gap-2 items-center cursor-pointer"
-          routerLink="/"
-        >
-          <span
-            class="text-[22px] font-bold tracking-tight font-display text-white"
-            >ZenithHR</span
-          >
+        <div class="flex flex-1 flex-shrink-0 gap-2.5 items-center cursor-pointer" routerLink="/">
+          <div class="flex justify-center items-center w-8 h-8 bg-violet-600 rounded-lg">
+            <i class="text-sm text-white pi pi-share-alt"></i>
+          </div>
+          <span class="text-[22px] font-bold tracking-tight text-white">ZenithHR</span>
         </div>
 
         <!-- Nav Links -->
         <div class="hidden items-center space-x-8 md:flex">
-          <a
-            class="font-medium transition-colors text-slate-300 hover:text-white text-[15px]"
-            href="#"
-            >Product</a
-          >
-          <a
-            class="flex gap-1.5 items-center font-medium transition-colors text-slate-300 hover:text-white text-[15px] group"
-            href="#"
-          >
-            Resources <i class="text-[10px] pi pi-chevron-down mt-1"></i>
+          <a class="font-medium transition-colors text-zinc-300 hover:text-white text-[15px]" href="#">Sản phẩm</a>
+          <a class="flex gap-1.5 items-center font-medium transition-colors text-zinc-300 hover:text-white text-[15px]" href="#">
+            Tính năng <i class="text-[10px] pi pi-chevron-down mt-1"></i>
           </a>
-          <a
-            class="flex gap-1.5 items-center font-medium transition-colors text-slate-300 hover:text-white text-[15px] group"
-            href="#"
-          >
-            Features <i class="text-[10px] pi pi-chevron-down mt-1"></i>
-          </a>
-          <a
-            class="font-medium transition-colors text-slate-300 hover:text-white text-[15px]"
-            href="#"
-            >Benefits</a
-          >
-          <a
-            class="font-medium transition-colors text-slate-300 hover:text-white text-[15px]"
-            href="#"
-            >Pricing</a
-          >
+          <a class="font-medium transition-colors text-zinc-300 hover:text-white text-[15px]" href="#">Bảng giá</a>
+          <a class="font-medium transition-colors text-zinc-300 hover:text-white text-[15px]" href="#">Tài liệu</a>
         </div>
 
         <!-- Auth Actions -->
-        <div class="hidden flex-1 justify-end items-center space-x-6 md:flex">
+        <div class="hidden flex-1 justify-end items-center gap-4 md:flex">
+          <a class="font-semibold text-zinc-300 hover:text-white text-[15px] transition-colors" routerLink="/login">Đăng nhập</a>
           <a
-            class="font-bold text-white hover:text-slate-200 text-[15px]"
-            routerLink="/login"
-            >Sign in</a
-          >
-          <a
-            class="px-6 py-2.5 font-bold text-white rounded-xl transition-all bg-[#050810] hover:bg-slate-900 border border-slate-800 shadow-[0_0_15px_rgba(30,41,59,0.5)]"
+            class="px-5 py-2.5 font-bold text-white bg-violet-600 rounded-xl transition-all hover:bg-violet-500 shadow-lg shadow-violet-600/25 hover:-translate-y-0.5"
             routerLink="/login"
           >
-            Start for Free
+            Dùng thử miễn phí
           </a>
         </div>
 
+        <!-- Mobile hamburger -->
         <div class="flex items-center md:hidden">
-          <button
-            (click)="toggleMenu()"
-            class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white focus:outline-none"
-          >
-            <i class="text-3xl pi pi-bars"></i>
+          <button type="button" (click)="toggleMenu()" class="p-2 text-zinc-400 hover:text-white focus:outline-none">
+            <i class="text-2xl" [class]="isMenuOpen ? 'pi pi-times' : 'pi pi-bars'"></i>
           </button>
         </div>
       </div>
@@ -93,200 +53,111 @@
 
     <!-- Mobile Menu -->
     @if (isMenuOpen) {
-      <div
-        class="p-4 space-y-4 bg-white border-b md:hidden dark:bg-slate-900 border-slate-100"
-      >
-        <a
-          class="block font-medium text-slate-600 dark:text-slate-300 hover:text-primary"
-          href="#"
-          >Product</a
-        >
-        <a
-          class="block font-medium text-slate-600 dark:text-slate-300 hover:text-primary"
-          href="#"
-          >Resources</a
-        >
-        <a
-          class="block font-medium text-slate-600 dark:text-slate-300 hover:text-primary"
-          href="#"
-          >Features</a
-        >
-        <a
-          class="block font-medium text-slate-600 dark:text-slate-300 hover:text-primary"
-          href="#"
-          >Pricing</a
-        >
-        <hr class="border-slate-100" />
-        <div class="flex flex-col gap-4">
-          <a
-            class="font-bold text-center text-brand-blue dark:text-white"
-            routerLink="/login"
-            >Sign in</a
-          >
-          <a
-            class="px-5 py-2.5 font-bold text-center text-white rounded-full bg-brand-blue"
-            routerLink="/login"
-            >Start for Free</a
-          >
+      <div class="px-4 py-6 space-y-4 bg-zinc-950 border-t border-zinc-800 md:hidden">
+        <a class="block py-2 font-medium text-zinc-300 hover:text-white transition-colors" href="#">Sản phẩm</a>
+        <a class="block py-2 font-medium text-zinc-300 hover:text-white transition-colors" href="#">Tính năng</a>
+        <a class="block py-2 font-medium text-zinc-300 hover:text-white transition-colors" href="#">Bảng giá</a>
+        <a class="block py-2 font-medium text-zinc-300 hover:text-white transition-colors" href="#">Tài liệu</a>
+        <hr class="border-zinc-800" />
+        <div class="flex flex-col gap-3 pt-2">
+          <a class="py-2.5 font-bold text-center text-white border border-zinc-700 rounded-xl hover:bg-zinc-800 transition-colors" routerLink="/login">Đăng nhập</a>
+          <a class="py-2.5 font-bold text-center text-white bg-violet-600 rounded-xl hover:bg-violet-500 transition-colors" routerLink="/login">Dùng thử miễn phí</a>
         </div>
       </div>
     }
   </nav>
 
   <!-- Hero Section -->
-  <section
-    class="overflow-hidden relative pt-12 pb-20 lg:pt-20 lg:pb-28 bg-[#0a0f1c]"
-  >
+  <section class="overflow-hidden relative pt-16 pb-24 lg:pt-24 lg:pb-32 bg-zinc-950">
+    <div class="absolute top-0 left-1/4 w-96 h-96 bg-violet-600/15 rounded-full blur-3xl pointer-events-none -z-0"></div>
+    <div class="absolute bottom-0 right-1/4 w-80 h-80 bg-violet-800/10 rounded-full blur-3xl pointer-events-none -z-0"></div>
+
     <div class="relative z-10 px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-      <div class="grid gap-12 items-center lg:grid-cols-2 lg:gap-8">
-        <div
-          class="max-w-2xl delay-100 reveal-on-scroll reveal-left"
-          #revealElement
-        >
-          <div
-            class="inline-flex gap-2 items-center px-4 py-1.5 mb-6 text-sm font-semibold text-blue-300 rounded-full border bg-slate-800/80 border-slate-700"
-          >
-            <span class="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></span>
-            Giải pháp Nhân sự & Bảng lương số 1 Việt Nam
+      <div class="grid gap-12 items-center lg:grid-cols-2 lg:gap-16">
+        <!-- Left: Headline + CTA -->
+        <div class="max-w-2xl reveal-on-scroll reveal-left delay-100" #revealElement>
+          <div class="inline-flex gap-2 items-center px-4 py-1.5 mb-6 text-sm font-semibold text-violet-300 rounded-full border bg-zinc-800/80 border-zinc-700">
+            <span class="w-2 h-2 bg-violet-400 rounded-full animate-pulse"></span>
+            Giải pháp Nhân sự &amp; Bảng lương số 1 Việt Nam
           </div>
-          <h1
-            class="mb-6 text-5xl font-extrabold leading-tight text-white font-display lg:text-6xl"
-          >
-            Chuyển đổi số nhân sự <br /><span class="text-blue-400"
-              >Dễ dàng & Chuyên nghiệp</span
-            >
+          <h1 class="mb-6 text-5xl font-extrabold leading-tight text-white font-display lg:text-[3.75rem]">
+            Quản trị nhân sự<br /><span class="text-violet-400">Dễ dàng &amp; Chuyên nghiệp</span>
           </h1>
-          <p class="mb-8 max-w-lg text-lg leading-relaxed text-slate-400">
-            Được thiết kế riêng cho đặc thù doanh nghiệp Việt Nam. Hỗ trợ đầy đủ
-            Bảo hiểm xã hội, Thuế TNCN và Chấm công FaceID trên Mobile. Tự động
-            hóa 80% quy trình thủ công của bạn.
+          <p class="mb-8 max-w-lg text-lg leading-relaxed text-zinc-400">
+            Được thiết kế riêng cho đặc thù doanh nghiệp Việt Nam. Hỗ trợ đầy đủ Bảo hiểm xã hội, Thuế TNCN
+            và Chấm công FaceID trên Mobile. Tự động hóa 80% quy trình thủ công của bạn.
           </p>
-          <div class="flex flex-col gap-4 mb-8 sm:flex-row">
+          <div class="flex flex-col gap-4 mb-10 sm:flex-row">
             <a
-              class="px-8 py-3.5 font-bold text-center text-white bg-violet-600 rounded-lg shadow-lg transition-all transform hover:bg-violet-500 shadow-violet-600/20 hover:-translate-y-1"
+              class="px-8 py-3.5 font-bold text-center text-white bg-violet-600 rounded-xl shadow-lg transition-all hover:bg-violet-500 shadow-violet-600/25 hover:-translate-y-1"
               routerLink="/login"
             >
               Dùng thử miễn phí
             </a>
             <a
-              class="flex gap-2 justify-center items-center px-8 py-3.5 font-bold text-center text-violet-400 rounded-lg border transition-all border-slate-700 group bg-slate-800 hover:bg-slate-700"
+              class="flex gap-2 justify-center items-center px-8 py-3.5 font-bold text-center text-zinc-200 rounded-xl border transition-all border-zinc-700 bg-zinc-800/80 hover:bg-zinc-700"
               href="#"
             >
-              <i
-                class="text-xl transition-transform pi pi-mobile group-hover:scale-110"
-              ></i>
-              Trải nghiệm App Mobile
+              <i class="text-xl pi pi-play-circle text-violet-400"></i>
+              Xem Demo
             </a>
           </div>
-          <div class="flex gap-4 items-center text-sm text-slate-400">
+          <div class="flex gap-4 items-center text-sm text-zinc-400">
             <div class="flex -space-x-2">
-              <img
-                class="w-8 h-8 rounded-full border-2 border-[#0a0f1c]"
-                src="https://i.pravatar.cc/100?img=1"
-                alt="User"
-              />
-              <img
-                class="w-8 h-8 rounded-full border-2 border-[#0a0f1c]"
-                src="https://i.pravatar.cc/100?img=2"
-                alt="User"
-              />
-              <img
-                class="w-8 h-8 rounded-full border-2 border-[#0a0f1c]"
-                src="https://i.pravatar.cc/100?img=3"
-                alt="User"
-              />
-              <div
-                class="flex justify-center items-center w-8 h-8 text-xs font-bold rounded-full border-2 border-[#0a0f1c] bg-slate-800 text-slate-300"
-              >
-                +5k
-              </div>
+              <img class="w-9 h-9 rounded-full border-2 border-zinc-950 object-cover" src="https://i.pravatar.cc/100?img=1" alt="User" />
+              <img class="w-9 h-9 rounded-full border-2 border-zinc-950 object-cover" src="https://i.pravatar.cc/100?img=2" alt="User" />
+              <img class="w-9 h-9 rounded-full border-2 border-zinc-950 object-cover" src="https://i.pravatar.cc/100?img=3" alt="User" />
+              <div class="flex justify-center items-center w-9 h-9 text-xs font-bold rounded-full border-2 border-zinc-950 bg-zinc-800 text-zinc-300">+5k</div>
             </div>
-            <span
-              >Đã được tin dùng bởi <strong>500+</strong> doanh nghiệp.</span
-            >
+            <span>Đã được tin dùng bởi <strong class="text-white">500+</strong> doanh nghiệp.</span>
           </div>
         </div>
 
-        <!-- Nửa bên phải: Hình ảnh Mô phỏng Nhân sự (Hero Image) -->
-        <div
-          class="relative h-[600px] w-full hidden lg:flex items-center justify-center reveal-on-scroll reveal-zoom delay-300"
-          #revealElement
-        >
-          <!-- Nền chìm (Background Decor) - Một Shape bo tròn màu xanh Navy rất đậm -->
-          <div
-            class="absolute right-8 bottom-12 w-64 h-80 bg-slate-900/60 rounded-tl-[120px] rounded-br-[40px] z-0"
-          ></div>
-
-          <!-- Hình ảnh Cô gái (Chân dung chính trung tâm) -->
-          <div class="relative z-10 w-80 h-[480px]">
+        <!-- Right: Hero visual -->
+        <div class="relative h-[580px] w-full hidden lg:flex items-center justify-center reveal-on-scroll reveal-zoom delay-300" #revealElement>
+          <div class="absolute right-8 bottom-8 w-64 h-80 bg-zinc-900/60 rounded-tl-[100px] rounded-br-[40px] z-0"></div>
+          <div class="relative z-10 w-[300px] h-[460px]">
             <img
               alt="Professional HR"
-              class="w-full h-full object-cover rounded-[50px] shadow-2xl bg-white"
+              class="w-full h-full object-cover rounded-[40px] shadow-2xl"
               src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=600"
               decoding="async"
               fetchpriority="high"
             />
           </div>
-
-          <!-- Thẻ nổi 1 (Floating Badge Top Left): HR Head -->
-          <div
-            class="absolute top-12 left-16 z-20 animate-[bounce_4s_ease-in-out_infinite]"
-          >
+          <div class="absolute top-16 left-12 z-20 animate-[bounce_4s_ease-in-out_infinite]">
             <div class="flex relative justify-center items-center">
-              <!-- Vòng sáng mờ bao quanh -->
-              <div
-                class="absolute inset-0 rounded-full blur-sm scale-125 bg-teal-500/20"
-              ></div>
+              <div class="absolute inset-0 rounded-full blur-sm scale-125 bg-violet-500/20"></div>
               <img
-                alt="HR Manager Badge"
-                class="object-cover relative z-10 w-24 h-24 rounded-full border-4 border-[#0a0f1c] shadow-2xl"
+                alt="HR Manager"
+                class="object-cover relative z-10 w-20 h-20 rounded-full border-4 border-zinc-950 shadow-2xl"
                 src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=200"
               />
-              <div
-                class="flex absolute -top-2 -right-6 z-20 gap-1 items-center px-3 py-1 rounded-full border shadow-xl backdrop-blur-md bg-slate-800/90 border-slate-700/50"
-              >
+              <div class="flex absolute -top-2 -right-8 z-20 gap-1 items-center px-3 py-1 rounded-full border shadow-xl backdrop-blur-md bg-zinc-800/90 border-zinc-700/50">
                 <span class="text-xs font-bold text-white">HR Head</span>
-                <span class="text-xs text-yellow-500">★</span>
+                <span class="text-xs text-yellow-400">★</span>
               </div>
             </div>
           </div>
-
-          <!-- Thẻ nổi 2 (Floating Card Bottom Left): Onboarding Progress -->
-          <div
-            class="absolute left-0 bottom-24 z-30 transition-transform duration-300 transform hover:scale-105"
-          >
-            <div
-              class="p-5 w-[340px] bg-slate-800/90 backdrop-blur-xl rounded-[24px] border border-slate-700/50 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)]"
-            >
-              <div class="flex justify-between items-center mb-6">
-                <div class="flex gap-4 items-center">
-                  <!-- Circle Icon Placeholder -->
-                  <div
-                    class="flex justify-center items-center w-12 h-12 rounded-full bg-violet-500 shadow-[0_0_15px_rgba(139,92,246,0.5)]"
-                  ></div>
-                  <!-- Fake Text Lines -->
-                  <div class="flex flex-col gap-2">
-                    <div class="w-20 h-2.5 rounded-full bg-slate-600/80"></div>
-                    <div class="w-12 h-2 rounded-full bg-slate-700"></div>
+          <div class="absolute left-0 bottom-20 z-30 transition-transform duration-300 transform hover:scale-105">
+            <div class="p-5 w-[320px] bg-zinc-800/90 backdrop-blur-xl rounded-2xl border border-zinc-700/50 shadow-2xl">
+              <div class="flex justify-between items-center mb-4">
+                <div class="flex gap-3 items-center">
+                  <div class="flex justify-center items-center w-11 h-11 rounded-full bg-violet-600 shadow-lg shadow-violet-600/30"></div>
+                  <div class="flex flex-col gap-1.5">
+                    <div class="w-20 h-2.5 rounded-full bg-zinc-600/80"></div>
+                    <div class="w-14 h-2 rounded-full bg-zinc-700"></div>
                   </div>
                 </div>
-                <span class="text-xs font-bold text-green-400">Active</span>
+                <span class="text-xs font-bold text-green-400 bg-green-400/10 px-2.5 py-1 rounded-full">Active</span>
               </div>
-
-              <div class="space-y-3">
-                <!-- Progress Bar -->
-                <div
-                  class="overflow-hidden w-full h-2.5 rounded-full shadow-inner bg-slate-700/80"
-                >
-                  <div
-                    class="w-3/4 h-full rounded-full bg-violet-500 shadow-[0_0_10px_rgba(139,92,246,0.8)]"
-                  ></div>
+              <div class="space-y-2">
+                <div class="overflow-hidden w-full h-2.5 rounded-full bg-zinc-700">
+                  <div class="w-3/4 h-full rounded-full bg-violet-500 shadow-[0_0_10px_rgba(139,92,246,0.7)]"></div>
                 </div>
-                <div
-                  class="flex justify-between text-xs font-medium text-slate-400"
-                >
+                <div class="flex justify-between text-xs text-zinc-400">
                   <span>Onboarding Progress</span>
-                  <span>75%</span>
+                  <span class="font-semibold text-violet-300">75%</span>
                 </div>
               </div>
             </div>
@@ -296,109 +167,96 @@
     </div>
   </section>
 
-  <!-- Problem & Solution Section -->
-  <section class="py-16 bg-white dark:bg-slate-800">
-    <div
-      class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 reveal-on-scroll reveal-up"
-      #revealElement
-    >
-      <div class="mb-12 text-center">
-        <h2
-          class="mb-4 text-3xl font-bold font-display text-slate-900 dark:text-white"
-        >
+  <!-- Trusted By -->
+  <section class="py-10 border-y bg-zinc-900 border-zinc-800">
+    <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+      <p class="mb-8 text-xs font-semibold tracking-widest text-center uppercase text-zinc-500">Được tin dùng bởi các doanh nghiệp hàng đầu</p>
+      <div class="flex flex-wrap justify-center items-center gap-x-12 gap-y-6 opacity-50">
+        @for (i of [1,2,3,4,5,6]; track i) {
+          <div class="flex items-center gap-2 text-zinc-400">
+            <div class="w-6 h-6 rounded bg-zinc-700"></div>
+            <span class="text-lg font-bold tracking-tight">Company {{ i }}</span>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Problem Statement -->
+  <section class="py-20 bg-white dark:bg-zinc-900">
+    <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 reveal-on-scroll reveal-up" #revealElement>
+      <div class="mb-14 text-center">
+        <span class="inline-block mb-3 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-violet-600 bg-violet-50 dark:bg-violet-900/20 rounded-full">Vấn đề</span>
+        <h2 class="mb-4 text-3xl font-bold font-display text-zinc-900 dark:text-white">
           Quản lý nhân sự đang bào mòn doanh nghiệp của bạn?
         </h2>
-        <p class="mx-auto max-w-2xl text-slate-600 dark:text-slate-400">
-          Hàng tá bảng tính Excel, hàng trăm Email xin phép và những sai sót
-          tính lương đáng tiếc.
+        <p class="mx-auto max-w-2xl text-zinc-500 dark:text-zinc-400">
+          Hàng tá bảng tính Excel, hàng trăm email xin phép và những sai sót tính lương đáng tiếc.
         </p>
       </div>
-      <div class="grid gap-8 md:grid-cols-3">
-        <div
-          class="p-6 bg-red-50 rounded-2xl border border-red-100 dark:bg-red-900/10 dark:border-red-900/30"
-        >
-          <i class="mb-4 text-3xl text-red-500 pi pi-file-excel"></i>
-          <h3 class="mb-2 font-bold text-slate-900 dark:text-white">
-            Chấm công phân mảnh
-          </h3>
-          <p class="text-sm text-slate-600 dark:text-slate-400">
-            Dữ liệu từ máy vân tay không đồng bộ. Kế toán mất 3 ngày mỗi tháng
-            chỉ để đối soát giờ làm.
-          </p>
+      <div class="grid gap-6 md:grid-cols-3">
+        <div class="p-7 bg-red-50 rounded-2xl border border-red-100 dark:bg-red-900/10 dark:border-red-900/30">
+          <div class="flex justify-center items-center w-12 h-12 mb-4 bg-red-100 dark:bg-red-900/30 rounded-xl">
+            <i class="text-xl text-red-500 pi pi-file-excel"></i>
+          </div>
+          <h3 class="mb-2 font-bold text-zinc-900 dark:text-white">Chấm công phân mảnh</h3>
+          <p class="text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">Dữ liệu từ máy vân tay không đồng bộ. Kế toán mất 3 ngày mỗi tháng chỉ để đối soát giờ làm.</p>
         </div>
-        <div
-          class="p-6 bg-orange-50 rounded-2xl border border-orange-100 dark:bg-orange-900/10 dark:border-orange-900/30"
-        >
-          <i class="mb-4 text-3xl text-orange-500 pi pi-envelope"></i>
-          <h3 class="mb-2 font-bold text-slate-900 dark:text-white">
-            Duyệt phép thủ công chậm chạp
-          </h3>
-          <p class="text-sm text-slate-600 dark:text-slate-400">
-            Nhân viên gửi Email, sếp quên duyệt, quỹ phép năm bị tính sai dẫn
-            đến khiếu nại liên tục.
-          </p>
+        <div class="p-7 bg-orange-50 rounded-2xl border border-orange-100 dark:bg-orange-900/10 dark:border-orange-900/30">
+          <div class="flex justify-center items-center w-12 h-12 mb-4 bg-orange-100 dark:bg-orange-900/30 rounded-xl">
+            <i class="text-xl text-orange-500 pi pi-envelope"></i>
+          </div>
+          <h3 class="mb-2 font-bold text-zinc-900 dark:text-white">Duyệt phép thủ công chậm chạp</h3>
+          <p class="text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">Nhân viên gửi email, sếp quên duyệt, quỹ phép năm bị tính sai dẫn đến khiếu nại liên tục.</p>
         </div>
-        <div
-          class="p-6 rounded-2xl border border-blue-100 bg-brand-blue/10 dark:bg-blue-900/10 dark:border-blue-900/30"
-        >
-          <i class="mb-4 text-3xl pi pi-database text-brand-blue"></i>
-          <h3 class="mb-2 font-bold text-slate-900 dark:text-white">
-            Dữ liệu phân tán nhiều nơi
-          </h3>
-          <p class="text-sm text-slate-600 dark:text-slate-400">
-            Hồ sơ ứng viên ở File Word, Hợp đồng ở Tủ tài liệu. Khó cấu trúc một
-            Sơ đồ tổ chức đồng nhất.
-          </p>
+        <div class="p-7 bg-violet-50 rounded-2xl border border-violet-100 dark:bg-violet-900/10 dark:border-violet-900/30">
+          <div class="flex justify-center items-center w-12 h-12 mb-4 bg-violet-100 dark:bg-violet-900/30 rounded-xl">
+            <i class="text-xl text-violet-600 pi pi-database"></i>
+          </div>
+          <h3 class="mb-2 font-bold text-zinc-900 dark:text-white">Dữ liệu phân tán nhiều nơi</h3>
+          <p class="text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">Hồ sơ ứng viên ở Word, hợp đồng trong tủ tài liệu. Khó xây dựng một sơ đồ tổ chức đồng nhất.</p>
         </div>
       </div>
-      <div class="mt-12 text-center">
-        <div
-          class="inline-block px-6 py-3 font-bold text-green-700 bg-green-100 rounded-full shadow-sm dark:bg-green-900/30 dark:text-green-400"
-        >
-          <i class="mr-2 pi pi-check-circle"></i> ZenithHR giải quyết tất cả chỉ
-          trên 1 nền tảng duy nhất.
+      <div class="mt-10 text-center">
+        <div class="inline-flex gap-2 items-center px-6 py-3 font-semibold text-violet-700 dark:text-violet-300 bg-violet-50 dark:bg-violet-900/20 rounded-full border border-violet-200 dark:border-violet-800">
+          <i class="pi pi-check-circle text-violet-600"></i>
+          ZenithHR giải quyết tất cả chỉ trên 1 nền tảng duy nhất.
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Features - Interactive Tabs -->
+  <!-- Features — Interactive Tabs -->
   <section class="py-20 lg:py-28 bg-background-light dark:bg-background-dark">
-    <div
-      class="px-4 mx-auto max-w-7xl delay-100 sm:px-6 lg:px-8 reveal-on-scroll reveal-up"
-      #revealElement
-    >
+    <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 reveal-on-scroll reveal-up delay-100" #revealElement>
       <div class="mb-16 text-center">
-        <h2
-          class="mb-4 text-4xl font-extrabold font-display md:text-5xl text-brand-blue dark:text-white"
-        >
-          Giải pháp Toàn diện
+        <span class="inline-block mb-3 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-violet-600 bg-violet-50 dark:bg-violet-900/20 rounded-full">Tính năng</span>
+        <h2 class="mb-4 text-4xl font-extrabold font-display md:text-5xl text-zinc-900 dark:text-white">
+          Giải pháp <span class="text-violet-600">Toàn diện</span>
         </h2>
-        <p class="mx-auto max-w-2xl text-lg text-slate-500 dark:text-slate-400">
-          Khám phá cách ZenithHR tự động hóa mọi quy trình nhân sự phức tạp nhất
-          của bạn chỉ trên một nền tảng duy nhất.
+        <p class="mx-auto max-w-2xl text-lg text-zinc-500 dark:text-zinc-400">
+          Khám phá cách ZenithHR tự động hóa mọi quy trình nhân sự phức tạp nhất của bạn chỉ trên một nền tảng duy nhất.
         </p>
       </div>
 
-      <div class="grid gap-10 items-center lg:grid-cols-12">
-        <!-- Interactive Feature List (Tabs) -->
-        <div class="space-y-4 lg:col-span-4">
+      <div class="grid gap-10 items-start lg:grid-cols-12">
+        <div class="space-y-3 lg:col-span-4">
           @for (feature of features; track feature.id) {
             <div
               (click)="setActiveFeature(feature.id)"
               [ngClass]="
                 activeFeatureId() === feature.id
-                  ? 'bg-white dark:bg-slate-800 border-primary shadow-lg shadow-orange-500/10 scale-105'
-                  : 'bg-transparent border-transparent hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:border-slate-200 dark:hover:border-slate-700 opacity-60 hover:opacity-100'
+                  ? 'bg-white dark:bg-zinc-800 border-violet-500 shadow-lg shadow-violet-500/10 scale-[1.02]'
+                  : 'bg-transparent border-transparent hover:bg-zinc-50 dark:hover:bg-zinc-800/50 opacity-60 hover:opacity-100'
               "
-              class="p-6 rounded-2xl border-2 transition-all duration-300 transform cursor-pointer"
+              class="p-5 rounded-2xl border-2 transition-all duration-300 cursor-pointer"
             >
               <div class="flex gap-4 items-start">
                 <div
                   [ngClass]="
                     activeFeatureId() === feature.id
-                      ? 'bg-orange-100 dark:bg-orange-900/30 text-primary'
-                      : 'bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400'
+                      ? 'bg-violet-100 dark:bg-violet-900/30 text-violet-600'
+                      : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400'
                   "
                   class="flex flex-shrink-0 justify-center items-center w-12 h-12 rounded-xl transition-colors"
                 >
@@ -408,17 +266,17 @@
                   <h3
                     [ngClass]="
                       activeFeatureId() === feature.id
-                        ? 'text-brand-blue dark:text-white font-bold'
-                        : 'text-slate-700 dark:text-slate-300 font-semibold'
+                        ? 'text-violet-700 dark:text-white font-bold'
+                        : 'text-zinc-700 dark:text-zinc-300 font-semibold'
                     "
-                    class="mb-2 text-lg transition-colors"
+                    class="mb-1.5 text-base transition-colors"
                   >
                     {{ feature.title }}
                   </h3>
                   <p
                     [ngClass]="
                       activeFeatureId() === feature.id
-                        ? 'text-slate-600 dark:text-slate-400 max-h-24 opacity-100'
+                        ? 'text-zinc-500 dark:text-zinc-400 max-h-24 opacity-100'
                         : 'max-h-0 opacity-0 overflow-hidden'
                     "
                     class="text-sm leading-relaxed transition-all duration-500 ease-in-out"
@@ -431,42 +289,21 @@
           }
         </div>
 
-        <!-- Feature Preview (Application Mockup) -->
         <div class="relative lg:col-span-8">
-          <!-- Nền Gradient vát góc tạo chiều sâu, làm nổi bật khung App Mockup -->
-          <div
-            class="absolute inset-0 bg-gradient-to-tr from-brand-blue/10 to-transparent dark:from-brand-blue/5 rounded-[2.5rem] transform rotate-1 scale-[1.02] -z-10"
-          ></div>
-
-          <!-- Khung cửa sổ ứng dụng (App Window Mockup) -->
-          <div
-            class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200/50 dark:border-slate-800/80 overflow-hidden relative h-[480px] flex flex-col transform hover:-translate-y-1 transition-transform duration-500"
-          >
-            <!-- Thanh Topbar giả lập kiểu macOS -->
-            <div
-              class="flex items-center px-4 h-10 border-b bg-slate-100 dark:bg-slate-800/50 border-slate-200 dark:border-slate-800 shrink-0"
-            >
+          <div class="absolute inset-0 bg-gradient-to-tr from-violet-600/8 to-transparent rounded-[2.5rem] rotate-1 scale-[1.02] -z-10"></div>
+          <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200/50 dark:border-zinc-800 overflow-hidden relative h-[480px] flex flex-col hover:-translate-y-1 transition-transform duration-500">
+            <div class="flex items-center px-4 h-10 border-b bg-zinc-100 dark:bg-zinc-800/60 border-zinc-200 dark:border-zinc-800 shrink-0">
               <div class="flex gap-1.5">
                 <div class="w-3 h-3 bg-red-400 rounded-full"></div>
                 <div class="w-3 h-3 bg-yellow-400 rounded-full"></div>
                 <div class="w-3 h-3 bg-green-400 rounded-full"></div>
               </div>
-              <!-- Đường dẫn ảo trên TopBar để đánh lừa thị giác (Mock URL) -->
-              <div
-                class="flex gap-2 justify-center items-center px-3 py-1 mx-auto w-1/2 bg-white rounded-md border shadow-sm dark:bg-slate-900 border-slate-200 dark:border-slate-700"
-              >
-                <i
-                  class="pi pi-lock text-[10px] text-green-600 dark:text-green-400"
-                ></i>
-                <span
-                  class="text-[11px] text-slate-500 dark:text-slate-400 font-mono tracking-wide"
-                  >app.zenithhr.com/dashboard</span
-                >
+              <div class="flex gap-2 justify-center items-center px-3 py-1 mx-auto w-1/2 bg-white dark:bg-zinc-900 rounded-md border shadow-sm border-zinc-200 dark:border-zinc-700">
+                <i class="pi pi-lock text-[10px] text-green-600 dark:text-green-400"></i>
+                <span class="text-[11px] text-zinc-500 dark:text-zinc-400 font-mono tracking-wide">app.zenithhr.com/dashboard</span>
               </div>
             </div>
-
-            <!-- Khu vực chứa nội dung hình ảnh thực tế (App Viewport) -->
-            <div class="relative flex-1 p-1 bg-slate-50 dark:bg-slate-900/40">
+            <div class="relative flex-1 bg-zinc-50 dark:bg-zinc-900/40">
               @for (feature of features; track feature.id) {
                 <img
                   [src]="loadedFeatureIds().has(feature.id) ? feature.imageUrl : ''"
@@ -477,7 +314,7 @@
                       ? 'opacity-100 translate-y-0 z-10 scale-100'
                       : 'opacity-0 translate-y-4 z-0 scale-[0.98]'
                   "
-                  class="absolute inset-0 w-full h-full object-cover rounded-xl transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] shadow-inner"
+                  class="absolute inset-0 w-full h-full object-cover rounded-xl transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]"
                 />
               }
             </div>
@@ -487,37 +324,29 @@
     </div>
   </section>
 
-  <!-- Horizontal Module Slider (Centered & Grid-Aligned) -->
-  <section
-    class="py-10 bg-white border-b dark:bg-slate-900 border-slate-100 dark:border-slate-800 reveal-on-scroll reveal-up"
-    #revealElement
-  >
+  <!-- Module Slider Navigation -->
+  <section class="py-8 bg-white border-b dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 reveal-on-scroll reveal-up" #revealElement>
     <div class="relative px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-      <div
-        id="module-slider"
-        class="flex overflow-x-auto gap-6 justify-center items-center md:gap-12 no-scrollbar scroll-smooth snap-x"
-      >
+      <div id="module-slider" class="flex overflow-x-auto gap-6 justify-center items-center md:gap-10 no-scrollbar scroll-smooth snap-x">
         @for (module of moduleFeatures; track module.id; let i = $index) {
           <div
-            class="flex flex-col flex-shrink-0 items-center transition-all duration-300 cursor-pointer module-item snap-center group/item"
+            class="flex flex-col flex-shrink-0 items-center cursor-pointer module-item snap-center group/item"
             (click)="setActiveModule(i)"
           >
             <span
-              class="text-[16px] font-bold whitespace-nowrap px-1 py-4 transition-all"
+              class="text-[15px] font-semibold whitespace-nowrap px-1 py-4 transition-all"
               [ngClass]="{
-                'text-[#16a34a] scale-110': i === activeModuleIndex(),
-                'text-slate-400 dark:text-slate-500 group-hover/item:text-slate-900 dark:group-hover/item:text-slate-200':
-                  i !== activeModuleIndex(),
+                'text-violet-600 dark:text-violet-400 scale-110': i === activeModuleIndex(),
+                'text-zinc-400 dark:text-zinc-500 group-hover/item:text-zinc-900 dark:group-hover/item:text-zinc-200': i !== activeModuleIndex()
               }"
             >
               {{ module.name }}
             </span>
-            <!-- Indicator Line -->
             <div
-              class="h-[3px] bg-[#16a34a] transition-all duration-300 rounded-full"
+              class="h-[3px] bg-violet-600 transition-all duration-300 rounded-full"
               [ngClass]="{
                 'w-full opacity-100': i === activeModuleIndex(),
-                'w-0 opacity-0': i !== activeModuleIndex(),
+                'w-0 opacity-0': i !== activeModuleIndex()
               }"
             ></div>
           </div>
@@ -526,62 +355,38 @@
     </div>
   </section>
 
-  <!-- Active Module Content Area (Grid-Balanced & Polished) -->
-  <section
-    class="py-20 lg:py-32 bg-[#0e172a] overflow-hidden relative reveal-on-scroll reveal-up delay-100"
-    #revealElement
-  >
-    <!-- Refined Organic Green Shape - More balanced spotlight with float animation -->
-    <div
-      class="absolute left-[calc(50%-450px)] top-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-[#16a34a] rounded-[100px] rotate-12 z-0 hidden lg:block opacity-80 blur-[2px] animate-float"
-    ></div>
-
+  <!-- Module Showcase -->
+  <section class="py-20 lg:py-32 bg-zinc-950 overflow-hidden relative reveal-on-scroll reveal-up delay-100" #revealElement>
+    <div class="absolute left-[calc(50%-350px)] top-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-violet-700/20 rounded-full blur-[80px] pointer-events-none hidden lg:block"></div>
     <div class="relative z-10 px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-      <div
-        class="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:items-center lg:gap-24"
-      >
-        <!-- Left Content: Typography & Navigation -->
-        <div
-          class="flex relative flex-col items-center text-center lg:items-start lg:text-left"
-        >
+      <div class="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:items-center lg:gap-24">
+        <div class="flex relative flex-col items-center text-center lg:items-start lg:text-left">
           @for (module of moduleFeatures; track module.id; let i = $index) {
             <div
               class="transition-all duration-700 ease-in-out transform"
               [ngClass]="{
-                'opacity-100 translate-y-0 relative z-10':
-                  i === activeModuleIndex(),
-                'opacity-0 translate-y-12 absolute inset-0 pointer-events-none z-0':
-                  i !== activeModuleIndex(),
+                'opacity-100 translate-y-0 relative z-10': i === activeModuleIndex(),
+                'opacity-0 translate-y-12 absolute inset-0 pointer-events-none z-0': i !== activeModuleIndex()
               }"
             >
-              <!-- Text Animations with Stagger -->
-              <h3
-                class="text-6xl md:text-7xl lg:text-8xl font-black text-white font-display leading-[0.9] tracking-tighter mb-4"
-                [class.animate-fade-in-up]="i === activeModuleIndex()"
-              >
+              <h3 class="text-6xl md:text-7xl lg:text-8xl font-black text-white font-display leading-[0.9] tracking-tighter mb-4">
                 {{ module.title }}
               </h3>
-              <p
-                class="mx-auto max-w-md text-xl font-bold md:text-2xl text-white/80 lg:mx-0 stagger-1"
-                [class.animate-fade-in-up]="i === activeModuleIndex()"
-              >
-                {{ module.subtitle }}
-              </p>
-
-              <!-- Navigation Control within the text cluster -->
-              <div
-                class="flex gap-4 justify-center items-center mt-8 lg:justify-start stagger-2"
-                [class.animate-fade-in-up]="i === activeModuleIndex()"
-              >
+              <p class="mx-auto max-w-md text-xl font-semibold text-white/70 lg:mx-0">{{ module.subtitle }}</p>
+              <div class="flex gap-4 justify-center items-center mt-8 lg:justify-start">
                 <button
+                  type="button"
                   (click)="scrollModules('left')"
-                  class="w-12 h-12 rounded-full bg-white text-[#16a34a] flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-all"
+                  class="w-12 h-12 rounded-full bg-white text-violet-700 flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-all"
+                  aria-label="Module trước"
                 >
                   <i class="text-xl font-bold pi pi-chevron-left"></i>
                 </button>
                 <button
+                  type="button"
                   (click)="scrollModules('right')"
-                  class="w-12 h-12 rounded-full bg-white text-[#16a34a] flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-all"
+                  class="w-12 h-12 rounded-full bg-white text-violet-700 flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-all"
+                  aria-label="Module tiếp theo"
                 >
                   <i class="text-xl font-bold pi pi-chevron-right"></i>
                 </button>
@@ -589,12 +394,8 @@
             </div>
           }
         </div>
-
-        <!-- Right Content: Application Mockup (Controlled Size) -->
         <div class="flex relative justify-center lg:justify-end">
-          <div
-            class="relative w-full max-w-[600px] aspect-[16/11] rounded-2xl shadow-[0_40px_80px_-20px_rgba(0,0,0,0.6)] border border-slate-700/50 bg-[#1e293b] overflow-hidden"
-          >
+          <div class="relative w-full max-w-[600px] aspect-[16/11] rounded-2xl shadow-2xl border border-zinc-700/50 bg-zinc-900 overflow-hidden">
             @for (module of moduleFeatures; track module.id; let i = $index) {
               <img
                 [src]="loadedModuleIndices().has(i) ? module.imageUrl : ''"
@@ -602,10 +403,8 @@
                 decoding="async"
                 class="absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]"
                 [ngClass]="{
-                  'opacity-100 scale-100 z-10 animate-scale-in':
-                    i === activeModuleIndex(),
-                  'opacity-0 scale-105 z-0 pointer-events-none':
-                    i !== activeModuleIndex(),
+                  'opacity-100 scale-100 z-10': i === activeModuleIndex(),
+                  'opacity-0 scale-105 z-0 pointer-events-none': i !== activeModuleIndex()
                 }"
               />
             }
@@ -615,105 +414,68 @@
     </div>
   </section>
 
-  <!-- Mobile Experience Section (BetterHR inspired) -->
-  <section class="overflow-hidden py-20 bg-white dark:bg-slate-800">
+  <!-- Mobile Experience -->
+  <section class="overflow-hidden py-20 bg-white dark:bg-zinc-900">
     <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
       <div class="flex flex-col gap-16 items-center lg:flex-row">
         <div class="lg:w-1/2 reveal-on-scroll reveal-left" #revealElement>
-          <h2 class="mb-6 text-4xl font-extrabold dark:text-white">
-            Gói gọn cả phòng Nhân sự <br /><span class="text-primary"
-              >trong túi áo bạn</span
-            >
+          <span class="inline-block mb-3 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-violet-600 bg-violet-50 dark:bg-violet-900/20 rounded-full">Mobile App</span>
+          <h2 class="mt-3 mb-6 text-4xl font-extrabold text-zinc-900 dark:text-white">
+            Gói gọn cả phòng Nhân sự<br /><span class="text-violet-600">trong túi áo bạn</span>
           </h2>
-          <p class="mb-8 text-lg text-slate-600 dark:text-slate-400">
-            Không còn rào cản về không gian và thời gian. ZenithHR App giúp nhân
-            viên chủ động trong mọi tác vụ, từ chấm công đến nhận lương.
+          <p class="mb-8 text-lg text-zinc-500 dark:text-zinc-400">
+            Không còn rào cản về không gian và thời gian. ZenithHR App giúp nhân viên chủ động trong mọi tác vụ, từ chấm công đến nhận lương.
           </p>
-
           <ul class="space-y-6">
             <li class="flex gap-4 items-start">
-              <div
-                class="flex justify-center items-center w-12 h-12 bg-green-100 rounded-full dark:bg-green-900/30 shrink-0"
-              >
+              <div class="flex justify-center items-center w-12 h-12 bg-green-100 rounded-xl dark:bg-green-900/30 shrink-0">
                 <i class="text-green-600 pi pi-qrcode"></i>
               </div>
               <div>
-                <h4 class="font-bold dark:text-white">Chấm công QR & GPS</h4>
-                <p class="text-sm text-slate-500">
-                  Check-in nhanh chóng tại văn phòng qua mã QR hoặc từ xa qua
-                  định vị GPS bảo mật.
-                </p>
+                <h4 class="font-bold text-zinc-900 dark:text-white">Chấm công QR &amp; GPS</h4>
+                <p class="text-sm text-zinc-500 dark:text-zinc-400">Check-in nhanh chóng tại văn phòng qua mã QR hoặc từ xa qua định vị GPS bảo mật.</p>
               </div>
             </li>
             <li class="flex gap-4 items-start">
-              <div
-                class="flex justify-center items-center w-12 h-12 bg-blue-100 rounded-full dark:bg-blue-900/30 shrink-0"
-              >
-                <i class="text-blue-600 pi pi-file-pdf"></i>
+              <div class="flex justify-center items-center w-12 h-12 bg-violet-100 rounded-xl dark:bg-violet-900/30 shrink-0">
+                <i class="text-violet-600 pi pi-file-pdf"></i>
               </div>
               <div>
-                <h4 class="font-bold dark:text-white">Tra cứu Bảng lương</h4>
-                <p class="text-sm text-slate-500">
-                  Xem và tải phiếu lương (Payslip) hàng tháng ngay khi có thông
-                  báo, bảo mật bằng lớp khóa thứ 2.
-                </p>
+                <h4 class="font-bold text-zinc-900 dark:text-white">Tra cứu Bảng lương</h4>
+                <p class="text-sm text-zinc-500 dark:text-zinc-400">Xem và tải phiếu lương (Payslip) hàng tháng ngay khi có thông báo, bảo mật bằng lớp khóa thứ 2.</p>
               </div>
             </li>
             <li class="flex gap-4 items-start">
-              <div
-                class="flex justify-center items-center w-12 h-12 bg-orange-100 rounded-full dark:bg-orange-900/30 shrink-0"
-              >
+              <div class="flex justify-center items-center w-12 h-12 bg-orange-100 rounded-xl dark:bg-orange-900/30 shrink-0">
                 <i class="text-orange-600 pi pi-send"></i>
               </div>
               <div>
-                <h4 class="font-bold dark:text-white">Duyệt phép thần tốc</h4>
-                <p class="text-sm text-slate-500">
-                  Tạo yêu cầu và nhận kết quả phê duyệt trong chưa đầy 1 phút.
-                  Quản lý quỹ phép minh bạch.
-                </p>
+                <h4 class="font-bold text-zinc-900 dark:text-white">Duyệt phép thần tốc</h4>
+                <p class="text-sm text-zinc-500 dark:text-zinc-400">Tạo yêu cầu và nhận kết quả phê duyệt trong chưa đầy 1 phút. Quản lý quỹ phép minh bạch.</p>
               </div>
             </li>
           </ul>
         </div>
-
-        <div
-          class="flex relative justify-center lg:w-1/2 reveal-on-scroll reveal-right"
-          #revealElement
-        >
-          <!-- Background Decor -->
-          <div
-            class="absolute inset-0 rounded-full blur-3xl transform scale-150 bg-primary/10 -z-10"
-          ></div>
-
-          <!-- Mobile Phone Mockup (Visual emphasis) -->
-          <div
-            class="relative w-[300px] h-[600px] bg-slate-900 rounded-[3rem] border-8 border-slate-800 shadow-2xl overflow-hidden"
-          >
-            <div
-              class="absolute top-0 left-1/2 z-20 w-1/3 h-6 rounded-b-xl -translate-x-1/2 bg-slate-800"
-            ></div>
+        <div class="flex relative justify-center lg:w-1/2 reveal-on-scroll reveal-right" #revealElement>
+          <div class="absolute inset-0 rounded-full blur-3xl scale-150 bg-violet-500/8 -z-10"></div>
+          <div class="relative w-[280px] h-[560px] bg-zinc-900 rounded-[3rem] border-8 border-zinc-800 shadow-2xl overflow-hidden">
+            <div class="absolute top-0 left-1/2 z-20 w-1/3 h-6 rounded-b-xl -translate-x-1/2 bg-zinc-800"></div>
             <img
               src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&q=80&w=400"
-              alt="App Screen"
+              alt="ZenithHR Mobile App"
               class="object-cover w-full h-full"
               loading="lazy"
               decoding="async"
             />
           </div>
-
-          <!-- Floating stats badge -->
-          <div
-            class="absolute -bottom-6 -left-6 p-6 bg-white rounded-2xl border shadow-xl animate-bounce dark:bg-slate-900 dark:border-slate-700"
-          >
+          <div class="absolute -bottom-4 -left-4 p-5 bg-white dark:bg-zinc-800 rounded-2xl border border-zinc-200 dark:border-zinc-700 shadow-xl animate-[bounce_3s_ease-in-out_infinite]">
             <div class="flex gap-3 items-center">
-              <div
-                class="flex justify-center items-center w-10 h-10 text-white bg-green-500 rounded-full"
-              >
-                <i class="text-xl pi pi-check"></i>
+              <div class="flex justify-center items-center w-10 h-10 text-white bg-green-500 rounded-full shrink-0">
+                <i class="text-lg pi pi-check"></i>
               </div>
               <div>
-                <div class="text-2xl font-black dark:text-white">99.9%</div>
-                <div class="text-xs text-slate-400">Employee Adoption Rate</div>
+                <div class="text-2xl font-black text-zinc-900 dark:text-white">99.9%</div>
+                <div class="text-xs text-zinc-400">Employee Adoption Rate</div>
               </div>
             </div>
           </div>
@@ -722,80 +484,38 @@
     </div>
   </section>
 
-  <!-- Marketing Bento Box Segment -->
-  <section
-    class="py-10 border-t bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800"
-  >
-    <div
-      class="px-4 mx-auto max-w-7xl delay-150 sm:px-6 lg:px-8 reveal-on-scroll reveal-zoom"
-      #revealElement
-    >
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[250px]">
-        <!-- Bento Item 1: Large -->
-        <div
-          class="flex overflow-hidden relative flex-col justify-center p-8 rounded-3xl shadow-xl md:col-span-2 bg-brand-blue group"
-        >
-          <div
-            class="absolute right-0 bottom-0 w-64 h-64 rounded-tl-full pointer-events-none bg-white/10"
-          ></div>
-          <h3
-            class="relative z-10 mb-4 text-3xl font-bold text-white font-display"
-          >
-            Tự động hoá Onboarding
-          </h3>
-          <p class="relative z-10 max-w-md text-lg text-blue-100">
-            Mạch luồng ký kết hợp đồng 100% không giấy tờ.
-          </p>
-          <div
-            class="absolute right-[-20px] bottom-[-20px] opacity-50 group-hover:opacity-100 group-hover:rotate-12 transition-all duration-500"
-          >
-            <i class="pi pi-file-edit text-[150px] text-white/20"></i>
+  <!-- Bento Box -->
+  <section class="py-12 border-t bg-zinc-50 dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800">
+    <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 delay-150 reveal-on-scroll reveal-zoom" #revealElement>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[260px]">
+        <div class="flex overflow-hidden relative flex-col justify-center p-8 rounded-3xl shadow-xl md:col-span-2 bg-violet-700 group">
+          <div class="absolute right-0 bottom-0 w-64 h-64 rounded-tl-full pointer-events-none bg-white/10"></div>
+          <h3 class="relative z-10 mb-3 text-3xl font-bold text-white font-display">Tự động hoá Onboarding</h3>
+          <p class="relative z-10 max-w-sm text-lg text-violet-100">Mạch luồng ký kết hợp đồng 100% không giấy tờ.</p>
+          <div class="absolute right-[-20px] bottom-[-20px] opacity-30 group-hover:opacity-60 group-hover:rotate-12 transition-all duration-500">
+            <i class="pi pi-file-edit text-[150px] text-white/30"></i>
           </div>
         </div>
-
-        <!-- Bento Item 2: Small Stats -->
-        <div
-          class="flex overflow-hidden flex-col justify-center items-center p-8 text-center text-white rounded-3xl shadow-xl transition-transform duration-300 transform bg-primary group hover:-translate-y-2"
-        >
-          <div class="flex items-baseline mb-2 text-5xl font-black">
-            80 <span class="text-2xl">%</span>
-          </div>
-          <p class="font-medium text-orange-100">
-            Tiết kiệm thời gian xử lý thủ công
-          </p>
+        <div class="flex overflow-hidden flex-col justify-center items-center p-8 text-center text-white rounded-3xl shadow-xl bg-violet-600 transition-transform duration-300 group hover:-translate-y-2">
+          <div class="flex items-baseline mb-2 text-5xl font-black">80 <span class="text-2xl ml-0.5">%</span></div>
+          <p class="font-medium text-violet-100">Tiết kiệm thời gian xử lý thủ công</p>
         </div>
-
-        <!-- Bento Item 3: Deep Dark mode mockup -->
-        <div
-          class="overflow-hidden relative p-8 rounded-3xl border shadow-xl bg-slate-900 border-slate-800 group"
-        >
+        <div class="overflow-hidden relative p-8 rounded-3xl border shadow-xl bg-zinc-900 border-zinc-800 group">
           <h3 class="mb-2 text-xl font-bold text-white">Dark Mode Sẵn Sàng</h3>
-          <p class="text-sm text-slate-400">Giao diện bảo vệ mắt 24/7.</p>
-          <div
-            class="absolute -right-10 -bottom-10 w-40 h-40 bg-gradient-to-tr to-orange-400 rounded-full opacity-20 blur-2xl transition-opacity from-primary group-hover:opacity-40"
-          ></div>
-          <i
-            class="absolute right-6 bottom-6 text-6xl pi pi-moon text-slate-700"
-          ></i>
+          <p class="text-sm text-zinc-400">Giao diện bảo vệ mắt 24/7.</p>
+          <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-gradient-to-tr from-violet-600 to-violet-400 rounded-full opacity-15 blur-2xl transition-opacity group-hover:opacity-35"></div>
+          <i class="absolute right-6 bottom-6 text-6xl pi pi-moon text-zinc-700"></i>
         </div>
-
-        <!-- Bento Item 4: Long Text -->
-        <div
-          class="flex overflow-hidden justify-between items-center p-8 bg-white rounded-3xl border shadow-lg md:col-span-2 dark:bg-slate-800 border-slate-100 dark:border-slate-700 group"
-        >
+        <div class="flex overflow-hidden justify-between items-center p-8 bg-white dark:bg-zinc-800 rounded-3xl border shadow-lg md:col-span-2 border-zinc-100 dark:border-zinc-700 group">
           <div>
-            <i class="mb-4 text-3xl text-green-500 pi pi-shield"></i>
-            <h3 class="mb-2 text-xl font-bold text-slate-800 dark:text-white">
-              Bảo mật cấp doanh nghiệp
-            </h3>
-            <p class="max-w-sm text-slate-500 dark:text-slate-400">
-              Dữ liệu được mã hoá AES-256. Hạ tầng đám mây tin cậy.
-            </p>
+            <div class="flex justify-center items-center w-12 h-12 mb-4 bg-green-100 dark:bg-green-900/30 rounded-xl">
+              <i class="text-xl text-green-600 pi pi-shield"></i>
+            </div>
+            <h3 class="mb-2 text-xl font-bold text-zinc-800 dark:text-white">Bảo mật cấp doanh nghiệp</h3>
+            <p class="max-w-sm text-zinc-500 dark:text-zinc-400">Dữ liệu được mã hoá AES-256. Hạ tầng đám mây tin cậy với SLA 99.9%.</p>
           </div>
-          <div class="hidden sm:block">
-            <div
-              class="flex flex-col justify-center items-center w-32 h-32 rounded-full border-8 border-green-50 transition-transform duration-500 dark:border-green-900/20 group-hover:scale-110"
-            >
+          <div class="hidden sm:block shrink-0">
+            <div class="flex flex-col justify-center items-center w-28 h-28 rounded-full border-8 border-green-50 dark:border-green-900/20 transition-transform duration-500 group-hover:scale-110">
               <i class="text-4xl text-green-500 pi pi-check"></i>
             </div>
           </div>
@@ -804,108 +524,91 @@
     </div>
   </section>
 
-  <!-- ROI Section -->
-  <section class="overflow-hidden relative py-16 text-white bg-brand-blue">
-    <!-- Interactive Background pattern -->
-    <div
-      class="absolute inset-0 opacity-10"
-      style="
-        background-image: radial-gradient(
-          circle at 2px 2px,
-          white 1px,
-          transparent 0
-        );
-        background-size: 32px 32px;
-      "
-    ></div>
-
-    <div
-      class="relative z-10 px-4 mx-auto max-w-7xl delay-100 sm:px-6 lg:px-8 reveal-on-scroll reveal-up"
-      #revealElement
-    >
+  <!-- ROI Stats Strip -->
+  <section class="overflow-hidden relative py-16 text-white bg-violet-700">
+    <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 32px 32px;"></div>
+    <div class="relative z-10 px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 delay-100 reveal-on-scroll reveal-up" #revealElement>
       <div class="mb-12 text-center">
-        <h2 class="mb-4 text-3xl font-bold font-display md:text-4xl">
-          Khoản đầu tư sinh lời ngay từ tháng đầu tiên
-        </h2>
-        <p class="text-blue-200">
-          Cam kết bằng số liệu từ hơn 500 khách hàng đã triển khai ZenithHR.
-        </p>
+        <h2 class="mb-3 text-3xl font-bold font-display md:text-4xl">Khoản đầu tư sinh lời ngay từ tháng đầu tiên</h2>
+        <p class="text-violet-200">Cam kết bằng số liệu từ hơn 500 khách hàng đã triển khai ZenithHR.</p>
       </div>
-
-      <div
-        class="grid grid-cols-2 gap-8 divide-x md:grid-cols-4 divide-blue-500/50"
-      >
+      <div class="grid grid-cols-2 gap-8 md:grid-cols-4 divide-x divide-violet-500/50">
         <div class="px-4 text-center">
-          <div class="mb-2 text-5xl font-black text-orange-400">100%</div>
-          <p class="text-sm font-medium text-blue-100">
-            Tự động hóa luồng tính lương, loại bỏ sai sót số liệu
-          </p>
+          <div class="mb-2 text-5xl font-black text-yellow-300">100%</div>
+          <p class="text-sm font-medium text-violet-100">Tự động hóa luồng tính lương, loại bỏ sai sót số liệu</p>
         </div>
         <div class="px-4 text-center">
-          <div class="mb-2 text-5xl font-black text-white">-50%</div>
-          <p class="text-sm font-medium text-blue-100">
-            Thời gian tuyển dụng ứng viên nhờ hệ thống Pipeline thông minh
-          </p>
+          <div class="mb-2 text-5xl font-black">-50%</div>
+          <p class="text-sm font-medium text-violet-100">Thời gian tuyển dụng ứng viên nhờ hệ thống Pipeline thông minh</p>
         </div>
         <div class="px-4 text-center">
-          <div class="mb-2 text-5xl font-black text-white">3x</div>
-          <p class="text-sm font-medium text-blue-100">
-            Tăng tốc độ Onboarding nhân sự mới với hồ sơ số hóa tập trung
-          </p>
+          <div class="mb-2 text-5xl font-black">3×</div>
+          <p class="text-sm font-medium text-violet-100">Tăng tốc độ Onboarding nhân sự mới với hồ sơ số hóa tập trung</p>
         </div>
         <div class="px-4 text-center">
-          <div class="mb-2 text-5xl font-black text-white">24/7</div>
-          <p class="text-sm font-medium text-blue-100">
-            Hệ thống Tracking & Portal nhân sự trực tuyến liên tục
-          </p>
+          <div class="mb-2 text-5xl font-black">24/7</div>
+          <p class="text-sm font-medium text-violet-100">Hệ thống Tracking &amp; Portal nhân sự trực tuyến liên tục</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- FAQ Section -->
-  <section class="py-20 bg-background-light dark:bg-background-dark">
-    <div
-      class="px-4 mx-auto max-w-4xl delay-200 reveal-on-scroll reveal-up"
-      #revealElement
-    >
-      <div class="mb-12 text-center">
-        <h2
-          class="mb-4 text-3xl font-bold font-display md:text-4xl text-brand-blue dark:text-white"
-        >
-          Câu hỏi thường gặp (FAQ)
+  <!-- Testimonials -->
+  <section class="py-20 bg-white dark:bg-zinc-900">
+    <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 reveal-on-scroll reveal-up" #revealElement>
+      <div class="mb-14 text-center">
+        <span class="inline-block mb-3 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-violet-600 bg-violet-50 dark:bg-violet-900/20 rounded-full">Khách hàng</span>
+        <h2 class="mb-4 text-3xl font-bold font-display text-zinc-900 dark:text-white">
+          Doanh nghiệp nói gì về <span class="text-violet-600">ZenithHR</span>?
         </h2>
-        <p class="text-slate-500 dark:text-slate-400">
-          Mọi thắc mắc của bạn trước khi đưa ra quyết định chuyển đổi số.
-        </p>
       </div>
+      <div class="grid gap-6 md:grid-cols-3">
+        @for (t of testimonials; track t.name) {
+          <div class="flex flex-col p-7 bg-zinc-50 dark:bg-zinc-800 rounded-2xl border border-zinc-200 dark:border-zinc-700">
+            <div class="flex gap-1 mb-4">
+              @for (star of [1,2,3,4,5]; track star) {
+                <i class="text-yellow-400 pi pi-star-fill text-sm"></i>
+              }
+            </div>
+            <p class="flex-1 mb-6 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300 italic">"{{ t.quote }}"</p>
+            <div class="flex items-center gap-3">
+              <img [src]="t.avatar" [alt]="t.name" class="w-10 h-10 rounded-full object-cover" loading="lazy" />
+              <div>
+                <div class="text-sm font-bold text-zinc-900 dark:text-white">{{ t.name }}</div>
+                <div class="text-xs text-zinc-400">{{ t.role }}</div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
 
-      <div class="space-y-4">
+  <!-- FAQ -->
+  <section class="py-20 bg-background-light dark:bg-background-dark">
+    <div class="px-4 mx-auto max-w-4xl delay-200 reveal-on-scroll reveal-up" #revealElement>
+      <div class="mb-12 text-center">
+        <span class="inline-block mb-3 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-violet-600 bg-violet-50 dark:bg-violet-900/20 rounded-full">FAQ</span>
+        <h2 class="mb-4 text-3xl font-bold font-display md:text-4xl text-zinc-900 dark:text-white">Câu hỏi thường gặp</h2>
+        <p class="text-zinc-500 dark:text-zinc-400">Mọi thắc mắc của bạn trước khi đưa ra quyết định chuyển đổi số.</p>
+      </div>
+      <div class="space-y-3">
         @for (faq of faqs(); track faq.id) {
-          <div
-            class="overflow-hidden bg-white rounded-2xl border transition-all duration-300 border-slate-200 dark:border-slate-700 dark:bg-slate-800"
-          >
+          <div class="overflow-hidden bg-white dark:bg-zinc-800 rounded-2xl border transition-all duration-300 border-zinc-200 dark:border-zinc-700">
             <button
+              type="button"
               (click)="toggleFaq(faq.id)"
-              class="flex justify-between items-center p-6 w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              class="flex justify-between items-center p-6 w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500"
             >
-              <span
-                class="text-lg font-bold text-slate-800 dark:text-slate-200"
-                >{{ faq.question }}</span
-              >
+              <span class="text-base font-bold text-zinc-800 dark:text-zinc-200">{{ faq.question }}</span>
               <i
-                class="transition-transform duration-300 transform pi pi-chevron-down text-slate-400"
+                class="transition-transform duration-300 transform pi pi-chevron-down text-zinc-400 shrink-0 ml-4"
                 [ngClass]="{ 'rotate-180': faq.isOpen }"
               ></i>
             </button>
-
             <div
-              class="px-6 transition-all duration-300 ease-in-out text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-900/50"
-              [ngClass]="
-                faq.isOpen
-                  ? 'max-h-40 py-4 opacity-100'
-                  : 'max-h-0 py-0 opacity-0 overflow-hidden'
-              "
+              class="px-6 transition-all duration-300 ease-in-out text-zinc-500 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-900/50"
+              [ngClass]="faq.isOpen ? 'max-h-40 py-4 opacity-100' : 'max-h-0 py-0 opacity-0 overflow-hidden'"
             >
               {{ faq.answer }}
             </div>
@@ -917,100 +620,95 @@
 
   <!-- CTA Section -->
   <section class="overflow-hidden py-20 bg-white dark:bg-background-dark">
-    <div
-      class="px-4 mx-auto max-w-7xl delay-200 sm:px-6 lg:px-8 reveal-on-scroll reveal-zoom"
-      #revealElement
-    >
-      <div class="grid gap-12 items-center lg:grid-cols-2">
-        <div class="order-2 lg:order-1">
-          <h2
-            class="mb-6 text-4xl font-bold font-display text-brand-blue dark:text-white"
-          >
-            Sẵn sàng để thiết lập lại chuẩn mực Doanh nghiệp?
+    <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 delay-200 reveal-on-scroll reveal-zoom" #revealElement>
+      <div class="relative overflow-hidden p-10 lg:p-16 rounded-3xl bg-zinc-950 text-center">
+        <div class="absolute top-0 left-1/3 w-80 h-80 bg-violet-700/25 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute bottom-0 right-1/3 w-64 h-64 bg-violet-500/15 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="relative z-10 max-w-2xl mx-auto">
+          <h2 class="mb-5 text-4xl font-bold font-display text-white leading-tight">
+            Sẵn sàng thiết lập lại chuẩn mực<br /><span class="text-violet-400">Doanh nghiệp của bạn?</span>
           </h2>
-          <p class="mb-8 max-w-lg text-slate-600 dark:text-slate-400">
-            Trải nghiệm toàn bộ những tính năng cao cấp nhất của nền tảng với
-            bản dùng thử 14 ngày. Tư vấn trực tiếp bởi kỹ sư vận hành hệ thống.
+          <p class="mb-8 text-zinc-400 text-lg">
+            Trải nghiệm toàn bộ tính năng cao cấp với bản dùng thử 14 ngày. Tư vấn trực tiếp bởi kỹ sư vận hành hệ thống.
           </p>
-          <div class="flex flex-col gap-4 sm:flex-row">
+          <div class="flex flex-col gap-4 justify-center sm:flex-row">
             <a
-              class="px-8 py-3.5 font-bold text-center text-white rounded-lg shadow-lg transition-all bg-primary hover:bg-primary-500 shadow-primary/30"
+              class="px-8 py-3.5 font-bold text-center text-white bg-violet-600 rounded-xl shadow-lg transition-all hover:bg-violet-500 shadow-violet-600/30 hover:-translate-y-1"
               routerLink="/login"
             >
               Bắt đầu dùng thử Miễn phí
             </a>
             <a
-              class="px-8 py-3.5 font-bold text-center bg-orange-50 rounded-lg border border-orange-200 transition-all dark:bg-slate-800 text-primary dark:border-slate-600 hover:bg-orange-100 dark:hover:bg-slate-700"
+              class="px-8 py-3.5 font-bold text-center text-zinc-200 border border-zinc-700 rounded-xl transition-all hover:bg-zinc-800"
               href="#"
             >
               Trò chuyện với Chuyên gia
             </a>
           </div>
-        </div>
-        <div class="flex relative order-1 justify-end lg:order-2">
-          <div class="relative w-full max-w-md aspect-square">
-            <div
-              class="absolute inset-0 bg-surface-light dark:bg-slate-800 rounded-tl-[100px] rounded-br-[100px] rounded-tr-[40px] rounded-bl-[40px]"
-            ></div>
-            <div
-              class="absolute right-0 bottom-0 w-2/3 h-2/3 rounded-tl-full opacity-90 bg-brand-blue"
-            ></div>
-            <img
-              alt="Team Growth"
-              class="object-contain absolute bottom-0 left-10 w-3/4 h-auto rounded-b-3xl"
-              src="https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&q=80&w=600"
-              loading="lazy"
-              decoding="async"
-            />
-          </div>
+          <p class="mt-6 text-sm text-zinc-500">Không cần thẻ tín dụng · Hủy bất kỳ lúc nào · Hỗ trợ 24/7</p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- Footer -->
-  <footer
-    class="pt-16 pb-8 border-t bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800"
-  >
+  <footer class="pt-16 pb-8 border-t bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800">
     <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
       <div class="flex flex-col justify-center items-center mb-12 text-center">
-        <div class="flex gap-2 items-center mb-4">
-          <div class="relative w-8 h-8">
-            <i
-              class="text-3xl pi pi-infinity text-brand-blue dark:text-white"
-            ></i>
+        <div class="flex gap-2.5 items-center mb-4">
+          <div class="flex justify-center items-center w-8 h-8 bg-violet-600 rounded-lg">
+            <i class="text-sm text-white pi pi-share-alt"></i>
           </div>
-          <span
-            class="text-2xl font-bold font-display text-slate-900 dark:text-white"
-            >ZenithHR</span
-          >
+          <span class="text-2xl font-bold font-display text-zinc-900 dark:text-white">ZenithHR</span>
         </div>
-        <p class="max-w-xs text-sm text-slate-500 dark:text-slate-400">
-          Your partner in simplifying HR processes and boosting workplace
-          productivity.
+        <p class="max-w-xs text-sm text-zinc-500 dark:text-zinc-400">
+          Đối tác số hóa quy trình nhân sự, nâng cao năng suất doanh nghiệp Việt Nam.
         </p>
       </div>
-
-      <div
-        class="flex flex-col gap-4 justify-between items-center pt-8 text-xs border-t border-slate-200 dark:border-slate-800 md:flex-row text-slate-400"
-      >
-        <div class="flex flex-wrap gap-4 justify-center md:justify-start">
-          <span>© 2024 ZenithHR, Inc.</span>
-          <a class="hover:text-slate-600 dark:hover:text-slate-300" href="#"
-            >Privacy</a
-          >
-          <a class="hover:text-slate-600 dark:hover:text-slate-300" href="#"
-            >Terms</a
-          >
-          <a class="hover:text-slate-600 dark:hover:text-slate-300" href="#"
-            >Sitemap</a
-          >
+      <div class="grid grid-cols-2 gap-8 mb-12 md:grid-cols-4 text-sm">
+        <div>
+          <h4 class="mb-4 font-bold text-zinc-900 dark:text-white">Sản phẩm</h4>
+          <ul class="space-y-3 text-zinc-500 dark:text-zinc-400">
+            <li><a class="hover:text-violet-600 transition-colors" href="#">Tính năng</a></li>
+            <li><a class="hover:text-violet-600 transition-colors" href="#">Bảng giá</a></li>
+            <li><a class="hover:text-violet-600 transition-colors" href="#">Changelog</a></li>
+            <li><a class="hover:text-violet-600 transition-colors" href="#">Lộ trình</a></li>
+          </ul>
         </div>
-        <div
-          class="flex gap-2 items-center px-3 py-1 rounded cursor-pointer bg-slate-200 dark:bg-slate-800"
-        >
-          <span>English</span>
-          <i class="text-xs pi pi-chevron-down"></i>
+        <div>
+          <h4 class="mb-4 font-bold text-zinc-900 dark:text-white">Công ty</h4>
+          <ul class="space-y-3 text-zinc-500 dark:text-zinc-400">
+            <li><a class="hover:text-violet-600 transition-colors" href="#">Về chúng tôi</a></li>
+            <li><a class="hover:text-violet-600 transition-colors" href="#">Blog</a></li>
+            <li><a class="hover:text-violet-600 transition-colors" href="#">Tuyển dụng</a></li>
+            <li><a class="hover:text-violet-600 transition-colors" href="#">Liên hệ</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="mb-4 font-bold text-zinc-900 dark:text-white">Hỗ trợ</h4>
+          <ul class="space-y-3 text-zinc-500 dark:text-zinc-400">
+            <li><a class="hover:text-violet-600 transition-colors" href="#">Tài liệu</a></li>
+            <li><a class="hover:text-violet-600 transition-colors" href="#">API Docs</a></li>
+            <li><a class="hover:text-violet-600 transition-colors" href="#">Cộng đồng</a></li>
+            <li><a class="hover:text-violet-600 transition-colors" href="#">Trạng thái hệ thống</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="mb-4 font-bold text-zinc-900 dark:text-white">Pháp lý</h4>
+          <ul class="space-y-3 text-zinc-500 dark:text-zinc-400">
+            <li><a class="hover:text-violet-600 transition-colors" href="#">Chính sách bảo mật</a></li>
+            <li><a class="hover:text-violet-600 transition-colors" href="#">Điều khoản dịch vụ</a></li>
+            <li><a class="hover:text-violet-600 transition-colors" href="#">Cookie Policy</a></li>
+            <li><a class="hover:text-violet-600 transition-colors" href="#">Sơ đồ trang</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="flex flex-col gap-4 justify-between items-center pt-8 text-xs border-t border-zinc-200 dark:border-zinc-800 md:flex-row text-zinc-400">
+        <span>© 2026 ZenithHR, Inc. Mọi quyền được bảo lưu.</span>
+        <div class="flex items-center gap-4">
+          <a href="#" class="hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"><i class="pi pi-twitter"></i></a>
+          <a href="#" class="hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"><i class="pi pi-linkedin"></i></a>
+          <a href="#" class="hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"><i class="pi pi-facebook"></i></a>
         </div>
       </div>
     </div>
