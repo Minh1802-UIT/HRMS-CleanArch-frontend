@@ -68,6 +68,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   chart?: Chart;
   attendanceTrendData: AttendanceTrend | null = null;
   isLoading: boolean = true;
+  isAuditLogsLoading = true;
 
   // New Dynamic Data
   recruitmentStats?: RecruitmentStats;
@@ -96,6 +97,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   funnelOptions!: Record<string, any>;
 
   userDisplayName: string = '';
+  chartPeriod: 'week' | 'month' = 'week';
 
   constructor(
       private dashboardService: DashboardService,
@@ -172,9 +174,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.auditLogService.getAuditLogs().pipe(takeUntil(this.destroy$)).subscribe({
           next: (result) => {
               this.auditLogs = result.items.slice(0, 5);
+              this.isAuditLogsLoading = false;
               this.cdr.markForCheck();
           },
-          error: (err) => this.logger.error('Audit logs error', err)
+          error: (err) => {
+              this.logger.error('Audit logs error', err);
+              this.isAuditLogsLoading = false;
+              this.cdr.markForCheck();
+          }
       });
   }
 
@@ -393,6 +400,36 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   getTotalEmployees(): string {
     const card = this.summaryCards.find(c => c.title === 'Total Employees');
     return card ? card.value.toString() : '0';
+  }
+
+  get avgAttendanceRate(): string {
+    if (!this.attendanceTrendData?.data?.length) return '–';
+    const avg = this.attendanceTrendData.data.reduce((a, b) => a + b, 0) / this.attendanceTrendData.data.length;
+    return (avg * 100).toFixed(1);
+  }
+
+  setChartPeriod(period: 'week' | 'month'): void {
+    if (this.chartPeriod === period || !this.attendanceTrendData) return;
+    this.chartPeriod = period;
+    const raw = this.attendanceTrendData;
+    const slice = period === 'week' ? 7 : raw.data.length;
+    const primaryColor = '#3b67f5';
+    this.chartData = {
+      labels: raw.labels.slice(-slice),
+      datasets: [{
+        label: 'Attendance Rate',
+        data: raw.data.slice(-slice),
+        fill: true,
+        borderColor: primaryColor,
+        tension: 0.4,
+        backgroundColor: 'rgba(59, 103, 245, 0.1)',
+        pointBackgroundColor: primaryColor,
+        pointBorderColor: '#fff',
+        pointHoverBackgroundColor: '#fff',
+        pointHoverBorderColor: primaryColor
+      }]
+    };
+    this.cdr.markForCheck();
   }
 
   trackByIndex(index: number, item?: unknown): number { return index; }

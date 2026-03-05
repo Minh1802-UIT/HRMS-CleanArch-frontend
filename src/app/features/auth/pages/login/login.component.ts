@@ -20,6 +20,7 @@ export class LoginComponent implements OnDestroy {
   loginForm: FormGroup;
   isLoading = false;
   errorMessage = '';
+  showPassword = false;
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -71,6 +72,10 @@ export class LoginComponent implements OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
   }
 
   onForgotPassword() {

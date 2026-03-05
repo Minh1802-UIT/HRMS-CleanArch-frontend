@@ -20,7 +20,7 @@
       <select
         [(ngModel)]="selectedYear"
         (ngModelChange)="loadReport()"
-        class="px-3 py-2 text-sm border border-slate-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-700 text-slate-700 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
+        class="px-3 py-2 text-sm border border-zinc-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-700 text-zinc-700 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
       >
         @for (yr of yearOptions; track yr) {
           <option [value]="yr">{{ yr }}</option>
@@ -29,6 +29,7 @@
 
       <!-- Export CSV -->
       <button
+        type="button"
         (click)="exportCsv()"
         [disabled]="!report || loading"
         class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[#F4623A] rounded-lg hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
@@ -45,7 +46,7 @@
       <div
         class="w-8 h-8 border-4 border-[#F4623A] border-t-transparent rounded-full animate-spin"
       ></div>
-      <span class="ml-3 text-slate-500">Loading reportâ€¦</span>
+      <span class="ml-3 text-zinc-500">Loading report…</span>
     </div>
   }
 
@@ -64,19 +65,19 @@
     <!-- Company Summary Cards -->
     <div class="grid grid-cols-2 gap-4 mb-6 lg:grid-cols-4">
       <div
-        class="bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl p-4 shadow-sm"
+        class="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-4 shadow-sm"
       >
-        <p class="text-xs text-slate-500 uppercase tracking-wide">
+        <p class="text-xs text-zinc-500 uppercase tracking-wide">
           Total Employees
         </p>
-        <p class="text-2xl font-bold text-slate-800 mt-1">
+        <p class="text-2xl font-bold text-zinc-800 mt-1">
           {{ report.employees.length }}
         </p>
       </div>
       <div
-        class="bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl p-4 shadow-sm"
+        class="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-4 shadow-sm"
       >
-        <p class="text-xs text-slate-500 uppercase tracking-wide">
+        <p class="text-xs text-zinc-500 uppercase tracking-wide">
           Company Gross
         </p>
         <p class="text-lg font-bold text-orange-600 mt-1">
@@ -84,17 +85,17 @@
         </p>
       </div>
       <div
-        class="bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl p-4 shadow-sm"
+        class="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-4 shadow-sm"
       >
-        <p class="text-xs text-slate-500 uppercase tracking-wide">Total PIT</p>
+        <p class="text-xs text-zinc-500 uppercase tracking-wide">Total PIT</p>
         <p class="text-lg font-bold text-red-500 mt-1">
           {{ formatCurrency(report.companyTotalPIT) }}
         </p>
       </div>
       <div
-        class="bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl p-4 shadow-sm"
+        class="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-4 shadow-sm"
       >
-        <p class="text-xs text-slate-500 uppercase tracking-wide">
+        <p class="text-xs text-zinc-500 uppercase tracking-wide">
           Company Net
         </p>
         <p class="text-lg font-bold text-green-600 mt-1">
@@ -106,7 +107,7 @@
     <!-- Employee Table -->
     @if (report.employees.length === 0) {
       <div
-        class="flex flex-col items-center justify-center py-16 text-slate-400"
+        class="flex flex-col items-center justify-center py-16 text-zinc-400"
       >
         <span class="material-symbols-outlined text-5xl mb-3">description</span>
         <p class="text-base">No payroll data found for {{ report.year }}.</p>
@@ -115,34 +116,34 @@
 
     @if (report.employees.length > 0) {
       <div
-        class="bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl shadow-sm overflow-hidden"
+        class="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl shadow-sm overflow-hidden"
       >
         <table class="w-full text-sm">
-          <thead class="bg-slate-50 border-b border-slate-200">
+          <thead class="bg-zinc-50/80 border-b border-zinc-200">
             <tr>
               <th class="w-8 px-4 py-3"></th>
               <th
-                class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide"
+                class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wide"
               >
                 Employee
               </th>
               <th
-                class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wide"
+                class="px-4 py-3 text-right text-xs font-semibold text-zinc-500 uppercase tracking-wide"
               >
                 Total Gross
               </th>
               <th
-                class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wide"
+                class="px-4 py-3 text-right text-xs font-semibold text-zinc-500 uppercase tracking-wide"
               >
                 SI + HI + UI
               </th>
               <th
-                class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wide"
+                class="px-4 py-3 text-right text-xs font-semibold text-zinc-500 uppercase tracking-wide"
               >
                 Total PIT
               </th>
               <th
-                class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wide"
+                class="px-4 py-3 text-right text-xs font-semibold text-zinc-500 uppercase tracking-wide"
               >
                 Net Income
               </th>
@@ -152,10 +153,10 @@
             @for (emp of report.employees; track emp.employeeId) {
               <!-- Employee summary row -->
               <tr
-                class="border-b border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors"
+                class="border-b border-zinc-100 hover:bg-zinc-50 cursor-pointer transition-colors"
                 (click)="toggleExpand(emp)"
               >
-                <td class="px-4 py-3 text-slate-400">
+                <td class="px-4 py-3 text-zinc-400">
                   <span
                     class="material-symbols-outlined text-base transition-transform"
                     [class.rotate-90]="emp.expanded"
@@ -164,17 +165,17 @@
                   </span>
                 </td>
                 <td class="px-4 py-3">
-                  <div class="font-medium text-slate-800">
+                  <div class="font-medium text-zinc-800">
                     {{ emp.employeeName }}
                   </div>
-                  <div class="text-xs text-slate-400">
+                  <div class="text-xs text-zinc-400">
                     {{ emp.employeeCode }}
                   </div>
                 </td>
-                <td class="px-4 py-3 text-right font-medium text-slate-700">
+                <td class="px-4 py-3 text-right font-medium text-zinc-700">
                   {{ formatCurrency(emp.totalGrossIncome) }}
                 </td>
-                <td class="px-4 py-3 text-right text-slate-600">
+                <td class="px-4 py-3 text-right text-zinc-600">
                   {{
                     formatCurrency(
                       emp.totalSocialInsurance +
@@ -196,13 +197,13 @@
                 @for (m of emp.monthlySummaries; track m.month) {
                   <tr class="bg-orange-50/40 border-b border-orange-100/60">
                     <td class="px-4 py-2"></td>
-                    <td class="px-4 py-2 pl-8 text-xs text-slate-500">
+                    <td class="px-4 py-2 pl-8 text-xs text-zinc-500">
                       {{ m.month }}
                     </td>
-                    <td class="px-4 py-2 text-right text-xs text-slate-600">
+                    <td class="px-4 py-2 text-right text-xs text-zinc-600">
                       {{ formatCurrency(m.grossIncome) }}
                     </td>
-                    <td class="px-4 py-2 text-right text-xs text-slate-500">
+                    <td class="px-4 py-2 text-right text-xs text-zinc-500">
                       {{
                         formatCurrency(
                           m.socialInsurance +
@@ -223,11 +224,11 @@
             }
           </tbody>
           <!-- Company total footer -->
-          <tfoot class="bg-slate-100 border-t-2 border-slate-300">
+          <tfoot class="bg-zinc-100 border-t-2 border-zinc-300">
             <tr>
               <td
                 colspan="2"
-                class="px-4 py-3 text-sm font-bold text-slate-700"
+                class="px-4 py-3 text-sm font-bold text-zinc-700"
               >
                 Company Total
               </td>
@@ -236,7 +237,7 @@
               >
                 {{ formatCurrency(report.companyTotalGross) }}
               </td>
-              <td class="px-4 py-3 text-right text-sm font-bold text-slate-600">
+              <td class="px-4 py-3 text-right text-sm font-bold text-zinc-600">
                 {{ formatCurrency(report.companyTotalInsurance) }}
               </td>
               <td class="px-4 py-3 text-right text-sm font-bold text-red-500">

@@ -31,6 +31,7 @@ export class LeaveRequestComponent implements OnInit, OnDestroy {
   loading: boolean = false;
   submitting: boolean = false;
   submitted: boolean = false; // Added for validation trigger
+  readonly todayIso = new Date().toISOString().split('T')[0];
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -181,9 +182,9 @@ export class LeaveRequestComponent implements OnInit, OnDestroy {
 
   getStatusClass(status: string): string {
     switch (status) {
-      case 'Approved': return 'bg-green-100 text-green-800 border-green-200';
-      case 'Rejected': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'Approved': return 'bg-green-100 text-green-800 border border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-700';
+      case 'Rejected': return 'bg-red-100 text-red-800 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800';
+      default:         return 'bg-yellow-100 text-yellow-800 border border-yellow-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-700';
     }
   }
 

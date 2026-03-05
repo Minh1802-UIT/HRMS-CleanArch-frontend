@@ -26,21 +26,25 @@
   </div>
 
   <!-- Tab: Location / QR -->
-  <div class="flex gap-2 mb-6">
+  <div class="flex gap-2 mb-6" role="tablist" aria-label="Check-in method">
     <button
-      class="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold border transition-all"
-      [class]="
-        'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 border-green-200 dark:border-green-700'
-      "
+      type="button"
+      role="tab"
+      aria-selected="true"
+      class="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold border transition-all bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 border-green-200 dark:border-green-700"
     >
-      <span class="material-symbols-outlined text-base">location_on</span>
+      <span class="material-symbols-outlined text-base" aria-hidden="true">location_on</span>
       Location
     </button>
     <button
+      type="button"
+      role="tab"
+      aria-selected="false"
       disabled
+      title="QR check-in coming soon"
       class="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold border border-zinc-200 dark:border-zinc-700 text-zinc-400 dark:text-zinc-500 cursor-not-allowed"
     >
-      <span class="material-symbols-outlined text-base">qr_code_2</span>
+      <span class="material-symbols-outlined text-base" aria-hidden="true">qr_code_2</span>
       QR
     </button>
     <div class="ml-auto flex items-center gap-2">
@@ -67,8 +71,10 @@
       }
       <!-- Check-In tab button -->
       <button
+        type="button"
         (click)="checkType = 'CheckIn'; cdr.markForCheck()"
-        class="px-3 py-1.5 text-xs font-bold rounded-full border transition-all"
+        [attr.aria-pressed]="checkType === 'CheckIn'"
+        class="px-3 py-1.5 text-xs font-bold rounded-full border transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500"
         [ngClass]="
           checkType === 'CheckIn'
             ? 'bg-green-500 text-white border-green-500'
@@ -79,8 +85,10 @@
       </button>
       <!-- Check-Out tab button -->
       <button
+        type="button"
         (click)="checkType = 'CheckOut'; cdr.markForCheck()"
-        class="px-3 py-1.5 text-xs font-bold rounded-full border transition-all"
+        [attr.aria-pressed]="checkType === 'CheckOut'"
+        class="px-3 py-1.5 text-xs font-bold rounded-full border transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500"
         [ngClass]="
           checkType === 'CheckOut'
             ? 'bg-rose-500 text-white border-rose-500'

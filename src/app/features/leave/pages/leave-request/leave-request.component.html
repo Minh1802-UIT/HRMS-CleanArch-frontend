@@ -16,9 +16,11 @@
     </div>
     <div class="flex items-center gap-3">
       <button
+        type="button"
         (click)="loadHistory(); loadBalances()"
         class="p-2 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg shadow-sm hover:bg-zinc-50 transition-colors"
         title="Refresh Data"
+        aria-label="Refresh leave data"
       >
         <span class="material-symbols-outlined text-zinc-500 dark:text-zinc-400"
           >refresh</span
@@ -85,19 +87,21 @@
           <!-- Leave Type -->
           <div>
             <label
+              id="leave-type-label"
               class="label-overline text-zinc-500 dark:text-zinc-400 block mb-1.5"
               >Leave Type *</label
             >
-            <div class="grid grid-cols-2 gap-2">
+            <div class="grid grid-cols-2 gap-2" role="group" aria-labelledby="leave-type-label">
               @for (
                 type of leaveTypes;
                 track trackByLeaveTypeId($index, type)
               ) {
                 <button
                   type="button"
-                  (click)="selectedTypeId = type.id"
+                  (click)="selectedTypeId = type.id; submitted = false"
                   [class.active]="selectedTypeId === type.id"
-                  class="type-btn text-left px-3 py-2 rounded-xl border text-xs transition-all flex flex-col gap-1"
+                  [attr.aria-pressed]="selectedTypeId === type.id"
+                  class="type-btn text-left px-3 py-2 rounded-xl border text-xs transition-all flex flex-col gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500"
                 >
                   <span>{{ type.name }}</span>
                   <span class="text-xs opacity-70"
@@ -106,50 +110,94 @@
                 </button>
               }
             </div>
+            @if (submitted && !selectedTypeId) {
+              <p class="text-xs text-red-500 mt-1.5 flex items-center gap-1">
+                <span class="material-symbols-outlined text-sm">error</span>
+                Please select a leave type.
+              </p>
+            }
           </div>
           <!-- Dates Row -->
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label
+                for="startDate"
                 class="label-overline text-zinc-500 dark:text-zinc-400 block mb-1.5"
                 >Start Date *</label
               >
               <input
                 type="date"
+                id="startDate"
                 [(ngModel)]="startDate"
                 name="startDate"
                 required
-                class="w-full px-4 py-2.5 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 outline-none transition-all dark:text-white"
+                [min]="todayIso"
+                class="w-full px-4 py-2.5 bg-zinc-50 dark:bg-zinc-800 border rounded-xl text-sm focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 outline-none transition-all dark:text-white"
+                [class.border-red-400]="submitted && !startDate"
+                [class.border-zinc-200]="!(submitted && !startDate)"
+                [class.dark:border-red-500]="submitted && !startDate"
+                [class.dark:border-zinc-700]="!(submitted && !startDate)"
               />
+              @if (submitted && !startDate) {
+                <p class="text-xs text-red-500 mt-1 flex items-center gap-1">
+                  <span class="material-symbols-outlined text-sm">error</span>
+                  Required
+                </p>
+              }
             </div>
             <div>
               <label
+                for="endDate"
                 class="label-overline text-zinc-500 dark:text-zinc-400 block mb-1.5"
                 >End Date *</label
               >
               <input
                 type="date"
+                id="endDate"
                 [(ngModel)]="endDate"
                 name="endDate"
                 required
-                class="w-full px-4 py-2.5 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 outline-none transition-all dark:text-white"
+                [min]="startDate || todayIso"
+                class="w-full px-4 py-2.5 bg-zinc-50 dark:bg-zinc-800 border rounded-xl text-sm focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 outline-none transition-all dark:text-white"
+                [class.border-red-400]="submitted && !endDate"
+                [class.border-zinc-200]="!(submitted && !endDate)"
+                [class.dark:border-red-500]="submitted && !endDate"
+                [class.dark:border-zinc-700]="!(submitted && !endDate)"
               />
+              @if (submitted && !endDate) {
+                <p class="text-xs text-red-500 mt-1 flex items-center gap-1">
+                  <span class="material-symbols-outlined text-sm">error</span>
+                  Required
+                </p>
+              }
             </div>
           </div>
           <!-- Reason -->
           <div>
             <label
+              for="reason"
               class="label-overline text-zinc-500 dark:text-zinc-400 block mb-1.5"
               >Reason *</label
             >
             <textarea
+              id="reason"
               [(ngModel)]="reason"
               name="reason"
               rows="3"
               required
               placeholder="Briefly explain your reason for leave..."
-              class="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 outline-none transition-all dark:text-white resize-none"
+              class="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-800 border rounded-xl text-sm focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 outline-none transition-all dark:text-white resize-none"
+              [class.border-red-400]="submitted && !reason.trim()"
+              [class.border-zinc-200]="!(submitted && !reason.trim())"
+              [class.dark:border-red-500]="submitted && !reason.trim()"
+              [class.dark:border-zinc-700]="!(submitted && !reason.trim())"
             ></textarea>
+            @if (submitted && !reason.trim()) {
+              <p class="text-xs text-red-500 mt-1 flex items-center gap-1">
+                <span class="material-symbols-outlined text-sm">error</span>
+                Please provide a reason.
+              </p>
+            }
           </div>
           <!-- Submit Button -->
           <button

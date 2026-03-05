@@ -56,10 +56,11 @@
       class="flex flex-col justify-end mb-5 space-y-3 sm:flex-row sm:space-y-0 sm:space-x-3"
     >
       <button
+        type="button"
         (click)="exportEmployeesCsv()"
         class="inline-flex justify-center items-center px-4 py-2 text-sm font-semibold bg-transparent rounded-lg border transition-colors border-violet-500 text-violet-600 hover:bg-violet-50 dark:hover:bg-violet-900/20"
       >
-        <span class="mr-2 text-sm material-symbols-outlined">download</span>
+        <span class="mr-2 text-sm material-symbols-outlined" aria-hidden="true">download</span>
         Export CSV
       </button>
     </div>
@@ -101,6 +102,7 @@
         </div>
       </div>
       <button
+        type="button"
         (click)="clearFilters()"
         class="self-end text-sm text-zinc-500 whitespace-nowrap transition-colors dark:text-zinc-400 hover:text-violet-600 xl:self-center"
       >
@@ -111,12 +113,38 @@
 
   <!-- Employee Table -->
   <div class="overflow-hidden rounded-2xl glass-panel">
-    <!-- Loading State -->
+    <!-- Loading State: skeleton rows -->
     @if (loading) {
-      <div class="flex justify-center items-center py-16">
-        <div
-          class="w-9 h-9 rounded-full border-[3px] border-zinc-200 dark:border-zinc-700 border-t-violet-600 animate-spin"
-        ></div>
+      <div class="overflow-x-auto" aria-busy="true" aria-label="Loading employees">
+        <table class="min-w-full">
+          <thead class="bg-zinc-50/80 dark:bg-zinc-900/60 border-b border-zinc-100 dark:border-zinc-800">
+            <tr>
+              <th scope="col" class="px-6 py-3.5 label-overline text-left text-zinc-500 dark:text-zinc-400">Employee</th>
+              <th scope="col" class="px-6 py-3.5 label-overline text-left text-zinc-500 dark:text-zinc-400">ID</th>
+              <th scope="col" class="px-6 py-3.5 label-overline text-left text-zinc-500 dark:text-zinc-400">Job Title</th>
+              <th scope="col" class="px-6 py-3.5 label-overline text-left text-zinc-500 dark:text-zinc-400">Department</th>
+              <th scope="col" class="px-6 py-3.5 label-overline text-left text-zinc-500 dark:text-zinc-400">Type</th>
+              <th scope="col" class="px-6 py-3.5 label-overline text-left text-zinc-500 dark:text-zinc-400">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
+            @for (i of [1,2,3,4,5,6,7,8]; track i) {
+              <tr>
+                <td class="px-6 py-4">
+                  <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-full skeleton flex-shrink-0"></div>
+                    <div class="w-32 h-4 skeleton"></div>
+                  </div>
+                </td>
+                <td class="px-6 py-4"><div class="w-16 h-4 skeleton rounded"></div></td>
+                <td class="px-6 py-4"><div class="w-28 h-4 skeleton"></div></td>
+                <td class="px-6 py-4"><div class="w-24 h-4 skeleton"></div></td>
+                <td class="px-6 py-4"><div class="w-20 h-5 skeleton rounded-full"></div></td>
+                <td class="px-6 py-4"><div class="w-12 h-4 skeleton"></div></td>
+              </tr>
+            }
+          </tbody>
+        </table>
       </div>
     }
 
@@ -285,15 +313,20 @@
     </div>
     <nav aria-label="Pagination" class="flex items-center gap-1">
       <button
+        type="button"
         (click)="goToPage(currentPage - 1)"
         [disabled]="currentPage === 1"
+        aria-label="Previous page"
         class="inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-zinc-500 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
       >
         <span class="text-base material-symbols-outlined">chevron_left</span>
       </button>
       @for (page of getPageNumbers(); track trackByPage($index, page)) {
         <button
+          type="button"
           (click)="goToPage(page)"
+          [attr.aria-label]="'Page ' + page"
+          [attr.aria-current]="page === currentPage ? 'page' : null"
           [ngClass]="
             page === currentPage
               ? 'bg-violet-600 border-violet-600 text-white shadow-sm'
@@ -305,8 +338,10 @@
         </button>
       }
       <button
+        type="button"
         (click)="goToPage(currentPage + 1)"
         [disabled]="currentPage === totalPages"
+        aria-label="Next page"
         class="inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-zinc-500 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
       >
         <span class="text-base material-symbols-outlined">chevron_right</span>

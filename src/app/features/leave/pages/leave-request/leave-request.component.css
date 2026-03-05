@@ -11,6 +11,7 @@
   background-color: #f9fafb;
   border-color: #e5e7eb;
   color: #4b5563;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s;
 }
 
 .type-btn:hover {
@@ -23,6 +24,26 @@
   border-color: #7c3aed;
   color: #7c3aed;
   font-weight: 600;
+  box-shadow: 0 0 0 1px #7c3aed;
+}
+
+/* Dark mode overrides */
+:is(.dark) .type-btn {
+  background-color: #27272a; /* zinc-800 */
+  border-color: #3f3f46;    /* zinc-700 */
+  color: #a1a1aa;           /* zinc-400 */
+}
+
+:is(.dark) .type-btn:hover {
+  background-color: #3f3f46;
+  border-color: #52525b;
+  color: #d4d4d8;
+}
+
+:is(.dark) .type-btn.active {
+  background-color: rgba(124, 58, 237, 0.15);
+  border-color: #7c3aed;
+  color: #a78bfa;
   box-shadow: 0 0 0 1px #7c3aed;
 }
 

@@ -1,16 +1,16 @@
-﻿<div class="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-950 antialiased">
+﻿<div class="flex flex-col min-h-screen bg-zinc-50 dark:bg-zinc-950 antialiased">
   <main class="flex flex-col flex-1 px-6 py-6 gap-5">
 
     <!-- Page Header -->
     <div class="flex items-start justify-between">
       <div>
         <p class="text-xs font-semibold text-violet-500 uppercase tracking-widest mb-1">Organization</p>
-        <h1 class="text-2xl font-black tracking-tight text-gray-900 dark:text-white">
+        <h1 class="text-2xl font-black tracking-tight text-zinc-900 dark:text-white">
           Position <span class="text-violet-500">Hierarchy</span>
         </h1>
-        <p class="mt-0.5 text-sm text-gray-500 dark:text-gray-400">Manage organizational hierarchy and job titles.</p>
+        <p class="mt-0.5 text-sm text-zinc-500 dark:text-zinc-400">Manage organizational hierarchy and job titles.</p>
       </div>
-      <button (click)="openAddModal()"
+      <button type="button" (click)="openAddModal()"
         class="flex items-center gap-2 px-4 py-2.5 text-sm font-bold text-white bg-violet-600 hover:bg-violet-500 rounded-xl shadow-lg shadow-violet-600/25 transition-all whitespace-nowrap">
         <i class="pi pi-plus-circle"></i> Add Position
       </button>
@@ -52,26 +52,27 @@
     <div class="flex flex-1 min-h-0 gap-4">
 
       <!-- Tree/List Panel -->
-      <div class="flex flex-col flex-1 min-w-0 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+      <div class="flex flex-col flex-1 min-w-0 bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden">
 
         <!-- Toolbar -->
-        <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-800 shrink-0">
+        <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-200 dark:border-zinc-800 shrink-0">
           <div class="flex items-center gap-3">
             <select [(ngModel)]="selectedDepartmentId" (change)="onDepartmentChange()"
-              class="py-1.5 pl-3 pr-8 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-violet-500">
+              class="py-1.5 pl-3 pr-8 text-sm rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 focus:outline-none focus:ring-2 focus:ring-violet-500">
               <option value="">All Departments</option>
               @for (dept of departments; track trackByDeptId($index, dept)) {
               <option [value]="dept.id">{{ dept.name }}</option>
               }
             </select>
             <div class="relative">
-              <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
+              <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 text-xs pointer-events-none"></i>
               <input type="text" [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange()"
                 placeholder="Search title or code…"
-                class="pl-8 pr-3 py-1.5 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 w-48" />
+                class="pl-8 pr-3 py-1.5 text-sm rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-violet-500 w-48" />
               @if (searchQuery) {
-              <button (click)="searchQuery = ''; onSearchChange()"
-                class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
+              <button type="button" (click)="searchQuery = ''; onSearchChange()"
+                aria-label="Clear search"
+                class="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 transition-colors">
                 <i class="pi pi-times text-xs"></i>
               </button>
               }
@@ -80,23 +81,23 @@
 
           <div class="flex items-center gap-2">
             @if (viewMode === 'tree') {
-            <div class="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
-              <button (click)="zoomOut()" class="zoom-btn" title="Zoom Out"><i class="pi pi-minus text-xs"></i></button>
-              <button (click)="resetZoom()" class="zoom-pct">{{ (zoomLevel * 100) | number:'1.0-0' }}%</button>
-              <button (click)="zoomIn()" class="zoom-btn" title="Zoom In"><i class="pi pi-plus text-xs"></i></button>
-              <div class="w-px h-4 bg-gray-300 dark:bg-gray-600 mx-1"></div>
-              <button (click)="resetZoom()" class="zoom-btn" title="Reset"><i class="pi pi-expand text-xs"></i></button>
+            <div class="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800 rounded-lg p-1">
+              <button type="button" (click)="zoomOut()" class="zoom-btn" title="Zoom Out"><i class="pi pi-minus text-xs"></i></button>
+              <button type="button" (click)="resetZoom()" class="zoom-pct">{{ (zoomLevel * 100) | number:'1.0-0' }}%</button>
+              <button type="button" (click)="zoomIn()" class="zoom-btn" title="Zoom In"><i class="pi pi-plus text-xs"></i></button>
+              <div class="w-px h-4 bg-zinc-300 dark:bg-zinc-600 mx-1"></div>
+              <button type="button" (click)="resetZoom()" class="zoom-btn" title="Reset"><i class="pi pi-expand text-xs"></i></button>
             </div>
             }
-            <div class="inline-flex p-1 bg-gray-100 dark:bg-gray-800 rounded-lg">
-              <button (click)="setViewMode('list')"
+            <div class="inline-flex p-1 bg-zinc-100 dark:bg-zinc-800 rounded-lg">
+              <button type="button" (click)="setViewMode('list')"
                 [class.bg-white]="viewMode === 'list'" [class.shadow-sm]="viewMode === 'list'"
-                class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-500 dark:text-gray-400 rounded-md transition-all">
+                class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-zinc-500 dark:text-zinc-400 rounded-md transition-all">
                 <i class="pi pi-list text-xs"></i> List
               </button>
-              <button (click)="setViewMode('tree')"
+              <button type="button" (click)="setViewMode('tree')"
                 [class.bg-white]="viewMode === 'tree'" [class.shadow-sm]="viewMode === 'tree'"
-                class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-500 dark:text-gray-400 rounded-md transition-all">
+                class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-zinc-500 dark:text-zinc-400 rounded-md transition-all">
                 <i class="pi pi-sitemap text-xs"></i> Tree
               </button>
             </div>
@@ -107,7 +108,7 @@
         @if (loading) {
         <div class="flex flex-col items-center justify-center h-64">
           <div class="w-10 h-10 border-t-2 border-b-2 border-violet-500 rounded-full animate-spin mb-3"></div>
-          <p class="text-sm text-gray-400">Loading positions...</p>
+          <p class="text-sm text-zinc-400">Loading positions...</p>
         </div>
         }
 
@@ -115,34 +116,34 @@
         @if (!loading && viewMode === 'list') {
           @if (positions.length === 0) {
           <div class="flex flex-col items-center justify-center h-64">
-            <i class="pi pi-search text-4xl text-gray-300 mb-3"></i>
-            <p class="text-gray-400 mb-1">{{ searchQuery ? 'No positions match "' + searchQuery + '"' : 'No positions found.' }}</p>
+            <i class="pi pi-search text-4xl text-zinc-300 mb-3"></i>
+            <p class="text-zinc-400 mb-1">{{ searchQuery ? 'No positions match "' + searchQuery + '"' : 'No positions found.' }}</p>
             @if (!searchQuery) {
-            <button (click)="openAddModal()" class="text-sm font-semibold text-violet-600 hover:underline">+ Add Position</button>
+            <button type="button" (click)="openAddModal()" class="text-sm font-semibold text-violet-600 hover:underline">+ Add Position</button>
             } @else {
-            <button (click)="searchQuery = ''; onSearchChange()" class="text-sm font-semibold text-violet-600 hover:underline">Clear search</button>
+            <button type="button" (click)="searchQuery = ''; onSearchChange()" class="text-sm font-semibold text-violet-600 hover:underline">Clear search</button>
             }
           </div>
           } @else {
           <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead class="bg-gray-50 dark:bg-gray-800/50">
+            <table class="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700">
+              <thead class="bg-zinc-50/80 dark:bg-zinc-800/50">
                 <tr>
-                  <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Title</th>
-                  <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Code</th>
-                  <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Level</th>
-                  <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
+                  <th class="px-6 py-3 text-left label-overline text-zinc-500">Title</th>
+                  <th class="px-6 py-3 text-left label-overline text-zinc-500">Code</th>
+                  <th class="px-6 py-3 text-left label-overline text-zinc-500">Level</th>
+                  <th class="px-6 py-3 text-right label-overline text-zinc-500">Actions</th>
                 </tr>
               </thead>
-              <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+              <tbody class="bg-white dark:bg-zinc-900 divide-y divide-zinc-200 dark:divide-zinc-700">
                 @for (pos of positions; track trackByPosId($index, pos)) {
-                <tr class="group hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                <tr class="group hover:bg-violet-50/30 dark:hover:bg-zinc-800/40 transition-colors">
                   <td class="px-6 py-3 whitespace-nowrap">
                     <div class="flex items-center gap-2" [style.padding-left.px]="((pos.level ?? 1) - 1) * 24">
                       @if ((pos.level ?? 1) > 1) {
-                      <div class="-mt-3 mr-1 w-5 h-5 rounded-bl-lg border-b-2 border-l-2 border-gray-300 dark:border-gray-600 shrink-0"></div>
+                      <div class="-mt-3 mr-1 w-5 h-5 rounded-bl-lg border-b-2 border-l-2 border-zinc-300 dark:border-zinc-600 shrink-0"></div>
                       }
-                      <span class="text-sm font-medium text-gray-900 dark:text-white">{{ pos.title }}</span>
+                      <span class="text-sm font-medium text-zinc-900 dark:text-white">{{ pos.title }}</span>
                     </div>
                   </td>
                   <td class="px-6 py-3 whitespace-nowrap">
@@ -154,15 +155,15 @@
                       'bg-blue-100 text-blue-700': (pos.level ?? 1) === 2,
                       'bg-emerald-100 text-emerald-700': (pos.level ?? 1) === 3,
                       'bg-amber-100 text-amber-700': (pos.level ?? 1) === 4,
-                      'bg-gray-100 text-gray-600': (pos.level ?? 1) >= 5
+                      'bg-zinc-100 text-zinc-600': (pos.level ?? 1) >= 5
                     }">{{ levelLabel(pos.level ?? 1) }} {{ pos.level }}</span>
                   </td>
                   <td class="px-6 py-3 text-right whitespace-nowrap">
                     <div class="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button (click)="openEditModal(pos)" class="p-1.5 rounded-lg text-gray-400 hover:text-violet-600 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-colors" title="Edit">
+                      <button type="button" (click)="openEditModal(pos)" class="p-1.5 rounded-lg text-zinc-400 hover:text-violet-600 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-colors" title="Edit">
                         <i class="pi pi-pencil text-sm"></i>
                       </button>
-                      <button (click)="deletePosition(pos)" class="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors" title="Delete">
+                      <button type="button" (click)="deletePosition(pos)" class="p-1.5 rounded-lg text-zinc-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors" title="Delete">
                         <i class="pi pi-trash text-sm"></i>
                       </button>
                     </div>
@@ -177,13 +178,13 @@
 
         <!-- TREE VIEW -->
         @if (!loading && viewMode === 'tree') {
-        <div class="flex-1 overflow-auto bg-gray-50/50 dark:bg-gray-950/50 p-6" style="min-height: 480px;">
+        <div class="flex-1 overflow-auto bg-zinc-50/50 dark:bg-zinc-950/50 p-6" style="min-height: 480px;">
           @if (treeData.length === 0) {
           <div class="flex flex-col items-center justify-center h-64">
-            <i class="pi pi-search text-4xl text-gray-300 mb-3"></i>
-            <p class="text-gray-400 mb-1">{{ searchQuery ? 'No positions match "' + searchQuery + '"' : 'No positions found.' }}</p>
+            <i class="pi pi-search text-4xl text-zinc-300 mb-3"></i>
+            <p class="text-zinc-400 mb-1">{{ searchQuery ? 'No positions match "' + searchQuery + '"' : 'No positions found.' }}</p>
             @if (searchQuery) {
-            <button (click)="searchQuery = ''; onSearchChange()" class="text-sm font-semibold text-violet-600 hover:underline">Clear search</button>
+            <button type="button" (click)="searchQuery = ''; onSearchChange()" class="text-sm font-semibold text-violet-600 hover:underline">Clear search</button>
             }
           </div>
           }
@@ -203,15 +204,15 @@
 
       <!-- DETAIL PANEL -->
       @if (selectedNode && viewMode === 'tree') {
-      <div class="detail-panel w-72 shrink-0 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 flex flex-col overflow-hidden">
-        <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-800">
+      <div class="detail-panel w-72 shrink-0 bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 flex flex-col overflow-hidden">
+          <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-200 dark:border-zinc-800">
           <div class="flex items-center gap-2">
             <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-violet-100 dark:bg-violet-900/30">
               <i class="pi pi-briefcase text-violet-600 dark:text-violet-400 text-sm"></i>
             </div>
-            <span class="font-bold text-gray-900 dark:text-white text-sm truncate max-w-[150px]">{{ selectedNode.title }}</span>
+            <span class="font-bold text-zinc-900 dark:text-white text-sm truncate max-w-[150px]">{{ selectedNode.title }}</span>
           </div>
-          <button (click)="closePanel()" class="w-7 h-7 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+          <button type="button" (click)="closePanel()" aria-label="Close panel" class="w-7 h-7 flex items-center justify-center rounded-lg text-zinc-400 hover:text-zinc-600 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
             <i class="pi pi-times text-xs"></i>
           </button>
         </div>
@@ -219,61 +220,61 @@
         <div class="flex-1 overflow-y-auto p-4 space-y-4">
           <div>
             <div class="flex items-center gap-1.5 mb-3">
-              <i class="pi pi-info-circle text-xs text-gray-400"></i>
-              <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">General</span>
+              <i class="pi pi-info-circle text-xs text-zinc-400"></i>
+              <span class="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">General</span>
             </div>
             <div class="space-y-2.5">
               <div class="flex items-center justify-between">
-                <span class="text-sm text-gray-500 dark:text-gray-400">Level</span>
+                <span class="text-sm text-zinc-500 dark:text-zinc-400">Level</span>
                 <span class="text-xs font-bold px-2 py-0.5 rounded-full" [ngClass]="{
                   'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400': (selectedNode.level ?? 1) === 1,
                   'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400': (selectedNode.level ?? 1) === 2,
                   'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400': (selectedNode.level ?? 1) === 3,
                   'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400': (selectedNode.level ?? 1) === 4,
-                  'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400': (selectedNode.level ?? 1) >= 5
+                  'bg-zinc-100 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-400': (selectedNode.level ?? 1) >= 5
                 }">{{ levelLabel(selectedNode.level ?? 1) }} {{ selectedNode.level }}</span>
               </div>
               <div class="flex items-center justify-between">
-                <span class="text-sm text-gray-500 dark:text-gray-400">Code</span>
+                <span class="text-sm text-zinc-500 dark:text-zinc-400">Code</span>
                 <span class="text-xs font-mono font-semibold text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-900/20 px-2 py-0.5 rounded">{{ selectedNode.code }}</span>
               </div>
               <div class="flex items-center justify-between">
-                <span class="text-sm text-gray-500 dark:text-gray-400">Status</span>
+                <span class="text-sm text-zinc-500 dark:text-zinc-400">Status</span>
                 <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">Active</span>
               </div>
               <div class="flex items-center justify-between">
-                <span class="text-sm text-gray-500 dark:text-gray-400">Sub-positions</span>
-                <span class="text-sm font-semibold text-gray-900 dark:text-white">{{ selectedNode.children?.length ?? 0 }}</span>
+                <span class="text-sm text-zinc-500 dark:text-zinc-400">Sub-positions</span>
+                <span class="text-sm font-semibold text-zinc-900 dark:text-white">{{ selectedNode.children?.length ?? 0 }}</span>
               </div>
             </div>
           </div>
 
           @if (selectedNode.salaryRangeMin || selectedNode.salaryRangeMax) {
-          <div class="border-t border-gray-100 dark:border-gray-800 pt-4">
+          <div class="border-t border-zinc-100 dark:border-zinc-800 pt-4">
             <div class="flex items-center gap-1.5 mb-3">
-              <i class="pi pi-wallet text-xs text-gray-400"></i>
-              <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Salary Range</span>
+              <i class="pi pi-wallet text-xs text-zinc-400"></i>
+              <span class="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Salary Range</span>
             </div>
             <div class="flex items-center justify-between p-3 rounded-lg bg-emerald-50 dark:bg-emerald-900/20">
               <div class="text-center">
-                <p class="text-[10px] text-gray-400 mb-0.5">Min</p>
+                <p class="text-[10px] text-zinc-400 mb-0.5">Min</p>
                 <p class="text-base font-black text-emerald-700 dark:text-emerald-400">{{ formatSalary(selectedNode.salaryRangeMin) }}</p>
               </div>
-              <i class="pi pi-arrow-right text-gray-300 text-xs"></i>
+              <i class="pi pi-arrow-right text-zinc-300 text-xs"></i>
               <div class="text-center">
-                <p class="text-[10px] text-gray-400 mb-0.5">Max</p>
+                <p class="text-[10px] text-zinc-400 mb-0.5">Max</p>
                 <p class="text-base font-black text-emerald-700 dark:text-emerald-400">{{ formatSalary(selectedNode.salaryRangeMax) }}</p>
               </div>
             </div>
           </div>
           }
 
-          <div class="border-t border-gray-100 dark:border-gray-800 pt-4 flex gap-2">
-            <button (click)="openEditModal(selectedNode)"
+          <div class="border-t border-zinc-100 dark:border-zinc-800 pt-4 flex gap-2">
+            <button type="button" (click)="openEditModal(selectedNode)"
               class="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-semibold text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-900/20 hover:bg-violet-100 rounded-lg transition-colors">
               <i class="pi pi-pencil text-xs"></i> Edit
             </button>
-            <button (click)="deletePosition(selectedNode)"
+            <button type="button" (click)="deletePosition(selectedNode)"
               class="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-semibold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 rounded-lg transition-colors">
               <i class="pi pi-trash text-xs"></i> Delete
             </button>

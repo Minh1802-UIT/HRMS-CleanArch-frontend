@@ -18,16 +18,17 @@
 
   <!-- Filter Card -->
   <div
-    class="p-5 mb-6 rounded-lg border border-gray-200 shadow-sm bg-surface-light dark:bg-surface-dark dark:border-gray-700"
+    class="p-5 mb-6 glass-panel rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm"
   >
     <!-- Action Buttons -->
     <div
       class="flex flex-col justify-end mb-6 space-y-3 sm:flex-row sm:space-y-0 sm:space-x-3"
     >
       <button
-        class="inline-flex justify-center items-center px-4 py-2 text-sm font-medium text-white rounded-md border border-transparent shadow-sm transition-colors bg-primary hover:bg-primary-500"
+        type="button"
+        class="inline-flex justify-center items-center gap-2 px-5 py-2.5 text-sm font-bold text-white rounded-xl shadow-lg transition-all bg-violet-600 hover:bg-violet-500 shadow-violet-600/25 btn-glow"
       >
-        <span class="mr-2 text-sm material-symbols-outlined">person_add</span>
+        <span class="text-base material-symbols-outlined" aria-hidden="true">person_add</span>
         Invite User
       </button>
     </div>
@@ -53,16 +54,17 @@
             [(ngModel)]="searchTerm"
             (input)="onSearchInput()"
             (keyup.enter)="onSearch()"
-            class="block py-2 pr-8 pl-10 w-full leading-5 placeholder-gray-500 text-gray-900 bg-gray-50 rounded-md border border-gray-300 transition-colors dark:border-gray-600 dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm"
+            class="block py-2 pr-8 pl-10 w-full text-sm placeholder-zinc-400 text-zinc-900 bg-zinc-50 rounded-xl border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all"
             placeholder="Search users by name, email or username..."
           />
           @if (searchTerm) {
             <button
+              type="button"
               (click)="clearSearch()"
-              class="flex absolute inset-y-0 right-0 items-center pr-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
-              title="Clear search"
+              aria-label="Clear search"
+              class="flex absolute inset-y-0 right-0 items-center pr-3 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
             >
-              <span class="text-sm material-symbols-outlined">close</span>
+              <span class="text-sm material-symbols-outlined" aria-hidden="true">close</span>
             </button>
           }
         </div>
@@ -77,56 +79,81 @@
 
   <!-- User Table -->
   <div
-    class="overflow-hidden rounded-lg border border-gray-200 shadow-sm bg-surface-light dark:bg-surface-dark dark:border-gray-700"
+    class="overflow-hidden glass-panel rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm"
   >
-    <!-- Loading State -->
+    <!-- Loading Skeleton -->
     @if (loading) {
-      <div class="flex justify-center items-center py-16">
-        <div
-          class="w-10 h-10 rounded-full border-t-2 border-b-2 animate-spin border-primary"
-        ></div>
+      <div class="overflow-x-auto" aria-busy="true" aria-label="Loading users">
+        <table class="min-w-full text-sm">
+          <thead class="bg-zinc-50/80 dark:bg-zinc-900/60 border-b border-zinc-100 dark:border-zinc-800">
+            <tr>
+              <th class="px-6 py-4 label-overline text-zinc-500 dark:text-zinc-400 text-left">User</th>
+              <th class="px-6 py-4 label-overline text-zinc-500 dark:text-zinc-400 text-left">Email</th>
+              <th class="px-6 py-4 label-overline text-zinc-500 dark:text-zinc-400 text-left">Current Roles</th>
+              <th class="px-6 py-4 label-overline text-zinc-500 dark:text-zinc-400 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
+            @for (i of [1,2,3,4,5]; track i) {
+              <tr>
+                <td class="px-6 py-4">
+                  <div class="flex gap-3 items-center">
+                    <div class="w-10 h-10 rounded-full skeleton flex-shrink-0"></div>
+                    <div class="space-y-1.5">
+                      <div class="w-24 h-3.5 skeleton"></div>
+                      <div class="w-16 h-2.5 skeleton"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4"><div class="w-40 h-3 skeleton"></div></td>
+                <td class="px-6 py-4"><div class="w-20 h-5 skeleton rounded-md"></div></td>
+                <td class="px-6 py-4"><div class="w-24 h-7 skeleton rounded-lg ml-auto"></div></td>
+              </tr>
+            }
+          </tbody>
+        </table>
       </div>
     }
 
     @if (!loading) {
       <div class="overflow-x-auto">
         <table
-          class="min-w-full text-sm divide-y divide-gray-200 dark:divide-gray-700"
+          class="min-w-full text-sm divide-y divide-zinc-100 dark:divide-zinc-800"
         >
-          <thead class="bg-gray-50 dark:bg-gray-800/50">
+          <thead class="bg-zinc-50/80 dark:bg-zinc-900/60 border-b border-zinc-100 dark:border-zinc-800">
             <tr>
               <th
                 scope="col"
-                class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase dark:text-gray-400"
+                class="px-6 py-4 label-overline text-left text-zinc-500 dark:text-zinc-400"
               >
                 User
               </th>
               <th
                 scope="col"
-                class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase dark:text-gray-400"
+                class="px-6 py-4 label-overline text-left text-zinc-500 dark:text-zinc-400"
               >
                 Email
               </th>
               <th
                 scope="col"
-                class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase dark:text-gray-400"
+                class="px-6 py-4 label-overline text-left text-zinc-500 dark:text-zinc-400"
               >
                 Current Roles
               </th>
               <th
                 scope="col"
-                class="px-6 py-4 text-xs font-semibold tracking-wider text-right text-gray-500 uppercase dark:text-gray-400"
+                class="px-6 py-4 label-overline text-right text-zinc-500 dark:text-zinc-400"
               >
                 Actions
               </th>
             </tr>
           </thead>
           <tbody
-            class="divide-y divide-gray-200 bg-surface-light dark:bg-surface-dark dark:divide-gray-700"
+            class="divide-y divide-zinc-100 dark:divide-zinc-800"
           >
             @for (user of users; track trackByUser($index, user)) {
               <tr
-                class="transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50 group"
+                class="transition-colors hover:bg-violet-50/30 dark:hover:bg-zinc-800/40 group"
               >
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="flex gap-3 items-center">
@@ -135,27 +162,23 @@
                         [src]="
                           user.avatar || 'assets/images/defaults/avatar-1.png'
                         "
-                        class="object-cover w-10 h-10 rounded-full border border-gray-100 dark:border-gray-700"
-                        onerror="
-                          this.src =
-                            'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjZTVlN2ViIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzljYTNhZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPj88L3RleHQ+PC9zdmc+'
-                        "
+                        [alt]="user.username + ' avatar'"
+                        class="object-cover w-10 h-10 rounded-full border border-zinc-100 dark:border-zinc-700"
+                        onerror="this.onerror=null;this.src='assets/images/defaults/avatar-1.png'"
                       />
                     </div>
                     <div>
-                      <div
-                        class="text-sm font-bold text-gray-900 dark:text-white"
-                      >
+                      <div class="text-sm font-bold text-zinc-900 dark:text-white">
                         {{ user.username }}
                       </div>
-                      <div class="font-mono text-xs text-gray-400">
+                      <div class="font-mono text-xs text-zinc-400">
                         ID: {{ user.id }}
                       </div>
                     </div>
                   </div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-600 dark:text-gray-300">
+                  <div class="text-sm text-zinc-600 dark:text-zinc-300">
                     {{ user.email }}
                   </div>
                 </td>
@@ -170,7 +193,7 @@
                       </span>
                     }
                     @if (!user.roles?.length) {
-                      <span class="text-xs italic text-gray-400">No roles</span>
+                      <span class="text-xs italic text-zinc-400">No roles</span>
                     }
                   </div>
                 </td>
@@ -179,43 +202,33 @@
                     class="flex gap-2 justify-end opacity-0 transition-opacity group-hover:opacity-100"
                   >
                     <button
+                      type="button"
                       (click)="sendResetPasswordEmail(user)"
-                      class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-blue-600 bg-blue-50 rounded-lg border border-blue-200 dark:bg-blue-900/20 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900/40"
-                      title="Send Password Reset Email"
+                      [attr.aria-label]="'Resend credentials to ' + user.email"
+                      class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-600 bg-blue-50 rounded-lg border border-blue-200 dark:bg-blue-900/20 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900/40"
                     >
-                      <span class="mr-1.5 text-sm material-symbols-outlined"
-                        >mail</span
-                      >
+                      <span class="text-sm material-symbols-outlined" aria-hidden="true">mail</span>
                       Resend Credentials
                     </button>
                     <button
+                      type="button"
                       (click)="openRoleDrawer(user)"
-                      class="inline-flex items-center px-3 py-1.5 text-xs font-medium bg-orange-50 rounded-lg border border-orange-200 text-primary dark:bg-orange-900/20 dark:border-orange-800 hover:bg-orange-100 dark:hover:bg-orange-900/40"
+                      [attr.aria-label]="'Manage roles for ' + user.username"
+                      class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-violet-700 bg-violet-50 rounded-lg border border-violet-200 dark:bg-violet-900/20 dark:border-violet-800 dark:text-violet-400 hover:bg-violet-100 dark:hover:bg-violet-900/40"
                     >
-                      <span class="mr-1.5 text-sm material-symbols-outlined"
-                        >security</span
-                      >
+                      <span class="text-sm material-symbols-outlined" aria-hidden="true">security</span>
                       Manage Roles
                     </button>
                   </div>
                 </td>
               </tr>
             }
-            <!-- Empty State -->
             @if (users.length === 0 && !loading) {
               <tr>
-                <td
-                  colspan="4"
-                  class="py-12 text-center text-gray-500 dark:text-gray-400"
-                >
-                  <div class="flex flex-col items-center">
-                    <span
-                      class="mb-2 text-4xl text-gray-300 material-symbols-outlined"
-                      >person_off</span
-                    >
-                    <p class="text-lg font-medium">No users found</p>
-                    <p class="text-sm">Try adjusting your search criteria</p>
-                  </div>
+                <td colspan="4" class="py-16 text-center">
+                  <span class="material-symbols-outlined text-4xl text-zinc-200 dark:text-zinc-700 block mb-2">person_off</span>
+                  <p class="text-sm font-semibold text-zinc-500 dark:text-zinc-400">No users found</p>
+                  <p class="text-xs text-zinc-400 mt-0.5">Try adjusting your search criteria</p>
                 </td>
               </tr>
             }
@@ -227,17 +240,17 @@
 
   <!-- Pagination -->
   <div class="flex flex-col justify-between items-center px-1 mt-6 sm:flex-row">
-    <div class="mb-4 text-sm text-gray-500 dark:text-gray-400 sm:mb-0">
+    <div class="mb-4 text-sm text-zinc-500 dark:text-zinc-400 sm:mb-0">
       Showing
-      <span class="font-medium text-gray-900 dark:text-white">{{
+      <span class="font-medium text-zinc-900 dark:text-white">{{
         (currentPage - 1) * pageSize + 1
       }}</span>
       to
-      <span class="font-medium text-gray-900 dark:text-white">{{
+      <span class="font-medium text-zinc-900 dark:text-white">{{
         Math.min(currentPage * pageSize, totalItems)
       }}</span>
       of
-      <span class="font-medium text-gray-900 dark:text-white">{{
+      <span class="font-medium text-zinc-900 dark:text-white">{{
         totalItems
       }}</span>
       results
@@ -247,33 +260,36 @@
       class="inline-flex relative z-0 -space-x-px rounded-md shadow-sm"
     >
       <button
+        type="button"
         (click)="goToPage(currentPage - 1)"
         [disabled]="currentPage === 1"
-        class="inline-flex relative items-center px-2 py-2 text-sm font-medium text-gray-500 rounded-l-md border border-gray-300 dark:border-gray-600 bg-surface-light dark:bg-surface-dark dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+        aria-label="Previous page"
+        class="inline-flex relative items-center px-2 py-2 text-sm font-medium text-zinc-500 rounded-l-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed"
       >
-        <span class="text-sm material-symbols-outlined">chevron_left</span>
+        <span class="text-sm material-symbols-outlined" aria-hidden="true">chevron_left</span>
       </button>
       @for (page of getPageNumbers(); track trackByPage($index, page)) {
         <button
+          type="button"
           (click)="goToPage(page)"
-          [class.bg-primary]="page === currentPage"
-          [class.border-primary]="page === currentPage"
-          [class.text-white]="page === currentPage"
-          class="inline-flex relative items-center px-4 py-2 text-sm font-medium border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800"
-          [ngClass]="{
-            'bg-surface-light dark:bg-surface-dark text-gray-500 dark:text-gray-400':
-              page !== currentPage,
-          }"
+          [attr.aria-label]="'Page ' + page"
+          [attr.aria-current]="page === currentPage ? 'page' : null"
+          class="inline-flex relative items-center px-4 py-2 text-sm font-semibold border border-zinc-200 dark:border-zinc-700 transition-colors"
+          [ngClass]="page === currentPage
+            ? 'bg-violet-600 border-violet-600 text-white'
+            : 'bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800'"
         >
           {{ page }}
         </button>
       }
       <button
+        type="button"
         (click)="goToPage(currentPage + 1)"
         [disabled]="currentPage === totalPages"
-        class="inline-flex relative items-center px-2 py-2 text-sm font-medium text-gray-500 rounded-r-md border border-gray-300 dark:border-gray-600 bg-surface-light dark:bg-surface-dark dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+        aria-label="Next page"
+        class="inline-flex relative items-center px-2 py-2 text-sm font-medium text-zinc-500 rounded-r-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed"
       >
-        <span class="text-sm material-symbols-outlined">chevron_right</span>
+        <span class="text-sm material-symbols-outlined" aria-hidden="true">chevron_right</span>
       </button>
     </nav>
   </div>
@@ -281,33 +297,35 @@
   <!-- Role Management Drawer Overlay -->
   @if (isDrawerOpen) {
     <div
-      class="fixed inset-0 z-40 backdrop-blur-sm transition-opacity bg-gray-900/40"
+      class="fixed inset-0 z-40 backdrop-blur-sm transition-opacity bg-zinc-900/60"
       (click)="closeDrawer()"
     ></div>
   }
 
   <!-- Drawer Content -->
   <div
-    class="flex fixed top-0 right-0 z-50 flex-col w-full max-w-md h-full bg-white border-l border-gray-200 shadow-2xl transition-transform duration-300 ease-in-out transform dark:bg-gray-900 dark:border-gray-700"
+    class="flex fixed top-0 right-0 z-50 flex-col w-full max-w-md h-full bg-white border-l border-zinc-200 shadow-2xl transition-transform duration-300 ease-in-out transform dark:bg-zinc-900 dark:border-zinc-800"
     [class.translate-x-full]="!isDrawerOpen"
     [class.translate-x-0]="isDrawerOpen"
   >
     <div
-      class="flex justify-between items-center p-6 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50"
+      class="flex justify-between items-center p-6 border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/50"
     >
       <div>
-        <h2 class="text-lg font-bold text-gray-900 dark:text-white">
+        <h2 class="text-lg font-bold text-zinc-900 dark:text-white">
           Has Access To
         </h2>
-        <p class="text-xs text-gray-500 dark:text-gray-400">
+        <p class="text-xs text-zinc-500 dark:text-zinc-400">
           Manage user roles and permissions
         </p>
       </div>
       <button
+        type="button"
         (click)="closeDrawer()"
-        class="p-2 text-gray-400 transition-colors hover:text-gray-600 dark:hover:text-gray-200"
+        aria-label="Close drawer"
+        class="p-2 rounded-lg text-zinc-400 transition-colors hover:text-zinc-600 dark:hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400"
       >
-        <span class="font-bold material-symbols-outlined">close</span>
+        <span class="font-bold material-symbols-outlined" aria-hidden="true">close</span>
       </button>
     </div>
 
@@ -331,7 +349,7 @@
           </div>
         </div>
         <h3
-          class="mb-4 text-xs font-bold tracking-widest text-gray-400 uppercase"
+          class="mb-4 label-overline text-zinc-400 dark:text-zinc-500"
         >
           Select Roles
         </h3>
@@ -339,31 +357,24 @@
           @for (role of availableRoles; track trackByRole($index, role)) {
             <div
               (click)="toggleRole(role)"
-              class="flex items-center p-4 rounded-xl border transition-all cursor-pointer group hover:bg-gray-50 dark:hover:bg-gray-800/50"
+              class="flex items-center p-4 rounded-xl border transition-all cursor-pointer group hover:bg-zinc-50 dark:hover:bg-zinc-800/50"
               [ngClass]="{
-                'border-primary bg-primary-50 dark:bg-primary-900\/10':
-                  selectedRoles[role],
-                'border-gray-200 dark:border-gray-700': !selectedRoles[role],
+                'border-violet-400 bg-violet-50 dark:bg-violet-900/10 dark:border-violet-700': selectedRoles[role],
+                'border-zinc-200 dark:border-zinc-700': !selectedRoles[role]
               }"
             >
               <div
                 class="flex justify-center items-center mr-4 w-6 h-6 rounded-md border transition-all"
-                [class.bg-primary]="selectedRoles[role]"
-                [class.border-primary]="selectedRoles[role]"
-                [class.border-gray-300]="!selectedRoles[role]"
-                [class.dark:border-gray-600]="!selectedRoles[role]"
+                [ngClass]="selectedRoles[role]
+                  ? 'bg-violet-600 border-violet-600'
+                  : 'border-zinc-300 dark:border-zinc-600'"
               >
                 @if (selectedRoles[role]) {
-                  <span class="text-sm text-white material-symbols-outlined"
-                    >check</span
-                  >
+                  <span class="text-sm text-white material-symbols-outlined" aria-hidden="true">check</span>
                 }
               </div>
               <div class="flex-1">
-                <span
-                  class="text-sm font-semibold text-gray-900 dark:text-white"
-                  >{{ role }}</span
-                >
+                <span class="text-sm font-semibold text-zinc-900 dark:text-white">{{ role }}</span>
               </div>
               <span
                 [ngClass]="getRoleBadgeClass(role)"
@@ -376,24 +387,24 @@
     }
 
     <div
-      class="p-6 border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50"
+      class="p-6 border-t border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/50"
     >
       <div class="flex gap-3">
         <button
+          type="button"
           (click)="closeDrawer()"
-          class="flex-1 py-3 font-semibold text-gray-700 bg-white rounded-xl border border-gray-300 shadow-sm transition-all dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+          class="flex-1 py-3 font-semibold text-zinc-700 bg-white rounded-xl border border-zinc-200 shadow-sm transition-all dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-700"
         >
           Cancel
         </button>
         <button
+          type="button"
           (click)="saveRoles()"
           [disabled]="saving"
-          class="flex flex-1 justify-center items-center py-3 font-semibold text-white rounded-xl shadow-md transition-all bg-primary hover:bg-primary-500 active:scale-95 disabled:opacity-50"
+          class="flex flex-1 justify-center items-center py-3 font-semibold text-white rounded-xl shadow-md transition-all bg-violet-600 hover:bg-violet-500 active:scale-95 disabled:opacity-50 shadow-violet-600/25"
         >
           @if (saving) {
-            <span
-              class="mr-2 w-5 h-5 rounded-full border-2 animate-spin border-white/30 border-t-white"
-            ></span>
+            <span class="mr-2 w-5 h-5 rounded-full border-2 animate-spin border-white/30 border-t-white"></span>
           }
           <span>{{ saving ? "Saving..." : "Save Changes" }}</span>
         </button>

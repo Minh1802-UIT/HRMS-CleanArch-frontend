@@ -18,7 +18,7 @@
 
   <!-- Filter Card -->
   <div
-    class="p-5 mb-6 rounded-lg border border-gray-200 shadow-sm bg-surface-light dark:bg-surface-dark dark:border-gray-700"
+    class="p-5 mb-6 glass-panel rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-soft"
   >
     <div
       class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5"
@@ -26,7 +26,7 @@
       <!-- Date Range -->
       <div class="space-y-1">
         <label
-          class="text-xs font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400"
+          class="label-overline text-zinc-500 dark:text-zinc-400"
           >Start Date</label
         >
         <input
@@ -34,12 +34,12 @@
           [(ngModel)]="startDate"
           (change)="onFilterChange()"
           [class.border-red-400]="!!dateError"
-          class="block px-3 py-2 w-full text-sm bg-gray-50 rounded-md border border-gray-300 dark:bg-gray-800 dark:border-gray-600 focus:ring-primary focus:border-primary dark:text-white"
+          class="block px-3 py-2 w-full text-sm bg-zinc-50 rounded-lg border border-zinc-200 dark:bg-zinc-800 dark:border-zinc-700 focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 dark:text-white"
         />
       </div>
       <div class="space-y-1">
         <label
-          class="text-xs font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400"
+          class="label-overline text-zinc-500 dark:text-zinc-400"
           >End Date</label
         >
         <input
@@ -47,7 +47,7 @@
           [(ngModel)]="endDate"
           (change)="onFilterChange()"
           [class.border-red-400]="!!dateError"
-          class="block px-3 py-2 w-full text-sm bg-gray-50 rounded-md border border-gray-300 dark:bg-gray-800 dark:border-gray-600 focus:ring-primary focus:border-primary dark:text-white"
+          class="block px-3 py-2 w-full text-sm bg-zinc-50 rounded-lg border border-zinc-200 dark:bg-zinc-800 dark:border-zinc-700 focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 dark:text-white"
         />
         @if (dateError) {
           <p class="text-xs text-red-500">{{ dateError }}</p>
@@ -57,13 +57,13 @@
       <!-- Action Type -->
       <div class="space-y-1">
         <label
-          class="text-xs font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400"
+          class="label-overline text-zinc-500 dark:text-zinc-400"
           >Action Type</label
         >
         <select
           [(ngModel)]="actionType"
           (change)="onFilterChange()"
-          class="block px-3 py-2 w-full text-sm bg-gray-50 rounded-md border border-gray-300 dark:bg-gray-800 dark:border-gray-600 focus:ring-primary focus:border-primary dark:text-white"
+          class="block px-3 py-2 w-full text-sm bg-zinc-50 rounded-lg border border-zinc-200 dark:bg-zinc-800 dark:border-zinc-700 focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 dark:text-white"
         >
           <option value="">All Actions</option>
           @for (type of actionTypes; track trackByActionType($index, type)) {
@@ -78,19 +78,20 @@
       <div class="space-y-1 lg:col-span-2 xl:col-span-2">
         <div class="flex justify-between items-center">
           <label
-            class="text-xs font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400"
+            class="label-overline text-zinc-500 dark:text-zinc-400"
             >Search</label
           >
           @if (hasActiveFilters) {
             <button
+              type="button"
               (click)="clearFilters()"
-              class="text-xs font-medium text-primary hover:underline"
+              class="text-xs font-medium text-violet-600 hover:underline"
             >Clear all</button>
           }
         </div>
         <div class="relative">
           <span
-            class="flex absolute inset-y-0 left-0 items-center pl-3 text-gray-400 pointer-events-none"
+            class="flex absolute inset-y-0 left-0 items-center pl-3 text-zinc-400 pointer-events-none"
           >
             <span class="text-sm material-symbols-outlined">search</span>
           </span>
@@ -100,13 +101,14 @@
             (input)="onSearchInput()"
             (keyup.enter)="onFilterChange()"
             placeholder="Search by user, table or activity..."
-            class="block py-2 pr-8 pl-10 w-full text-sm bg-gray-50 rounded-md border border-gray-300 dark:bg-gray-800 dark:border-gray-600 focus:ring-primary focus:border-primary dark:text-white"
+            class="block py-2 pr-8 pl-10 w-full text-sm bg-zinc-50 rounded-lg border border-zinc-200 dark:bg-zinc-800 dark:border-zinc-700 focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 dark:text-white"
           />
           @if (searchTerm) {
             <button
+              type="button"
               (click)="searchTerm = ''; onFilterChange()"
-              class="flex absolute inset-y-0 right-0 items-center pr-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
-              title="Clear search"
+              aria-label="Clear search"
+              class="flex absolute inset-y-0 right-0 items-center pr-3 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
             >
               <span class="text-sm material-symbols-outlined">close</span>
             </button>
@@ -118,12 +120,12 @@
 
   <!-- Table Section -->
   <div
-    class="overflow-hidden rounded-lg border border-gray-200 shadow-sm bg-surface-light dark:bg-surface-dark dark:border-gray-700"
+    class="overflow-hidden glass-panel rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-soft"
   >
     @if (loading) {
       <div class="flex justify-center items-center py-16">
         <div
-          class="w-10 h-10 rounded-full border-t-2 border-b-2 animate-spin border-primary"
+          class="w-10 h-10 rounded-full border-t-2 border-b-2 animate-spin border-violet-600"
         ></div>
       </div>
     }
@@ -131,73 +133,73 @@
     @if (!loading) {
       <div class="overflow-x-auto">
         <table
-          class="min-w-full text-sm divide-y divide-gray-200 dark:divide-gray-700"
+          class="min-w-full text-sm divide-y divide-zinc-100 dark:divide-zinc-800"
         >
-          <thead class="bg-gray-50 dark:bg-gray-800/50">
+          <thead class="bg-zinc-50/80 dark:bg-zinc-900/60">
             <tr>
               <th
                 scope="col"
-                class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase dark:text-gray-400"
+                class="px-6 py-4 text-left label-overline text-zinc-500 dark:text-zinc-400"
               >
                 Timestamp
               </th>
               <th
                 scope="col"
-                class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase dark:text-gray-400"
+                class="px-6 py-4 text-left label-overline text-zinc-500 dark:text-zinc-400"
               >
                 User
               </th>
               <th
                 scope="col"
-                class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase dark:text-gray-400"
+                class="px-6 py-4 text-left label-overline text-zinc-500 dark:text-zinc-400"
               >
                 Action
               </th>
               <th
                 scope="col"
-                class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase dark:text-gray-400"
+                class="px-6 py-4 text-left label-overline text-zinc-500 dark:text-zinc-400"
               >
                 Target
               </th>
               <th
                 scope="col"
-                class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-500 uppercase dark:text-gray-400"
+                class="px-6 py-4 text-left label-overline text-zinc-500 dark:text-zinc-400"
               >
                 Details
               </th>
             </tr>
           </thead>
           <tbody
-            class="divide-y divide-gray-200 bg-surface-light dark:bg-surface-dark dark:divide-gray-700"
+            class="divide-y divide-zinc-100 dark:divide-zinc-800"
           >
             @for (log of logs; track trackByLogId($index, log)) {
               <tr
-                class="transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                class="transition-colors hover:bg-violet-50/30 dark:hover:bg-zinc-800/40"
               >
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div
-                    class="text-sm font-medium text-gray-900 dark:text-white"
+                    class="text-sm font-medium text-zinc-900 dark:text-white"
                   >
                     {{ log.createdAt | date: "short" }}
                   </div>
-                  <div class="text-xs text-gray-400">
+                  <div class="text-xs text-zinc-400">
                     {{ log.createdAt | date: "HH:mm:ss.SSS" }}
                   </div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="flex gap-2 items-center">
                     <div
-                      class="flex justify-center items-center w-8 h-8 text-xs font-bold uppercase rounded-full bg-primary/10 dark:bg-primary/20 text-primary"
+                      class="flex justify-center items-center w-8 h-8 text-xs font-bold uppercase rounded-full bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400"
                     >
                       {{ log.userName.substring(0, 2) }}
                     </div>
                     <div>
                       <div
-                        class="text-sm font-bold text-gray-900 dark:text-white"
+                        class="text-sm font-bold text-zinc-900 dark:text-white"
                       >
                         {{ log.userName }}
                       </div>
-                      <div class="text-xs text-gray-400 font-mono">
+                      <div class="text-xs text-zinc-400 font-mono">
                         {{ log.userId }}
                       </div>
                     </div>
@@ -213,17 +215,17 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div
-                    class="text-sm font-medium text-gray-600 dark:text-gray-300"
+                    class="text-sm font-medium text-zinc-600 dark:text-zinc-300"
                   >
                     {{ log.tableName }}
                   </div>
-                  <div class="text-xs text-gray-400 font-mono">
+                  <div class="text-xs text-zinc-400 font-mono">
                     ID: {{ log.recordId }}
                   </div>
                 </td>
                 <td class="px-6 py-4">
                   <div
-                    class="max-w-xs truncate text-[11px] text-gray-500 dark:text-gray-400"
+                    class="max-w-xs truncate text-[11px] text-zinc-500 dark:text-zinc-400"
                     [title]="log.newValues || ''"
                   >
                     {{ log.newValues || "No changes details" }}
@@ -236,11 +238,11 @@
               <tr>
                 <td
                   colspan="5"
-                  class="py-12 text-center text-gray-500 dark:text-gray-400"
+                  class="py-12 text-center text-zinc-500 dark:text-zinc-400"
                 >
                   <div class="flex flex-col items-center">
                     <span
-                      class="mb-2 text-4xl text-gray-300 material-symbols-outlined"
+                      class="mb-2 text-4xl text-zinc-300 material-symbols-outlined"
                       >description</span
                     >
                     <p class="text-lg font-medium">No audit logs found</p>
@@ -257,17 +259,17 @@
 
   <!-- Pagination -->
   <div class="flex flex-col justify-between items-center px-1 mt-6 sm:flex-row">
-    <div class="mb-4 text-sm text-gray-500 dark:text-gray-400 sm:mb-0">
+    <div class="mb-4 text-sm text-zinc-500 dark:text-zinc-400 sm:mb-0">
       Showing
-      <span class="font-medium text-gray-900 dark:text-white">{{
+      <span class="font-medium text-zinc-900 dark:text-white">{{
         (currentPage - 1) * pageSize + 1
       }}</span>
       to
-      <span class="font-medium text-gray-900 dark:text-white">{{
+      <span class="font-medium text-zinc-900 dark:text-white">{{
         Math.min(currentPage * pageSize, totalItems)
       }}</span>
       of
-      <span class="font-medium text-gray-900 dark:text-white">{{
+      <span class="font-medium text-zinc-900 dark:text-white">{{
         totalItems
       }}</span>
       results
@@ -277,30 +279,37 @@
       class="inline-flex relative z-0 -space-x-px rounded-md shadow-sm"
     >
       <button
+        type="button"
         (click)="goToPage(currentPage - 1)"
         [disabled]="currentPage === 1"
-        class="inline-flex relative items-center px-2 py-2 text-sm font-medium text-gray-500 rounded-l-md border border-gray-300 dark:border-gray-600 bg-surface-light dark:bg-surface-dark dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+        aria-label="Previous page"
+        class="inline-flex relative items-center px-2 py-2 text-sm font-medium text-zinc-500 rounded-l-md border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <span class="text-sm material-symbols-outlined">chevron_left</span>
       </button>
       @for (page of getPageNumbers(); track trackByPage($index, page)) {
         <button
+          type="button"
           (click)="goToPage(page)"
-          [class.bg-primary]="page === currentPage"
-          [class.border-primary]="page === currentPage"
+          [attr.aria-label]="'Page ' + page"
+          [attr.aria-current]="page === currentPage ? 'page' : null"
+          [class.bg-violet-600]="page === currentPage"
+          [class.border-violet-600]="page === currentPage"
           [class.text-white]="page === currentPage"
-          [class.bg-surface-light]="page !== currentPage"
-          [class.dark:bg-surface-dark]="page !== currentPage"
-          [class.text-gray-500]="page !== currentPage"
-          class="inline-flex relative items-center px-4 py-2 text-sm font-medium border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800"
+          [class.bg-white]="page !== currentPage"
+          [class.dark:bg-zinc-900]="page !== currentPage"
+          [class.text-zinc-500]="page !== currentPage"
+          class="inline-flex relative items-center px-4 py-2 text-sm font-medium border border-zinc-300 dark:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-800"
         >
           {{ page }}
         </button>
       }
       <button
+        type="button"
         (click)="goToPage(currentPage + 1)"
         [disabled]="currentPage === totalPages"
-        class="inline-flex relative items-center px-2 py-2 text-sm font-medium text-gray-500 rounded-r-md border border-gray-300 dark:border-gray-600 bg-surface-light dark:bg-surface-dark dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+        aria-label="Next page"
+        class="inline-flex relative items-center px-2 py-2 text-sm font-medium text-zinc-500 rounded-r-md border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <span class="text-sm material-symbols-outlined">chevron_right</span>
       </button>

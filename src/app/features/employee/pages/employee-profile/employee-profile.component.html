@@ -1,29 +1,30 @@
-<div class="min-h-screen transition-colors duration-500 bg-slate-50 dark:bg-slate-950">
+<div class="min-h-screen transition-colors duration-500 bg-zinc-50 dark:bg-zinc-950">
   <!-- Profile Header & Tab Navigation -->
   <div
-    class="sticky top-0 z-40 bg-white border-b transition-all dark:bg-slate-900 border-slate-200 dark:border-slate-800">
+    class="sticky top-0 z-40 bg-white border-b transition-all dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800">
     <div class="max-w-[1600px] mx-auto px-6 pt-6">
       <!-- Top Action Bar -->
       <div class="flex justify-between items-center mb-8">
         <div class="flex gap-4 items-center">
-          <button (click)="goBack()"
-            class="flex justify-center items-center w-10 h-10 rounded-xl transition-all bg-slate-50 dark:bg-slate-800 text-slate-600 hover:text-primary">
+          <button type="button" (click)="goBack()"
+            class="flex justify-center items-center w-10 h-10 rounded-xl transition-all bg-zinc-50 dark:bg-zinc-800 text-zinc-600 hover:text-violet-600">
             <span class="material-symbols-outlined">arrow_back</span>
           </button>
-          <div class="h-8 w-[1px] bg-slate-200 dark:bg-slate-700 mx-2"></div>
-          <p class="hidden text-sm font-bold tracking-widest uppercase text-slate-500 md:block">
+          <div class="h-8 w-[1px] bg-zinc-200 dark:bg-zinc-700 mx-2"></div>
+          <p class="hidden text-sm font-bold tracking-widest uppercase text-zinc-500 md:block">
             Employee Profile
           </p>
         </div>
 
         @if (canEdit) {
         <div class="flex gap-3 items-center">
-          <button (click)="openEditModal(1)"
-            class="flex gap-2 items-center px-5 py-2.5 text-sm font-bold bg-white rounded-xl border shadow-sm transition-all dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700">
+          <button type="button" (click)="openEditModal(1)"
+            class="flex gap-2 items-center px-5 py-2.5 text-sm font-bold bg-white rounded-xl border shadow-sm transition-all dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-700">
             <span class="text-lg material-symbols-outlined">edit</span>
             Manage Details
           </button>
-          <button (click)="deleteEmployee()"
+          <button type="button" (click)="deleteEmployee()"
+            aria-label="Delete employee"
             class="flex justify-center items-center w-10 h-10 text-rose-500 bg-rose-50 rounded-xl transition-all dark:bg-rose-900/20 hover:bg-rose-100 dark:hover:bg-rose-900/40">
             <span class="material-symbols-outlined">delete</span>
           </button>
@@ -38,10 +39,10 @@
             class="absolute -inset-1 bg-gradient-to-tr to-purple-500 rounded-3xl opacity-25 blur transition duration-1000 from-primary group-hover:opacity-50 group-hover:duration-200">
           </div>
           <img [src]="getAvatarUrl(employee?.avatarUrl)"
-            class="object-cover relative w-32 h-32 rounded-3xl ring-4 ring-white md:w-40 md:h-40 dark:ring-slate-900 shadow-premium"
+            class="object-cover relative w-32 h-32 rounded-3xl ring-4 ring-white md:w-40 md:h-40 dark:ring-zinc-900 shadow-premium"
             onerror="this.src = 'assets/images/defaults/avatar-1.png'" />
           <div
-            class="absolute -right-2 -bottom-2 p-2 text-white bg-emerald-500 rounded-xl ring-4 ring-white shadow-lg dark:ring-slate-900">
+            class="absolute -right-2 -bottom-2 p-2 text-white bg-emerald-500 rounded-xl ring-4 ring-white shadow-lg dark:ring-zinc-900">
             <span class="text-sm material-symbols-outlined">verified</span>
           </div>
         </div>
@@ -49,21 +50,21 @@
         <div class="flex-1 space-y-4 text-center md:text-left">
           <div>
             <div class="flex gap-3 justify-center items-center mb-1 md:justify-start">
-              <h1 class="text-3xl font-extrabold tracking-tight md:text-4xl text-slate-900 dark:text-white">
+              <h1 class="text-3xl font-extrabold tracking-tight md:text-4xl text-zinc-900 dark:text-white">
                 {{ employee?.fullName }}
               </h1>
               <span
-                class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-500 text-xs font-bold uppercase tracking-widest">{{
+                class="px-2.5 py-1 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-500 text-xs font-bold uppercase tracking-widest">{{
                 employee?.employeeCode }}</span>
             </div>
             <div class="flex flex-wrap gap-6 justify-center items-center md:justify-start">
-              <div class="flex gap-2 items-center text-slate-600 dark:text-slate-500">
+              <div class="flex gap-2 items-center text-zinc-600 dark:text-zinc-500">
                 <span class="text-lg opacity-50 material-symbols-outlined">work</span>
                 <span class="text-sm font-bold tracking-tight">{{
                   getPositionTitle()
                   }}</span>
               </div>
-              <div class="flex gap-2 items-center text-slate-600 dark:text-slate-500">
+              <div class="flex gap-2 items-center text-zinc-600 dark:text-zinc-500">
                 <span class="text-lg opacity-50 material-symbols-outlined">corporate_fare</span>
                 <span class="text-sm font-bold tracking-tight">{{
                   getDepartmentName()
@@ -76,11 +77,11 @@
             <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest" [ngClass]="
                 getStatus() === 'Active'
                   ? 'bg-emerald-100 text-emerald-700'
-                  : 'bg-slate-100 text-slate-600'
+                  : 'bg-zinc-100 text-zinc-600'
               ">
               ● {{ getStatus() }}
             </span>
-            <span class="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest">
+            <span class="px-3 py-1 rounded-full bg-violet-100 text-violet-600 text-xs font-bold uppercase tracking-widest">
               {{ getEmploymentType() }}
             </span>
             <span
@@ -97,15 +98,15 @@
         tab of ["Overview", "Personal", "Career", "Financial", "Time Off"];
         track trackByIndex($index, tab)
         ) {
-        <button (click)="setActiveTab(tab.toLowerCase().replace(' ', ''))"
+        <button type="button" (click)="setActiveTab(tab.toLowerCase().replace(' ', ''))"
           class="relative py-4 text-sm font-bold tracking-widest uppercase transition-all group" [ngClass]="
               activeTab === tab.toLowerCase().replace(' ', '')
-                ? 'text-primary'
-                : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                ? 'text-violet-600'
+                : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
             ">
           {{ tab }}
           <span
-            class="absolute bottom-0 left-0 w-full h-1 rounded-t-full transition-all duration-300 origin-left scale-x-0 bg-primary group-hover:scale-x-100"
+            class="absolute bottom-0 left-0 w-full h-1 rounded-t-full transition-all duration-300 origin-left scale-x-0 bg-violet-600 group-hover:scale-x-100"
             [ngClass]="{
                 'scale-x-100': activeTab === tab.toLowerCase().replace(' ', ''),
               }"></span>
@@ -118,7 +119,7 @@
   <!-- Loading State -->
   @if (loading) {
   <div class="flex justify-center items-center py-20">
-    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600"></div>
   </div>
   }
 
@@ -140,27 +141,27 @@
                 <span class="flex justify-center items-center p-3 text-blue-600 bg-blue-50 rounded-2xl">
                   <span class="material-symbols-outlined">badge</span>
                 </span>
-                <h3 class="text-sm font-bold tracking-widest uppercase text-slate-900 dark:text-white">Employment</h3>
+                <h3 class="text-sm font-bold tracking-widest uppercase text-zinc-900 dark:text-white">Employment</h3>
               </div>
               <div class="space-y-5">
-                <div class="flex justify-between items-center py-3 border-b border-slate-100 dark:border-slate-800">
-                  <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">Join Date</span>
-                  <span class="text-sm font-bold text-slate-900 dark:text-white">{{ formatDate(employee.jobDetails?.joinDate) }}</span>
+                <div class="flex justify-between items-center py-3 border-b border-zinc-100 dark:border-zinc-800">
+                  <span class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Join Date</span>
+                  <span class="text-sm font-bold text-zinc-900 dark:text-white">{{ formatDate(employee.jobDetails?.joinDate) }}</span>
                 </div>
-                <div class="flex justify-between items-center py-3 border-b border-slate-100 dark:border-slate-800">
-                  <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">Type</span>
-                  <span class="text-sm font-bold text-slate-900 dark:text-white">{{ employee.jobDetails?.employmentType || employee.employmentType || '-' }}</span>
+                <div class="flex justify-between items-center py-3 border-b border-zinc-100 dark:border-zinc-800">
+                  <span class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Type</span>
+                  <span class="text-sm font-bold text-zinc-900 dark:text-white">{{ employee.jobDetails?.employmentType || employee.employmentType || '-' }}</span>
                 </div>
-                <div class="flex justify-between items-center py-3 border-b border-slate-100 dark:border-slate-800">
-                  <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">Status</span>
+                <div class="flex justify-between items-center py-3 border-b border-zinc-100 dark:border-zinc-800">
+                  <span class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Status</span>
                   <span class="px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-widest"
-                    [ngClass]="getStatus() === 'Active' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600'">
+                    [ngClass]="getStatus() === 'Active' ? 'bg-emerald-100 text-emerald-700' : 'bg-zinc-100 text-zinc-600'">
                     {{ getStatus() }}
                   </span>
                 </div>
                 <div class="flex justify-between items-center py-3">
-                  <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">Probation End</span>
-                  <span class="text-sm font-bold text-slate-900 dark:text-white">{{ formatDate(employee.jobDetails?.probationEndDate) }}</span>
+                  <span class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Probation End</span>
+                  <span class="text-sm font-bold text-zinc-900 dark:text-white">{{ formatDate(employee.jobDetails?.probationEndDate) }}</span>
                 </div>
               </div>
             </div>
@@ -171,28 +172,28 @@
                 <span class="flex justify-center items-center p-3 text-purple-600 bg-purple-50 rounded-2xl">
                   <span class="material-symbols-outlined">grid_view</span>
                 </span>
-                <h3 class="text-sm font-bold tracking-widest uppercase text-slate-900 dark:text-white">Quick Access</h3>
+                <h3 class="text-sm font-bold tracking-widest uppercase text-zinc-900 dark:text-white">Quick Access</h3>
               </div>
               <div class="grid grid-cols-2 gap-4">
-                <button (click)="setActiveTab('personal')"
-                  class="flex flex-col gap-2 items-start p-4 rounded-2xl border transition-all border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 hover:bg-primary/5 hover:border-primary/30 group">
-                  <span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">person</span>
-                  <span class="text-xs font-bold uppercase tracking-widest text-slate-600 dark:text-slate-400 group-hover:text-primary transition-colors">Personal</span>
+                <button type="button" (click)="setActiveTab('personal')"
+                  class="flex flex-col gap-2 items-start p-4 rounded-2xl border transition-all border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/50 hover:bg-violet-50 hover:border-violet-200 group">
+                  <span class="material-symbols-outlined text-zinc-400 group-hover:text-violet-600 transition-colors">person</span>
+                  <span class="text-xs font-bold uppercase tracking-widest text-zinc-600 dark:text-zinc-400 group-hover:text-violet-600 transition-colors">Personal</span>
                 </button>
-                <button (click)="setActiveTab('career')"
-                  class="flex flex-col gap-2 items-start p-4 rounded-2xl border transition-all border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 hover:bg-primary/5 hover:border-primary/30 group">
-                  <span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">work</span>
-                  <span class="text-xs font-bold uppercase tracking-widest text-slate-600 dark:text-slate-400 group-hover:text-primary transition-colors">Career</span>
+                <button type="button" (click)="setActiveTab('career')"
+                  class="flex flex-col gap-2 items-start p-4 rounded-2xl border transition-all border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/50 hover:bg-violet-50 hover:border-violet-200 group">
+                  <span class="material-symbols-outlined text-zinc-400 group-hover:text-violet-600 transition-colors">work</span>
+                  <span class="text-xs font-bold uppercase tracking-widest text-zinc-600 dark:text-zinc-400 group-hover:text-violet-600 transition-colors">Career</span>
                 </button>
-                <button (click)="setActiveTab('financial')"
-                  class="flex flex-col gap-2 items-start p-4 rounded-2xl border transition-all border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 hover:bg-primary/5 hover:border-primary/30 group">
-                  <span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">payments</span>
-                  <span class="text-xs font-bold uppercase tracking-widest text-slate-600 dark:text-slate-400 group-hover:text-primary transition-colors">Financial</span>
+                <button type="button" (click)="setActiveTab('financial')"
+                  class="flex flex-col gap-2 items-start p-4 rounded-2xl border transition-all border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/50 hover:bg-violet-50 hover:border-violet-200 group">
+                  <span class="material-symbols-outlined text-zinc-400 group-hover:text-violet-600 transition-colors">payments</span>
+                  <span class="text-xs font-bold uppercase tracking-widest text-zinc-600 dark:text-zinc-400 group-hover:text-violet-600 transition-colors">Financial</span>
                 </button>
-                <button (click)="setActiveTab('timeoff')"
-                  class="flex flex-col gap-2 items-start p-4 rounded-2xl border transition-all border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 hover:bg-primary/5 hover:border-primary/30 group">
-                  <span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">event_available</span>
-                  <span class="text-xs font-bold uppercase tracking-widest text-slate-600 dark:text-slate-400 group-hover:text-primary transition-colors">Time Off</span>
+                <button type="button" (click)="setActiveTab('timeoff')"
+                  class="flex flex-col gap-2 items-start p-4 rounded-2xl border transition-all border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/50 hover:bg-violet-50 hover:border-violet-200 group">
+                  <span class="material-symbols-outlined text-zinc-400 group-hover:text-violet-600 transition-colors">event_available</span>
+                  <span class="text-xs font-bold uppercase tracking-widest text-zinc-600 dark:text-zinc-400 group-hover:text-violet-600 transition-colors">Time Off</span>
                 </button>
               </div>
             </div>
@@ -201,28 +202,28 @@
           <!-- Right: Contact Channels -->
           <div class="space-y-6">
             <div class="p-8 rounded-3xl glass-panel shadow-soft">
-              <h3 class="mb-6 text-sm font-bold tracking-widest uppercase text-slate-900 dark:text-white">
+              <h3 class="mb-6 text-sm font-bold tracking-widest uppercase text-zinc-900 dark:text-white">
                 Contact Channels
               </h3>
               <div class="space-y-4">
                 <div
-                  class="flex gap-4 items-center p-4 rounded-2xl border bg-slate-50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-800">
+                  class="flex gap-4 items-center p-4 rounded-2xl border bg-zinc-50 dark:bg-zinc-800/50 border-zinc-100 dark:border-zinc-800">
                   <span class="flex justify-center items-center w-10 h-10 text-blue-600 bg-blue-100 rounded-xl">
                     <span class="text-lg material-symbols-outlined">mail</span>
                   </span>
                   <div class="flex-1 min-w-0">
-                    <p class="text-xs font-bold text-slate-500 uppercase tracking-widest">Professional</p>
-                    <p class="text-sm font-bold truncate text-slate-900 dark:text-white">{{ employee.email }}</p>
+                    <p class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Professional</p>
+                    <p class="text-sm font-bold truncate text-zinc-900 dark:text-white">{{ employee.email }}</p>
                   </div>
                 </div>
                 <div
-                  class="flex gap-4 items-center p-4 rounded-2xl border bg-slate-50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-800">
+                  class="flex gap-4 items-center p-4 rounded-2xl border bg-zinc-50 dark:bg-zinc-800/50 border-zinc-100 dark:border-zinc-800">
                   <span class="flex justify-center items-center w-10 h-10 text-emerald-600 bg-emerald-100 rounded-xl">
                     <span class="text-lg material-symbols-outlined">call</span>
                   </span>
                   <div class="flex-1 min-w-0">
-                    <p class="text-xs font-bold text-slate-500 uppercase tracking-widest">Mobile</p>
-                    <p class="text-sm font-bold truncate text-slate-900 dark:text-white">
+                    <p class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Mobile</p>
+                    <p class="text-sm font-bold truncate text-zinc-900 dark:text-white">
                       {{ employee.personalInfo.phoneNumber || "No phone set" }}
                     </p>
                   </div>
@@ -240,20 +241,20 @@
               <span class="flex justify-center items-center p-3 text-emerald-600 bg-emerald-50 rounded-2xl">
                 <span class="material-symbols-outlined">account_balance</span>
               </span>
-              <h3 class="text-sm font-bold tracking-widest uppercase text-slate-900 dark:text-white">Bank Details</h3>
+              <h3 class="text-sm font-bold tracking-widest uppercase text-zinc-900 dark:text-white">Bank Details</h3>
             </div>
             <div class="grid grid-cols-2 gap-y-5 gap-x-8">
               <div>
-                <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Bank</p>
-                <p class="text-sm font-bold text-slate-700 dark:text-slate-200">{{ employee.bankDetails?.bankName || '-' }}</p>
+                <p class="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1">Bank</p>
+                <p class="text-sm font-bold text-zinc-700 dark:text-zinc-200">{{ employee.bankDetails?.bankName || '-' }}</p>
               </div>
               <div>
-                <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Account Holder</p>
-                <p class="text-sm font-bold text-slate-700 dark:text-slate-200">{{ employee.bankDetails?.accountHolder || employee.fullName }}</p>
+                <p class="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1">Account Holder</p>
+                <p class="text-sm font-bold text-zinc-700 dark:text-zinc-200">{{ employee.bankDetails?.accountHolder || employee.fullName }}</p>
               </div>
               <div class="col-span-2">
-                <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Account Number</p>
-                <p class="text-sm font-bold tracking-widest text-slate-700 dark:text-slate-200">{{ employee.bankDetails?.accountNumber || '-' }}</p>
+                <p class="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1">Account Number</p>
+                <p class="text-sm font-bold tracking-widest text-zinc-700 dark:text-zinc-200">{{ employee.bankDetails?.accountNumber || '-' }}</p>
               </div>
             </div>
           </div>
@@ -264,24 +265,24 @@
               <span class="flex justify-center items-center p-3 text-amber-600 bg-amber-50 rounded-2xl">
                 <span class="material-symbols-outlined">receipt_long</span>
               </span>
-              <h3 class="text-sm font-bold tracking-widest uppercase text-slate-900 dark:text-white">Tax & Insurance</h3>
+              <h3 class="text-sm font-bold tracking-widest uppercase text-zinc-900 dark:text-white">Tax & Insurance</h3>
             </div>
             <div class="grid grid-cols-2 gap-y-5 gap-x-8">
               <div>
-                <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Tax Code</p>
-                <p class="text-sm font-bold tracking-widest text-slate-700 dark:text-slate-200">{{ employee.bankDetails?.taxCode || '-' }}</p>
+                <p class="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1">Tax Code</p>
+                <p class="text-sm font-bold tracking-widest text-zinc-700 dark:text-zinc-200">{{ employee.bankDetails?.taxCode || '-' }}</p>
               </div>
               <div>
-                <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Insurance Code</p>
-                <p class="text-sm font-bold tracking-widest text-slate-700 dark:text-slate-200">{{ employee.bankDetails?.insuranceCode || '-' }}</p>
+                <p class="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1">Insurance Code</p>
+                <p class="text-sm font-bold tracking-widest text-zinc-700 dark:text-zinc-200">{{ employee.bankDetails?.insuranceCode || '-' }}</p>
               </div>
               <div>
-                <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Identity Card</p>
-                <p class="text-sm font-bold tracking-widest text-slate-700 dark:text-slate-200">{{ employee.personalInfo.identityCard || '-' }}</p>
+                <p class="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1">Identity Card</p>
+                <p class="text-sm font-bold tracking-widest text-zinc-700 dark:text-zinc-200">{{ employee.personalInfo.identityCard || '-' }}</p>
               </div>
               <div>
-                <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Dependents</p>
-                <p class="text-sm font-bold text-slate-700 dark:text-slate-200">{{ employee.personalInfo.dependentCount ?? 0 }}</p>
+                <p class="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1">Dependents</p>
+                <p class="text-sm font-bold text-zinc-700 dark:text-zinc-200">{{ employee.personalInfo.dependentCount ?? 0 }}</p>
               </div>
             </div>
           </div>
@@ -298,7 +299,7 @@
               <span class="flex justify-center items-center p-3 text-indigo-600 bg-indigo-50 rounded-2xl">
                 <span class="material-symbols-outlined">person</span>
               </span>
-              <h3 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
+              <h3 class="text-xl font-bold tracking-tight text-zinc-900 dark:text-white">
                 Personal Identity
               </h3>
             </div>
@@ -351,7 +352,7 @@
               <span class="flex justify-center items-center p-3 text-emerald-600 bg-emerald-50 rounded-2xl">
                 <span class="material-symbols-outlined">location_on</span>
               </span>
-              <h3 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
+              <h3 class="text-xl font-bold tracking-tight text-zinc-900 dark:text-white">
                 Contact & Location
               </h3>
             </div>
@@ -411,7 +412,7 @@
               <span class="flex justify-center items-center p-3 text-blue-600 bg-blue-50 rounded-2xl">
                 <span class="material-symbols-outlined">work</span>
               </span>
-              <h3 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
+              <h3 class="text-xl font-bold tracking-tight text-zinc-900 dark:text-white">
                 Employment Architecture
               </h3>
             </div>
@@ -454,7 +455,7 @@
                 </p>
                 <div class="flex gap-2 items-center mt-1">
                   <div
-                    class="w-6 h-6 rounded-lg bg-primary text-white flex items-center justify-center text-xs font-bold uppercase">
+                    class="w-6 h-6 rounded-lg bg-violet-600 text-white flex items-center justify-center text-xs font-bold uppercase">
                     M
                   </div>
                   <p class="text-sm font-bold text-slate-900 dark:text-white">
@@ -475,7 +476,7 @@
                 <span class="flex justify-center items-center p-3 text-amber-600 bg-amber-50 rounded-2xl">
                   <span class="material-symbols-outlined">description</span>
                 </span>
-                <h3 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
+                <h3 class="text-xl font-bold tracking-tight text-zinc-900 dark:text-white">
                   Legal Contracts
                 </h3>
               </div>
@@ -495,7 +496,7 @@
               <span class="flex justify-center items-center p-3 text-emerald-600 bg-emerald-50 rounded-2xl">
                 <span class="material-symbols-outlined">account_balance</span>
               </span>
-              <h3 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
+              <h3 class="text-xl font-bold tracking-tight text-zinc-900 dark:text-white">
                 Financial Profile
               </h3>
             </div>
@@ -546,8 +547,8 @@
           </div>
           <!-- Payroll History Overview -->
           <div
-            class="overflow-hidden relative p-10 text-white rounded-3xl border-0 glass-panel shadow-soft bg-slate-900">
-            <div class="absolute -right-20 -bottom-20 w-80 h-80 rounded-full blur-3xl bg-primary/20"></div>
+            class="overflow-hidden relative p-10 text-white rounded-3xl border-0 glass-panel shadow-soft bg-zinc-900">
+            <div class="absolute -right-20 -bottom-20 w-80 h-80 rounded-full blur-3xl bg-violet-600/20"></div>
             <div class="relative z-10">
               <div class="flex justify-between items-center mb-10">
                 <h3 class="text-xl font-bold tracking-tight uppercase">
@@ -599,10 +600,10 @@
           ) {
           <div class="overflow-hidden relative p-6 rounded-3xl glass-panel shadow-soft group">
             <div
-              class="absolute -right-2 -bottom-2 w-16 h-16 rounded-full transition-transform duration-500 bg-primary/5 group-hover:scale-150">
+              class="absolute -right-2 -bottom-2 w-16 h-16 rounded-full transition-transform duration-500 bg-violet-600/5 group-hover:scale-150">
             </div>
             <div class="flex relative z-10 gap-4 items-center">
-              <div class="flex justify-center items-center w-12 h-12 rounded-2xl bg-primary/10 text-primary">
+              <div class="flex justify-center items-center w-12 h-12 rounded-2xl bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400">
                 <span class="material-symbols-outlined">{{
                   getLeaveIcon(balance.type)
                   }}</span>
@@ -622,13 +623,14 @@
         </div>
         <!-- Leave History Table -->
         <div class="overflow-hidden rounded-3xl glass-panel shadow-soft">
-          <div class="flex justify-between items-center p-8 border-b border-slate-50 dark:border-slate-800">
-            <h3 class="text-lg font-bold tracking-tight uppercase text-slate-900 dark:text-white">
-              Leave Request History
-            </h3>
+            <div class="flex justify-between items-center p-8 border-b border-zinc-100 dark:border-zinc-800">
+              <h3
+                class="text-lg font-bold tracking-tight uppercase text-zinc-900 dark:text-white">
+                Leave Request History
+              </h3>
             <div class="flex gap-3">
-              <button
-                class="flex justify-center items-center w-10 h-10 rounded-xl transition-all bg-slate-50 dark:bg-slate-800 text-slate-600 hover:text-primary">
+              <button type="button"
+                class="flex justify-center items-center w-10 h-10 rounded-xl transition-all bg-zinc-50 dark:bg-zinc-800 text-zinc-600 hover:text-violet-600">
                 <span class="text-lg material-symbols-outlined">filter_list</span>
               </button>
             </div>
@@ -637,7 +639,7 @@
             <table class="w-full text-left">
               <thead>
                 <tr
-                  class="text-xs font-bold text-slate-500 uppercase tracking-widest bg-slate-50/50 dark:bg-slate-800/50">
+                  class="text-xs font-bold text-zinc-500 uppercase tracking-widest bg-zinc-50/50 dark:bg-zinc-800/50">
                   <th class="px-8 py-4">Status</th>
                   <th class="px-8 py-4">Leave Type</th>
                   <th class="px-8 py-4">Start Date</th>
@@ -646,12 +648,13 @@
                   <th class="px-8 py-4 text-right">Reason</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-slate-50 dark:divide-slate-900">
+              <tbody class="divide-y divide-zinc-100 dark:divide-zinc-900">
                 @for (
                 request of leaveRequests;
                 track trackByIndex($index, request)
                 ) {
-                <tr class="transition-all group hover:bg-slate-50/50 dark:hover:bg-slate-900/30">
+                <tr
+                  class="transition-all group hover:bg-zinc-50/50 dark:hover:bg-zinc-900/30">
                   <td class="px-8 py-5">
                     <span class="px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-tighter" [ngClass]="{
                               'bg-emerald-100 text-emerald-700':
@@ -684,7 +687,7 @@
                 @if (leaveRequests.length === 0) {
                 <tr>
                   <td colspan="6"
-                    class="px-8 py-20 text-sm italic font-bold tracking-widest text-center uppercase text-slate-500">
+                    class="px-8 py-20 text-sm italic font-bold tracking-widest text-center uppercase text-zinc-500">
                     No leave history found for this employee
                   </td>
                 </tr>

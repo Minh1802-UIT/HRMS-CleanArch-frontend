@@ -15,18 +15,24 @@
       </p>
     </div>
     <button
+      type="button"
       (click)="downloadReport()"
       class="flex gap-2 items-center px-5 py-2.5 text-sm font-bold text-white rounded-xl shadow-lg transition-all bg-violet-600 hover:bg-violet-500 shadow-violet-600/25 btn-glow whitespace-nowrap"
     >
-      <span class="text-lg material-symbols-outlined">download</span>
+      <span class="text-lg material-symbols-outlined" aria-hidden="true">download</span>
       Download Report
     </button>
   </div>
   <!-- Status Filter Tabs -->
   <div
     class="flex space-x-6 mb-8 border-b border-zinc-200 dark:border-zinc-800"
+    role="tablist"
+    aria-label="Filter by status"
   >
     <button
+      type="button"
+      role="tab"
+      [attr.aria-selected]="activeFilter === 'Pending'"
       (click)="activeFilter = 'Pending'"
       class="px-1 pb-3 text-xs font-bold tracking-widest uppercase border-b-2 transition-all"
       [ngClass]="
@@ -38,6 +44,9 @@
       Pending ({{ pendingCount }})
     </button>
     <button
+      type="button"
+      role="tab"
+      [attr.aria-selected]="activeFilter === 'Approved'"
       (click)="activeFilter = 'Approved'"
       class="px-1 pb-3 text-xs font-bold tracking-widest uppercase border-b-2 transition-all"
       [ngClass]="
@@ -49,6 +58,9 @@
       Approved ({{ approvedCount }})
     </button>
     <button
+      type="button"
+      role="tab"
+      [attr.aria-selected]="activeFilter === 'Rejected'"
       (click)="activeFilter = 'Rejected'"
       class="px-1 pb-3 text-xs font-bold tracking-widest uppercase border-b-2 transition-all"
       [ngClass]="
@@ -63,24 +75,27 @@
 
   <!-- Filters Row -->
   <div
-    class="flex flex-wrap gap-4 items-center p-4 mb-6 bg-white rounded-xl border shadow-sm dark:bg-gray-800 border-slate-200 dark:border-gray-700"
+    class="flex flex-wrap gap-4 items-center p-4 mb-6 glass-panel rounded-xl border shadow-sm border-zinc-200 dark:border-zinc-800"
   >
     <div class="flex-1 min-w-[240px] relative">
       <span
-        class="absolute top-2.5 left-3 text-xl material-symbols-outlined text-slate-500"
+        class="absolute top-2.5 left-3 text-xl material-symbols-outlined text-zinc-400 dark:text-zinc-500"
+        aria-hidden="true"
         >search</span
       >
       <input
-        type="text"
+        type="search"
         [(ngModel)]="searchTerm"
-        class="py-2 pr-4 pl-10 w-full text-sm rounded-lg bg-slate-50 dark:bg-gray-700 border-slate-200 dark:border-gray-600 focus:ring-primary focus:border-primary dark:text-white"
+        class="py-2 pr-4 pl-10 w-full text-sm rounded-lg bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 focus:outline-none dark:text-white placeholder:text-zinc-400"
         placeholder="Search employee or code..."
+        aria-label="Search employees"
       />
     </div>
     <div class="flex flex-wrap gap-3 items-center lg:flex-nowrap">
       <select
         [(ngModel)]="selectedDepartment"
-        class="py-2 pr-10 pl-3 text-sm rounded-lg bg-slate-50 dark:bg-gray-700 border-slate-200 dark:border-gray-600 focus:ring-primary focus:border-primary dark:text-white"
+        aria-label="Filter by department"
+        class="py-2 pr-10 pl-3 text-sm rounded-lg bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 focus:outline-none dark:text-white"
       >
         @for (dept of departments; track trackByValue($index, dept)) {
           <option [value]="dept">
@@ -90,7 +105,8 @@
       </select>
       <select
         [(ngModel)]="selectedLeaveType"
-        class="py-2 pr-10 pl-3 text-sm rounded-lg bg-slate-50 dark:bg-gray-700 border-slate-200 dark:border-gray-600 focus:ring-primary focus:border-primary dark:text-white"
+        aria-label="Filter by leave type"
+        class="py-2 pr-10 pl-3 text-sm rounded-lg bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 focus:outline-none dark:text-white"
       >
         @for (type of leaveTypes; track trackByValue($index, type)) {
           <option [value]="type">
@@ -100,32 +116,35 @@
       </select>
       <div class="relative">
         <span
-          class="absolute top-2.5 left-3 text-sm material-symbols-outlined text-slate-500"
+          class="absolute top-2.5 left-3 text-sm material-symbols-outlined text-zinc-400"
+          aria-hidden="true"
           >calendar_today</span
         >
         <input
           type="date"
           [(ngModel)]="startDate"
-          title="Start date"
-          class="py-2 pr-4 pl-10 text-sm rounded-lg bg-slate-50 dark:bg-gray-700 border-slate-200 dark:border-gray-600 focus:ring-primary focus:border-primary dark:text-white"
+          aria-label="Start date filter"
+          class="py-2 pr-4 pl-10 text-sm rounded-lg bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 focus:outline-none dark:text-white"
         />
       </div>
       <div class="relative">
         <span
-          class="absolute top-2.5 left-3 text-sm material-symbols-outlined text-slate-500"
+          class="absolute top-2.5 left-3 text-sm material-symbols-outlined text-zinc-400"
+          aria-hidden="true"
           >event</span
         >
         <input
           type="date"
           [(ngModel)]="endDate"
           [min]="startDate"
-          title="End date"
-          class="py-2 pr-4 pl-10 text-sm rounded-lg bg-slate-50 dark:bg-gray-700 border-slate-200 dark:border-gray-600 focus:ring-primary focus:border-primary dark:text-white"
+          aria-label="End date filter"
+          class="py-2 pr-4 pl-10 text-sm rounded-lg bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 focus:outline-none dark:text-white"
         />
       </div>
       <button
+        type="button"
         (click)="resetFilters()"
-        class="px-4 py-2 text-sm font-medium text-white rounded-lg bg-slate-800 dark:bg-slate-600 hover:bg-slate-700"
+        class="px-4 py-2 text-sm font-semibold rounded-lg border transition-colors border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800"
       >
         Reset
       </button>
@@ -134,12 +153,50 @@
 
   <!-- Skeleton / Loader -->
   @if (loading) {
-    <div class="flex justify-center p-12">
-      <div class="flex flex-col items-center">
-        <div
-          class="mb-4 w-12 h-12 rounded-full border-b-2 animate-spin border-primary"
-        ></div>
-        <p class="font-medium text-slate-600">Loading requests...</p>
+    <div
+      class="overflow-hidden glass-panel rounded-xl border border-zinc-200 dark:border-zinc-800"
+      aria-busy="true"
+      aria-label="Loading leave requests"
+    >
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr
+              class="bg-zinc-50/80 dark:bg-zinc-900/60 border-b border-zinc-100 dark:border-zinc-800 text-[11px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider"
+            >
+              <th class="px-6 py-4 w-10"></th>
+              <th class="px-4 py-4">Employee</th>
+              <th class="px-4 py-4">Leave Type</th>
+              <th class="px-4 py-4">Duration</th>
+              <th class="px-4 py-4">Requested On</th>
+              <th class="px-4 py-4">Reason</th>
+              <th class="px-4 py-4 text-center">Attachment</th>
+              <th class="px-4 py-4 text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
+            @for (i of [1,2,3,4,5]; track i) {
+              <tr>
+                <td class="px-6 py-4"><div class="w-4 h-4 skeleton rounded"></div></td>
+                <td class="px-4 py-4">
+                  <div class="flex gap-3 items-center">
+                    <div class="w-9 h-9 rounded-full skeleton flex-shrink-0"></div>
+                    <div class="space-y-1.5">
+                      <div class="w-28 h-3.5 skeleton"></div>
+                      <div class="w-16 h-2.5 skeleton"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-4 py-4"><div class="w-20 h-5 skeleton rounded-full"></div></td>
+                <td class="px-4 py-4"><div class="w-24 h-3.5 skeleton"></div></td>
+                <td class="px-4 py-4"><div class="w-20 h-3 skeleton"></div></td>
+                <td class="px-4 py-4"><div class="w-32 h-3 skeleton"></div></td>
+                <td class="px-4 py-4 text-center"><div class="w-5 h-5 skeleton rounded mx-auto"></div></td>
+                <td class="px-4 py-4 text-right"><div class="w-16 h-7 skeleton rounded-lg ml-auto"></div></td>
+              </tr>
+            }
+          </tbody>
+        </table>
       </div>
     </div>
   }
@@ -147,13 +204,13 @@
   <!-- Data Table -->
   @if (!loading) {
     <div
-      class="overflow-hidden bg-white rounded-xl border shadow-sm dark:bg-gray-800 border-slate-200 dark:border-gray-700"
+      class="overflow-hidden glass-panel rounded-xl border shadow-sm border-zinc-200 dark:border-zinc-800"
     >
       <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
           <thead>
             <tr
-              class="bg-slate-50 dark:bg-gray-700/50 border-b border-slate-200 dark:border-gray-600 text-[11px] font-bold text-slate-600 dark:text-gray-400 uppercase tracking-wider"
+              class="bg-zinc-50/80 dark:bg-zinc-900/60 border-b border-zinc-100 dark:border-zinc-800 text-[11px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider"
             >
               <th class="px-6 py-4 w-10">
                 <input
@@ -170,13 +227,13 @@
               <th class="px-4 py-4 text-right">Action</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-slate-100 dark:divide-gray-700">
+          <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
             @for (
               req of filteredRequests;
               track trackByRequestId($index, req)
             ) {
               <tr
-                class="transition-colors hover:bg-slate-50/50 dark:hover:bg-gray-700/30"
+                class="transition-colors hover:bg-zinc-50/60 dark:hover:bg-zinc-800/40"
               >
                 <td class="px-6 py-4">
                   <input
@@ -190,17 +247,17 @@
                       [src]="
                         req.avatarUrl || 'assets/images/defaults/avatar-1.png'
                       "
-                      alt="Avatar"
-                      class="w-9 h-9 rounded-full border border-slate-100 dark:border-gray-600"
+                      [alt]="req.employeeName + ' avatar'"
+                      class="w-9 h-9 rounded-full border border-zinc-100 dark:border-zinc-700"
                       onerror="this.onerror=null;this.src='assets/images/defaults/avatar-1.png'"
                     />
                     <div>
                       <p
-                        class="text-sm font-semibold text-slate-800 dark:text-white"
+                        class="text-sm font-semibold text-zinc-800 dark:text-white"
                       >
                         {{ req.employeeName }}
                       </p>
-                      <p class="text-xs text-slate-600">
+                      <p class="text-xs text-zinc-500 dark:text-zinc-400">
                         {{ req.employeeCode }}
                       </p>
                     </div>
@@ -216,27 +273,28 @@
                 </td>
                 <td class="px-4 py-4">
                   <div
-                    class="text-sm font-medium text-slate-700 dark:text-gray-300"
+                    class="text-sm font-medium text-zinc-700 dark:text-zinc-300"
                   >
                     {{ req.startDate | date: "MMM dd" }} -
                     {{ req.endDate | date: "MMM dd" }}
                   </div>
-                  <div class="text-xs text-slate-600">{{ req.days }} days</div>
+                  <div class="text-xs text-zinc-500 dark:text-zinc-400">{{ req.days }} days</div>
                 </td>
                 <td class="px-4 py-4">
-                  <span class="text-xs text-slate-600 dark:text-slate-400">
+                  <span class="text-xs text-zinc-500 dark:text-zinc-400">
                     {{ req.requestDate | date: 'MMM dd, yyyy' }}
                   </span>
                 </td>
                 <td class="px-4 py-4">
                   <div class="max-w-[200px]">
                     <p
-                      class="text-xs truncate text-slate-600 dark:text-gray-400"
+                      class="text-xs truncate text-zinc-500 dark:text-zinc-400"
                     >
                       {{ req.reason }}
                     </p>
                     <button
-                      class="text-xs font-bold text-primary uppercase hover:underline"
+                      type="button"
+                      class="text-xs font-bold text-violet-600 dark:text-violet-400 uppercase hover:underline"
                     >
                       View more
                     </button>
@@ -252,28 +310,34 @@
                   @if (req.status === "Pending") {
                     <div class="flex gap-2 justify-end items-center">
                       <button
+                        type="button"
                         (click)="approve(req)"
                         [disabled]="processingId === req.id"
+                        [attr.aria-label]="'Approve leave for ' + req.employeeName"
                         class="flex justify-center items-center p-2 text-white bg-emerald-500 rounded-lg shadow-sm transition-all hover:bg-emerald-600 disabled:opacity-50"
                       >
                         @if (processingId !== req.id) {
                           <span
                             class="text-lg font-bold material-symbols-outlined"
+                            aria-hidden="true"
                             >check</span
                           >
                         }
                         @if (processingId === req.id) {
-                          <i class="text-lg pi pi-spin pi-spinner"></i>
+                          <i class="text-lg pi pi-spin pi-spinner" aria-label="Processing"></i>
                         }
                       </button>
                       <button
+                        type="button"
                         (click)="reject(req)"
                         [disabled]="processingId === req.id"
-                        class="flex justify-center items-center p-2 text-red-500 rounded-lg border border-red-200 transition-all hover:bg-red-50 dark:hover:bg-red-900/20 disabled:opacity-50"
+                        [attr.aria-label]="'Reject leave for ' + req.employeeName"
+                        class="flex justify-center items-center p-2 text-red-500 rounded-lg border border-red-200 dark:border-red-800 transition-all hover:bg-red-50 dark:hover:bg-red-900/20 disabled:opacity-50"
                       >
                         @if (processingId !== req.id) {
                           <span
                             class="text-lg font-bold material-symbols-outlined"
+                            aria-hidden="true"
                             >close</span
                           >
                         }
@@ -293,8 +357,10 @@
             }
             @if (filteredRequests.length === 0) {
               <tr>
-                <td colspan="8" class="py-12 text-center text-slate-600">
-                  No leave requests found for the selected filters.
+                <td colspan="8" class="py-16 text-center">
+                  <span class="material-symbols-outlined text-4xl text-zinc-200 dark:text-zinc-700 block mb-2">event_busy</span>
+                  <p class="text-sm font-semibold text-zinc-500 dark:text-zinc-400">No leave requests found</p>
+                  <p class="text-xs text-zinc-400 mt-0.5">Try adjusting your filters</p>
                 </td>
               </tr>
             }
@@ -303,34 +369,38 @@
       </div>
       <!-- Pagination Footer -->
       <div
-        class="flex justify-between items-center px-6 py-4 border-t bg-slate-50 dark:bg-gray-700/50 border-slate-200 dark:border-gray-600"
+        class="flex justify-between items-center px-6 py-4 border-t bg-zinc-50/80 dark:bg-zinc-900/60 border-zinc-100 dark:border-zinc-800"
       >
-        <p class="text-sm font-medium text-slate-600 dark:text-gray-400">
-          Show <span class="text-slate-700 dark:text-white">1</span> to
-          <span class="text-slate-700 dark:text-white">{{
-            filteredRequests.length
-          }}</span>
+        <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+          Show <span class="font-semibold text-zinc-900 dark:text-white">{{ filteredRequests.length === 0 ? 0 : 1 }}</span> to
+          <span class="font-semibold text-zinc-900 dark:text-white">{{ filteredRequests.length }}</span>
           of
-          <span class="text-slate-700 dark:text-white">{{
-            filteredRequests.length
-          }}</span>
+          <span class="font-semibold text-zinc-900 dark:text-white">{{ filteredRequests.length }}</span>
           results
         </p>
         <div class="flex gap-2 items-center">
           <button
-            class="flex justify-center items-center w-8 h-8 bg-white rounded-lg border cursor-not-allowed border-slate-200 dark:border-gray-600 dark:bg-gray-800 text-slate-500"
+            type="button"
+            disabled
+            aria-label="Previous page"
+            class="flex justify-center items-center w-8 h-8 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-400 disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            <span class="text-lg material-symbols-outlined">chevron_left</span>
+            <span class="text-lg material-symbols-outlined" aria-hidden="true">chevron_left</span>
           </button>
           <button
-            class="flex justify-center items-center w-8 h-8 text-sm font-semibold text-white rounded-lg bg-navy-dark"
+            type="button"
+            aria-current="page"
+            class="flex justify-center items-center w-8 h-8 text-sm font-semibold text-white rounded-lg bg-violet-600"
           >
             1
           </button>
           <button
-            class="flex justify-center items-center w-8 h-8 bg-white rounded-lg border cursor-not-allowed border-slate-200 dark:border-gray-600 dark:bg-gray-800 text-slate-500"
+            type="button"
+            disabled
+            aria-label="Next page"
+            class="flex justify-center items-center w-8 h-8 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-400 disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            <span class="text-lg material-symbols-outlined">chevron_right</span>
+            <span class="text-lg material-symbols-outlined" aria-hidden="true">chevron_right</span>
           </button>
         </div>
       </div>
@@ -352,10 +422,12 @@
             Reject Leave Request
           </h2>
           <button
+            type="button"
             (click)="closeRejectModal()"
-            class="transition-colors text-slate-500 hover:text-slate-600"
+            aria-label="Close reject modal"
+            class="transition-colors text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 rounded"
           >
-            <span class="material-symbols-outlined">close</span>
+            <span class="material-symbols-outlined" aria-hidden="true">close</span>
           </button>
         </div>
         <div class="p-6">
@@ -382,12 +454,14 @@
           </div>
           <div class="mb-6">
             <label
-              class="block mb-2 text-sm font-semibold text-slate-700 dark:text-gray-300"
+              for="rejectionReason"
+              class="block mb-2 text-sm font-semibold text-zinc-700 dark:text-zinc-300"
               >Reason for Rejection *</label
             >
             <textarea
+              id="rejectionReason"
               [(ngModel)]="rejectionReason"
-              class="px-4 py-3 w-full text-sm rounded-xl border-slate-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-red-500 focus:border-red-500 placeholder:text-slate-500"
+              class="px-4 py-3 w-full text-sm rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 dark:text-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 focus:outline-none placeholder:text-zinc-400"
               placeholder="Please provide a reason for rejecting this request..."
               rows="4"
             ></textarea>
@@ -400,26 +474,30 @@
             </p>
             <div class="flex flex-wrap gap-2">
               <button
+                type="button"
                 (click)="addQuickReason('Inadequate staffing')"
-                class="px-3 py-1.5 text-xs font-medium rounded-full border transition-all border-slate-200 dark:border-gray-600 text-slate-600 dark:text-gray-400 hover:border-red-200 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600"
+                class="px-3 py-1.5 text-xs font-medium rounded-full border transition-all border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:border-red-200 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600"
               >
                 Inadequate staffing
               </button>
               <button
+                type="button"
                 (click)="addQuickReason('Peak workload period')"
-                class="px-3 py-1.5 text-xs font-medium rounded-full border transition-all border-slate-200 dark:border-gray-600 text-slate-600 dark:text-gray-400 hover:border-red-200 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600"
+                class="px-3 py-1.5 text-xs font-medium rounded-full border transition-all border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:border-red-200 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600"
               >
                 Peak workload period
               </button>
               <button
+                type="button"
                 (click)="addQuickReason('Missing information')"
-                class="px-3 py-1.5 text-xs font-medium rounded-full border transition-all border-slate-200 dark:border-gray-600 text-slate-600 dark:text-gray-400 hover:border-red-200 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600"
+                class="px-3 py-1.5 text-xs font-medium rounded-full border transition-all border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:border-red-200 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600"
               >
                 Missing information
               </button>
               <button
+                type="button"
                 (click)="addQuickReason('Incorrect dates')"
-                class="px-3 py-1.5 text-xs font-medium rounded-full border transition-all border-slate-200 dark:border-gray-600 text-slate-600 dark:text-gray-400 hover:border-red-200 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600"
+                class="px-3 py-1.5 text-xs font-medium rounded-full border transition-all border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:border-red-200 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600"
               >
                 Incorrect dates
               </button>
@@ -430,15 +508,17 @@
           class="flex justify-between items-center px-6 py-4 border-t bg-slate-50 dark:bg-gray-700 border-slate-100 dark:border-gray-600"
         >
           <button
+            type="button"
             (click)="closeRejectModal()"
-            class="px-5 py-2.5 text-sm font-semibold rounded-lg transition-colors text-slate-600 dark:text-gray-400 hover:bg-slate-200 dark:hover:bg-gray-600"
+            class="px-5 py-2.5 text-sm font-semibold rounded-lg transition-colors text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-700"
           >
             Cancel
           </button>
           <button
+            type="button"
             (click)="confirmRejection()"
             [disabled]="!rejectionReason.trim()"
-            class="px-6 py-2.5 text-sm font-bold text-white bg-red-600 rounded-lg shadow-lg transition-all hover:bg-red-700 shadow-red-200 dark:shadow-none disabled:opacity-50"
+            class="px-6 py-2.5 text-sm font-bold text-white bg-red-600 rounded-lg shadow-lg transition-all hover:bg-red-700 disabled:opacity-50"
           >
             Confirm Rejection
           </button>
