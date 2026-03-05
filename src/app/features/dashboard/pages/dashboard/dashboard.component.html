@@ -9,16 +9,16 @@
       <div class="space-y-2">
         <p class="label-overline text-violet-500">HR Management Dashboard</p>
         <h1
-          class="flex gap-3 items-center text-4xl font-black tracking-tighter lg:text-5xl text-slate-900 dark:text-white"
+          class="flex gap-3 items-center text-4xl font-black tracking-tighter lg:text-5xl text-zinc-900 dark:text-white"
         >
           Hi, <span class="text-gradient-primary">{{ userDisplayName }}</span>
           <span class="animate-bounce inline-block">👋</span>
         </h1>
-        <p class="text-base font-medium text-slate-500 dark:text-slate-400">
+        <p class="text-base font-medium text-zinc-500 dark:text-zinc-400">
           Here's what's happening in your organization today.
         </p>
       </div>
-      <div class="flex gap-3">
+        <div class="flex gap-3">
         <button
           type="button"
           aria-label="View current date"
@@ -28,6 +28,7 @@
           {{ today | date: "MMM d, y" }}
         </button>
         <button
+          *appHasRole="['Admin', 'HR']"
           type="button"
           routerLink="/employees/add"
           class="btn-glow flex gap-2 items-center px-5 py-2.5 text-sm font-bold text-white rounded-xl bg-gradient-premium shadow-lg shadow-violet-600/30"
@@ -35,7 +36,7 @@
           <span class="text-lg material-symbols-outlined" aria-hidden="true">add</span>
           Add Employee
         </button>
-      </div>
+        </div>
     </header>
 
     <!-- Stats Grid -->
@@ -588,47 +589,299 @@
       }
     </section>
 
-    <!-- Fallback if not Admin/HR -->
+    <!-- Employee Self-Service Dashboard -->
     <div
       *appHasRole="['Employee']"
-      class="glass-panel p-20 rounded-[3rem] text-center space-y-8 shadow-premium"
+      class="space-y-8"
     >
-      <div
-        class="flex justify-center items-center mx-auto w-32 h-32 rounded-full ring-8 bg-primary/10 ring-primary/5"
-      >
-        <span class="text-6xl material-symbols-outlined text-primary"
-          >analytics</span
-        >
-      </div>
-      <div class="space-y-2">
-        <h2
-          class="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white"
-        >
-          Employee Insights
-        </h2>
-        <p
-          class="mx-auto max-w-lg font-medium text-slate-500 dark:text-slate-400"
-        >
-          Coming soon: personalized productivity metrics, team availability, and
-          upcoming goal tracking.
-        </p>
-      </div>
-      <div class="flex gap-4 justify-center">
-        <button
-          type="button"
-          routerLink="/employees"
-          class="px-8 py-3 font-bold text-white rounded-2xl shadow-lg transition-all bg-slate-900 dark:bg-white dark:text-slate-900 hover:scale-105"
-        >
-          My Profile
-        </button>
-        <button
-          type="button"
-          routerLink="/leave/request"
-          class="px-8 py-3 font-bold bg-white rounded-2xl border shadow-sm transition-all dark:bg-slate-900 text-slate-900 dark:text-white border-slate-200 dark:border-slate-800 hover:scale-105"
-        >
-          Request Time Off
-        </button>
-      </div>
+      <!-- Loading skeleton -->
+      @if (isEmployeeDataLoading) {
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
+          @for (i of [1,2,3]; track i) {
+            <div class="p-6 rounded-3xl glass-panel shadow-soft">
+              <div class="space-y-4">
+                <div class="w-32 skeleton-text"></div>
+                <div class="w-20 skeleton-title"></div>
+                <div class="w-full skeleton h-2 rounded"></div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      @if (!isEmployeeDataLoading) {
+        <!-- Quick Stats Row -->
+        <section class="grid grid-cols-1 gap-6 sm:grid-cols-3">
+          <!-- Today Attendance -->
+          <div class="elevated-card overflow-hidden relative p-6 rounded-2xl glass-panel shadow-soft card-accent-violet">
+            <div class="absolute -top-10 -right-10 w-36 h-36 rounded-full blur-3xl opacity-[0.12] bg-violet-400 pointer-events-none"></div>
+            <div class="relative z-10">
+              <div class="flex justify-between items-start mb-5">
+                <span class="flex justify-center items-center p-3 rounded-xl icon-bg-violet">
+                  <span class="material-symbols-outlined text-2xl">fingerprint</span>
+                </span>
+                <span class="px-2.5 py-1 text-xs font-bold rounded-full"
+                  [ngClass]="todayStatus.hasCheckedIn ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400'">
+                  {{ todayStatus.hasCheckedIn ? 'Checked In' : 'Not Yet' }}
+                </span>
+              </div>
+              <p class="label-overline mb-2">Today's Attendance</p>
+              <h2 class="number-display text-violet-700 dark:text-violet-400">
+                {{ todayStatus.checkInTime ? (todayStatus.checkInTime | date:'HH:mm') : '--:--' }}
+              </h2>
+              <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+                @if (todayStatus.hasCheckedOut) {
+                  Out: {{ todayStatus.checkOutTime | date:'HH:mm' }}
+                } @else if (todayStatus.hasCheckedIn) {
+                  Still working...
+                } @else {
+                  Haven't checked in yet
+                }
+              </p>
+            </div>
+          </div>
+
+          <!-- Latest Payslip -->
+          <div class="elevated-card overflow-hidden relative p-6 rounded-2xl glass-panel shadow-soft card-accent-emerald">
+            <div class="absolute -top-10 -right-10 w-36 h-36 rounded-full blur-3xl opacity-[0.12] bg-emerald-400 pointer-events-none"></div>
+            <div class="relative z-10">
+              <div class="flex justify-between items-start mb-5">
+                <span class="flex justify-center items-center p-3 rounded-xl icon-bg-emerald">
+                  <span class="material-symbols-outlined text-2xl">payments</span>
+                </span>
+                <span class="px-2.5 py-1 text-xs font-bold rounded-full"
+                  [ngClass]="myLatestPayroll?.status === 'Paid' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'">
+                  {{ myLatestPayroll?.status || 'N/A' }}
+                </span>
+              </div>
+              <p class="label-overline mb-2">Net Salary · {{ myLatestPayroll?.month || '–' }}</p>
+              <h2 class="number-display text-emerald-700 dark:text-emerald-400">
+                {{ myLatestPayroll ? (myLatestPayroll.finalNetSalary | currency:'VND':'symbol':'1.0-0') : '–' }}
+              </h2>
+              <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+                Gross: {{ myLatestPayroll ? (myLatestPayroll.grossIncome | currency:'VND':'symbol':'1.0-0') : '–' }}
+              </p>
+            </div>
+          </div>
+
+          <!-- Leave Requests -->
+          <div class="elevated-card overflow-hidden relative p-6 rounded-2xl glass-panel shadow-soft card-accent-amber">
+            <div class="absolute -top-10 -right-10 w-36 h-36 rounded-full blur-3xl opacity-[0.12] bg-amber-400 pointer-events-none"></div>
+            <div class="relative z-10">
+              <div class="flex justify-between items-start mb-5">
+                <span class="flex justify-center items-center p-3 rounded-xl icon-bg-amber">
+                  <span class="material-symbols-outlined text-2xl">event_available</span>
+                </span>
+                <span class="px-2.5 py-1 text-xs font-bold rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+                  {{ myLeaveRequests.length }} requests
+                </span>
+              </div>
+              <p class="label-overline mb-2">Leave Requests</p>
+              <h2 class="number-display text-amber-700 dark:text-amber-400">
+                {{ myLeaveRequests.length }}
+              </h2>
+              <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Recent history</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- My Shift & My Payroll -->
+        <section class="grid grid-cols-1 gap-8 lg:grid-cols-2">
+          <!-- My Shift -->
+          <div class="p-8 rounded-3xl glass-panel shadow-soft">
+            <div class="flex justify-between items-center mb-6">
+              <div class="space-y-1">
+                <p class="label-overline text-violet-500">Today</p>
+                <h3 class="text-xl font-black tracking-tight text-zinc-900 dark:text-white">My Shift</h3>
+              </div>
+              <a routerLink="/attendance/check-in"
+                class="flex gap-2 items-center px-4 py-2 text-sm font-bold text-violet-600 bg-violet-50 dark:bg-violet-900/20 rounded-xl hover:bg-violet-100 dark:hover:bg-violet-900/30 transition-colors">
+                <span class="text-base material-symbols-outlined">login</span>
+                Check In/Out
+              </a>
+            </div>
+            <div class="space-y-4">
+              <!-- Check-in status -->
+              <div class="flex items-center justify-between p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-100 dark:border-zinc-800">
+                <div class="flex items-center gap-3">
+                  <div class="flex items-center justify-center w-10 h-10 rounded-xl"
+                    [ngClass]="todayStatus.hasCheckedIn ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600' : 'bg-zinc-100 dark:bg-zinc-700 text-zinc-400'">
+                    <span class="material-symbols-outlined text-lg">login</span>
+                  </div>
+                  <div>
+                    <p class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Check-In</p>
+                    <p class="text-sm font-bold text-zinc-900 dark:text-white">
+                      {{ todayStatus.checkInTime ? (todayStatus.checkInTime | date:'HH:mm') : '–' }}
+                    </p>
+                  </div>
+                </div>
+                <span class="px-2.5 py-1 text-xs font-bold rounded-full"
+                  [ngClass]="todayStatus.hasCheckedIn ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-zinc-100 text-zinc-500 dark:bg-zinc-700 dark:text-zinc-400'">
+                  {{ todayStatus.hasCheckedIn ? 'Done' : 'Pending' }}
+                </span>
+              </div>
+              <!-- Check-out status -->
+              <div class="flex items-center justify-between p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-100 dark:border-zinc-800">
+                <div class="flex items-center gap-3">
+                  <div class="flex items-center justify-center w-10 h-10 rounded-xl"
+                    [ngClass]="todayStatus.hasCheckedOut ? 'bg-sky-100 dark:bg-sky-900/30 text-sky-600' : 'bg-zinc-100 dark:bg-zinc-700 text-zinc-400'">
+                    <span class="material-symbols-outlined text-lg">logout</span>
+                  </div>
+                  <div>
+                    <p class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Check-Out</p>
+                    <p class="text-sm font-bold text-zinc-900 dark:text-white">
+                      {{ todayStatus.checkOutTime ? (todayStatus.checkOutTime | date:'HH:mm') : '–' }}
+                    </p>
+                  </div>
+                </div>
+                <span class="px-2.5 py-1 text-xs font-bold rounded-full"
+                  [ngClass]="todayStatus.hasCheckedOut ? 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400' : 'bg-zinc-100 text-zinc-500 dark:bg-zinc-700 dark:text-zinc-400'">
+                  {{ todayStatus.hasCheckedOut ? 'Done' : 'Pending' }}
+                </span>
+              </div>
+            </div>
+            <!-- Quick links -->
+            <div class="mt-6 pt-5 border-t border-zinc-100 dark:border-zinc-800">
+              <p class="label-overline text-zinc-400 mb-3">Quick Links</p>
+              <div class="flex gap-3">
+                <a routerLink="/attendance/my-history"
+                  class="flex gap-2 items-center px-3 py-2 text-xs font-bold text-zinc-600 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">
+                  <span class="text-sm material-symbols-outlined">history</span>My History
+                </a>
+                <a routerLink="/leaves"
+                  class="flex gap-2 items-center px-3 py-2 text-xs font-bold text-zinc-600 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">
+                  <span class="text-sm material-symbols-outlined">event_available</span>Leave Request
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- My Payroll -->
+          <div class="p-8 rounded-3xl glass-panel shadow-soft">
+            <div class="flex justify-between items-center mb-6">
+              <div class="space-y-1">
+                <p class="label-overline text-emerald-500">Latest Payslip</p>
+                <h3 class="text-xl font-black tracking-tight text-zinc-900 dark:text-white">My Payroll</h3>
+              </div>
+              <a routerLink="/profile"
+                class="flex gap-2 items-center px-4 py-2 text-sm font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition-colors">
+                <span class="text-base material-symbols-outlined">receipt_long</span>
+                View Profile
+              </a>
+            </div>
+            @if (myLatestPayroll) {
+              <div class="space-y-3">
+                <div class="flex justify-between items-center py-3 border-b border-zinc-100 dark:border-zinc-800">
+                  <span class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Month</span>
+                  <span class="text-sm font-bold text-zinc-900 dark:text-white">{{ myLatestPayroll.month }}</span>
+                </div>
+                <div class="flex justify-between items-center py-3 border-b border-zinc-100 dark:border-zinc-800">
+                  <span class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Gross Income</span>
+                  <span class="text-sm font-bold text-zinc-900 dark:text-white">{{ myLatestPayroll.grossIncome | currency:'VND':'symbol':'1.0-0' }}</span>
+                </div>
+                <div class="flex justify-between items-center py-3 border-b border-zinc-100 dark:border-zinc-800">
+                  <span class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Total Deductions</span>
+                  <span class="text-sm font-bold text-rose-600 dark:text-rose-400">-{{ myLatestPayroll.totalDeductions | currency:'VND':'symbol':'1.0-0' }}</span>
+                </div>
+                <div class="flex justify-between items-center py-4 rounded-2xl px-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-900/40">
+                  <span class="text-sm font-black text-zinc-700 dark:text-zinc-200 uppercase tracking-widest">Net Salary</span>
+                  <span class="text-lg font-black text-emerald-700 dark:text-emerald-400">{{ myLatestPayroll.finalNetSalary | currency:'VND':'symbol':'1.0-0' }}</span>
+                </div>
+                <div class="flex justify-between items-center pt-2">
+                  <span class="text-xs text-zinc-400">{{ myLatestPayroll.actualWorkingDays }} working days</span>
+                  <span class="px-2.5 py-1 text-xs font-bold rounded-full"
+                    [ngClass]="myLatestPayroll.status === 'Paid' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'">
+                    {{ myLatestPayroll.status }}
+                  </span>
+                </div>
+              </div>
+            } @else {
+              <div class="flex flex-col items-center justify-center py-12 text-center">
+                <span class="material-symbols-outlined text-4xl text-zinc-300 dark:text-zinc-600 mb-3">receipt_long</span>
+                <p class="text-sm font-bold text-zinc-500">No payslip data available yet</p>
+              </div>
+            }
+          </div>
+        </section>
+
+        <!-- Recent Leave Requests -->
+        <section class="p-8 rounded-3xl glass-panel shadow-soft">
+          <div class="flex justify-between items-center mb-6">
+            <div class="space-y-1">
+              <p class="label-overline text-amber-500">History</p>
+              <h3 class="text-xl font-black tracking-tight text-zinc-900 dark:text-white">Recent Leave Requests</h3>
+            </div>
+            <a routerLink="/leaves"
+              class="flex gap-2 items-center px-4 py-2 text-sm font-bold text-amber-600 bg-amber-50 dark:bg-amber-900/20 rounded-xl hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors">
+              <span class="text-base material-symbols-outlined">add</span>
+              New Request
+            </a>
+          </div>
+          @if (myLeaveRequests.length > 0) {
+            <div class="overflow-x-auto">
+              <table class="w-full">
+                <thead>
+                  <tr class="border-b border-zinc-100 dark:border-zinc-800">
+                    <th class="pb-3 text-left label-overline text-zinc-500 dark:text-zinc-400">Type</th>
+                    <th class="pb-3 text-left label-overline text-zinc-500 dark:text-zinc-400">From</th>
+                    <th class="pb-3 text-left label-overline text-zinc-500 dark:text-zinc-400">To</th>
+                    <th class="pb-3 text-left label-overline text-zinc-500 dark:text-zinc-400">Days</th>
+                    <th class="pb-3 text-left label-overline text-zinc-500 dark:text-zinc-400">Status</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
+                  @for (req of myLeaveRequests; track req.id) {
+                    <tr class="transition-all hover:bg-violet-50/30 dark:hover:bg-zinc-800/40">
+                      <td class="py-3 pr-4 text-sm font-bold text-zinc-900 dark:text-white">{{ req.type }}</td>
+                      <td class="py-3 pr-4 text-sm text-zinc-600 dark:text-zinc-400">{{ req.startDate | date:'dd/MM/yyyy' }}</td>
+                      <td class="py-3 pr-4 text-sm text-zinc-600 dark:text-zinc-400">{{ req.endDate | date:'dd/MM/yyyy' }}</td>
+                      <td class="py-3 pr-4 text-sm font-bold text-zinc-700 dark:text-zinc-300">{{ req.days }}</td>
+                      <td class="py-3">
+                        <span class="px-2.5 py-1 text-xs font-bold rounded-full"
+                          [ngClass]="{
+                            'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400': req.status === 'Approved',
+                            'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400': req.status === 'Rejected',
+                            'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400': req.status === 'Pending'
+                          }">{{ req.status }}</span>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          } @else {
+            <div class="flex flex-col items-center justify-center py-12 text-center">
+              <span class="material-symbols-outlined text-4xl text-zinc-300 dark:text-zinc-600 mb-3">event_available</span>
+              <p class="text-sm font-bold text-zinc-500">No leave requests found</p>
+              <a routerLink="/leaves" class="mt-3 text-sm font-bold text-violet-600 hover:underline">Submit your first request</a>
+            </div>
+          }
+        </section>
+
+        <!-- Quick Actions -->
+        <section class="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <a routerLink="/profile"
+            class="flex flex-col gap-3 items-start p-5 rounded-2xl border transition-all cursor-pointer border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/50 hover:bg-violet-50 hover:border-violet-200 dark:hover:bg-violet-900/20 group">
+            <span class="material-symbols-outlined text-zinc-400 group-hover:text-violet-600 transition-colors text-2xl">person</span>
+            <span class="text-xs font-bold uppercase tracking-widest text-zinc-600 dark:text-zinc-400 group-hover:text-violet-600 transition-colors">My Profile</span>
+          </a>
+          <a routerLink="/leaves"
+            class="flex flex-col gap-3 items-start p-5 rounded-2xl border transition-all cursor-pointer border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/50 hover:bg-amber-50 hover:border-amber-200 dark:hover:bg-amber-900/20 group">
+            <span class="material-symbols-outlined text-zinc-400 group-hover:text-amber-600 transition-colors text-2xl">event_available</span>
+            <span class="text-xs font-bold uppercase tracking-widest text-zinc-600 dark:text-zinc-400 group-hover:text-amber-600 transition-colors">Request Leave</span>
+          </a>
+          <a routerLink="/attendance/check-in"
+            class="flex flex-col gap-3 items-start p-5 rounded-2xl border transition-all cursor-pointer border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/50 hover:bg-emerald-50 hover:border-emerald-200 dark:hover:bg-emerald-900/20 group">
+            <span class="material-symbols-outlined text-zinc-400 group-hover:text-emerald-600 transition-colors text-2xl">login</span>
+            <span class="text-xs font-bold uppercase tracking-widest text-zinc-600 dark:text-zinc-400 group-hover:text-emerald-600 transition-colors">Check In/Out</span>
+          </a>
+          <a routerLink="/attendance/my-history"
+            class="flex flex-col gap-3 items-start p-5 rounded-2xl border transition-all cursor-pointer border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/50 hover:bg-sky-50 hover:border-sky-200 dark:hover:bg-sky-900/20 group">
+            <span class="material-symbols-outlined text-zinc-400 group-hover:text-sky-600 transition-colors text-2xl">history</span>
+            <span class="text-xs font-bold uppercase tracking-widest text-zinc-600 dark:text-zinc-400 group-hover:text-sky-600 transition-colors">My History</span>
+          </a>
+        </section>
+      }
     </div>
   </main>
 </div>

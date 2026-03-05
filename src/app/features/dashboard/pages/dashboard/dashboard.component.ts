@@ -1,5 +1,5 @@
 import { Component, OnInit, ElementRef, ViewChild, AfterViewInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, effect } from '@angular/core';
-import { NgClass, DatePipe } from '@angular/common';
+import { NgClass, DatePipe, CurrencyPipe } from '@angular/common';
 import { HasRoleDirective } from '@core/directives/has-role.directive';
 
 import { DashboardService, SummaryCard, RecruitmentStats, JobVacancy, OngoingProcess, DashboardEvent, DashboardLeave, Interview, NewHire, PendingRequest, DashboardAnalytics, AttendanceTrend } from '@features/dashboard/services/dashboard.service';
@@ -10,8 +10,11 @@ import { LoggerService } from '@core/services/logger.service';
 import { AuthService } from '@core/services/auth.service';
 import { ThemeService } from '@core/services/theme.service';
 import { User } from '@core/models/user.model';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { MyAttendanceService, TodayAttendanceStatus } from '@features/attendance/services/my-attendance.service';
+import { PayrollService, Payroll } from '@features/payroll/services/payroll.service';
+import { LeaveRequestService, LeaveRequest } from '@features/leave/services/leave-request.service';
+import { Subject, forkJoin, of } from 'rxjs';
+import { takeUntil, catchError } from 'rxjs/operators';
 
 Chart.register(...registerables);
 
@@ -50,7 +53,7 @@ import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [NgClass, DatePipe,
+  imports: [NgClass, DatePipe, CurrencyPipe,
     ButtonModule, ChartModule, TableModule, TagModule, MenuModule, RouterModule, HasRoleDirective],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
@@ -81,6 +84,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   pendingRequests: PendingRequest[] = [];
   analytics?: DashboardAnalytics;
 
+  // ── Employee self-service data ─────────────────────────────────────────────
+  todayStatus: TodayAttendanceStatus = { hasCheckedIn: false, hasCheckedOut: false, checkInTime: null, checkOutTime: null };
+  myLatestPayroll: Payroll | null = null;
+  myLeaveRequests: LeaveRequest[] = [];
+  isEmployeeDataLoading = true;
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   chartData!: Record<string, any>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -105,7 +114,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       private logger: LoggerService,
       private authService: AuthService,
       private cdr: ChangeDetectorRef,
-      private themeService: ThemeService
+      private themeService: ThemeService,
+      private myAttendanceService: MyAttendanceService,
+      private payrollService: PayrollService,
+      private leaveRequestService: LeaveRequestService
   ) {
     // Re-initialise chart colours whenever dark/light mode changes
     effect(() => {
@@ -127,12 +139,18 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.currentUser = user;
         this.userDisplayName = user.fullName || user.username;
         const roles = user.roles || [];
+        const isAdminOrHR = roles.includes('Admin') || roles.includes('HR');
+        const isEmployee = !isAdminOrHR;
         
         // Only load dashboard data once for Admin or HR
-        if (!this.dashboardLoaded && (roles.includes('Admin') || roles.includes('HR'))) {
+        if (!this.dashboardLoaded && isAdminOrHR) {
           this.dashboardLoaded = true;
           this.loadDashboardData();
           this.loadAuditLogs();
+        }
+        // Load self-service data for employee role
+        if (isEmployee) {
+          this.loadEmployeeData();
         }
         this.cdr.markForCheck();
       }
@@ -183,6 +201,21 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
               this.cdr.markForCheck();
           }
       });
+  }
+
+  loadEmployeeData() {
+    this.isEmployeeDataLoading = true;
+    forkJoin({
+      attendance: this.myAttendanceService.getTodayStatus().pipe(catchError(() => of({ hasCheckedIn: false, hasCheckedOut: false, checkInTime: null, checkOutTime: null }))),
+      payrolls:   this.payrollService.getMyPayrolls().pipe(catchError(() => of([]))),
+      leaves:     this.leaveRequestService.getLeaveHistory().pipe(catchError(() => of([])))
+    }).pipe(takeUntil(this.destroy$)).subscribe(({ attendance, payrolls, leaves }) => {
+      this.todayStatus    = attendance;
+      this.myLatestPayroll = payrolls.length > 0 ? payrolls[0] : null;
+      this.myLeaveRequests = leaves.slice(0, 3);
+      this.isEmployeeDataLoading = false;
+      this.cdr.markForCheck();
+    });
   }
 
   ngAfterViewInit() {
