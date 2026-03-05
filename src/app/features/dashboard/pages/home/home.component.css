@@ -42,12 +42,15 @@
 
 /* Infinite marquee for trusted companies */
 @keyframes trusted-scroll {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
 }
 
 .trusted-marquee {
-  animation: trusted-scroll 22s linear infinite;
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: trusted-scroll 25s linear infinite;
 }
 
 .trusted-marquee:hover {
@@ -56,12 +59,15 @@
 
 /* Infinite marquee ticker for module pills */
 @keyframes marquee-scroll {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
 }
 
 .module-marquee {
-  animation: marquee-scroll 28s linear infinite;
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: marquee-scroll 32s linear infinite;
 }
 
 /* Pause on hover so users can read & click */
