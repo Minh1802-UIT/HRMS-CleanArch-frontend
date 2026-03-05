@@ -349,24 +349,40 @@
         </h2>
       </div>
 
-      <!-- Pill Tab Navigation -->
-      <div class="mb-10 relative">
-        <div
-          id="module-slider"
-          class="flex overflow-x-auto gap-2 pb-2 no-scrollbar scroll-smooth"
-        >
-          <!-- left fade -->
-          <div class="absolute left-0 top-0 h-full w-8 bg-gradient-to-r from-zinc-950 to-transparent pointer-events-none z-10"></div>
-          <!-- right fade -->
-          <div class="absolute right-0 top-0 h-full w-8 bg-gradient-to-l from-zinc-950 to-transparent pointer-events-none z-10"></div>
+      <!-- Pill Tab Navigation (Infinite Marquee) -->
+      <div class="mb-10 relative overflow-hidden py-1">
+        <!-- Left edge fade -->
+        <div class="absolute left-0 top-0 h-full w-24 bg-gradient-to-r from-zinc-950 to-transparent pointer-events-none z-10"></div>
+        <!-- Right edge fade -->
+        <div class="absolute right-0 top-0 h-full w-24 bg-gradient-to-l from-zinc-950 to-transparent pointer-events-none z-10"></div>
 
-          @for (module of moduleFeatures; track module.id; let i = $index) {
+        <!-- Marquee track: 2 identical copies for seamless loop -->
+        <div class="module-marquee flex gap-3 w-max">
+          <!-- Copy 1 -->
+          @for (module of moduleFeatures; track 'a-' + module.id; let i = $index) {
             <button
               type="button"
               class="module-item flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-200"
               [ngClass]="i === activeModuleIndex()
                 ? 'bg-violet-600 text-white shadow-lg shadow-violet-600/30'
-                : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200 border border-zinc-700'"
+                : 'bg-zinc-800/80 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200 border border-zinc-700'"
+              (click)="setActiveModule(i)"
+            >
+              <i class="pi {{ module.icon }} text-xs"
+                [ngClass]="i === activeModuleIndex() ? 'text-violet-200' : 'text-zinc-500'"
+              ></i>
+              {{ module.name }}
+            </button>
+          }
+          <!-- Copy 2 (duplicate for seamless loop) -->
+          @for (module of moduleFeatures; track 'b-' + module.id; let i = $index) {
+            <button
+              type="button"
+              aria-hidden="true"
+              class="module-item flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-200"
+              [ngClass]="i === activeModuleIndex()
+                ? 'bg-violet-600 text-white shadow-lg shadow-violet-600/30'
+                : 'bg-zinc-800/80 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200 border border-zinc-700'"
               (click)="setActiveModule(i)"
             >
               <i class="pi {{ module.icon }} text-xs"

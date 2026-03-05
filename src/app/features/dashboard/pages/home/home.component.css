@@ -40,3 +40,18 @@
   scrollbar-width: none;  /* Firefox */
 }
 
+/* Infinite marquee ticker for module pills */
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.module-marquee {
+  animation: marquee-scroll 28s linear infinite;
+}
+
+/* Pause on hover so users can read & click */
+.module-marquee:hover {
+  animation-play-state: paused;
+}
+
