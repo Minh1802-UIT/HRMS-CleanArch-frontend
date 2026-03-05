@@ -23,6 +23,17 @@ export class LayoutService {
   // Computed property for dark theme status
   isDarkTheme = computed(() => this.layoutConfig().darkTheme);
 
+  // Mobile sidebar drawer state
+  mobileSidebarOpen = signal<boolean>(false);
+
+  toggleMobileSidebar(): void {
+    this.mobileSidebarOpen.update(v => !v);
+  }
+
+  closeMobileSidebar(): void {
+    this.mobileSidebarOpen.set(false);
+  }
+
   // Observables for menu state
   private menuSource = new Subject<MenuStateChange>();
   menuSource$ = this.menuSource.asObservable();

@@ -1,12 +1,19 @@
 ﻿<!-- Slim Top Bar -->
 <header
-  class="flex items-center justify-between h-14 px-6 bg-[#0a0a0f] border-b border-zinc-800 flex-shrink-0 z-30"
+  class="flex items-center justify-between h-14 px-4 md:px-6 bg-[#0a0a0f] border-b border-zinc-800 flex-shrink-0 z-30"
 >
-  <!-- Left: Page Title -->
-  <div class="flex items-center gap-3 min-w-0">
-    <span class="text-[13px] font-semibold text-zinc-200 truncate">{{
-      pageTitle
-    }}</span>
+  <!-- Left: Hamburger (mobile) + Page Title -->
+  <div class="flex items-center gap-2 md:gap-3 min-w-0">
+    <!-- Hamburger: only visible on mobile -->
+    <button
+      type="button"
+      class="md:hidden flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors flex-shrink-0"
+      aria-label="Toggle sidebar"
+      (click)="layoutService.toggleMobileSidebar()"
+    >
+      <span class="material-symbols-outlined text-[20px]">menu</span>
+    </button>
+    <span class="text-[13px] font-semibold text-zinc-200 truncate">{{ pageTitle }}</span>
   </div>
 
   <!-- Right: Actions -->

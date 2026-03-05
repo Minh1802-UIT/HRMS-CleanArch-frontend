@@ -9,9 +9,10 @@ import {
 } from '@angular/core';
 import { CommonModule, NgClass } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
-import { Subject, takeUntil } from 'rxjs';
+import { LayoutService } from '../layout.service';
+import { Subject, takeUntil, filter } from 'rxjs';
 
 interface NavItem {
   label: string;
@@ -201,7 +202,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    public layoutService: LayoutService
   ) {}
 
   ngOnInit(): void {
@@ -210,6 +212,14 @@ export class SidebarComponent implements OnInit, OnDestroy {
       .subscribe((user) => {
         this.userRoles$.set(user?.roles ?? []);
       });
+
+    // Close mobile sidebar after any route navigation
+    this.router.events
+      .pipe(
+        filter(e => e instanceof NavigationEnd),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(() => this.layoutService.closeMobileSidebar());
   }
 
   ngOnDestroy(): void {

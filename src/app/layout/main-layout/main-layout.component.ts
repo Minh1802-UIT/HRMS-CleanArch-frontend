@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from
 import { RouterModule, RouterOutlet, ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { SharedNavbarComponent } from '@shared/components/shared-navbar/shared-navbar.component';
 import { SidebarComponent } from '../sidebar/sidebar.component';
+import { LayoutService } from '../layout.service';
 import { Subject, filter, map, takeUntil } from 'rxjs';
 
 @Component({
@@ -11,6 +12,15 @@ import { Subject, filter, map, takeUntil } from 'rxjs';
   imports: [RouterOutlet, RouterModule, SharedNavbarComponent, SidebarComponent],
   template: `
     <div class="flex h-screen overflow-hidden bg-zinc-50 dark:bg-[#09090b]">
+      <!-- Mobile sidebar backdrop -->
+      @if (layoutService.mobileSidebarOpen()) {
+        <div
+          class="fixed inset-0 bg-black/50 z-40 md:hidden"
+          (click)="layoutService.closeMobileSidebar()"
+          aria-hidden="true"
+        ></div>
+      }
+
       <!-- Left Sidebar -->
       <app-sidebar [activePage]="activePage"></app-sidebar>
 
@@ -35,7 +45,8 @@ export class MainLayoutComponent implements OnDestroy {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    public layoutService: LayoutService
   ) {
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd),
