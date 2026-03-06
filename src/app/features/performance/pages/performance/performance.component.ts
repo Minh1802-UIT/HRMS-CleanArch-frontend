@@ -21,6 +21,7 @@ export class PerformanceComponent implements OnInit, OnDestroy {
   activeTab: 'goals' | 'reviews' = 'goals';
   isLoading = true;
   currentUserId: string = '';
+  currentUserName: string = '';
   private destroy$ = new Subject<void>();
 
   // New Goal Modal
@@ -41,6 +42,7 @@ export class PerformanceComponent implements OnInit, OnDestroy {
     const user = this.authService.user();
     if (user) {
       this.currentUserId = user.id;
+      this.currentUserName = user.fullName || user.username || '';
       this.loadData();
     }
   }

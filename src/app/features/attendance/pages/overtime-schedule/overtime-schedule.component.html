@@ -1,0 +1,188 @@
+<div class="p-6 max-w-[1200px] mx-auto">
+
+  <!-- Header -->
+  <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <p class="label-overline text-violet-500 mb-1">Attendance</p>
+      <h1 class="text-2xl font-black tracking-tight text-zinc-900 dark:text-white">
+        Lịch Tăng Ca (OT)
+      </h1>
+      <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
+        Chỉ những ngày được đăng ký tại đây mới tính giờ OT khi nhân viên checkout lố giờ ca.
+      </p>
+    </div>
+  </div>
+
+  <!-- Add form card -->
+  <div class="glass-panel rounded-2xl p-5 mb-6 border border-zinc-200 dark:border-zinc-700">
+    <h2 class="text-sm font-black text-zinc-800 dark:text-white mb-4 flex items-center gap-2">
+      <span class="material-symbols-outlined text-base text-violet-500">more_time</span>
+      Thêm ngày OT
+    </h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+      <!-- Employee selector -->
+      <div class="relative lg:col-span-2">
+        <label class="block text-xs font-bold text-zinc-500 dark:text-zinc-400 mb-1">Nhân viên *</label>
+        <input
+          type="text"
+          [value]="employeeQuery"
+          (input)="onEmployeeInput($any($event.target).value)"
+          (blur)="showSuggestions = false"
+          placeholder="Tìm theo tên hoặc mã..."
+          autocomplete="off"
+          class="w-full px-3 py-2 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm text-zinc-800 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-violet-400"
+        />
+        @if (showSuggestions && employeeSuggestions.length > 0) {
+          <div class="absolute z-50 top-full mt-1 left-0 right-0 bg-white dark:bg-zinc-900 rounded-xl shadow-lg border border-zinc-200 dark:border-zinc-700 overflow-hidden max-h-52 overflow-y-auto">
+            @for (emp of employeeSuggestions; track emp.id) {
+              <button
+                type="button"
+                (mousedown)="selectEmployee(emp)"
+                class="w-full text-left px-4 py-2.5 text-sm hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
+              >
+                <span class="font-bold text-zinc-800 dark:text-white">{{ emp.fullName }}</span>
+                <span class="ml-2 text-xs text-zinc-400">({{ emp.employeeCode }})</span>
+              </button>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Date picker -->
+      <div>
+        <label class="block text-xs font-bold text-zinc-500 dark:text-zinc-400 mb-1">Ngày OT *</label>
+        <input
+          type="date"
+          [(ngModel)]="selectedDate"
+          class="w-full px-3 py-2 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm text-zinc-800 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-violet-400"
+        />
+      </div>
+
+      <!-- Note -->
+      <div>
+        <label class="block text-xs font-bold text-zinc-500 dark:text-zinc-400 mb-1">Ghi chú</label>
+        <input
+          type="text"
+          [(ngModel)]="newNote"
+          placeholder="VD: Deadline dự án..."
+          maxlength="200"
+          class="w-full px-3 py-2 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm text-zinc-800 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-violet-400"
+        />
+      </div>
+    </div>
+
+    <div class="mt-4 flex justify-end">
+      <button
+        type="button"
+        (click)="addSchedule()"
+        [disabled]="!canAdd() || saving"
+        class="inline-flex items-center gap-2 px-5 py-2 bg-violet-600 hover:bg-violet-700 text-white text-sm font-bold rounded-xl transition-all shadow-md shadow-violet-500/20 disabled:opacity-40 disabled:cursor-not-allowed"
+      >
+        @if (saving) {
+          <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+        } @else {
+          <span class="material-symbols-outlined text-base">add</span>
+        }
+        Thêm ngày OT
+      </button>
+    </div>
+  </div>
+
+  <!-- Schedule list -->
+  <div class="glass-panel rounded-2xl border border-zinc-200 dark:border-zinc-700 overflow-hidden">
+
+    <!-- Table header row with month navigation -->
+    <div class="flex items-center justify-between px-5 py-4 border-b border-zinc-100 dark:border-zinc-800">
+      <div class="flex items-center gap-2 text-sm font-black text-zinc-800 dark:text-white">
+        <span class="material-symbols-outlined text-base text-violet-500">calendar_month</span>
+        Lịch OT tháng {{ formatMonthLabel(currentMonthKey) }}
+      </div>
+      <div class="flex items-center gap-2">
+        <button (click)="prevMonth()" class="p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors">
+          <span class="material-symbols-outlined text-sm text-zinc-500">chevron_left</span>
+        </button>
+        <span class="text-sm font-bold text-zinc-600 dark:text-zinc-300 min-w-[80px] text-center">
+          {{ formatMonthLabel(currentMonthKey) }}
+        </span>
+        <button (click)="nextMonth()" class="p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors">
+          <span class="material-symbols-outlined text-sm text-zinc-500">chevron_right</span>
+        </button>
+        <button (click)="load()" title="Refresh" class="p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors">
+          <span class="material-symbols-outlined text-sm text-zinc-500">refresh</span>
+        </button>
+      </div>
+    </div>
+
+    @if (loading) {
+      <div class="flex items-center justify-center py-16">
+        <div class="w-8 h-8 border-2 border-violet-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    } @else if (schedules.length === 0) {
+      <div class="flex flex-col items-center justify-center py-16 text-zinc-400">
+        <span class="material-symbols-outlined text-4xl mb-2">event_busy</span>
+        <p class="text-sm font-bold">Chưa có ngày OT nào được đăng ký</p>
+        <p class="text-xs mt-1">Thêm ngày OT ở form phía trên.</p>
+      </div>
+    } @else {
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-zinc-100 dark:border-zinc-800 text-left">
+              <th class="px-5 py-3 text-xs font-black text-zinc-400 uppercase tracking-wide">Nhân viên</th>
+              <th class="px-5 py-3 text-xs font-black text-zinc-400 uppercase tracking-wide">Ngày OT</th>
+              <th class="px-5 py-3 text-xs font-black text-zinc-400 uppercase tracking-wide">Ghi chú</th>
+              <th class="px-5 py-3 text-xs font-black text-zinc-400 uppercase tracking-wide">Đã tạo</th>
+              <th class="px-5 py-3 text-xs font-black text-zinc-400 uppercase tracking-wide"></th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-50 dark:divide-zinc-800">
+            @for (entry of schedules; track entry.id) {
+              <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
+                <td class="px-5 py-3">
+                  <span class="font-bold text-zinc-800 dark:text-zinc-100">
+                    {{ entry.employeeName ?? entry.employeeId }}
+                  </span>
+                </td>
+                <td class="px-5 py-3">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-violet-100 text-violet-700 border border-violet-200 dark:bg-violet-900/30 dark:text-violet-400 dark:border-violet-700">
+                    <span class="material-symbols-outlined text-xs">more_time</span>
+                    {{ formatDate(entry.date) }}
+                  </span>
+                </td>
+                <td class="px-5 py-3 text-zinc-500 dark:text-zinc-400 max-w-[260px] truncate">
+                  {{ entry.note || '—' }}
+                </td>
+                <td class="px-5 py-3 text-xs text-zinc-400 whitespace-nowrap">
+                  {{ formatDate(entry.createdAt) }}
+                </td>
+                <td class="px-5 py-3 text-right">
+                  <button
+                    type="button"
+                    (click)="deleteSchedule(entry)"
+                    title="Xoá lịch OT"
+                    class="inline-flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-bold border bg-red-50 text-red-600 border-red-200 dark:bg-red-900/20 dark:text-red-400 dark:border-red-700 hover:bg-red-100 dark:hover:bg-red-800/30 transition-colors"
+                  >
+                    <span class="material-symbols-outlined text-xs">delete</span>
+                    Xoá
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+
+  <!-- Info note -->
+  <div class="mt-4 flex items-start gap-2 text-xs text-zinc-400 dark:text-zinc-500">
+    <span class="material-symbols-outlined text-sm flex-shrink-0">info</span>
+    <span>
+      Khi nhân viên checkout lố giờ kết thúc ca, giờ OT chỉ được tính nếu ngày đó đã được
+      đăng ký tại đây. Các ngày không có trong danh sách sẽ không tính OT dù checkout muộn.
+    </span>
+  </div>
+
+</div>

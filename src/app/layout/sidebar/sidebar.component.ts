@@ -129,6 +129,13 @@ const ALL_GROUPS: NavGroup[] = [
         roles: ['Admin', 'HR', 'Manager'],
       },
       {
+        label: 'OT Schedule',
+        icon: 'more_time',
+        route: '/attendance/overtime-schedule',
+        activePage: 'overtime-schedule',
+        roles: ['Admin', 'HR'],
+      },
+      {
         label: 'Leave Reports',
         icon: 'summarize',
         route: '/admin/leave-reports',

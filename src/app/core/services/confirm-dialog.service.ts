@@ -9,6 +9,7 @@ export interface ConfirmOptions {
   cancelLabel?: string;
   type?: 'danger' | 'warning' | 'info' | 'success';
   icon?: string;
+  confirmClass?: string;
 }
 
 export interface ConfirmState extends ConfirmOptions {

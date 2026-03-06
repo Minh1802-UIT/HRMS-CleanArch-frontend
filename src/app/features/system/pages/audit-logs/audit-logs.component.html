@@ -200,9 +200,6 @@
                       >
                         {{ log.userName }}
                       </div>
-                      <div class="text-xs text-zinc-400 font-mono">
-                        {{ log.userId }}
-                      </div>
                     </div>
                   </div>
                 </td>
@@ -220,8 +217,11 @@
                   >
                     {{ log.tableName }}
                   </div>
-                  <div class="text-xs text-zinc-400 font-mono">
-                    ID: {{ log.recordId }}
+                  <div
+                    class="text-xs text-zinc-400 font-mono cursor-default"
+                    [title]="log.recordId"
+                  >
+                    #{{ log.recordId | slice:0:8 }}&hellip;
                   </div>
                 </td>
                 <td class="px-6 py-4">
@@ -349,7 +349,7 @@
         >{{ selectedLog.action }}</span>
         <div>
           <h2 class="text-base font-black text-zinc-900 dark:text-white leading-tight">Audit Log Detail</h2>
-          <p class="text-xs text-zinc-400 font-mono mt-0.5 truncate max-w-[280px]">{{ selectedLog.id }}</p>
+          <p class="text-xs text-zinc-400 font-mono mt-0.5">Log #{{ selectedLog.id | slice:0:8 }}</p>
         </div>
       </div>
       <button
@@ -391,7 +391,6 @@
               </div>
               <div class="min-w-0">
                 <p class="text-sm font-bold text-zinc-800 dark:text-zinc-100 truncate">{{ selectedLog.userName }}</p>
-                <p class="text-[10px] text-zinc-400 font-mono truncate">{{ selectedLog.userId }}</p>
               </div>
             </div>
           </div>
@@ -403,7 +402,14 @@
           <!-- Record ID -->
           <div class="col-span-2 rounded-xl bg-zinc-50 dark:bg-zinc-800 p-3.5">
             <p class="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1">Record ID</p>
-            <p class="text-xs font-mono text-zinc-600 dark:text-zinc-300 break-all">{{ selectedLog.recordId || '—' }}</p>
+            @if (selectedLog.recordId) {
+              <p
+                class="text-xs font-mono text-zinc-600 dark:text-zinc-300 cursor-default select-all"
+                [title]="selectedLog.recordId"
+              >#{{ selectedLog.recordId | slice:0:16 }}&hellip;</p>
+            } @else {
+              <p class="text-xs text-zinc-400">&mdash;</p>
+            }
           </div>
         </div>
       </section>

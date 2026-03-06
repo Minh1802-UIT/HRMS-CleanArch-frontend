@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, HostListener } from '@angular/core';
-import { NgClass, DatePipe } from '@angular/common';
+import { NgClass, DatePipe, SlicePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuditLogService } from '@features/system/services/audit-log.service';
 import { AuditLog } from '@core/models/audit-log.model';
@@ -10,7 +10,7 @@ import { ToastService } from '@core/services/toast.service';
 @Component({
   selector: 'app-audit-logs',
   standalone: true,
-  imports: [NgClass, DatePipe, FormsModule],
+  imports: [NgClass, DatePipe, SlicePipe, FormsModule],
   templateUrl: './audit-logs.component.html',
   styleUrl: './audit-logs.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush

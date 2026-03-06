@@ -170,10 +170,10 @@
                     </div>
                     <div>
                       <div class="text-sm font-bold text-zinc-900 dark:text-white">
-                        {{ user.username }}
+                        {{ user.fullName || user.username }}
                       </div>
-                      <div class="font-mono text-xs text-zinc-400">
-                        ID: {{ user.id }}
+                      <div class="text-xs text-zinc-400">
+                        &#64;{{ user.username }}
                       </div>
                     </div>
                   </div>
