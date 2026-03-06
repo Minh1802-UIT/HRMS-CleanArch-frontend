@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { PerformanceService } from '@features/performance/services/performance.service';
 import { PerformanceReview, PerformanceGoal, PerformanceGoalStatus, PerformanceReviewStatus } from '@features/performance/models/performance.model';
 import { AuthService } from '@core/services/auth.service';
+import { ToastService } from '@core/services/toast.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -22,9 +23,17 @@ export class PerformanceComponent implements OnInit, OnDestroy {
   currentUserId: string = '';
   private destroy$ = new Subject<void>();
 
+  // New Goal Modal
+  isGoalModalOpen = false;
+  savingGoal = false;
+  newGoalTitle = '';
+  newGoalDescription = '';
+  newGoalTargetDate = '';
+
   constructor(
     private performanceService: PerformanceService,
     private authService: AuthService,
+    private toastService: ToastService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -104,6 +113,62 @@ export class PerformanceComponent implements OnInit, OnDestroy {
      if (status === 3) return 'bg-blue-100 text-blue-700';
      if (status === 4) return 'bg-rose-100 text-rose-700';
      return 'bg-slate-100 text-slate-700';
+  }
+
+  exportPdf(): void {
+    this.toastService.showInfo('Export PDF', 'PDF export will be available in a future update.');
+  }
+
+  openNewGoalModal(): void {
+    this.newGoalTitle = '';
+    this.newGoalDescription = '';
+    this.newGoalTargetDate = '';
+    this.isGoalModalOpen = true;
+    this.cdr.markForCheck();
+  }
+
+  closeGoalModal(): void {
+    this.isGoalModalOpen = false;
+    this.cdr.markForCheck();
+  }
+
+  submitGoal(): void {
+    if (!this.newGoalTitle.trim() || !this.newGoalTargetDate) {
+      this.toastService.showWarn('Validation', 'Please fill in Goal Title and Target Date.');
+      return;
+    }
+    this.savingGoal = true;
+    this.cdr.markForCheck();
+    const payload: Partial<PerformanceGoal> = {
+      employeeId: this.currentUserId,
+      title: this.newGoalTitle.trim(),
+      description: this.newGoalDescription.trim(),
+      targetDate: this.newGoalTargetDate,
+      progress: 0,
+      status: PerformanceGoalStatus.InProgress
+    };
+    this.performanceService.createGoal(payload).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (id) => {
+        this.savingGoal = false;
+        if (id) {
+          this.toastService.showSuccess('Goal Created', `"${payload.title}" has been added to your goals.`);
+          this.closeGoalModal();
+          this.loadData();
+        } else {
+          this.toastService.showError('Save Failed', 'Could not create the goal. Please try again.');
+        }
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.savingGoal = false;
+        this.toastService.showError('Save Failed', 'Could not create the goal. Please try again.');
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  viewReviewDetail(_review: PerformanceReview): void {
+    this.toastService.showInfo('Review Detail', 'Detailed review view will be available in a future update.');
   }
 
   trackByIndex(index: number, item?: unknown): number { return index; }

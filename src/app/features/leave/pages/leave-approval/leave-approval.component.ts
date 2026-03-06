@@ -240,6 +240,10 @@ export class LeaveApprovalComponent implements OnInit, OnDestroy {
     this.toastService.showInfo('Coming Soon', 'Report export feature is coming soon.');
   }
 
+  viewFullReason(req: LeaveRequest): void {
+    this.toastService.showInfo('Leave Reason', req.reason || 'No reason provided.');
+  }
+
   trackByValue(index: number, value: string): string { return value; }
   trackByRequestId(index: number, req: LeaveRequest): string { return req.id; }
 }

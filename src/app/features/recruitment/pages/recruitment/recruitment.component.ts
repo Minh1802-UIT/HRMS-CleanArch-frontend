@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { of, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { LoggerService } from '@core/services/logger.service';
+import { ToastService } from '@core/services/toast.service';
 import { RecruitmentService } from '@features/recruitment/services/recruitment.service';
 import { JobVacancy, Candidate, RecruitmentStage } from '@features/recruitment/models/recruitment.model';
 
@@ -52,6 +53,7 @@ export class RecruitmentComponent implements OnInit, OnDestroy {
 
   constructor(
     private logger: LoggerService,
+    private toastService: ToastService,
     private recruitmentService: RecruitmentService,
     private cdr: ChangeDetectorRef
   ) {}
@@ -253,16 +255,19 @@ export class RecruitmentComponent implements OnInit, OnDestroy {
 
   viewJobDetails(job: JobVacancy) {
     this.logger.debug('View details for:', job.title);
+    this.toastService.showInfo('Job Details', `Detailed view for "${job.title}" will be available in a future update.`);
     this.closeMenu();
   }
 
   openSettings(job: JobVacancy) {
     this.logger.debug('Settings for:', job.title);
+    this.toastService.showInfo('Job Settings', 'Job settings panel will be available in a future update.');
     this.closeMenu();
   }
 
   addNewJob() {
     this.logger.debug('Add new job');
+    this.toastService.showInfo('New Position', 'Job creation form will be available in a future update.');
   }
 
   toggleJobSelection(job: JobVacancy) {

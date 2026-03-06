@@ -57,12 +57,14 @@
           <div class="flex gap-4">
             <button
               type="button"
+              (click)="exportPdf()"
               class="px-6 py-3 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-2xl font-extrabold text-zinc-700 dark:text-zinc-300 shadow-sm hover:shadow-md transition-all flex items-center gap-2"
               >
               <span class="material-symbols-outlined" aria-hidden="true">download</span> Export PDF
             </button>
             <button
               type="button"
+              (click)="openNewGoalModal()"
               class="px-6 py-3 bg-violet-600 text-white rounded-2xl font-extrabold shadow-lg shadow-violet-600/30 hover:-translate-y-0.5 transition-all flex items-center gap-2"
               >
               <span class="material-symbols-outlined" aria-hidden="true">add</span> New Goal
@@ -293,6 +295,7 @@
                                   <td class="px-8 py-5 text-right">
                                     <button
                                       type="button"
+                                      (click)="viewReviewDetail(review)"
                                       class="px-4 py-2 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 shadow-sm opacity-0 group-hover:opacity-100 transition-all hover:border-primary hover:text-primary"
                                       >
                                       View Detail
@@ -334,3 +337,96 @@
               </div>
             </main>
           </div>
+
+<!-- New Goal Modal -->
+@if (isGoalModalOpen) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+    (click)="closeGoalModal()"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="goal-modal-title"
+  >
+    <div
+      class="w-full max-w-lg bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl p-8 space-y-6"
+      (click)="$event.stopPropagation()"
+    >
+      <!-- Header -->
+      <div class="flex items-center justify-between">
+        <h2 id="goal-modal-title" class="text-xl font-black text-zinc-900 dark:text-white flex items-center gap-2">
+          <span class="material-symbols-outlined text-violet-600">rocket_launch</span>
+          New Performance Goal
+        </h2>
+        <button
+          type="button"
+          (click)="closeGoalModal()"
+          class="p-2 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 transition"
+          aria-label="Close"
+        >
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <!-- Form -->
+      <div class="space-y-5">
+        <div>
+          <label for="goal-title" class="block text-xs font-bold uppercase tracking-widest text-zinc-500 mb-2">Goal Title <span class="text-rose-500">*</span></label>
+          <input
+            id="goal-title"
+            type="text"
+            [(ngModel)]="newGoalTitle"
+            maxlength="120"
+            placeholder="e.g. Complete AWS certification"
+            class="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-violet-500"
+          />
+        </div>
+        <div>
+          <label for="goal-desc" class="block text-xs font-bold uppercase tracking-widest text-zinc-500 mb-2">Description</label>
+          <textarea
+            id="goal-desc"
+            [(ngModel)]="newGoalDescription"
+            rows="3"
+            maxlength="500"
+            placeholder="Describe the goal and success criteria..."
+            class="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-violet-500 resize-none"
+          ></textarea>
+        </div>
+        <div>
+          <label for="goal-date" class="block text-xs font-bold uppercase tracking-widest text-zinc-500 mb-2">Target Date <span class="text-rose-500">*</span></label>
+          <input
+            id="goal-date"
+            type="date"
+            [(ngModel)]="newGoalTargetDate"
+            class="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-violet-500"
+          />
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex justify-end gap-3 pt-2">
+        <button
+          type="button"
+          (click)="closeGoalModal()"
+          [disabled]="savingGoal"
+          class="px-5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-sm font-bold text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition disabled:opacity-50"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          (click)="submitGoal()"
+          [disabled]="savingGoal"
+          class="px-6 py-2.5 rounded-xl bg-violet-600 text-white text-sm font-bold shadow-lg shadow-violet-600/30 hover:-translate-y-0.5 transition disabled:opacity-50 flex items-center gap-2"
+        >
+          @if (savingGoal) {
+            <span class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+            Saving...
+          } @else {
+            <span class="material-symbols-outlined text-base">check</span>
+            Save Goal
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}

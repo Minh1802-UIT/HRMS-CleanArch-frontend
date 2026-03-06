@@ -4,6 +4,7 @@ import { RouterModule, ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { LoggerService } from '@core/services/logger.service';
+import { ToastService } from '@core/services/toast.service';
 import { RecruitmentService } from '@features/recruitment/services/recruitment.service';
 
 interface Experience {
@@ -95,6 +96,7 @@ export class CandidateDetailComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private logger: LoggerService,
+    private toastService: ToastService,
     private recruitmentService: RecruitmentService,
     private cdr: ChangeDetectorRef
   ) {}
@@ -180,15 +182,34 @@ export class CandidateDetailComponent implements OnInit, OnDestroy {
   }
 
   reject() {
-    this.logger.debug('Reject candidate');
+    if (!this.candidate) return;
+    this.recruitmentService.updateCandidateStatus(this.candidate.id, 'Rejected')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (ok) => {
+          if (ok) {
+            this.toastService.showSuccess('Candidate Rejected', `${this.candidate?.name || 'Candidate'} has been marked as Rejected.`);
+            if (this.candidate) this.candidate.status = 'Rejected';
+            this.cdr.markForCheck();
+          } else {
+            this.toastService.showError('Update Failed', 'Could not update candidate status. Please try again.');
+          }
+        },
+        error: () => this.toastService.showError('Update Failed', 'Could not update candidate status. Please try again.')
+      });
   }
 
   email() {
-    this.logger.debug('Email candidate');
+    if (this.candidate?.email) {
+      window.location.href = `mailto:${this.candidate.email}`;
+    } else {
+      this.toastService.showWarn('No Email', 'This candidate does not have an email address on record.');
+    }
   }
 
   moveToNextStage() {
     this.logger.debug('Move to next stage');
+    this.toastService.showInfo('Move to Next Stage', 'Pipeline stage management will be available in a future update.');
   }
 
   trackByIndex(index: number, item?: unknown): number { return index; }

@@ -366,4 +366,8 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
   trackByIndex(index: number, item?: unknown): number {
     return index;
   }
+
+  filterLeaveHistory(): void {
+    this.toastService.showInfo('Filter', 'Advanced leave history filtering will be available in a future update.');
+  }
 }

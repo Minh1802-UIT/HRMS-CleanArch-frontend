@@ -216,6 +216,10 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   trackByRole(index: number, role: string): string { return role; }
   trackByPage(index: number, page: number): number { return page; }
 
+  inviteUser(): void {
+    this.toastService.showInfo('Invite User', 'User invitation via email will be available in a future update.');
+  }
+
   getRoleBadgeClass(role: string): string {
     switch (role) {
       case 'Admin': return 'bg-purple-100 text-purple-700 border-purple-200';
