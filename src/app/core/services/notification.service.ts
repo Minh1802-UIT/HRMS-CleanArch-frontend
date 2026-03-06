@@ -40,7 +40,7 @@ export class NotificationService {
   }
 
   markRead(id: string): Observable<void> {
-    return this.http.put<ApiResponse<unknown>>(`${this.apiUrl}/${id}/read`, {}).pipe(
+    return this.http.post<ApiResponse<unknown>>(`${this.apiUrl}/${id}/read`, {}).pipe(
       tap(() => {
         // Decrement local count
         const current = this._unreadCount.getValue();

@@ -43,7 +43,7 @@ export class PayrollService {
   }
 
   markAsPaid(id: string): Observable<void> {
-    return this.http.put<ApiResponse<void>>(`${this.apiUrl}/${id}/status`, { id, status: 'Paid' }).pipe(
+    return this.http.post<ApiResponse<void>>(`${this.apiUrl}/${id}/status`, { id, status: 'Paid' }).pipe(
       map(() => void 0),
       catchError(err => { this.logger.error(`PayrollService: markAsPaid(${id}) failed`, err); return throwError(() => err); })
     );

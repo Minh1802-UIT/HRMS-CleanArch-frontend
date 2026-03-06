@@ -35,7 +35,7 @@ export class AttendanceService {
 
   getDailyRecords(date: Date, params: { pageSize: number; pageNumber: number } = { pageSize: 10, pageNumber: 1 }): Observable<PagedResult<AttendanceRecord>> {
     const dateStr = this.formatDate(date);
-    return this.http.post<ApiResponse<PagedResult<AttendanceRawDto>>>(`${this.apiUrl}/daily/${dateStr}`, params).pipe(
+    return this.http.get<ApiResponse<PagedResult<AttendanceRawDto>>>(`${this.apiUrl}/daily/${dateStr}`, { params: params as any }).pipe(
         map(response => {
             const data = response.data;
             const items = (data.items || []).map((dto: AttendanceRawDto) => ({
@@ -108,7 +108,7 @@ export class AttendanceService {
 
   getDailyStats(): Observable<DailyStats> {
       const today = this.formatDate(new Date());
-      return this.http.post<ApiResponse<any>>(`${this.apiUrl}/daily/${today}`, { pageSize: 999, pageNumber: 1 }).pipe(
+      return this.http.get<ApiResponse<any>>(`${this.apiUrl}/daily/${today}`, { params: { pageSize: '999', pageNumber: '1' } }).pipe(
           map(response => {
               const data = response.data;
               // Backend returns PagedResult with items array, not a flat array

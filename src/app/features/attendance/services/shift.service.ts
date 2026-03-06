@@ -48,7 +48,7 @@ export class ShiftService {
   }
 
   updateShift(id: string, shift: UpdateShift): Observable<boolean> {
-    return this.http.put<ApiResponse<boolean>>(`${this.apiUrl}/${id}`, shift).pipe(
+    return this.http.patch<ApiResponse<boolean>>(`${this.apiUrl}/${id}`, shift).pipe(
       map(response => response.data),
       catchError(err => { this.logger.error(`ShiftService: updateShift(${id}) failed`, err); return throwError(() => err); })
     );

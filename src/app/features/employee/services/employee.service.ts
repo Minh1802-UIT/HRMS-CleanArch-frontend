@@ -38,7 +38,7 @@ export class EmployeeService {
       this.logger.debug('EmployeeService: list cache hit');
       return of(listCached.data);
     }
-    return this.http.post<ApiResponse<PagedResult<Employee>>>(`${this.apiUrl}/list`, params).pipe(
+    return this.http.get<ApiResponse<PagedResult<Employee>>>(`${this.apiUrl}`, { params: params as any }).pipe(
       map(response => response.data),
       tap(data => this.listCache.set(cacheKey, { data, expiry: Date.now() + this.LIST_CACHE_TTL_MS })),
       catchError(err => { this.logger.error('EmployeeService: getEmployees failed', err); return throwError(() => err); })
@@ -111,7 +111,7 @@ export class EmployeeService {
   }
 
   updateEmployee(id: string, employee: Partial<Employee>): Observable<Employee> {
-    return this.http.put<ApiResponse<Employee>>(`${this.apiUrl}/${id}`, employee).pipe(
+    return this.http.patch<ApiResponse<Employee>>(`${this.apiUrl}/${id}`, employee).pipe(
       map(response => response.data),
       tap(() => this.invalidateEmployeeCache(id)),
       catchError(err => { this.logger.error(`EmployeeService: updateEmployee(${id}) failed`, err); return throwError(() => err); })

@@ -71,6 +71,15 @@
   <section class="overflow-hidden relative pt-16 pb-24 lg:pt-24 lg:pb-32 bg-zinc-950">
     <div class="absolute top-0 left-1/4 w-96 h-96 bg-violet-600/15 rounded-full blur-3xl pointer-events-none -z-0"></div>
     <div class="absolute bottom-0 right-1/4 w-80 h-80 bg-violet-800/10 rounded-full blur-3xl pointer-events-none -z-0"></div>
+    <!-- Dot grid texture -->
+    <div class="absolute inset-0 pointer-events-none" style="background-image: radial-gradient(circle, rgba(139,92,246,0.07) 1px, transparent 1px); background-size: 40px 40px; z-index: 0;"></div>
+    <!-- Floating sparkle particles -->
+    <div class="hero-particle" style="width:4px;height:4px;top:18%;left:7%;animation-duration:4.2s;animation-delay:0s;"></div>
+    <div class="hero-particle" style="width:3px;height:3px;top:62%;left:14%;animation-duration:5.1s;animation-delay:1.3s;"></div>
+    <div class="hero-particle" style="width:5px;height:5px;top:33%;right:18%;animation-duration:3.8s;animation-delay:0.7s;"></div>
+    <div class="hero-particle" style="width:3px;height:3px;top:72%;right:9%;animation-duration:4.7s;animation-delay:2.1s;"></div>
+    <div class="hero-particle" style="width:4px;height:4px;top:47%;left:38%;animation-duration:6.2s;animation-delay:1.9s;"></div>
+    <div class="hero-particle" style="width:6px;height:6px;top:8%;right:28%;animation-duration:4.4s;animation-delay:3.1s;"></div>
 
     <div class="relative z-10 px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
       <div class="grid gap-12 items-center lg:grid-cols-2 lg:gap-16">
@@ -81,7 +90,7 @@
             Giải pháp Nhân sự &amp; Bảng lương số 1 Việt Nam
           </div>
           <h1 class="mb-6 text-4xl font-extrabold leading-tight text-white font-display sm:text-5xl lg:text-[3.75rem]">
-            Quản trị nhân sự<br /><span class="text-violet-400">Dễ dàng &amp; Chuyên nghiệp</span>
+            Quản trị nhân sự<br /><span class="text-gradient-animate">Dễ dàng &amp; Chuyên nghiệp</span>
           </h1>
           <p class="mb-8 max-w-lg text-lg leading-relaxed text-zinc-400">
             Được thiết kế riêng cho đặc thù doanh nghiệp Việt Nam. Hỗ trợ đầy đủ Bảo hiểm xã hội, Thuế TNCN
@@ -89,7 +98,7 @@
           </p>
           <div class="flex flex-col gap-4 mb-10 sm:flex-row">
             <a
-              class="px-8 py-3.5 font-bold text-center text-white bg-violet-600 rounded-xl shadow-lg transition-all hover:bg-violet-500 shadow-violet-600/25 hover:-translate-y-1"
+              class="btn-shimmer px-8 py-3.5 font-bold text-center text-white bg-violet-600 rounded-xl shadow-lg transition-all hover:bg-violet-500 shadow-violet-600/25 hover:-translate-y-1"
               routerLink="/login"
             >
               Dùng thử miễn phí
@@ -153,7 +162,7 @@
               </div>
               <div class="space-y-2">
                 <div class="overflow-hidden w-full h-2.5 rounded-full bg-zinc-700">
-                  <div class="w-3/4 h-full rounded-full bg-violet-500 shadow-[0_0_10px_rgba(139,92,246,0.7)]"></div>
+                  <div class="progress-glow w-3/4 h-full rounded-full bg-violet-500"></div>
                 </div>
                 <div class="flex justify-between text-xs text-zinc-400">
                   <span>Onboarding Progress</span>
@@ -647,7 +656,7 @@
   </section>
 
   <!-- ROI Stats Strip -->
-  <section class="overflow-hidden relative py-16 text-white bg-violet-700">
+  <section #roiSection class="overflow-hidden relative py-16 text-white bg-violet-700">
     <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 32px 32px;"></div>
     <div class="relative z-10 px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 delay-100 reveal-on-scroll reveal-up" #revealElement>
       <div class="mb-12 text-center">
@@ -656,15 +665,15 @@
       </div>
       <div class="grid grid-cols-2 gap-y-8 gap-x-4 md:grid-cols-4 md:divide-x md:divide-violet-500/50">
         <div class="px-4 text-center">
-          <div class="mb-2 text-5xl font-black text-yellow-300">100%</div>
+          <div class="mb-2 text-5xl font-black text-yellow-300">{{ countedStats().automation }}</div>
           <p class="text-sm font-medium text-violet-100">Tự động hóa luồng tính lương, loại bỏ sai sót số liệu</p>
         </div>
         <div class="px-4 text-center">
-          <div class="mb-2 text-5xl font-black">-50%</div>
+          <div class="mb-2 text-5xl font-black">{{ countedStats().recruiting }}</div>
           <p class="text-sm font-medium text-violet-100">Thời gian tuyển dụng ứng viên nhờ hệ thống Pipeline thông minh</p>
         </div>
         <div class="px-4 text-center">
-          <div class="mb-2 text-5xl font-black">3×</div>
+          <div class="mb-2 text-5xl font-black">{{ countedStats().speed }}</div>
           <p class="text-sm font-medium text-violet-100">Tăng tốc độ Onboarding nhân sự mới với hồ sơ số hóa tập trung</p>
         </div>
         <div class="px-4 text-center">
@@ -755,7 +764,7 @@
           </p>
           <div class="flex flex-col gap-4 justify-center sm:flex-row">
             <a
-              class="px-8 py-3.5 font-bold text-center text-white bg-violet-600 rounded-xl shadow-lg transition-all hover:bg-violet-500 shadow-violet-600/30 hover:-translate-y-1"
+              class="btn-shimmer px-8 py-3.5 font-bold text-center text-white bg-violet-600 rounded-xl shadow-lg transition-all hover:bg-violet-500 shadow-violet-600/30 hover:-translate-y-1"
               routerLink="/login"
             >
               Bắt đầu dùng thử Miễn phí

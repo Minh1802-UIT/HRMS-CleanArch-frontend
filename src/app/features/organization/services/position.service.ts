@@ -53,7 +53,7 @@ export class PositionService {
   }
 
   updatePosition(id: string, pos: Position): Observable<Position> {
-    return this.http.put<ApiResponse<Position>>(`${this.apiUrl}/${id}`, pos).pipe(
+    return this.http.patch<ApiResponse<Position>>(`${this.apiUrl}/${id}`, pos).pipe(
       map(response => response.data),
       catchError(err => { this.logger.error(`PositionService: updatePosition(${id}) failed`, err); return throwError(() => err); })
     );

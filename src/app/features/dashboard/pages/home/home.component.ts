@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, signal, AfterViewInit, ElementRef, QueryList, ViewChildren } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, computed, AfterViewInit, ElementRef, QueryList, ViewChildren, ViewChild } from '@angular/core';
 
 import { RouterLink } from '@angular/router';
 import { NgClass } from '@angular/common';
@@ -28,6 +28,17 @@ interface FAQ {
 })
 export class HomeComponent {
   isMenuOpen = false;
+
+  // Stats count-up animation
+  statsProgress = signal(0);
+  countedStats = computed(() => {
+    const p = this.statsProgress() / 100;
+    return {
+      automation: Math.round(p * 100) + '%',
+      recruiting: '-' + Math.round(p * 50) + '%',
+      speed: p >= 1 ? '3\u00D7' : (Math.round(p * 30) / 10).toFixed(1).replace(/\.0$/, '') + '\u00D7',
+    };
+  });
 
   // Performance: Track loaded feature/module images to avoid eager-loading all at once
   loadedFeatureIds = signal(new Set<string>(['organization']));
@@ -250,10 +261,12 @@ export class HomeComponent {
   }
 
   // --- Scroll Animation Logic ---
+  @ViewChild('roiSection') roiSection?: ElementRef;
   @ViewChildren('revealElement') revealElements!: QueryList<ElementRef>;
 
   ngAfterViewInit() {
     this.setupScrollAnimations();
+    this.setupStatsAnimation();
   }
 
   private setupScrollAnimations() {
@@ -277,5 +290,29 @@ export class HomeComponent {
 
     // Bắt đầu theo dõi tất cả các phần tử có gắn #revealElement trong HTML
     this.revealElements.forEach(el => observer.observe(el.nativeElement));
+  }
+
+  private setupStatsAnimation() {
+    if (!this.roiSection || typeof IntersectionObserver === 'undefined') return;
+    const obs = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && this.statsProgress() === 0) {
+        this.runStatsCountUp();
+      }
+    }, { threshold: 0.25 });
+    obs.observe(this.roiSection.nativeElement);
+  }
+
+  private runStatsCountUp() {
+    const steps = 60;
+    const interval = 1800 / steps;
+    let step = 0;
+    const timer = setInterval(() => {
+      step++;
+      this.statsProgress.set(Math.round((step / steps) * 100));
+      if (step >= steps) {
+        clearInterval(timer);
+        this.statsProgress.set(100);
+      }
+    }, interval);
   }
 }

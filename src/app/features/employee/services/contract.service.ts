@@ -35,7 +35,7 @@ export class ContractService {
 
   // Update contract details
   updateContract(id: string, contract: Partial<Contract>): Observable<Contract> {
-    return this.http.put<ApiResponse<Contract>>(`${this.apiUrl}/${id}`, contract).pipe(
+    return this.http.patch<ApiResponse<Contract>>(`${this.apiUrl}/${id}`, contract).pipe(
       map(response => response.data),
       catchError(err => { this.logger.error(`ContractService: updateContract(${id}) failed`, err); return throwError(() => err); })
     );

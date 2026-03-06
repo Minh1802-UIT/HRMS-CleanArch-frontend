@@ -39,7 +39,7 @@ export class RecruitmentService {
   }
 
   getCandidatesByVacancy(vacancyId: string): Observable<Candidate[]> {
-    return this.http.get<ApiResponse<Candidate[]>>(`${this.apiUrl}/candidates/by-vacancy/${vacancyId}`).pipe(
+    return this.http.get<ApiResponse<Candidate[]>>(`${this.apiUrl}/candidates`, { params: { vacancyId } }).pipe(
       map(res => res.data || []),
       catchError(err => {
         this.logger.error(`Failed to fetch candidates for vacancy ${vacancyId}`, err);
@@ -59,7 +59,7 @@ export class RecruitmentService {
   }
 
   updateCandidateStatus(id: string, status: string): Observable<boolean> {
-    return this.http.put<ApiResponse<boolean>>(`${this.apiUrl}/candidates/${id}/status`, { status }).pipe(
+    return this.http.post<ApiResponse<boolean>>(`${this.apiUrl}/candidates/${id}/status`, { status }).pipe(
       map(res => res.succeeded),
       catchError(err => {
         this.logger.error(`Failed to update status for candidate ${id}`, err);
@@ -83,7 +83,7 @@ export class RecruitmentService {
   }
 
   updateVacancy(id: string, dto: Partial<JobVacancy>): Observable<boolean> {
-    return this.http.put<ApiResponse<boolean>>(`${this.apiUrl}/vacancies/${id}`, dto).pipe(
+    return this.http.patch<ApiResponse<boolean>>(`${this.apiUrl}/vacancies/${id}`, dto).pipe(
       map(res => res.succeeded),
       catchError(err => {
         this.logger.error(`Failed to update vacancy ${id}`, err);
@@ -127,7 +127,7 @@ export class RecruitmentService {
   }
 
   updateCandidate(id: string, dto: Partial<Candidate>): Observable<boolean> {
-    return this.http.put<ApiResponse<boolean>>(`${this.apiUrl}/candidates/${id}`, dto).pipe(
+    return this.http.patch<ApiResponse<boolean>>(`${this.apiUrl}/candidates/${id}`, dto).pipe(
       map(res => res.succeeded),
       catchError(err => {
         this.logger.error(`Failed to update candidate ${id}`, err);

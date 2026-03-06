@@ -381,7 +381,7 @@ export class AuthService {
   }
 
   updateUserRoles(userId: string, roles: string[]): Observable<void> {
-      return this.http.put<ApiResponse<void>>(`${this.apiUrl}/roles/${userId}`, { Roles: roles }).pipe(
+      return this.http.patch<ApiResponse<void>>(`${this.apiUrl}/roles/${userId}`, { Roles: roles }).pipe(
         map(response => response.data)
       );
   }

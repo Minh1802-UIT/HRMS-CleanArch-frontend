@@ -39,7 +39,7 @@ export class PerformanceService {
   }
 
   updateGoalProgress(id: string, progress: number): Observable<boolean> {
-    return this.http.put<ApiResponse<boolean>>(`${this.apiUrl}/goals/${id}/progress`, progress).pipe(
+    return this.http.patch<ApiResponse<boolean>>(`${this.apiUrl}/goals/${id}/progress`, progress).pipe(
       map(res => res.succeeded),
       catchError(err => {
         this.logger.error(`Failed to update progress for goal ${id}`, err);
@@ -69,7 +69,7 @@ export class PerformanceService {
   }
 
   updateReview(id: string, review: Partial<PerformanceReview>): Observable<boolean> {
-    return this.http.put<ApiResponse<boolean>>(`${this.apiUrl}/reviews/${id}`, review).pipe(
+    return this.http.patch<ApiResponse<boolean>>(`${this.apiUrl}/reviews/${id}`, review).pipe(
       map(res => res.succeeded),
       catchError(err => {
         this.logger.error(`Failed to update performance review ${id}`, err);

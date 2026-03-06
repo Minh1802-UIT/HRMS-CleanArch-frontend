@@ -75,3 +75,64 @@
   animation-play-state: paused;
 }
 
+/* =================== VISUAL ENHANCEMENTS =================== */
+
+/* 1. Animated gradient text for hero heading */
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50%       { background-position: 100% 50%; }
+}
+.text-gradient-animate {
+  background: linear-gradient(135deg, #c4b5fd, #8b5cf6, #a78bfa, #ddd6fe, #7c3aed);
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-shift 5s ease infinite;
+}
+
+/* 2. CTA button shimmer sweep */
+@keyframes shimmer-sweep {
+  0%        { transform: translateX(-200%); }
+  60%, 100% { transform: translateX(350%); }
+}
+.btn-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.btn-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.22), transparent);
+  animation: shimmer-sweep 2.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* 3. Floating hero sparkle particles */
+@keyframes particle-float {
+  0%, 100% { opacity: 0.15; transform: translateY(0px)   scale(1);   }
+  50%       { opacity: 0.55; transform: translateY(-18px) scale(1.4); }
+}
+.hero-particle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(139, 92, 246, 0.65);
+  box-shadow: 0 0 8px 2px rgba(139, 92, 246, 0.55);
+  animation: particle-float ease-in-out infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 4. Progress bar glow pulse in hero card */
+@keyframes bar-glow {
+  0%, 100% { box-shadow: 0 0 8px rgba(139,92,246,0.5); }
+  50%       { box-shadow: 0 0 20px rgba(139,92,246,1), 0 0 35px rgba(139,92,246,0.35); }
+}
+.progress-glow {
+  animation: bar-glow 2s ease-in-out infinite;
+}
+
