@@ -122,7 +122,7 @@ export class EmployeeService {
   }
 
   updateEmployee(id: string, employee: Partial<Employee>): Observable<Employee> {
-    return this.http.put<ApiResponse<Employee>>(`${this.apiUrl}/${id}`, employee).pipe(
+    return this.http.patch<ApiResponse<Employee>>(`${this.apiUrl}/${id}`, employee).pipe(
       map(response => response.data),
       tap(() => this.invalidateEmployeeCache(id)),
       catchError(err => { this.logger.error(`EmployeeService: updateEmployee(${id}) failed`, err); return throwError(() => err); })

@@ -320,6 +320,7 @@ export class EmployeeDetailComponent implements OnInit, OnDestroy {
           // Update employee via service
           const updatePayload: Partial<Employee> = {
             id: this.employee!.id,
+            version: this.employee!.version,
             fullName: this.employee!.fullName,
             email: this.employee!.email,
             jobDetails: {

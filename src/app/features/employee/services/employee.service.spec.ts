@@ -212,7 +212,7 @@ describe('EmployeeService', () => {
   // updateEmployee
   // --------------------------------------------------
   describe('updateEmployee()', () => {
-    it('should PUT /employees/:id and return updated employee', () => {
+    it('should PATCH /employees/:id and return updated employee', () => {
       const updated = makeEmployee({ id: 'emp-1', fullName: 'Alice Updated' });
 
       service.updateEmployee('emp-1', { fullName: 'Alice Updated' }).subscribe(result => {
@@ -220,7 +220,7 @@ describe('EmployeeService', () => {
       });
 
       const req = httpMock.expectOne(`${apiUrl}/emp-1`);
-      expect(req.request.method).toBe('PUT');
+      expect(req.request.method).toBe('PATCH');
       expect(req.request.body).toEqual({ fullName: 'Alice Updated' });
       req.flush({ succeeded: true, message: '', data: updated });
     });

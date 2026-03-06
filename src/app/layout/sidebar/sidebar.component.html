@@ -13,9 +13,7 @@
     @if (!collapsed()) {
       <a routerLink="/dashboard" class="flex items-center gap-2 min-w-0">
         <span class="text-[#a78bfa] text-2xl font-bold leading-none">M</span>
-        <span class="text-zinc-900 dark:text-white text-[13px] font-bold tracking-tight truncate"
-          >ZenithHR</span
-        >
+        <span class="text-zinc-900 dark:text-white text-[13px] font-bold tracking-tight truncate">ZenithHR</span>
       </a>
     }
     <button
@@ -27,7 +25,7 @@
       class="flex items-center justify-center w-8 h-8 rounded-lg text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors flex-shrink-0"
     >
       <span class="material-symbols-outlined text-[20px]">
-        {{ collapsed() ? "menu_open" : "menu" }}
+        {{ collapsed() ? 'menu_open' : 'menu' }}
       </span>
     </button>
   </div>
@@ -37,75 +35,129 @@
     class="flex-1 overflow-y-auto overflow-x-hidden py-3 space-y-px"
     style="scrollbar-width: thin; scrollbar-color: #27272a transparent"
   >
-    @for (group of filteredGroups(); track group.title) {
-      <!-- Section label -->
-      @if (!collapsed()) {
-        <p
-          class="label-overline text-zinc-600 px-4 pt-5 pb-1.5 first:pt-2 select-none"
-        >
-          {{ langService.t(group.title) }}  
-        </p>
-      } @else {
-        <div class="mx-3 mt-4 mb-2 border-t border-zinc-200 dark:border-zinc-800/60"></div>
-      }
 
-      <!-- Nav items -->
-      @for (item of group.items; track item.route) {
+    <!-- ═══ COLLAPSED: flat icon list ═══ -->
+    @if (collapsed()) {
+      @for (item of flatItems(); track (item.activePage ?? item.label)) {
         <a
           [routerLink]="item.route"
-          [title]="collapsed() ? langService.t(item.label) : ''"
+          [title]="langService.t(item.label)"
           [ngClass]="{
-            'bg-violet-600/15 text-[#a78bfa]': isActive(item.activePage),
-            'text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800/70': !isActive(
-              item.activePage
-            ),
-            'justify-center': collapsed(),
-            'justify-start': !collapsed(),
+            'bg-violet-600/15 text-[#a78bfa]': isActive(item.activePage ?? ''),
+            'text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800/70': !isActive(item.activePage ?? '')
           }"
-          class="relative flex items-center gap-3 mx-2 rounded-lg px-3 py-2 text-[13px] font-medium transition-all duration-150 group/item"
+          class="relative flex items-center justify-center mx-2 rounded-lg px-3 py-2 transition-all duration-150 group/item"
         >
-          <!-- Active left-bar indicator -->
-          @if (isActive(item.activePage)) {
-            <span
-              class="absolute left-0 inset-y-1.5 w-[3px] rounded-r-full bg-[#a78bfa]"
-            ></span>
+          @if (isActive(item.activePage ?? '')) {
+            <span class="absolute left-0 inset-y-1.5 w-[3px] rounded-r-full bg-[#a78bfa]"></span>
           }
-
-          <!-- Icon -->
           <span
-            [ngClass]="
-              isActive(item.activePage)
-                ? 'text-[#a78bfa]'
-                : 'text-zinc-500 dark:text-zinc-400 group-hover/item:text-zinc-800 dark:group-hover/item:text-zinc-200'
-            "
+            [ngClass]="isActive(item.activePage ?? '') ? 'text-[#a78bfa]' : 'text-zinc-500 dark:text-zinc-400 group-hover/item:text-zinc-800 dark:group-hover/item:text-zinc-200'"
             class="material-symbols-outlined text-[20px] flex-shrink-0 transition-colors"
-          >
-            {{ item.icon }}
+          >{{ item.icon }}</span>
+          <span class="absolute left-full ml-3 px-2.5 py-1 bg-zinc-900 border border-zinc-700 text-white text-xs font-medium rounded-md shadow-lg pointer-events-none whitespace-nowrap opacity-0 group-hover/item:opacity-100 transition-opacity duration-150 z-50">
+            {{ langService.t(item.label) }}
           </span>
-
-          <!-- Label -->
-          @if (!collapsed()) {
-            <span class="truncate">{{ langService.t(item.label) }}</span>
-          }
-
-          <!-- Tooltip (collapsed mode) -->
-          @if (collapsed()) {
-            <span
-              class="absolute left-full ml-3 px-2.5 py-1 bg-zinc-900 border border-zinc-700 text-white text-xs font-medium rounded-md shadow-lg pointer-events-none whitespace-nowrap opacity-0 group-hover/item:opacity-100 transition-opacity duration-150 z-50"
-            >
-              {{ langService.t(item.label) }}
-            </span>
-          }
         </a>
       }
     }
+
+    @else {
+      <!-- ═══ EXPANDED: accordion groups ═══ -->
+      @for (group of filteredGroups(); track group.title) {
+
+        <!-- Section label -->
+        <p class="label-overline text-zinc-600 px-4 pt-5 pb-1.5 first:pt-2 select-none">
+          {{ langService.t(group.title) }}
+        </p>
+
+        @for (item of group.items; track item.label) {
+
+          <!-- ── Dropdown parent ── -->
+          @if (item.children) {
+            <div class="mx-2">
+              <button
+                type="button"
+                (click)="toggleParent(item.label)"
+                class="w-full relative flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] font-medium transition-all duration-150 group/item"
+                [ngClass]="{
+                  'text-[#a78bfa]': isParentActive(item),
+                  'text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800/70': !isParentActive(item)
+                }"
+              >
+                @if (isParentActive(item)) {
+                  <span class="absolute left-0 inset-y-1.5 w-[3px] rounded-r-full bg-[#a78bfa]"></span>
+                }
+                <span
+                  [ngClass]="isParentActive(item) ? 'text-[#a78bfa]' : 'text-zinc-500 dark:text-zinc-400 group-hover/item:text-zinc-800 dark:group-hover/item:text-zinc-200'"
+                  class="material-symbols-outlined text-[20px] flex-shrink-0 transition-colors"
+                >{{ item.icon }}</span>
+                <span class="flex-1 text-left truncate">{{ langService.t(item.label) }}</span>
+                <span
+                  class="material-symbols-outlined text-[18px] flex-shrink-0 transition-transform duration-200 opacity-50"
+                  [class.rotate-180]="isParentExpanded(item.label)"
+                >expand_more</span>
+              </button>
+
+              <!-- Children panel with smooth height animation -->
+              <div
+                class="overflow-hidden transition-[max-height] duration-200 ease-out"
+                [style.maxHeight]="isParentExpanded(item.label) ? '600px' : '0px'"
+              >
+                <div class="ml-3 pl-3 border-l border-zinc-200 dark:border-zinc-800 mt-0.5 mb-1 space-y-px">
+                  @for (child of item.children; track child.route) {
+                    <a
+                      [routerLink]="child.route"
+                      [ngClass]="{
+                        'bg-violet-600/15 text-[#a78bfa]': isActive(child.activePage ?? ''),
+                        'text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800/70': !isActive(child.activePage ?? '')
+                      }"
+                      class="relative flex items-center gap-2.5 rounded-lg px-3 py-1.5 text-[12.5px] font-medium transition-all duration-150 group/child"
+                    >
+                      @if (isActive(child.activePage ?? '')) {
+                        <span class="absolute left-0 inset-y-1.5 w-[3px] rounded-r-full bg-[#a78bfa]"></span>
+                      }
+                      <span
+                        [ngClass]="isActive(child.activePage ?? '') ? 'text-[#a78bfa]' : 'text-zinc-400 dark:text-zinc-500 group-hover/child:text-zinc-800 dark:group-hover/child:text-zinc-200'"
+                        class="material-symbols-outlined text-[17px] flex-shrink-0 transition-colors"
+                      >{{ child.icon }}</span>
+                      <span class="truncate">{{ langService.t(child.label) }}</span>
+                    </a>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+          @else {
+            <!-- ── Direct leaf link ── -->
+            <a
+              [routerLink]="item.route"
+              [ngClass]="{
+                'bg-violet-600/15 text-[#a78bfa]': isActive(item.activePage ?? ''),
+                'text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800/70': !isActive(item.activePage ?? '')
+              }"
+              class="relative flex items-center gap-3 mx-2 rounded-lg px-3 py-2 text-[13px] font-medium transition-all duration-150 group/item"
+            >
+              @if (isActive(item.activePage ?? '')) {
+                <span class="absolute left-0 inset-y-1.5 w-[3px] rounded-r-full bg-[#a78bfa]"></span>
+              }
+              <span
+                [ngClass]="isActive(item.activePage ?? '') ? 'text-[#a78bfa]' : 'text-zinc-500 dark:text-zinc-400 group-hover/item:text-zinc-800 dark:group-hover/item:text-zinc-200'"
+                class="material-symbols-outlined text-[20px] flex-shrink-0 transition-colors"
+              >{{ item.icon }}</span>
+              <span class="truncate">{{ langService.t(item.label) }}</span>
+            </a>
+          }
+
+        }
+      }
+    }
+
   </nav>
 
   <!-- ── Footer: version tag ── -->
   @if (!collapsed()) {
-    <div
-      class="flex-shrink-0 px-4 py-3 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between"
-    >
+    <div class="flex-shrink-0 px-4 py-3 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
       <span class="label-overline text-zinc-400 dark:text-zinc-700">ZenithHR</span>
       <span class="text-[10px] text-zinc-400 dark:text-zinc-700 font-mono">v1.0</span>
     </div>
