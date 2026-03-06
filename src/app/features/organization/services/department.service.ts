@@ -48,7 +48,7 @@ export class DepartmentService {
   }
 
   updateDepartment(id: string, dept: Department): Observable<Department> {
-    return this.http.patch<ApiResponse<Department>>(`${this.apiUrl}/${id}`, dept).pipe(
+    return this.http.put<ApiResponse<Department>>(`${this.apiUrl}/${id}`, dept).pipe(
       map(response => response.data),
       catchError(err => { this.logger.error(`DepartmentService: updateDepartment(${id}) failed`, err); return throwError(() => err); })
     );

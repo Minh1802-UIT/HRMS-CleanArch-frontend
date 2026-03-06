@@ -52,7 +52,7 @@ export class LeaveRequestService {
   }
 
   getAllRequests(): Observable<LeaveRequest[]> {
-    return this.http.get<ApiResponse<PagedResult<LeaveRequestRawDto>>>(`${this.apiUrl}`, {}).pipe(
+    return this.http.post<ApiResponse<PagedResult<LeaveRequestRawDto>>>(`${this.apiUrl}/list`, {}).pipe(
       map(response => (response.data?.items || []).map((item: LeaveRequestRawDto) => this.mapToModel(item))),
       catchError(err => {
         this.logger.error('Get all leave requests failed', err);
@@ -84,7 +84,7 @@ export class LeaveRequestService {
   }
 
   approveRequest(id: string, comment?: string): Observable<boolean> {
-    return this.http.post<ApiResponse<void>>(`${this.apiUrl}/${id}/review`, {
+    return this.http.put<ApiResponse<void>>(`${this.apiUrl}/${id}/review`, {
       id: id,
       status: 'Approved',
       managerComment: comment || 'Approved via UI'
@@ -95,7 +95,7 @@ export class LeaveRequestService {
   }
 
   rejectRequest(id: string, comment?: string): Observable<boolean> {
-    return this.http.post<ApiResponse<void>>(`${this.apiUrl}/${id}/review`, {
+    return this.http.put<ApiResponse<void>>(`${this.apiUrl}/${id}/review`, {
       id: id,
       status: 'Rejected',
       managerComment: comment || 'Rejected via UI'
