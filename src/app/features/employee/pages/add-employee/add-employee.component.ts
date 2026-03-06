@@ -11,7 +11,7 @@ import { ToastService } from '@core/services/toast.service';
 import { LoggerService } from '@core/services/logger.service';
 import { MasterDataService } from '@features/organization/services/master-data.service';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, distinctUntilChanged } from 'rxjs/operators';
 
 // Import new step components
 import { EmployeeWizardStepsComponent } from './wizard-steps/employee-wizard-steps.component';
@@ -60,6 +60,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
   positions: Position[] = [];
   shifts: Shift[] = [];
   managers: Employee[] = [];
+  managersForDisplay: { id: string; displayLabel: string }[] = [];
   storedEmployeeCode: string = '';
   employeeVersion: number = 0;
 
@@ -129,6 +130,19 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
     if (this.isEditMode && this.employeeId) {
        this.loadEmployeeData(this.employeeId);
     }
+
+    // Reload managers filtered to the selected department
+    this.employeeForm.get('jobDetails.department')!.valueChanges.pipe(
+      takeUntil(this.destroy$),
+      distinctUntilChanged()
+    ).subscribe((deptId: string) => {
+      if (deptId) {
+        this.loadManagersByDepartment(deptId);
+      } else {
+        this.managersForDisplay = [];
+        this.cdr.markForCheck();
+      }
+    });
   }
 
   ngOnDestroy(): void {
@@ -227,6 +241,23 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
           this.cdr.markForCheck();
         },
         error: (err: unknown) => this.logger.error('Error loading managers', err instanceof Error ? err : undefined)
+    });
+  }
+
+  loadManagersByDepartment(departmentId: string) {
+    this.employeeService.getLookup('', 100, departmentId).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data: Employee[]) => {
+        this.managersForDisplay = data.map(emp => {
+          const positionId = (emp as any).positionId as string;
+          const positionTitle = this.positions.find(p => p.id === positionId)?.title ?? '';
+          return {
+            id: emp.id,
+            displayLabel: positionTitle ? `${emp.fullName} — ${positionTitle}` : emp.fullName
+          };
+        });
+        this.cdr.markForCheck();
+      },
+      error: (err: unknown) => this.logger.error('Error loading managers for department', err instanceof Error ? err : undefined)
     });
   }
 

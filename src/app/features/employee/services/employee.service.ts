@@ -52,15 +52,17 @@ export class EmployeeService {
     );
   }
 
-  getLookup(keyword: string = '', limit?: number): Observable<Employee[]> {
+  getLookup(keyword: string = '', limit?: number, departmentId?: string): Observable<Employee[]> {
     const params: Record<string, string> = {};
     if (keyword) params['keyword'] = keyword;
     if (limit && limit > 0) params['limit'] = limit.toString();
+    if (departmentId) params['departmentId'] = departmentId;
     return this.http.get<ApiResponse<Array<{ id: string; label: string; secondaryLabel?: string }>>>(`${this.apiUrl}/lookup`, { params }).pipe(
       map(response => (response.data || []).map(item => ({
         id: item.id,
         fullName: item.label,
-        employeeCode: item.secondaryLabel ?? '',
+        employeeCode: '',
+        positionId: item.secondaryLabel ?? '',
       } as unknown as Employee))),
       catchError(err => { this.logger.error('EmployeeService: getLookup failed', err); return throwError(() => err); })
     );

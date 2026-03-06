@@ -6,7 +6,6 @@ import { Position } from '@features/organization/models/position.model';
 import { FormInputComponent } from '@shared/components/form-input/form-input.component';
 import { FormSelectComponent } from '@shared/components/form-select/form-select.component';
 import { Shift } from '@features/attendance/models/shift.model';
-import { Employee } from '@features/employee/models/employee.model';
 
 /**
  * Step 2: Job Details Component
@@ -29,7 +28,7 @@ export class StepJobDetailsComponent {
   @Input() departments: Department[] = [];
   @Input() positions: Position[] = [];
   @Input() shifts: Shift[] = [];
-  @Input() managers: Employee[] = [];
+  @Input() managers: { id: string; displayLabel: string }[] = [];
 
   setEmploymentType(type: string) {
     this.formGroup.get('employmentType')?.setValue(type);
