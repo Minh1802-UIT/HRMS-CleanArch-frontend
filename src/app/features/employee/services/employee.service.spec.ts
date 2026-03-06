@@ -65,7 +65,7 @@ describe('EmployeeService', () => {
   // getEmployees
   // --------------------------------------------------
   describe('getEmployees()', () => {
-    it('should POST to /employees/list and return PagedResult', () => {
+    it('should GET /employees with query params and return PagedResult', () => {
       const employees = [makeEmployee()];
       const paged = makePagedResult(employees);
 
@@ -74,17 +74,25 @@ describe('EmployeeService', () => {
         expect(result.items[0].fullName).toBe('Alice Smith');
       });
 
-      const req = httpMock.expectOne(`${apiUrl}/list`);
-      expect(req.request.method).toBe('POST');
-      expect(req.request.body).toEqual({ pageNumber: 1, pageSize: 10 });
+      const req = httpMock.expectOne(r =>
+        r.method === 'GET' &&
+        r.url === `${apiUrl}` &&
+        r.params.get('pageNumber') === '1' &&
+        r.params.get('pageSize') === '10'
+      );
+      expect(req.request.method).toBe('GET');
       req.flush({ succeeded: true, message: '', data: paged });
     });
 
-    it('should POST with default params when none provided', () => {
+    it('should GET with default params when none provided', () => {
       service.getEmployees().subscribe();
 
-      const req = httpMock.expectOne(`${apiUrl}/list`);
-      expect(req.request.body).toEqual({ pageSize: 10, pageNumber: 1 });
+      const req = httpMock.expectOne(r =>
+        r.method === 'GET' &&
+        r.url === `${apiUrl}` &&
+        r.params.get('pageNumber') === '1' &&
+        r.params.get('pageSize') === '10'
+      );
       req.flush({ succeeded: true, message: '', data: makePagedResult([]) });
     });
 
@@ -92,7 +100,7 @@ describe('EmployeeService', () => {
       let error: unknown;
       service.getEmployees().subscribe({ error: err => error = err });
 
-      const req = httpMock.expectOne(`${apiUrl}/list`);
+      const req = httpMock.expectOne(r => r.method === 'GET' && r.url === `${apiUrl}`);
       req.flush('Server error', { status: 500, statusText: 'Internal Server Error' });
 
       expect(error).toBeTruthy();

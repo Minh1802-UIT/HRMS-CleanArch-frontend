@@ -38,7 +38,14 @@ export class EmployeeService {
       this.logger.debug('EmployeeService: list cache hit');
       return of(listCached.data);
     }
-    return this.http.post<ApiResponse<PagedResult<Employee>>>(`${this.apiUrl}/list`, params).pipe(
+    const httpParams: Record<string, string> = {
+      pageNumber: params.pageNumber.toString(),
+      pageSize: params.pageSize.toString(),
+    };
+    if (params.searchTerm) httpParams['searchTerm'] = params.searchTerm;
+    if (params.sortBy) httpParams['sortBy'] = params.sortBy;
+
+    return this.http.get<ApiResponse<PagedResult<Employee>>>(`${this.apiUrl}`, { params: httpParams }).pipe(
       map(response => response.data),
       tap(data => this.listCache.set(cacheKey, { data, expiry: Date.now() + this.LIST_CACHE_TTL_MS })),
       catchError(err => { this.logger.error('EmployeeService: getEmployees failed', err); return throwError(() => err); })
