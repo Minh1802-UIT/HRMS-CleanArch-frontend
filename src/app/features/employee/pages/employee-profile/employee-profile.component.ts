@@ -69,6 +69,7 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
   // Master Data Maps
   departmentsMap: { [key: string]: string } = {};
   positionsMap: { [key: string]: string } = {};
+  managersMap: { [key: string]: string } = {};
 
   // Leave Balances
   leaveBalances: LeaveBalance[] = [];
@@ -157,6 +158,24 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
       });
       this.cdr.markForCheck();
     });
+    this.employeeService.getLookup().pipe(takeUntil(this.destroy$)).subscribe({
+      next: (employees) => {
+        employees.forEach(e => {
+          if (e.id) this.managersMap[e.id] = e.fullName;
+        });
+        this.cdr.markForCheck();
+      },
+      error: (err: Error) => this.logger.error('Failed to load managers lookup', err)
+    });
+  }
+
+  getManagerName(managerId: string | undefined): string {
+    if (!managerId) return 'Self-Reporting';
+    return this.managersMap[managerId] ?? 'Loading...';
+  }
+
+  getInitials(name: string): string {
+    return name.split(' ').filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase();
   }
 
   loadEmployee() {

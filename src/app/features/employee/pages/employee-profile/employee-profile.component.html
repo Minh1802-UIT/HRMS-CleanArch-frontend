@@ -454,16 +454,14 @@
                   Reporting Manager
                 </p>
                 <div class="flex gap-2 items-center mt-1">
-                  <div
-                    class="w-6 h-6 rounded-lg bg-violet-600 text-white flex items-center justify-center text-xs font-bold uppercase">
-                    M
-                  </div>
+                  @if (employee.jobDetails?.managerId) {
+                    <div
+                      class="w-6 h-6 rounded-lg bg-violet-600 text-white flex items-center justify-center text-xs font-bold uppercase">
+                      {{ getInitials(getManagerName(employee.jobDetails?.managerId)) }}
+                    </div>
+                  }
                   <p class="text-sm font-bold text-slate-900 dark:text-white">
-                    {{
-                    employee.jobDetails?.managerId
-                    ? "Direct Line Manager"
-                    : "Self-Reporting"
-                    }}
+                    {{ getManagerName(employee.jobDetails?.managerId) }}
                   </p>
                 </div>
               </div>
