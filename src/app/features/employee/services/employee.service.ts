@@ -49,8 +49,12 @@ export class EmployeeService {
     const params: Record<string, string> = {};
     if (keyword) params['keyword'] = keyword;
     if (limit && limit > 0) params['limit'] = limit.toString();
-    return this.http.get<ApiResponse<Employee[]>>(`${this.apiUrl}/lookup`, { params }).pipe(
-      map(response => response.data || []),
+    return this.http.get<ApiResponse<Array<{ id: string; label: string; secondaryLabel?: string }>>>(`${this.apiUrl}/lookup`, { params }).pipe(
+      map(response => (response.data || []).map(item => ({
+        id: item.id,
+        fullName: item.label,
+        employeeCode: item.secondaryLabel ?? '',
+      } as unknown as Employee))),
       catchError(err => { this.logger.error('EmployeeService: getLookup failed', err); return throwError(() => err); })
     );
   }

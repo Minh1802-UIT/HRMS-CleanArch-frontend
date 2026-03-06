@@ -4,7 +4,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Subject, debounceTime, distinctUntilChanged, switchMap, of } from 'rxjs';
+import { Subject, debounceTime, distinctUntilChanged, switchMap, of, catchError } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { OvertimeScheduleService, OvertimeSchedule } from '@features/attendance/services/overtime-schedule.service';
 import { EmployeeService } from '@features/employee/services/employee.service';
@@ -58,7 +58,9 @@ export class OvertimeScheduleComponent implements OnInit, OnDestroy {
     this.employeeSearch$.pipe(
       debounceTime(300),
       distinctUntilChanged(),
-      switchMap(q => q.length >= 1 ? this.employeeService.getLookup(q, 10) : of([])),
+      switchMap(q => q.length >= 1
+        ? this.employeeService.getLookup(q, 10).pipe(catchError(() => of([])))
+        : of([])),
       takeUntil(this.destroy$)
     ).subscribe(results => {
       this.employeeSuggestions = results;

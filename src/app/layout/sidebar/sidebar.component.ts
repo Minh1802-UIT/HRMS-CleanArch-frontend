@@ -123,7 +123,7 @@ const ALL_GROUPS: NavGroup[] = [
       },
       {
         label: 'Explanations',
-        icon: 'pending_actions',
+        icon: 'rate_review',
         route: '/attendance/explanations',
         activePage: 'explanations',
         roles: ['Admin', 'HR', 'Manager'],

@@ -130,14 +130,14 @@ export class EmployeeDetailComponent implements OnInit, OnDestroy {
       if (!emp) return '-';
       const id = emp.jobDetails?.departmentId;
       if (!id) return '-';
-      return this.departmentsMap[id] || id; 
+      return this.departmentsMap[id] || '-';
   }
 
   getPositionTitle(emp: Employee | null): string {
       if (!emp) return '-';
       const id = emp.jobDetails?.positionId;
       if (!id) return '-';
-      return this.positionsMap[id] || id;
+      return this.positionsMap[id] || '-';
   }
 
   getStatus(emp: Employee | null): string {
