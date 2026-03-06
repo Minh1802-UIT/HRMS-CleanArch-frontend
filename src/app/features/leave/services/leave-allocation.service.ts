@@ -42,12 +42,8 @@ export class LeaveAllocationService {
   }
 
   getAllAllocations(pagination: PaginationParams, keyword: string = ''): Observable<PagedResult<LeaveAllocationDto>> {
-    const params: Record<string, string> = {};
-    if (pagination.pageNumber) params['pageNumber'] = String(pagination.pageNumber);
-    if (pagination.pageSize) params['pageSize'] = String(pagination.pageSize);
-    if (pagination.sortBy) params['sortBy'] = pagination.sortBy;
-    if (keyword) params['keyword'] = keyword;
-    return this.http.get<ApiResponse<PagedResult<LeaveAllocationDto>>>(`${this.apiUrl}`, { params }).pipe(
+    const body = { pageNumber: pagination.pageNumber, pageSize: pagination.pageSize, keyword };
+    return this.http.post<ApiResponse<PagedResult<LeaveAllocationDto>>>(`${this.apiUrl}/list`, body).pipe(
       map(response => response.data),
       catchError(err => {
         this.logger.error('LeaveAllocationService: getAllAllocations failed', err);
