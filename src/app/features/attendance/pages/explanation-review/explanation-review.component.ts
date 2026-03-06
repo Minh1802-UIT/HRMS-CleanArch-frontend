@@ -57,7 +57,7 @@ export class ExplanationReviewComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           this.logger.error('ExplanationReview: load failed', err);
-          this.toast.showError('Lỗi', err?.error?.message || 'Không thể tải danh sách giải trình.');
+          this.toast.showError('Error', err?.error?.message || 'Failed to load explanation list.');
           this.loading = false;
           this.cdr.markForCheck();
         }
@@ -66,10 +66,10 @@ export class ExplanationReviewComponent implements OnInit, OnDestroy {
 
   approve(item: AttendanceExplanation): void {
     this.confirm.confirm({
-      title: 'Phê duyệt giải trình',
-      message: `Bạn có chắc muốn phê duyệt giải trình của ${item.employeeName ?? item.employeeId} cho ngày ${new Date(item.workDate).toLocaleDateString('vi-VN')}? Hệ thống sẽ tự động cập nhật ngày đó thành đủ công (8 giờ).`,
-      confirmLabel: 'Phê duyệt',
-      cancelLabel: 'Hủy',
+      title: 'Approve Explanation',
+      message: `Are you sure you want to approve the explanation for ${item.employeeName ?? item.employeeId} on ${new Date(item.workDate).toLocaleDateString('en-GB')}? The system will automatically update that day to full attendance (8 hours).`,
+      confirmLabel: 'Approve',
+      cancelLabel: 'Cancel',
       type: 'success',
     })
     .pipe(takeUntil(this.destroy$))
@@ -82,12 +82,12 @@ export class ExplanationReviewComponent implements OnInit, OnDestroy {
         .subscribe({
           next: () => {
             this.items = this.items.filter(i => i.id !== item.id);
-            this.toast.showSuccess('Đã phê duyệt', `Giải trình của ${item.employeeName ?? item.employeeId} đã được phê duyệt.`);
+            this.toast.showSuccess('Approved', `Explanation for ${item.employeeName ?? item.employeeId} has been approved.`);
             this.processingId = null;
             this.cdr.markForCheck();
           },
           error: (err) => {
-            this.toast.showError('Lỗi', err?.error?.message || 'Phê duyệt thất bại.');
+            this.toast.showError('Error', err?.error?.message || 'Approval failed.');
             this.processingId = null;
             this.cdr.markForCheck();
           }
@@ -120,13 +120,13 @@ export class ExplanationReviewComponent implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           this.items = this.items.filter(i => i.id !== item.id);
-          this.toast.showSuccess('Đã từ chối', `Giải trình của ${item.employeeName ?? item.employeeId} đã bị từ chối.`);
+          this.toast.showSuccess('Rejected', `Explanation for ${item.employeeName ?? item.employeeId} has been rejected.`);
           this.processingId = null;
           this.closeRejectModal();
           this.cdr.markForCheck();
         },
         error: (err) => {
-          this.toast.showError('Lỗi', err?.error?.message || 'Từ chối thất bại.');
+          this.toast.showError('Error', err?.error?.message || 'Rejection failed.');
           this.processingId = null;
           this.cdr.markForCheck();
         }

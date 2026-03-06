@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   Input,
   OnInit,
@@ -12,6 +13,7 @@ import { RouterModule } from '@angular/router';
 import { Router, NavigationEnd } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
 import { LayoutService } from '../layout.service';
+import { LanguageService } from '@core/services/language.service';
 import { Subject, takeUntil, filter } from 'rxjs';
 
 interface NavItem {
@@ -210,7 +212,9 @@ export class SidebarComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private authService: AuthService,
-    public layoutService: LayoutService
+    public layoutService: LayoutService,
+    public langService: LanguageService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -219,6 +223,11 @@ export class SidebarComponent implements OnInit, OnDestroy {
       .subscribe((user) => {
         this.userRoles$.set(user?.roles ?? []);
       });
+
+    // Re-render when language changes
+    this.langService.langChange$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => this.cdr.markForCheck());
 
     // Close mobile sidebar after any route navigation
     this.router.events

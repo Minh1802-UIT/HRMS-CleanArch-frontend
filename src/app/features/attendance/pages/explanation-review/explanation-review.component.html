@@ -5,10 +5,10 @@
     <h1
       class="text-2xl font-black tracking-tight text-zinc-900 dark:text-white"
     >
-      Giải Trình Chấm Công
+      Attendance Explanations
     </h1>
     <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
-      Duyệt các đơn giải trình quên check-out của nhân viên.
+      Review and approve missing check-out explanation requests from employees.
     </p>
   </div>
 
@@ -40,9 +40,9 @@
         >check_circle</span
       >
       <p class="text-base font-bold text-zinc-600 dark:text-zinc-300">
-        Không có đơn nào cần duyệt
+        No pending requests
       </p>
-      <p class="text-sm">Tất cả đơn giải trình đã được xử lý.</p>
+      <p class="text-sm">All explanation requests have been processed.</p>
     </div>
   }
 
@@ -58,7 +58,7 @@
           >pending_actions</span
         >
         <h2 class="text-sm font-black text-zinc-800 dark:text-white">
-          Đang chờ duyệt
+          Pending Review
           <span
             class="ml-2 inline-flex items-center justify-center w-5 h-5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 text-xs font-black"
           >
@@ -75,27 +75,27 @@
               <th
                 class="px-5 py-3 label-overline text-zinc-500 dark:text-zinc-400 text-left"
               >
-                Nhân viên
+                Employee
               </th>
               <th
                 class="px-5 py-3 label-overline text-zinc-500 dark:text-zinc-400 text-left"
               >
-                Ngày
+                Date
               </th>
               <th
                 class="px-5 py-3 label-overline text-zinc-500 dark:text-zinc-400 text-left"
               >
-                Lý do
+                Reason
               </th>
               <th
                 class="px-5 py-3 label-overline text-zinc-500 dark:text-zinc-400 text-left"
               >
-                Ngày gửi
+                Submitted
               </th>
               <th
                 class="px-5 py-3 label-overline text-zinc-500 dark:text-zinc-400 text-right"
               >
-                Thao tác
+                Actions
               </th>
             </tr>
           </thead>
@@ -165,7 +165,7 @@
                           >check</span
                         >
                       }
-                      Duyệt
+                      Approve
                     </button>
                     <button
                       type="button"
@@ -176,7 +176,7 @@
                       <span class="material-symbols-outlined text-xs"
                         >close</span
                       >
-                      Từ chối
+                      Reject
                     </button>
                   </div>
                 </td>
@@ -208,7 +208,7 @@
         </div>
         <div>
           <h3 class="text-base font-black text-zinc-900 dark:text-white">
-            Từ Chối Giải Trình
+            Reject Explanation
           </h3>
           <p class="text-xs text-zinc-500 dark:text-zinc-400">
             {{ selectedItem.employeeName ?? selectedItem.employeeId }} ·
@@ -230,9 +230,9 @@
       <div
         class="rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700/40 p-3 mb-4 text-xs text-red-700 dark:text-red-300"
       >
-        <span class="font-bold">Lưu ý:</span> Từ chối sẽ khiến ngày
-        {{ selectedItem.workDate | date: "dd/MM/yyyy" }} giữ nguyên là 0 giờ
-        (mất 1 công).
+        <span class="font-bold">Note:</span> Rejecting will keep
+        {{ selectedItem.workDate | date: "dd/MM/yyyy" }} as 0 hours
+        (1 day marked absent).
       </div>
 
       <!-- Reason textarea -->
@@ -240,13 +240,13 @@
         <label
           class="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1.5"
         >
-          Lý do từ chối <span class="text-red-500">*</span>
+          Rejection reason <span class="text-red-500">*</span>
         </label>
         <textarea
           [(ngModel)]="rejectNote"
           rows="3"
           maxlength="300"
-          placeholder="Vui lòng mô tả lý do từ chối..."
+          placeholder="Please describe the reason for rejection..."
           class="w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-sm text-zinc-800 dark:text-zinc-100 px-3 py-2.5 resize-none focus:outline-none focus:ring-2 focus:ring-red-400 placeholder:text-zinc-400"
         ></textarea>
         <p class="text-right text-xs text-zinc-400 mt-1">
@@ -262,7 +262,7 @@
           [disabled]="processingId !== null"
           class="flex-1 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-sm font-bold text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors disabled:opacity-50"
         >
-          Hủy
+          Cancel
         </button>
         <button
           type="button"
@@ -275,7 +275,7 @@
               >progress_activity</span
             >
           }
-          Từ Chối
+          Reject
         </button>
       </div>
     </div>

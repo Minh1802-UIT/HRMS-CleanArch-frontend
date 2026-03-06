@@ -363,8 +363,8 @@
                       >
                         {{ formatTime(log.checkOutTime) }}
                       </span>
-                    } @else if (log.isMissingPunch) {
-                      <!-- Missing punch: show explain button -->
+                    } @else if (needsMissingPunchExplanation(log)) {
+                      <!-- Missing checkout: show explain button -->
                       @if (getExplanationForLog(log); as exp) {
                         <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold border"
                           [ngClass]="exp.status === 'Approved' ? 'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-700'

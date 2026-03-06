@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
 import { NotificationService } from '@core/services/notification.service';
 import { ThemeService } from '@core/services/theme.service';
+import { LanguageService } from '@core/services/language.service';
 import { LayoutService } from '@layout/layout.service';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -62,6 +63,7 @@ export class SharedNavbarComponent implements OnInit, OnDestroy {
     private notificationService: NotificationService,
     private cdr: ChangeDetectorRef,
     public themeService: ThemeService,
+    public langService: LanguageService,
     public layoutService: LayoutService
   ) {
     this.currentUser$ = this.authService.currentUser;

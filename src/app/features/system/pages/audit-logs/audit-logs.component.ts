@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, HostListener } from '@angular/core';
 import { NgClass, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuditLogService } from '@features/system/services/audit-log.service';
@@ -31,6 +31,7 @@ export class AuditLogsComponent implements OnInit, OnDestroy {
   protected readonly Math = Math;
 
   actionTypes = ['Create', 'Update', 'Delete', 'Login', 'Logout', 'RoleAssignment'];
+  selectedLog: AuditLog | null = null;
   private destroy$ = new Subject<void>();
   private searchInput$ = new Subject<string>();
 
@@ -163,4 +164,72 @@ export class AuditLogsComponent implements OnInit, OnDestroy {
   trackByActionType(index: number, type: string): string { return type; }
   trackByLogId(index: number, log: AuditLog): string { return log.id || String(index); }
   trackByPage(index: number, page: number): number { return page; }
+
+  // ── Detail Panel ──────────────────────────────────────────
+
+  openDetail(log: AuditLog): void {
+    this.selectedLog = log;
+    this.cdr.markForCheck();
+  }
+
+  closeDetail(): void {
+    this.selectedLog = null;
+    this.cdr.markForCheck();
+  }
+
+  @HostListener('document:keydown.escape')
+  onEsc(): void { this.closeDetail(); }
+
+  parseJson(val: string | null): Record<string, unknown> | null {
+    if (!val) return null;
+    try {
+      const parsed = JSON.parse(val);
+      return typeof parsed === 'object' && parsed !== null ? parsed : null;
+    } catch {
+      return null;
+    }
+  }
+
+  objectKeys(obj: Record<string, unknown> | null): string[] {
+    return obj ? Object.keys(obj) : [];
+  }
+
+  /** Keys that have changed between oldValues and newValues */
+  changedKeys(old: Record<string, unknown> | null, nv: Record<string, unknown> | null): Set<string> {
+    if (!old || !nv) return new Set();
+    const changed = new Set<string>();
+    const allKeys = new Set([...Object.keys(old), ...Object.keys(nv)]);
+    allKeys.forEach(k => {
+      if (JSON.stringify(old[k]) !== JSON.stringify(nv[k])) changed.add(k);
+    });
+    return changed;
+  }
+
+  /** All keys from old + new merged and deduplicated */
+  mergedKeys(old: Record<string, unknown> | null, nv: Record<string, unknown> | null): string[] {
+    const set = new Set<string>();
+    if (old) Object.keys(old).forEach(k => set.add(k));
+    if (nv) Object.keys(nv).forEach(k => set.add(k));
+    return Array.from(set);
+  }
+
+  formatValue(val: unknown): string {
+    if (val === null || val === undefined) return '—';
+    if (typeof val === 'object') return JSON.stringify(val, null, 2);
+    return String(val);
+  }
+
+  // Getters for the detail drawer (avoids @let which requires Angular 18+)
+  get selectedOldObj(): Record<string, unknown> | null {
+    return this.parseJson(this.selectedLog?.oldValues ?? null);
+  }
+  get selectedNewObj(): Record<string, unknown> | null {
+    return this.parseJson(this.selectedLog?.newValues ?? null);
+  }
+  get selectedDiff(): Set<string> {
+    return this.changedKeys(this.selectedOldObj, this.selectedNewObj);
+  }
+  get selectedMergedKeys(): string[] {
+    return this.mergedKeys(this.selectedOldObj, this.selectedNewObj);
+  }
 }

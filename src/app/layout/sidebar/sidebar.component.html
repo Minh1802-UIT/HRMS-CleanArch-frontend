@@ -43,7 +43,7 @@
         <p
           class="label-overline text-zinc-600 px-4 pt-5 pb-1.5 first:pt-2 select-none"
         >
-          {{ group.title }}
+          {{ langService.t(group.title) }}  
         </p>
       } @else {
         <div class="mx-3 mt-4 mb-2 border-t border-zinc-200 dark:border-zinc-800/60"></div>
@@ -53,7 +53,7 @@
       @for (item of group.items; track item.route) {
         <a
           [routerLink]="item.route"
-          [title]="collapsed() ? item.label : ''"
+          [title]="collapsed() ? langService.t(item.label) : ''"
           [ngClass]="{
             'bg-violet-600/15 text-[#a78bfa]': isActive(item.activePage),
             'text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800/70': !isActive(
@@ -85,7 +85,7 @@
 
           <!-- Label -->
           @if (!collapsed()) {
-            <span class="truncate">{{ item.label }}</span>
+            <span class="truncate">{{ langService.t(item.label) }}</span>
           }
 
           <!-- Tooltip (collapsed mode) -->
@@ -93,7 +93,7 @@
             <span
               class="absolute left-full ml-3 px-2.5 py-1 bg-zinc-900 border border-zinc-700 text-white text-xs font-medium rounded-md shadow-lg pointer-events-none whitespace-nowrap opacity-0 group-hover/item:opacity-100 transition-opacity duration-150 z-50"
             >
-              {{ item.label }}
+              {{ langService.t(item.label) }}
             </span>
           }
         </a>

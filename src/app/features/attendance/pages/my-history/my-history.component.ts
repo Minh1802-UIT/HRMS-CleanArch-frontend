@@ -252,6 +252,24 @@ export class MyHistoryComponent implements OnInit, OnDestroy {
 
   // ── Explanation modal ──────────────────────────────────────────────────────
 
+  /**
+   * True when this log row should offer a "Giải trình" button.
+   * Covers both cases:
+   *  - isMissingPunch  : checked IN but no checkout (ghost-log may or may not have run)
+   *  - isMissingCheckIn: checked OUT but no check-in
+   *  - raw missing checkout: past day, has checkIn, no checkOut, flag not yet set by batch
+   */
+  needsMissingPunchExplanation(log: DailyLogEntry): boolean {
+    if (log.isWeekend || log.isHoliday) return false;
+    if (log.isMissingPunch) return true;
+    // Ghost-log hasn't run yet but the employee clearly forgot to check out
+    const logDate = new Date(log.date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    logDate.setHours(0, 0, 0, 0);
+    return !!log.checkInTime && !log.checkOutTime && logDate < today;
+  }
+
   /** Returns the explanation for a given log date, if any */
   getExplanationForLog(log: DailyLogEntry): AttendanceExplanation | undefined {
     return this.myExplanations.find(e => {
