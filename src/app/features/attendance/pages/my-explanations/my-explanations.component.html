@@ -1,0 +1,361 @@
+<div class="p-6 max-w-[1400px] mx-auto">
+
+  <!-- ── Header ──────────────────────────────────────────────────────────── -->
+  <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <p class="label-overline text-amber-500 mb-1">Attendance</p>
+      <h1 class="text-2xl font-black tracking-tight text-zinc-900 dark:text-white">My Explanations</h1>
+      <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
+        Track all your submitted explanations and their review status by month.
+      </p>
+    </div>
+  </div>
+
+  <!-- ── Stats cards ────────────────────────────────────────────────────── -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+
+    <!-- Total -->
+    <div class="glass-panel rounded-2xl p-4 flex flex-col items-center text-center gap-2">
+      <div class="w-10 h-10 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
+        <span class="material-symbols-outlined text-zinc-500 dark:text-zinc-400">description</span>
+      </div>
+      <div>
+        <p class="text-2xl font-black text-zinc-900 dark:text-white leading-none">{{ stats.total }}</p>
+        <p class="text-xs text-zinc-400 mt-0.5">Total</p>
+      </div>
+    </div>
+
+    <!-- Pending -->
+    <div class="glass-panel rounded-2xl p-4 flex flex-col items-center text-center gap-2">
+      <div class="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+        <span class="material-symbols-outlined text-amber-600 dark:text-amber-400">schedule</span>
+      </div>
+      <div>
+        <p class="text-2xl font-black text-zinc-900 dark:text-white leading-none">{{ stats.pending }}</p>
+        <p class="text-xs text-zinc-400 mt-0.5">Pending</p>
+      </div>
+    </div>
+
+    <!-- Approved -->
+    <div class="glass-panel rounded-2xl p-4 flex flex-col items-center text-center gap-2">
+      <div class="w-10 h-10 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+        <span class="material-symbols-outlined text-green-600 dark:text-green-400">check_circle</span>
+      </div>
+      <div>
+        <p class="text-2xl font-black text-zinc-900 dark:text-white leading-none">{{ stats.approved }}</p>
+        <p class="text-xs text-zinc-400 mt-0.5">Approved</p>
+      </div>
+    </div>
+
+    <!-- Rejected -->
+    <div class="glass-panel rounded-2xl p-4 flex flex-col items-center text-center gap-2">
+      <div class="w-10 h-10 rounded-xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+        <span class="material-symbols-outlined text-red-500 dark:text-red-400">cancel</span>
+      </div>
+      <div>
+        <p class="text-2xl font-black text-zinc-900 dark:text-white leading-none">{{ stats.rejected }}</p>
+        <p class="text-xs text-zinc-400 mt-0.5">Rejected</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Table card ────────────────────────────────────────────────────── -->
+  <div class="glass-panel rounded-2xl overflow-hidden">
+
+    <!-- Toolbar -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-6 py-4 border-b border-zinc-200 dark:border-zinc-800">
+      <div class="flex items-center gap-2 text-sm font-semibold text-zinc-700 dark:text-zinc-200">
+        <span class="material-symbols-outlined text-amber-500 text-lg">pending_actions</span>
+        Explanation History
+      </div>
+
+      <div class="flex items-center gap-3 flex-wrap">
+        <!-- Status filter -->
+        <div class="relative">
+          <select
+            [(ngModel)]="selectedStatus"
+            class="appearance-none pl-3 pr-8 py-1.5 text-xs font-semibold rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-amber-400 cursor-pointer"
+          >
+            @for (opt of statusOptions; track opt.value) {
+              <option [value]="opt.value">{{ opt.label }}</option>
+            }
+          </select>
+          <span class="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 material-symbols-outlined text-sm text-zinc-400">expand_more</span>
+        </div>
+
+        <!-- Month navigator -->
+        <div class="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800 rounded-xl px-2 py-1">
+          <button
+            (click)="prevMonth()"
+            class="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white dark:hover:bg-zinc-700 transition-colors"
+            aria-label="Previous month"
+          >
+            <span class="material-symbols-outlined text-base text-zinc-500">chevron_left</span>
+          </button>
+          <span class="text-xs font-bold text-zinc-700 dark:text-zinc-200 px-1 min-w-[110px] text-center">
+            {{ displayRange }}
+          </span>
+          <button
+            (click)="nextMonth()"
+            [disabled]="isCurrentMonth"
+            class="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white dark:hover:bg-zinc-700 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            aria-label="Next month"
+          >
+            <span class="material-symbols-outlined text-base text-zinc-500">chevron_right</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    @if (loading) {
+      <div class="flex items-center justify-center py-20 gap-3 text-zinc-400">
+        <span class="material-symbols-outlined animate-spin text-2xl">progress_activity</span>
+        <span class="text-sm">Loading...</span>
+      </div>
+    } @else {
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="text-left border-b border-zinc-200 dark:border-zinc-800">
+              <th scope="col" class="px-6 py-3 text-[10px] font-black uppercase tracking-wider text-zinc-400">#</th>
+              <th scope="col" class="px-6 py-3 text-[10px] font-black uppercase tracking-wider text-zinc-400">Work Date</th>
+              <th scope="col" class="px-6 py-3 text-[10px] font-black uppercase tracking-wider text-zinc-400">Reason</th>
+              <th scope="col" class="px-6 py-3 text-[10px] font-black uppercase tracking-wider text-zinc-400">Status</th>
+              <th scope="col" class="px-6 py-3 text-[10px] font-black uppercase tracking-wider text-zinc-400">Reviewed By</th>
+              <th scope="col" class="px-6 py-3 text-[10px] font-black uppercase tracking-wider text-zinc-400">Submitted On</th>
+              <th scope="col" class="px-6 py-3 w-14"></th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (filteredItems.length === 0) {
+              <tr>
+                <td colspan="7" class="px-6 py-16 text-center">
+                  <div class="flex flex-col items-center gap-3 text-zinc-400">
+                    <span class="material-symbols-outlined text-4xl opacity-40">inbox</span>
+                    <p class="text-sm">No explanations found for this month.</p>
+                  </div>
+                </td>
+              </tr>
+            } @else {
+              @for (item of filteredItems; track item.id; let i = $index) {
+                <tr
+                  class="border-b border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors cursor-pointer"
+                  (click)="openDetail(item)"
+                >
+                  <!-- # -->
+                  <td class="px-6 py-3 text-xs text-zinc-400 font-mono">{{ i + 1 }}</td>
+
+                  <!-- Work date -->
+                  <td class="px-6 py-3">
+                    <span class="font-semibold text-zinc-800 dark:text-zinc-100">{{ formatDate(item.workDate) }}</span>
+                  </td>
+
+                  <!-- Reason preview -->
+                  <td class="px-6 py-3 max-w-xs">
+                    <span class="text-zinc-600 dark:text-zinc-300 truncate block max-w-[260px]">{{ item.reason }}</span>
+                  </td>
+
+                  <!-- Status badge -->
+                  <td class="px-6 py-3">
+                    <span
+                      class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold border"
+                      [ngClass]="getStatusClass(item.status)"
+                    >
+                      <span class="material-symbols-outlined text-xs leading-none" style="font-size:12px">{{ getStatusIcon(item.status) }}</span>
+                      {{ item.status }}
+                    </span>
+                  </td>
+
+                  <!-- Reviewed by -->
+                  <td class="px-6 py-3 text-xs text-zinc-500 dark:text-zinc-400">
+                    {{ item.reviewedBy || '—' }}
+                  </td>
+
+                  <!-- Submitted on -->
+                  <td class="px-6 py-3 text-xs text-zinc-400">
+                    {{ formatDate(item.createdAt) }}
+                  </td>
+
+                  <!-- View button -->
+                  <td class="px-3 py-3">
+                    <button
+                      class="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
+                      (click)="$event.stopPropagation(); openDetail(item)"
+                      title="View detail"
+                    >
+                      <span class="material-symbols-outlined text-base text-zinc-400">open_in_new</span>
+                    </button>
+                  </td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+  </div><!-- /glass-panel -->
+
+</div><!-- /page -->
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     DETAIL DRAWER
+══════════════════════════════════════════════════════════════════════════ -->
+@if (selectedItem) {
+  <!-- Backdrop -->
+  <div
+    class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
+    (click)="closeDetail()"
+    aria-label="Close drawer"
+  ></div>
+
+  <!-- Drawer panel -->
+  <aside
+    class="fixed right-0 top-0 h-full w-full max-w-lg z-50 bg-white dark:bg-zinc-950 shadow-2xl flex flex-col overflow-hidden"
+    role="dialog"
+    aria-modal="true"
+  >
+    <!-- Drawer header -->
+    <div class="flex items-center justify-between px-6 py-4 border-b border-zinc-200 dark:border-zinc-800 flex-shrink-0">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center"
+             [ngClass]="{
+               'bg-green-100 dark:bg-green-900/30': selectedItem.status === 'Approved',
+               'bg-amber-100 dark:bg-amber-900/30': selectedItem.status === 'Pending',
+               'bg-red-100 dark:bg-red-900/30':    selectedItem.status === 'Rejected'
+             }">
+          <span class="material-symbols-outlined text-lg"
+                [ngClass]="{
+                  'text-green-600 dark:text-green-400': selectedItem.status === 'Approved',
+                  'text-amber-600 dark:text-amber-400': selectedItem.status === 'Pending',
+                  'text-red-500 dark:text-red-400':    selectedItem.status === 'Rejected'
+                }">{{ getStatusIcon(selectedItem.status) }}</span>
+        </div>
+        <div>
+          <p class="text-xs font-bold uppercase tracking-wider text-zinc-400">Explanation Detail</p>
+          <p class="text-sm font-black text-zinc-900 dark:text-white">{{ formatDate(selectedItem.workDate) }}</p>
+        </div>
+      </div>
+      <button
+        (click)="closeDetail()"
+        class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+        aria-label="Close"
+      >
+        <span class="material-symbols-outlined text-zinc-400">close</span>
+      </button>
+    </div>
+
+    <!-- Drawer body -->
+    <div class="flex-1 overflow-y-auto p-6 space-y-6">
+
+      <!-- Status banner -->
+      <div
+        class="rounded-xl px-4 py-3 flex items-center gap-3 border"
+        [ngClass]="{
+          'bg-green-50 border-green-200 dark:bg-green-900/10 dark:border-green-800/40': selectedItem.status === 'Approved',
+          'bg-amber-50 border-amber-200 dark:bg-amber-900/10 dark:border-amber-800/40': selectedItem.status === 'Pending',
+          'bg-red-50   border-red-200   dark:bg-red-900/10   dark:border-red-800/40':   selectedItem.status === 'Rejected'
+        }"
+      >
+        <span class="material-symbols-outlined text-2xl"
+              [ngClass]="{
+                'text-green-500': selectedItem.status === 'Approved',
+                'text-amber-500': selectedItem.status === 'Pending',
+                'text-red-500':   selectedItem.status === 'Rejected'
+              }">{{ getStatusIcon(selectedItem.status) }}</span>
+        <div>
+          <p class="text-sm font-black"
+             [ngClass]="{
+               'text-green-700 dark:text-green-400': selectedItem.status === 'Approved',
+               'text-amber-700 dark:text-amber-400': selectedItem.status === 'Pending',
+               'text-red-700   dark:text-red-400':   selectedItem.status === 'Rejected'
+             }">{{ selectedItem.status }}</p>
+          @if (selectedItem.status === 'Pending') {
+            <p class="text-xs text-amber-600 dark:text-amber-500 mt-0.5">Awaiting review from your manager or HR.</p>
+          }
+          @if (selectedItem.status === 'Approved') {
+            <p class="text-xs text-green-600 dark:text-green-400 mt-0.5">Your explanation has been accepted.</p>
+          }
+          @if (selectedItem.status === 'Rejected') {
+            <p class="text-xs text-red-600 dark:text-red-400 mt-0.5">Your explanation was not accepted.</p>
+          }
+        </div>
+      </div>
+
+      <!-- Key metadata grid -->
+      <section>
+        <p class="label-overline text-zinc-400 mb-3">Details</p>
+        <div class="grid grid-cols-2 gap-3">
+
+          <div class="bg-zinc-50 dark:bg-zinc-900/60 rounded-xl p-3 border border-zinc-200 dark:border-zinc-800">
+            <p class="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1">Work Date</p>
+            <p class="text-sm font-semibold text-zinc-800 dark:text-zinc-100">{{ formatDate(selectedItem.workDate) }}</p>
+          </div>
+
+          <div class="bg-zinc-50 dark:bg-zinc-900/60 rounded-xl p-3 border border-zinc-200 dark:border-zinc-800">
+            <p class="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1">Submitted On</p>
+            <p class="text-sm font-semibold text-zinc-800 dark:text-zinc-100">{{ formatDateTime(selectedItem.createdAt) }}</p>
+          </div>
+
+          @if (selectedItem.reviewedBy) {
+            <div class="bg-zinc-50 dark:bg-zinc-900/60 rounded-xl p-3 border border-zinc-200 dark:border-zinc-800">
+              <p class="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1">Reviewed By</p>
+              <p class="text-sm font-semibold text-zinc-800 dark:text-zinc-100">{{ selectedItem.reviewedBy }}</p>
+            </div>
+          }
+
+          @if (selectedItem.reviewedAt) {
+            <div class="bg-zinc-50 dark:bg-zinc-900/60 rounded-xl p-3 border border-zinc-200 dark:border-zinc-800">
+              <p class="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1">Reviewed At</p>
+              <p class="text-sm font-semibold text-zinc-800 dark:text-zinc-100">{{ formatDateTime(selectedItem.reviewedAt) }}</p>
+            </div>
+          }
+
+        </div>
+      </section>
+
+      <!-- Reason -->
+      <section>
+        <p class="label-overline text-zinc-400 mb-2">Reason</p>
+        <div class="bg-zinc-50 dark:bg-zinc-900/60 rounded-xl p-4 border border-zinc-200 dark:border-zinc-800">
+          <p class="text-sm text-zinc-700 dark:text-zinc-200 leading-relaxed whitespace-pre-wrap">{{ selectedItem.reason }}</p>
+        </div>
+      </section>
+
+      <!-- Review note (only if has data) -->
+      @if (selectedItem.reviewNote) {
+        <section>
+          <p class="label-overline text-zinc-400 mb-2">Review Note</p>
+          <div
+            class="rounded-xl p-4 border"
+            [ngClass]="{
+              'bg-green-50 border-green-200 dark:bg-green-900/10 dark:border-green-800/40': selectedItem.status === 'Approved',
+              'bg-red-50   border-red-200   dark:bg-red-900/10   dark:border-red-800/40':   selectedItem.status === 'Rejected',
+              'bg-zinc-50  border-zinc-200  dark:bg-zinc-900/60  dark:border-zinc-800':      selectedItem.status === 'Pending'
+            }"
+          >
+            <p class="text-sm leading-relaxed whitespace-pre-wrap"
+               [ngClass]="{
+                 'text-green-700 dark:text-green-300': selectedItem.status === 'Approved',
+                 'text-red-700   dark:text-red-300':   selectedItem.status === 'Rejected',
+                 'text-zinc-700  dark:text-zinc-200':  selectedItem.status === 'Pending'
+               }">{{ selectedItem.reviewNote }}</p>
+          </div>
+        </section>
+      }
+
+    </div><!-- /drawer body -->
+
+    <!-- Drawer footer -->
+    <div class="flex items-center justify-end gap-2 px-6 py-4 border-t border-zinc-200 dark:border-zinc-800 flex-shrink-0">
+      <button
+        (click)="closeDetail()"
+        class="px-4 py-2 text-sm font-semibold rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 transition-colors"
+      >
+        Close
+      </button>
+    </div>
+  </aside>
+}

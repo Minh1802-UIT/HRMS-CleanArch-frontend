@@ -1,0 +1,9 @@
+/* my-explanations.component.css */
+
+.label-overline {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  display: block;
+}

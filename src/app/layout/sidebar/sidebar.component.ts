@@ -89,6 +89,12 @@ const ALL_GROUPS: NavGroup[] = [
         activePage: 'my-history',
       },
       {
+        label: 'My Explanations',
+        icon: 'pending_actions',
+        route: '/attendance/my-explanations',
+        activePage: 'my-explanations',
+      },
+      {
         label: 'Attendance',
         icon: 'fingerprint',
         route: '/attendance',
