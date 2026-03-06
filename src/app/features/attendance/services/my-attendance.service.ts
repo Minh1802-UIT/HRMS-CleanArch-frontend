@@ -25,6 +25,7 @@ export interface DailyLogEntry {
   isEarlyLeave: boolean;
   /** True when the employee checked in but never checked out (auto-closed by ghost-log). */
   isMissingPunch: boolean;
+  isMissingCheckIn: boolean;
   overtimeHours: number;
   isWeekend: boolean;
   isHoliday: boolean;

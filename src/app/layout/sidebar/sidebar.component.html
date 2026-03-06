@@ -1,19 +1,19 @@
 <aside
-  class="fixed md:relative inset-y-0 left-0 flex flex-col h-screen bg-[#0a0a0f] border-r border-zinc-800 transition-all duration-300 ease-in-out flex-shrink-0 z-50 -translate-x-full md:translate-x-0"
+  class="fixed md:relative inset-y-0 left-0 flex flex-col h-screen bg-white dark:bg-[#0a0a0f] border-r border-zinc-200 dark:border-zinc-800 transition-all duration-300 ease-in-out flex-shrink-0 z-50 -translate-x-full md:translate-x-0"
   [class.translate-x-0]="layoutService.mobileSidebarOpen()"
   [class.w-60]="!collapsed()"
   [class.w-16]="collapsed()"
 >
   <!-- ── Header: Logo + Toggle ── -->
   <div
-    class="flex items-center h-14 px-3 border-b border-zinc-800 flex-shrink-0"
+    class="flex items-center h-14 px-3 border-b border-zinc-200 dark:border-zinc-800 flex-shrink-0"
     [class.justify-between]="!collapsed()"
     [class.justify-center]="collapsed()"
   >
     @if (!collapsed()) {
       <a routerLink="/dashboard" class="flex items-center gap-2 min-w-0">
         <span class="text-[#a78bfa] text-2xl font-bold leading-none">M</span>
-        <span class="text-white text-[13px] font-bold tracking-tight truncate"
+        <span class="text-zinc-900 dark:text-white text-[13px] font-bold tracking-tight truncate"
           >ZenithHR</span
         >
       </a>
@@ -24,7 +24,7 @@
       title="Toggle sidebar"
       [attr.aria-label]="collapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
       [attr.aria-expanded]="!collapsed()"
-      class="flex items-center justify-center w-8 h-8 rounded-lg text-zinc-500 hover:text-white hover:bg-zinc-800 transition-colors flex-shrink-0"
+      class="flex items-center justify-center w-8 h-8 rounded-lg text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors flex-shrink-0"
     >
       <span class="material-symbols-outlined text-[20px]">
         {{ collapsed() ? "menu_open" : "menu" }}
@@ -46,7 +46,7 @@
           {{ group.title }}
         </p>
       } @else {
-        <div class="mx-3 mt-4 mb-2 border-t border-zinc-800/60"></div>
+        <div class="mx-3 mt-4 mb-2 border-t border-zinc-200 dark:border-zinc-800/60"></div>
       }
 
       <!-- Nav items -->
@@ -56,7 +56,7 @@
           [title]="collapsed() ? item.label : ''"
           [ngClass]="{
             'bg-violet-600/15 text-[#a78bfa]': isActive(item.activePage),
-            'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/70': !isActive(
+            'text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800/70': !isActive(
               item.activePage
             ),
             'justify-center': collapsed(),
@@ -76,7 +76,7 @@
             [ngClass]="
               isActive(item.activePage)
                 ? 'text-[#a78bfa]'
-                : 'text-zinc-400 group-hover/item:text-zinc-200'
+                : 'text-zinc-500 dark:text-zinc-400 group-hover/item:text-zinc-800 dark:group-hover/item:text-zinc-200'
             "
             class="material-symbols-outlined text-[20px] flex-shrink-0 transition-colors"
           >
@@ -104,10 +104,10 @@
   <!-- ── Footer: version tag ── -->
   @if (!collapsed()) {
     <div
-      class="flex-shrink-0 px-4 py-3 border-t border-zinc-800 flex items-center justify-between"
+      class="flex-shrink-0 px-4 py-3 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between"
     >
-      <span class="label-overline text-zinc-700">ZenithHR</span>
-      <span class="text-[10px] text-zinc-700 font-mono">v1.0</span>
+      <span class="label-overline text-zinc-400 dark:text-zinc-700">ZenithHR</span>
+      <span class="text-[10px] text-zinc-400 dark:text-zinc-700 font-mono">v1.0</span>
     </div>
   }
 </aside>

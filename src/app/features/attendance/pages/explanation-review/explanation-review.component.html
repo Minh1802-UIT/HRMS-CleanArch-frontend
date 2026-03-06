@@ -1,0 +1,283 @@
+<div class="p-6 max-w-[1200px] mx-auto">
+  <!-- Header -->
+  <div class="mb-6">
+    <p class="label-overline text-green-600 mb-1">Attendance</p>
+    <h1
+      class="text-2xl font-black tracking-tight text-zinc-900 dark:text-white"
+    >
+      Giải Trình Chấm Công
+    </h1>
+    <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
+      Duyệt các đơn giải trình quên check-out của nhân viên.
+    </p>
+  </div>
+
+  <!-- Loading skeleton -->
+  @if (loading) {
+    <div
+      class="glass-panel rounded-2xl overflow-hidden border border-zinc-100 dark:border-zinc-800"
+    >
+      @for (i of [1, 2, 3, 4]; track i) {
+        <div
+          class="px-5 py-4 border-b border-zinc-100 dark:border-zinc-800 animate-pulse flex items-center gap-4"
+        >
+          <div class="skeleton w-32 h-3 rounded"></div>
+          <div class="skeleton w-24 h-3 rounded"></div>
+          <div class="skeleton flex-1 h-3 rounded"></div>
+          <div class="skeleton w-20 h-8 rounded-xl"></div>
+          <div class="skeleton w-20 h-8 rounded-xl"></div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Empty state -->
+  @if (!loading && items.length === 0) {
+    <div
+      class="glass-panel rounded-2xl flex flex-col items-center justify-center py-20 gap-3 text-zinc-400 border border-zinc-100 dark:border-zinc-800"
+    >
+      <span class="material-symbols-outlined text-5xl text-green-400"
+        >check_circle</span
+      >
+      <p class="text-base font-bold text-zinc-600 dark:text-zinc-300">
+        Không có đơn nào cần duyệt
+      </p>
+      <p class="text-sm">Tất cả đơn giải trình đã được xử lý.</p>
+    </div>
+  }
+
+  <!-- Explanation list -->
+  @if (!loading && items.length > 0) {
+    <div
+      class="glass-panel rounded-2xl overflow-hidden border border-zinc-100 dark:border-zinc-800"
+    >
+      <div
+        class="px-5 py-4 border-b border-zinc-100 dark:border-zinc-800 flex items-center gap-2"
+      >
+        <span class="material-symbols-outlined text-amber-500 text-xl"
+          >pending_actions</span
+        >
+        <h2 class="text-sm font-black text-zinc-800 dark:text-white">
+          Đang chờ duyệt
+          <span
+            class="ml-2 inline-flex items-center justify-center w-5 h-5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 text-xs font-black"
+          >
+            {{ items.length }}
+          </span>
+        </h2>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr
+              class="border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50/80 dark:bg-zinc-900/60"
+            >
+              <th
+                class="px-5 py-3 label-overline text-zinc-500 dark:text-zinc-400 text-left"
+              >
+                Nhân viên
+              </th>
+              <th
+                class="px-5 py-3 label-overline text-zinc-500 dark:text-zinc-400 text-left"
+              >
+                Ngày
+              </th>
+              <th
+                class="px-5 py-3 label-overline text-zinc-500 dark:text-zinc-400 text-left"
+              >
+                Lý do
+              </th>
+              <th
+                class="px-5 py-3 label-overline text-zinc-500 dark:text-zinc-400 text-left"
+              >
+                Ngày gửi
+              </th>
+              <th
+                class="px-5 py-3 label-overline text-zinc-500 dark:text-zinc-400 text-right"
+              >
+                Thao tác
+              </th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-50 dark:divide-zinc-800/50">
+            @for (item of items; track item.id) {
+              <tr
+                class="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/30 transition-colors"
+              >
+                <!-- Employee -->
+                <td class="px-5 py-4 whitespace-nowrap">
+                  <div class="flex items-center gap-2">
+                    <div
+                      class="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center text-white text-xs font-black flex-shrink-0"
+                    >
+                      {{
+                        (item.employeeName ?? item.employeeId)
+                          .charAt(0)
+                          .toUpperCase()
+                      }}
+                    </div>
+                    <div>
+                      <p
+                        class="font-bold text-zinc-800 dark:text-zinc-100 text-xs"
+                      >
+                        {{ item.employeeName ?? item.employeeId }}
+                      </p>
+                    </div>
+                  </div>
+                </td>
+                <!-- Work date -->
+                <td class="px-5 py-4 whitespace-nowrap">
+                  <span class="font-bold text-zinc-700 dark:text-zinc-200">
+                    {{ item.workDate | date: "dd/MM/yyyy" }}
+                  </span>
+                  <p class="text-xs text-zinc-400 mt-0.5">Missing check-out</p>
+                </td>
+                <!-- Reason -->
+                <td class="px-5 py-4 max-w-xs">
+                  <p
+                    class="text-zinc-700 dark:text-zinc-300 text-xs leading-relaxed line-clamp-3"
+                  >
+                    {{ item.reason }}
+                  </p>
+                </td>
+                <!-- Submitted at -->
+                <td
+                  class="px-5 py-4 whitespace-nowrap text-xs text-zinc-500 dark:text-zinc-400"
+                >
+                  {{ item.createdAt | date: "dd/MM/yyyy HH:mm" }}
+                </td>
+                <!-- Actions -->
+                <td class="px-5 py-4 whitespace-nowrap text-right">
+                  <div class="flex items-center justify-end gap-2">
+                    <button
+                      type="button"
+                      (click)="approve(item)"
+                      [disabled]="processingId === item.id"
+                      class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-green-500 hover:bg-green-600 text-white text-xs font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      @if (processingId === item.id) {
+                        <span
+                          class="material-symbols-outlined text-xs animate-spin"
+                          >progress_activity</span
+                        >
+                      } @else {
+                        <span class="material-symbols-outlined text-xs"
+                          >check</span
+                        >
+                      }
+                      Duyệt
+                    </button>
+                    <button
+                      type="button"
+                      (click)="openRejectModal(item)"
+                      [disabled]="processingId === item.id"
+                      class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-100 hover:bg-red-200 text-red-700 dark:bg-red-900/30 dark:hover:bg-red-900/50 dark:text-red-400 text-xs font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <span class="material-symbols-outlined text-xs"
+                        >close</span
+                      >
+                      Từ chối
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</div>
+
+<!-- ── Reject Modal ────────────────────────────────────────────────────────── -->
+@if (showRejectModal && selectedItem) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+    (click)="closeRejectModal()"
+  >
+    <div
+      class="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl w-full max-w-md p-6 relative"
+      (click)="$event.stopPropagation()"
+    >
+      <!-- Header -->
+      <div class="flex items-center gap-3 mb-4">
+        <div
+          class="w-10 h-10 rounded-xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center flex-shrink-0"
+        >
+          <span class="material-symbols-outlined text-red-500">cancel</span>
+        </div>
+        <div>
+          <h3 class="text-base font-black text-zinc-900 dark:text-white">
+            Từ Chối Giải Trình
+          </h3>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400">
+            {{ selectedItem.employeeName ?? selectedItem.employeeId }} ·
+            {{ selectedItem.workDate | date: "dd/MM/yyyy" }}
+          </p>
+        </div>
+        <button
+          type="button"
+          (click)="closeRejectModal()"
+          class="ml-auto w-8 h-8 flex items-center justify-center rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+        >
+          <span class="material-symbols-outlined text-zinc-400 text-xl"
+            >close</span
+          >
+        </button>
+      </div>
+
+      <!-- Info banner -->
+      <div
+        class="rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700/40 p-3 mb-4 text-xs text-red-700 dark:text-red-300"
+      >
+        <span class="font-bold">Lưu ý:</span> Từ chối sẽ khiến ngày
+        {{ selectedItem.workDate | date: "dd/MM/yyyy" }} giữ nguyên là 0 giờ
+        (mất 1 công).
+      </div>
+
+      <!-- Reason textarea -->
+      <div class="mb-5">
+        <label
+          class="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1.5"
+        >
+          Lý do từ chối <span class="text-red-500">*</span>
+        </label>
+        <textarea
+          [(ngModel)]="rejectNote"
+          rows="3"
+          maxlength="300"
+          placeholder="Vui lòng mô tả lý do từ chối..."
+          class="w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-sm text-zinc-800 dark:text-zinc-100 px-3 py-2.5 resize-none focus:outline-none focus:ring-2 focus:ring-red-400 placeholder:text-zinc-400"
+        ></textarea>
+        <p class="text-right text-xs text-zinc-400 mt-1">
+          {{ rejectNote.length }}/300
+        </p>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex gap-3">
+        <button
+          type="button"
+          (click)="closeRejectModal()"
+          [disabled]="processingId !== null"
+          class="flex-1 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-sm font-bold text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors disabled:opacity-50"
+        >
+          Hủy
+        </button>
+        <button
+          type="button"
+          (click)="confirmReject()"
+          [disabled]="processingId !== null || !rejectNote.trim()"
+          class="flex-1 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        >
+          @if (processingId !== null) {
+            <span class="material-symbols-outlined text-sm animate-spin"
+              >progress_activity</span
+            >
+          }
+          Từ Chối
+        </button>
+      </div>
+    </div>
+  </div>
+}

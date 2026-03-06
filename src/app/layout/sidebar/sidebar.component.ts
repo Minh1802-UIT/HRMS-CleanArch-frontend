@@ -114,6 +114,13 @@ const ALL_GROUPS: NavGroup[] = [
         roles: ['Admin', 'HR', 'Manager'],
       },
       {
+        label: 'Explanations',
+        icon: 'pending_actions',
+        route: '/attendance/explanations',
+        activePage: 'explanations',
+        roles: ['Admin', 'HR', 'Manager'],
+      },
+      {
         label: 'Leave Reports',
         icon: 'summarize',
         route: '/admin/leave-reports',

@@ -330,6 +330,27 @@
                         >
                         {{ formatTime(log.checkInTime) }}
                       </span>
+                    } @else if (log.isMissingCheckIn) {
+                      <!-- Missing check-in: show explain button -->
+                      @if (getExplanationForLog(log); as exp) {
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold border"
+                          [ngClass]="exp.status === 'Approved' ? 'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-700'
+                                    : exp.status === 'Rejected' ? 'bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-700'
+                                    : 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-700'">
+                          <span class="material-symbols-outlined text-xs">{{ exp.status === 'Approved' ? 'check_circle' : exp.status === 'Rejected' ? 'cancel' : 'hourglass_empty' }}</span>
+                          {{ exp.status }}
+                        </span>
+                      } @else {
+                        <button
+                          type="button"
+                          (click)="openExplanationModal(log)"
+                          title="Gửi giải trình quên check-in"
+                          class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold border bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-700 hover:bg-amber-200 dark:hover:bg-amber-800/40 transition-colors"
+                        >
+                          <span class="material-symbols-outlined text-xs">edit_note</span>
+                          Giải trình
+                        </button>
+                      }
                     } @else {
                       <span class="text-zinc-300 dark:text-zinc-600">-/-</span>
                     }
@@ -342,6 +363,27 @@
                       >
                         {{ formatTime(log.checkOutTime) }}
                       </span>
+                    } @else if (log.isMissingPunch) {
+                      <!-- Missing punch: show explain button -->
+                      @if (getExplanationForLog(log); as exp) {
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold border"
+                          [ngClass]="exp.status === 'Approved' ? 'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-700'
+                                    : exp.status === 'Rejected' ? 'bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-700'
+                                    : 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-700'">
+                          <span class="material-symbols-outlined text-xs">{{ exp.status === 'Approved' ? 'check_circle' : exp.status === 'Rejected' ? 'cancel' : 'hourglass_empty' }}</span>
+                          {{ exp.status }}
+                        </span>
+                      } @else {
+                        <button
+                          type="button"
+                          (click)="openExplanationModal(log)"
+                          title="Gửi giải trình quên check-out"
+                          class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold border bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-700 hover:bg-amber-200 dark:hover:bg-amber-800/40 transition-colors"
+                        >
+                          <span class="material-symbols-outlined text-xs">edit_note</span>
+                          Giải trình
+                        </button>
+                      }
                     } @else {
                       <span class="text-zinc-300 dark:text-zinc-600">-/-</span>
                     }
@@ -387,3 +429,67 @@
     }
   </div>
 </div>
+
+<!-- ── Explanation Modal ──────────────────────────────────────────────────── -->
+@if (showExplanationModal && explanationLog) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+       (click)="closeExplanationModal()">
+    <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl w-full max-w-md p-6 relative"
+         (click)="$event.stopPropagation()">
+      <!-- Header -->
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center flex-shrink-0">
+          <span class="material-symbols-outlined text-amber-500">edit_note</span>
+        </div>
+        <div>
+          <h3 class="text-base font-black text-zinc-900 dark:text-white">Gửi Giải Trình</h3>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400">
+            Ngày {{ explanationLog.date | date: 'dd/MM/yyyy' }} · Quên check-out
+          </p>
+        </div>
+        <button type="button" (click)="closeExplanationModal()"
+          class="ml-auto w-8 h-8 flex items-center justify-center rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
+          <span class="material-symbols-outlined text-zinc-400 text-xl">close</span>
+        </button>
+      </div>
+
+      <!-- Info banner -->
+      <div class="rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/40 p-3 mb-4 text-xs text-amber-700 dark:text-amber-300">
+        <span class="font-bold">Lưu ý:</span> Nếu được phê duyệt, hệ thống sẽ tự động tính ngày này là đủ công (8 giờ).
+        Nếu bị từ chối, ngày này sẽ giữ nguyên là 0 giờ.
+      </div>
+
+      <!-- Reason textarea -->
+      <div class="mb-5">
+        <label class="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">
+          Lý do giải trình <span class="text-red-500">*</span>
+        </label>
+        <textarea
+          [(ngModel)]="explanationReason"
+          rows="4"
+          maxlength="500"
+          placeholder="Vui lòng mô tả lý do bạn quên check-out ngày hôm đó..."
+          class="w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-sm text-zinc-800 dark:text-zinc-100 px-3 py-2.5 resize-none focus:outline-none focus:ring-2 focus:ring-amber-400 placeholder:text-zinc-400"
+        ></textarea>
+        <p class="text-right text-xs text-zinc-400 mt-1">{{ explanationReason.length }}/500</p>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex gap-3">
+        <button type="button" (click)="closeExplanationModal()"
+          [disabled]="submittingExplanation"
+          class="flex-1 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-sm font-bold text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors disabled:opacity-50">
+          Hủy
+        </button>
+        <button type="button" (click)="submitExplanation()"
+          [disabled]="submittingExplanation || !explanationReason.trim()"
+          class="flex-1 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+          @if (submittingExplanation) {
+            <span class="material-symbols-outlined text-sm animate-spin">progress_activity</span>
+          }
+          Gửi Giải Trình
+        </button>
+      </div>
+    </div>
+  </div>
+}

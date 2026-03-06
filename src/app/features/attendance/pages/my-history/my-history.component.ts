@@ -8,13 +8,14 @@ import {
 import { CommonModule, DatePipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Subject } from 'rxjs';
+import { Subject, forkJoin } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
   MyAttendanceService,
   MonthlyAttendanceReport,
   DailyLogEntry,
 } from '@features/attendance/services/my-attendance.service';
+import { ExplanationService, AttendanceExplanation } from '@features/attendance/services/explanation.service';
 import { ToastService } from '@core/services/toast.service';
 import { LoggerService } from '@core/services/logger.service';
 
@@ -46,8 +47,16 @@ export class MyHistoryComponent implements OnInit, OnDestroy {
   // Month-range display e.g. "01/03/26 – 31/03/26"
   displayRange = '';
 
+  // ── Explanation modal ──────────────────────────────────────────────────────
+  showExplanationModal = false;
+  explanationLog: DailyLogEntry | null = null;   // the day being explained
+  explanationReason = '';
+  submittingExplanation = false;
+  myExplanations: AttendanceExplanation[] = [];
+
   constructor(
     private myAttendanceService: MyAttendanceService,
+    private explanationService: ExplanationService,
     private toast: ToastService,
     private logger: LoggerService,
     private cdr: ChangeDetectorRef
@@ -70,29 +79,33 @@ export class MyHistoryComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.isUnlinkedAccount = false;
     this.cdr.markForCheck();
-    this.myAttendanceService
-      .getMyMonthlyReport(this.selectedMonth)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (rpt) => {
-          this.report = rpt;
-          this.computeStats();
-          this.loading = false;
-          this.cdr.markForCheck();
-        },
-        error: (err) => {
-          const errorCode: string = err?.error?.errorCode ?? '';
-          const isUnlinked = errorCode === 'AUTH_UNLINKED_ACCOUNT';
-          this.isUnlinkedAccount = isUnlinked;
-          if (!isUnlinked) {
-            this.logger.error('MyHistory: load failed', err);
-            this.toast.showError('Error', err?.error?.message || 'Failed to load attendance history');
-          }
-          this.report = null;
-          this.loading = false;
-          this.cdr.markForCheck();
-        },
-      });
+
+    forkJoin({
+      report: this.myAttendanceService.getMyMonthlyReport(this.selectedMonth),
+      explanations: this.explanationService.getMyExplanations()
+    })
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: ({ report, explanations }) => {
+        this.report = report;
+        this.myExplanations = explanations ?? [];
+        this.computeStats();
+        this.loading = false;
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        const errorCode: string = err?.error?.errorCode ?? '';
+        const isUnlinked = errorCode === 'AUTH_UNLINKED_ACCOUNT';
+        this.isUnlinkedAccount = isUnlinked;
+        if (!isUnlinked) {
+          this.logger.error('MyHistory: load failed', err);
+          this.toast.showError('Error', err?.error?.message || 'Failed to load attendance history');
+        }
+        this.report = null;
+        this.loading = false;
+        this.cdr.markForCheck();
+      },
+    });
   }
 
   computeStats(): void {
@@ -108,11 +121,20 @@ export class MyHistoryComponent implements OnInit, OnDestroy {
     const totalHrs = logs.reduce((sum, l) => sum + (l.workingHours || 0), 0);
     const avgHrs = presentDays > 0 ? totalHrs / presentDays : 0;
 
+    // Wire explanations counter: N approved / M total submitted this month
+    const [mmStr] = this.selectedMonth.split('-');
+    const monthExplanations = this.myExplanations.filter(e => {
+      const d = new Date(e.workDate);
+      return String(d.getMonth() + 1).padStart(2, '0') === mmStr;
+    });
+    const approvedCount = monthExplanations.filter(e => e.status === 'Approved').length;
+    const totalCount = monthExplanations.length;
+
     this.stats = {
       present: presentDays,
       avgHours: Math.round(avgHrs * 10) / 10,
       missing: missingDays,
-      explanations: '0/0',
+      explanations: `${approvedCount}/${totalCount}`,
       totalWorkdays: workdays.length,
     };
 
@@ -226,5 +248,56 @@ export class MyHistoryComponent implements OnInit, OnDestroy {
 
   trackByDate(_: number, log: DailyLogEntry): string {
     return log.date;
+  }
+
+  // ── Explanation modal ──────────────────────────────────────────────────────
+
+  /** Returns the explanation for a given log date, if any */
+  getExplanationForLog(log: DailyLogEntry): AttendanceExplanation | undefined {
+    return this.myExplanations.find(e => {
+      const d = new Date(e.workDate);
+      const logD = new Date(log.date);
+      return d.toDateString() === logD.toDateString();
+    });
+  }
+
+  openExplanationModal(log: DailyLogEntry): void {
+    this.explanationLog = log;
+    this.explanationReason = '';
+    this.showExplanationModal = true;
+    this.cdr.markForCheck();
+  }
+
+  closeExplanationModal(): void {
+    this.showExplanationModal = false;
+    this.explanationLog = null;
+    this.explanationReason = '';
+    this.cdr.markForCheck();
+  }
+
+  submitExplanation(): void {
+    if (!this.explanationLog || !this.explanationReason.trim()) return;
+    this.submittingExplanation = true;
+    this.cdr.markForCheck();
+
+    const workDate = new Date(this.explanationLog.date);
+    this.explanationService.submit(workDate, this.explanationReason.trim())
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result) => {
+          this.myExplanations = [...this.myExplanations, result];
+          this.computeStats();
+          this.toast.showSuccess('Đã gửi', 'Đơn giải trình của bạn đã được gửi thành công.');
+          this.submittingExplanation = false;
+          this.closeExplanationModal();
+          this.cdr.markForCheck();
+        },
+        error: (err) => {
+          const msg = err?.error?.message || 'Gửi giải trình thất bại. Vui lòng thử lại.';
+          this.toast.showError('Lỗi', msg);
+          this.submittingExplanation = false;
+          this.cdr.markForCheck();
+        }
+      });
   }
 }

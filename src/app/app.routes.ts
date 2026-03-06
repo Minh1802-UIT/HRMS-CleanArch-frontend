@@ -42,6 +42,7 @@ export const routes: Routes = [
       // Attendance self-service (all authenticated employees)
       { path: 'attendance/check-in', loadComponent: () => import('./features/attendance/pages/checkin-page/checkin-page.component').then(m => m.CheckinPageComponent), canActivate: [authGuard], data: { activePage: 'checkin' } },
       { path: 'attendance/my-history', loadComponent: () => import('./features/attendance/pages/my-history/my-history.component').then(m => m.MyHistoryComponent), canActivate: [authGuard], data: { activePage: 'my-history' } },
+      { path: 'attendance/explanations', loadComponent: () => import('./features/attendance/pages/explanation-review/explanation-review.component').then(m => m.ExplanationReviewComponent), canActivate: [roleGuard], data: { roles: ['Admin', 'HR', 'Manager'], activePage: 'attendance' } },
 
       { path: 'departments', loadComponent: () => import('./features/organization/pages/departments/departments.component').then(m => m.DepartmentsComponent), canActivate: [roleGuard], data: { roles: ['Admin', 'HR'], activePage: 'departments' } },
 
