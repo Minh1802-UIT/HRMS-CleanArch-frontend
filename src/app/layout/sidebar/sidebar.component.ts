@@ -51,7 +51,7 @@ const ALL_GROUPS: NavGroup[] = [
     items: [
       {
         label: 'My Time',
-        icon: 'person_clock',
+        icon: 'calendar_today',
         children: [
           { label: 'Check In/Out',    icon: 'login',           route: '/attendance/check-in',       activePage: 'checkin' },
           { label: 'My History',      icon: 'history',         route: '/attendance/my-history',      activePage: 'my-history' },
@@ -61,7 +61,7 @@ const ALL_GROUPS: NavGroup[] = [
       },
       {
         label: 'Management',
-        icon: 'manage_history',
+        icon: 'tune',
         roles: ['Admin', 'HR', 'Manager'],
         children: [
           { label: 'Attendance',    icon: 'fingerprint', route: '/attendance',                   activePage: 'attendance',        roles: ['Admin', 'HR', 'Manager'] },
