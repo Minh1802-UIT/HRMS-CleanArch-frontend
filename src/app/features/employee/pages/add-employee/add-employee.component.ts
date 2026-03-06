@@ -97,10 +97,10 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
         position: ['', Validators.required], 
         manager: [''],
         shiftId: ['', Validators.required],
-        workLocation: ['New York Office'],
+        workLocation: [''],
         joinDate: [new Date().toISOString().split('T')[0], Validators.required],
         status: ['Active'],
-        employmentType: ['Full-Time'],
+        employmentType: ['Full-time'],
         probationEndDate: [''],
         workLocationArrangement: ['On-site']
       }),
@@ -179,14 +179,14 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
           jobDetails: {
               department: emp.jobDetails?.departmentId,
               position: emp.jobDetails?.positionId,
+              manager: emp.jobDetails?.managerId,
               shiftId: emp.jobDetails?.shiftId,
               joinDate: emp.jobDetails?.joinDate ? new Date(emp.jobDetails.joinDate).toISOString().split('T')[0] : '',
               status: emp.jobDetails?.status,
-              workLocation: 'New York Office', 
-              employmentType: 'Full-Time' 
+              employmentType: emp.jobDetails?.employmentType || 'Full-time',
+              workLocationArrangement: 'On-site'
           },
           compensation: {
-              basicSalary: 0,
               bankName: emp.bankDetails?.bankName,
               accountNumber: emp.bankDetails?.accountNumber,
               accountHolder: emp.bankDetails?.accountHolder,
@@ -266,7 +266,13 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
                gender: formValue.personalInfo.gender,
                phoneNumber: formValue.personalInfo.phone,
                address: formValue.personalInfo.address,
-               identityCard: formValue.personalInfo.identityCard
+               identityCard: formValue.personalInfo.identityCard,
+               maritalStatus: formValue.personalInfo.maritalStatus,
+               nationality: formValue.personalInfo.nationality,
+               hometown: formValue.personalInfo.hometown,
+               country: formValue.personalInfo.country,
+               city: formValue.personalInfo.city,
+               postalCode: formValue.personalInfo.postalCode
            },
            
            jobDetails: {
@@ -276,6 +282,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
                shiftId: formValue.jobDetails.shiftId,
                joinDate: formatDate(formValue.jobDetails.joinDate),
                status: formValue.jobDetails.status,
+               employmentType: formValue.jobDetails.employmentType,
                probationEndDate: formValue.jobDetails.probationEndDate ? formatDate(formValue.jobDetails.probationEndDate) : null
            },
            
@@ -337,6 +344,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
                 shiftId: formValue.jobDetails.shiftId,
                 joinDate: formatDate(formValue.jobDetails.joinDate),
                 status: formValue.jobDetails.status,
+                employmentType: formValue.jobDetails.employmentType,
                 probationEndDate: formValue.jobDetails.probationEndDate ? formatDate(formValue.jobDetails.probationEndDate) : null
             },
             
