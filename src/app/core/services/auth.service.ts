@@ -1,12 +1,12 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, of, BehaviorSubject, throwError } from 'rxjs';
-import { tap, map, catchError, filter, take } from 'rxjs/operators';
-import { environment } from '../../../environments/environment';
-import { ApiResponse, PagedResult } from '../models/api-response';
-import { User, LoginCredentials, RegisterData, JwtPayload } from '../models/user.model';
-import { LoggerService } from './logger.service';
+import { Observable, of, throwError } from 'rxjs';
+import { tap, map, catchError } from 'rxjs/operators';
+import { environment } from '@env/environment';
+import { ApiResponse, PagedResult } from '@core/models/api-response';
+import { User, LoginCredentials, RegisterData, JwtPayload } from '@core/models/user.model';
+import { LoggerService } from '@core/services/logger.service';
 
 /** User info sub-object embedded in the login response. Mirrors backend UserDto. */
 interface LoginUserData {
@@ -53,18 +53,14 @@ export class AuthService {
   // Timer ID for the proactive background refresh scheduled ~2 min before expiry.
   private _refreshTimer: ReturnType<typeof setTimeout> | null = null;
 
-  // State management with Signals
+  // State management with Signals only
   private currentUserSignal = signal<User | null>(this.getInitialUser());
   public readonly user = this.currentUserSignal.asReadonly();
   public readonly isAuthenticated = computed(() => !!this.user());
 
-  // Backward compatibility with BehaviorSubject
-  private currentUserSubject: BehaviorSubject<User | null>;
-  public currentUser: Observable<User | null>;
-
-  // Refresh token state
-  private isRefreshing = false;
-  private refreshTokenSubject = new BehaviorSubject<string | null>(null);
+  // Refresh token state - using Signal instead of BehaviorSubject
+  private isRefreshingSignal = signal<boolean>(false);
+  private refreshTokenSignal = signal<string | null>(null);
 
   constructor(
     private router: Router,
@@ -72,8 +68,6 @@ export class AuthService {
     private logger: LoggerService
   ) {
     const user = this.currentUserSignal();
-    this.currentUserSubject = new BehaviorSubject<User | null>(user);
-    this.currentUser = this.currentUserSubject.asObservable();
 
     // ── One-time migration ────────────────────────────────────────────────────
     // Old sessions (before in-memory token implementation) stored the JWT inside
@@ -84,11 +78,10 @@ export class AuthService {
       // Re-save metadata without the token so future reloads go through the
       // normal silent-refresh path instead of reading a now-stale value.
       this.storeUserMetadata(user);
-      // Sanitise the in-memory signal/subject too (keeps the model coherent).
+      // Sanitise the in-memory signal too (keeps the model coherent).
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { token: _t, refreshToken: _rt, ...clean } = user;
       this.currentUserSignal.set(clean as User);
-      this.currentUserSubject.next(clean as User);
       this.logger.debug('[AuthService] Token migrated from sessionStorage → memory');
     }
   }
@@ -115,7 +108,7 @@ export class AuthService {
   }
 
   public get currentUserValue(): User | null {
-    return this.currentUserSubject.value;
+    return this.currentUserSignal();
   }
 
   /** Returns the in-memory access token. Null on page reload until silent refresh completes. */
@@ -161,7 +154,6 @@ export class AuthService {
         this.logger.debug('User object created (token in memory only)', user);
         this.storeUserMetadata(user);
         this.currentUserSignal.set(user);
-        this.currentUserSubject.next(user);
 
         // Schedule proactive background refresh ~2 min before expiry
         this.scheduleProactiveRefresh(data.expiresIn);
@@ -177,9 +169,8 @@ export class AuthService {
     // Clear local state
     sessionStorage.removeItem('currentUser');
     this.currentUserSignal.set(null);
-    this.currentUserSubject.next(null);
-    this.isRefreshing = false;
-    this.refreshTokenSubject.next(null);
+    this.isRefreshingSignal.set(false);
+    this.refreshTokenSignal.set(null);
 
     // Fire-and-forget: clear httpOnly refresh token cookie on backend
     this.http.post(`${this.apiUrl}/logout`, {}, { withCredentials: true }).pipe(
@@ -206,17 +197,26 @@ export class AuthService {
       return throwError(() => new Error('No tokens available'));
     }
 
-    if (this.isRefreshing) {
-      // Another request already triggered a refresh — queue and wait
-      return this.refreshTokenSubject.pipe(
-        filter(token => token !== null),
-        take(1),
-        map(token => token as string)
-      );
+    if (this.isRefreshingSignal()) {
+      // Another request already triggered a refresh — queue and wait using Promise
+      return new Observable<string>(observer => {
+        const checkInterval = setInterval(() => {
+          if (!this.isRefreshingSignal()) {
+            clearInterval(checkInterval);
+            const token = this.refreshTokenSignal();
+            if (token && token !== 'REFRESH_FAILED') {
+              observer.next(token);
+              observer.complete();
+            } else {
+              observer.error(new Error('Token refresh failed'));
+            }
+          }
+        }, 100);
+      });
     }
 
-    this.isRefreshing = true;
-    this.refreshTokenSubject.next(null);
+    this.isRefreshingSignal.set(true);
+    this.refreshTokenSignal.set(null);
 
     // Send current token (or empty string for silent page-reload refresh)
     return this.http.post<ApiResponse<RefreshSuccessData>>(
@@ -236,11 +236,10 @@ export class AuthService {
         if (user) {
           this.storeUserMetadata(user);
           this.currentUserSignal.set(user);
-          this.currentUserSubject.next(user);
         }
 
-        this.isRefreshing = false;
-        this.refreshTokenSubject.next(newAccessToken);
+        this.isRefreshingSignal.set(false);
+        this.refreshTokenSignal.set(newAccessToken);
         this.logger.debug('Token refreshed successfully');
 
         // Re-schedule proactive refresh
@@ -248,9 +247,9 @@ export class AuthService {
       }),
       map(data => data.accessToken as string),
       catchError(err => {
-        this.isRefreshing = false;
-        this.refreshTokenSubject.next('REFRESH_FAILED');
-        this.refreshTokenSubject.next(null); // Reset for next cycle
+        this.isRefreshingSignal.set(false);
+        this.refreshTokenSignal.set('REFRESH_FAILED');
+        this.refreshTokenSignal.set(null); // Reset for next cycle
         this.logger.error('Token refresh failed', err);
         this.logout();
         return throwError(() => err);
@@ -304,12 +303,21 @@ export class AuthService {
 
   /** Whether a refresh is currently in progress */
   get isRefreshInProgress(): boolean {
-    return this.isRefreshing;
+    return this.isRefreshingSignal();
   }
 
   /** Observable that emits when refresh completes */
   get onRefreshComplete(): Observable<string | null> {
-    return this.refreshTokenSubject.asObservable();
+    // Convert Signal to Observable for backward compatibility
+    return new Observable<string | null>(observer => {
+      const checkInterval = setInterval(() => {
+        if (!this.isRefreshingSignal()) {
+          clearInterval(checkInterval);
+          observer.next(this.refreshTokenSignal());
+          observer.complete();
+        }
+      }, 100);
+    });
   }
 
   /**
@@ -328,7 +336,6 @@ export class AuthService {
           const updatedUser: User = { ...user, mustChangePassword: false };
           this.storeUserMetadata(updatedUser);
           this.currentUserSignal.set(updatedUser);
-          this.currentUserSubject.next(updatedUser);
         }
       })
     );

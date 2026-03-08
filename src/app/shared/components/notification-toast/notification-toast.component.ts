@@ -1,19 +1,18 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { AsyncPipe, NgClass } from '@angular/common';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { NgClass } from '@angular/common';
 import { ToastService, Toast } from '@core/services/toast.service';
 
 @Component({
   selector: 'app-notification-toast',
   standalone: true,
-  imports: [AsyncPipe, NgClass],
+  imports: [NgClass],
   templateUrl: './notification-toast.component.html',
   styleUrl: './notification-toast.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NotificationToastComponent {
-  toasts$ = this.toastService.toasts;
-
-  constructor(private toastService: ToastService) {}
+  private toastService = inject(ToastService);
+  toasts = this.toastService.toasts;
 
   remove(id: number) { this.toastService.remove(id); }
 

@@ -1,4 +1,4 @@
-﻿<!-- Slim Top Bar -->
+<!-- Slim Top Bar -->
 <header
   class="flex items-center justify-between h-14 px-4 md:px-6 bg-white dark:bg-[#0a0a0f] border-b border-zinc-200 dark:border-zinc-800 flex-shrink-0 z-30"
 >
@@ -51,11 +51,11 @@
       >
         <span class="material-symbols-outlined text-[20px]">notifications</span>
         @if ((unreadCount$ | async) ?? 0; as count) {
-          @if (count > 0) {
+          @if ((count ?? 0) > 0) {
             <span
               class="absolute top-1 right-1 flex items-center justify-center min-w-[16px] h-[16px] text-[9px] font-bold text-white bg-[#a78bfa] rounded-full px-0.5 leading-none"
             >
-              {{ count > 99 ? "99+" : count }}
+              {{ (count ?? 0) > 99 ? "99+" : count }}
             </span>
           }
         }
@@ -154,7 +154,7 @@
     <div class="w-px h-5 bg-zinc-200 dark:bg-zinc-800 mx-1"></div>
 
     <!-- User Profile -->
-    @if (currentUser$ | async; as user) {
+    @if (currentUser(); as user) {
       <div class="relative group">
         <div
           class="flex items-center gap-2 pl-2 pr-3 py-1 rounded-full cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"

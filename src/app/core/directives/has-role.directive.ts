@@ -1,6 +1,6 @@
-import { Directive, Input, TemplateRef, ViewContainerRef, OnInit, OnDestroy } from '@angular/core';
+import { Directive, Input, TemplateRef, ViewContainerRef, OnInit, OnDestroy, effect, untracked } from '@angular/core';
+import { Subject } from 'rxjs';
 import { AuthService } from '@core/services/auth.service';
-import { Subject, takeUntil } from 'rxjs';
 
 @Directive({
   selector: '[appHasRole]',
@@ -10,17 +10,24 @@ export class HasRoleDirective implements OnInit, OnDestroy {
   @Input() appHasRole: string | string[] = [];
   private stop$ = new Subject<void>();
   private isVisible = false;
+  private hasView = false;
 
   constructor(
     private templateRef: TemplateRef<any>,
     private viewContainer: ViewContainerRef,
     private authService: AuthService
-  ) {}
+  ) {
+    // Effect to react to user changes
+    effect(() => {
+      const user = untracked(() => this.authService.user());
+      if (user) {
+        this.updateView(user.roles || []);
+      }
+    }, { allowSignalWrites: true });
+  }
 
   ngOnInit() {
-    this.authService.currentUser.pipe(takeUntil(this.stop$)).subscribe(user => {
-      this.updateView(user?.roles || []);
-    });
+    // Initial check - but wait for effect to trigger
   }
 
   ngOnDestroy() {

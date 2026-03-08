@@ -1,5 +1,5 @@
 import { Injectable, signal, Signal, WritableSignal } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { DepartmentService } from './department.service';
 import { Department } from '../models/department.model';
@@ -10,25 +10,22 @@ import { LeaveType } from '@features/leave/models/leave-type.model';
 import { LoggerService } from '@core/services/logger.service';
 
 /**
- * Centralized Master Data Service with caching using Signals and Subjects
+ * Centralized Master Data Service with caching using Signals
+ * Provides both Signal-based API (preferred) and Observable-based API (for backward compatibility)
  */
 @Injectable({
   providedIn: 'root'
 })
 export class MasterDataService {
-  // Signals for modern components
+  // Signals for state management
   private departmentsSignal: WritableSignal<Department[]> = signal([]);
   private positionsSignal: WritableSignal<Position[]> = signal([]);
   private leaveTypesSignal: WritableSignal<LeaveType[]> = signal([]);
 
+  // Public readonly signals
   public readonly departments = this.departmentsSignal.asReadonly();
   public readonly positions = this.positionsSignal.asReadonly();
   public readonly leaveTypes = this.leaveTypesSignal.asReadonly();
-
-  // BehaviorSubjects for backward compatibility
-  private departments$ = new BehaviorSubject<Department[]>([]);
-  private positions$ = new BehaviorSubject<Position[]>([]);
-  private leaveTypes$ = new BehaviorSubject<LeaveType[]>([]);
 
   // Loading state flags
   private departmentsLoaded = false;
@@ -50,54 +47,87 @@ export class MasterDataService {
   }
 
   // ========================================
-  // Public Observables
+  // Public Signals API (Preferred)
   // ========================================
 
   /**
-   * Get departments observable with caching
-   * Lazy loads on first call, then returns cached data
+   * Trigger lazy load of departments
+   * Use with: masterData.departments() to get the signal value
+   */
+  loadDepartments(): void {
+    if (!this.departmentsLoaded && !this.departmentsLoading) {
+      this.fetchDepartments();
+    }
+  }
+
+  /**
+   * Trigger lazy load of positions
+   * Use with: masterData.positions() to get the signal value
+   */
+  loadPositions(): void {
+    if (!this.positionsLoaded && !this.positionsLoading) {
+      this.fetchPositions();
+    }
+  }
+
+  /**
+   * Trigger lazy load of leave types
+   * Use with: masterData.leaveTypes() to get the signal value
+   */
+  loadLeaveTypes(): void {
+    if (!this.leaveTypesLoaded && !this.leaveTypesLoading) {
+      this.fetchLeaveTypes();
+    }
+  }
+
+  // ========================================
+  // Backward Compatible Observable API
+  // ========================================
+
+  /**
+   * Get departments observable - triggers lazy load if needed
+   * @deprecated Use loadDepartments() + departments signal instead
    */
   getDepartments$(): Observable<Department[]> {
     if (!this.departmentsLoaded && !this.departmentsLoading) {
-      this.loadDepartments();
+      this.fetchDepartments();
     }
-    return this.departments$.asObservable();
+    return of(this.departmentsSignal());
   }
 
   /**
-   * Get positions observable with caching
-   * Lazy loads on first call, then returns cached data
+   * Get positions observable - triggers lazy load if needed
+   * @deprecated Use loadPositions() + positions signal instead
    */
   getPositions$(): Observable<Position[]> {
     if (!this.positionsLoaded && !this.positionsLoading) {
-      this.loadPositions();
+      this.fetchPositions();
     }
-    return this.positions$.asObservable();
+    return of(this.positionsSignal());
   }
 
   /**
-   * Get leave types observable with caching
-   * Lazy loads on first call, then returns cached data
+   * Get leave types observable - triggers lazy load if needed
+   * @deprecated Use loadLeaveTypes() + leaveTypes signal instead
    */
   getLeaveTypes$(): Observable<LeaveType[]> {
     if (!this.leaveTypesLoaded && !this.leaveTypesLoading) {
-      this.loadLeaveTypes();
+      this.fetchLeaveTypes();
     }
-    return this.leaveTypes$.asObservable();
+    return of(this.leaveTypesSignal());
   }
 
   // ========================================
-  // Private Load Methods
+  // Private Fetch Methods
   // ========================================
 
-  private loadDepartments(): void {
+  private fetchDepartments(): void {
     this.departmentsLoading = true;
     this.logger.debug('Loading departments from API');
 
     this.deptService.getDepartments().pipe(
       tap(data => {
         this.departmentsSignal.set(data);
-        this.departments$.next(data);
         this.departmentsLoaded = true;
         this.departmentsLoading = false;
         this.logger.debug(`Loaded ${data.length} departments`);
@@ -106,19 +136,17 @@ export class MasterDataService {
       error: (err) => {
         this.logger.error('Failed to load departments', err);
         this.departmentsLoading = false;
-        // Keep empty array in BehaviorSubject
       }
     });
   }
 
-  private loadPositions(): void {
+  private fetchPositions(): void {
     this.positionsLoading = true;
     this.logger.debug('Loading positions from API');
 
     this.posService.getPositions().pipe(
       tap(data => {
         this.positionsSignal.set(data);
-        this.positions$.next(data);
         this.positionsLoaded = true;
         this.positionsLoading = false;
         this.logger.debug(`Loaded ${data.length} positions`);
@@ -131,14 +159,13 @@ export class MasterDataService {
     });
   }
 
-  private loadLeaveTypes(): void {
+  private fetchLeaveTypes(): void {
     this.leaveTypesLoading = true;
     this.logger.debug('Loading leave types from API');
 
     this.leaveTypeService.getAll().pipe(
       tap(data => {
         this.leaveTypesSignal.set(data);
-        this.leaveTypes$.next(data);
         this.leaveTypesLoaded = true;
         this.leaveTypesLoading = false;
         this.logger.debug(`Loaded ${data.length} leave types`);
@@ -162,7 +189,7 @@ export class MasterDataService {
   refreshDepartments(): void {
     this.logger.debug('Refreshing departments cache');
     this.departmentsLoaded = false;
-    this.loadDepartments();
+    this.fetchDepartments();
   }
 
   /**
@@ -172,7 +199,7 @@ export class MasterDataService {
   refreshPositions(): void {
     this.logger.debug('Refreshing positions cache');
     this.positionsLoaded = false;
-    this.loadPositions();
+    this.fetchPositions();
   }
 
   /**
@@ -182,7 +209,7 @@ export class MasterDataService {
   refreshLeaveTypes(): void {
     this.logger.debug('Refreshing leave types cache');
     this.leaveTypesLoaded = false;
-    this.loadLeaveTypes();
+    this.fetchLeaveTypes();
   }
 
   /**
@@ -204,7 +231,7 @@ export class MasterDataService {
    * Returns undefined if not found or not loaded yet
    */
   getDepartmentById(id: string): Department | undefined {
-    return this.departments$.value.find(d => d.id === id);
+    return this.departmentsSignal().find(d => d.id === id);
   }
 
   /**
@@ -212,7 +239,7 @@ export class MasterDataService {
    * Returns undefined if not found or not loaded yet
    */
   getPositionById(id: string): Position | undefined {
-    return this.positions$.value.find(p => p.id === id);
+    return this.positionsSignal().find(p => p.id === id);
   }
 
   /**
@@ -220,7 +247,7 @@ export class MasterDataService {
    * Returns undefined if not found or not loaded yet
    */
   getLeaveTypeById(id: string): LeaveType | undefined {
-    return this.leaveTypes$.value.find(lt => lt.id === id);
+    return this.leaveTypesSignal().find(lt => lt.id === id);
   }
 
   /**

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit, OnDestroy, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
@@ -46,7 +46,11 @@ export class SharedNavbarComponent implements OnInit, OnDestroy {
   @Input() subTabTitle: string = '';
   @Input() activeSubTab: string = '';
 
-  currentUser$: Observable<User | null>;
+  // Signal-based user - using computed to handle nullable user
+  readonly currentUser = this.authService.user;
+  readonly userFullName = computed(() => this.currentUser()?.fullName ?? '');
+  readonly userAvatar = computed(() => this.currentUser()?.avatar ?? 'assets/images/defaults/avatar-1.png');
+
   unreadCount$: Observable<number>;
 
   showNotifPanel: boolean = false;
@@ -66,7 +70,6 @@ export class SharedNavbarComponent implements OnInit, OnDestroy {
     public langService: LanguageService,
     public layoutService: LayoutService
   ) {
-    this.currentUser$ = this.authService.currentUser;
     this.unreadCount$ = this.notificationService.unreadCount$;
   }
 

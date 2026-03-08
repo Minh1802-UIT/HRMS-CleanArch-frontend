@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, ViewChild, AfterViewInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, effect } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, AfterViewInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, effect, computed, untracked } from '@angular/core';
 import { NgClass, DatePipe, CurrencyPipe } from '@angular/common';
 import { HasRoleDirective } from '@core/directives/has-role.directive';
 
@@ -119,6 +119,30 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       private payrollService: PayrollService,
       private leaveRequestService: LeaveRequestService
   ) {
+    // Effect to react to user changes - load data when user becomes available and is Admin/HR
+    effect(() => {
+      const user = this.authService.user();
+      if (user) {
+        this.currentUser = user;
+        this.userDisplayName = user.fullName || user.username;
+        const roles = user.roles || [];
+        const isAdminOrHR = roles.includes('Admin') || roles.includes('HR');
+        const isEmployee = !isAdminOrHR;
+
+        // Only load dashboard data once for Admin or HR
+        if (!this.dashboardLoaded && isAdminOrHR) {
+          this.dashboardLoaded = true;
+          this.loadDashboardData();
+          this.loadAuditLogs();
+        }
+        // Load self-service data for employee role
+        if (isEmployee) {
+          this.loadEmployeeData();
+        }
+        this.cdr.markForCheck();
+      }
+    }, { allowSignalWrites: true });
+
     // Re-initialise chart colours whenever dark/light mode changes
     effect(() => {
       this.themeService.isDark(); // track signal
@@ -133,28 +157,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.initChartOptions();
-    
-    this.authService.currentUser.pipe(takeUntil(this.destroy$)).subscribe(user => {
-      if (user) {
-        this.currentUser = user;
-        this.userDisplayName = user.fullName || user.username;
-        const roles = user.roles || [];
-        const isAdminOrHR = roles.includes('Admin') || roles.includes('HR');
-        const isEmployee = !isAdminOrHR;
-        
-        // Only load dashboard data once for Admin or HR
-        if (!this.dashboardLoaded && isAdminOrHR) {
-          this.dashboardLoaded = true;
-          this.loadDashboardData();
-          this.loadAuditLogs();
-        }
-        // Load self-service data for employee role
-        if (isEmployee) {
-          this.loadEmployeeData();
-        }
-        this.cdr.markForCheck();
-      }
-    });
   }
 
   ngOnDestroy(): void {

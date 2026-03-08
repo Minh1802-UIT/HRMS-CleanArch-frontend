@@ -1,5 +1,5 @@
 
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -12,13 +12,23 @@ import { AddEmployeeComponent } from '../add-employee/add-employee.component';
 import { MasterDataService } from '@features/organization/services/master-data.service';
 import { ToastService } from '@core/services/toast.service';
 import { LoggerService } from '@core/services/logger.service';
-import { UploadService } from '@features/employee/services/upload.service';
 import { CsvExportService } from '@core/services/csv-export.service';
+import { EmployeeTableComponent } from '../../components/employee-table/employee-table.component';
+import { EmployeeFiltersComponent } from '../../components/employee-filters/employee-filters.component';
+import { EmployeePaginationComponent } from '../../components/employee-pagination/employee-pagination.component';
 
 @Component({
   selector: 'app-employee-list',
   standalone: true,
-  imports: [NgClass, FormsModule, RouterModule, AddEmployeeComponent],
+  imports: [
+    NgClass,
+    FormsModule,
+    RouterModule,
+    AddEmployeeComponent,
+    EmployeeTableComponent,
+    EmployeeFiltersComponent,
+    EmployeePaginationComponent
+  ],
   templateUrl: './employee-list.component.html',
   styleUrl: './employee-list.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -26,14 +36,19 @@ import { CsvExportService } from '@core/services/csv-export.service';
 export class EmployeeListComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   private searchInput$ = new Subject<string>();
+  private employeeService = inject(EmployeeService);
+  private masterData = inject(MasterDataService);
+  private router = inject(Router);
+  private toastService = inject(ToastService);
+  private logger = inject(LoggerService);
+  private csvExport = inject(CsvExportService);
+  private cdr = inject(ChangeDetectorRef);
+
   employees: Employee[] = [];
-  filteredEmployees: Employee[] = [];
   loading: boolean = false;
   searchTerm: string = '';
 
-  // Modal/Drawer State
   showEditDrawer = false;
-  showViewDrawer = false;
   selectedEmployeeId: string | null = null;
 
   currentPage: number = 1;
@@ -41,27 +56,10 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
   totalItems: number = 0;
   totalPagesCount: number = 0;
 
-  // Stats
-  totalEmployees: number = 0;
-  activeEmployees: number = 0;
-  newHires: number = 0;
-
   protected readonly Math = Math;
 
-  // Master Data Maps
-  deptMap: { [key: string]: string } = {}; // Renamed from departmentsMap
-  posMap: { [key: string]: string } = {}; // Renamed from positionsMap
-
-  constructor(
-    private employeeService: EmployeeService,
-    private masterData: MasterDataService, // Injected MasterDataService
-    private router: Router,
-    private toastService: ToastService,
-    private logger: LoggerService,
-    private uploadService: UploadService,
-    private csvExport: CsvExportService,
-    private cdr: ChangeDetectorRef
-  ) { }
+  deptMap: { [key: string]: string } = {};
+  posMap: { [key: string]: string } = {};
 
   ngOnInit() {
     this.loadMasterData();
@@ -85,13 +83,11 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
       this.totalItems = data.totalCount;
       this.totalPagesCount = data.totalPages;
       this.loading = false;
-      this.calculateStats();
       this.cdr.markForCheck();
     });
   }
 
   loadMasterData() {
-    // Load Departments from MasterDataService
     this.masterData.getDepartments$().pipe(takeUntil(this.destroy$)).subscribe({
       next: (depts: Department[]) => {
         depts.forEach((d: Department) => {
@@ -105,7 +101,6 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
       }
     });
 
-    // Load Positions from MasterDataService
     this.masterData.getPositions$().pipe(takeUntil(this.destroy$)).subscribe({
       next: (positions: Position[]) => {
         positions.forEach((p: Position) => {
@@ -120,34 +115,8 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
     });
   }
 
-  getDepartmentName(employee: Employee): string {
-    // 1. Try flattened DTO property (Backend Paged List)
-    const name = employee.departmentName || employee.DepartmentName;
-    if (name && name !== 'N/A') return name;
-
-    // 2. Try lookup map (Backend Full DTO / Local Master Data)
-    const id = employee.jobDetails?.departmentId;
-    if (id && this.deptMap[id]) return this.deptMap[id];
-
-    // 3. Fallback
-    return name || '-';
-  }
-
-  getPositionTitle(employee: Employee): string {
-    // 1. Try flattened DTO property
-    const name = employee.positionName || employee.PositionName;
-    if (name && name !== 'N/A') return name;
-
-    // 2. Try lookup map
-    const id = employee.jobDetails?.positionId;
-    if (id && this.posMap[id]) return this.posMap[id];
-
-    // 3. Fallback
-    return name || '-';
-  }
-
   onAddEmployee() {
-    this.selectedEmployeeId = null; // Clear ID for Add Mode
+    this.selectedEmployeeId = null;
     this.showEditDrawer = true;
   }
 
@@ -173,7 +142,6 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
         this.totalItems = data.totalCount;
         this.totalPagesCount = data.totalPages;
         this.loading = false;
-        this.calculateStats();
         this.cdr.markForCheck();
       },
       error: (err) => {
@@ -191,30 +159,17 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  calculateStats() {
-    this.totalEmployees = this.totalItems;
-    this.activeEmployees = this.employees.filter(e => (e.status || e.jobDetails?.status) === 'Active').length;
-
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    this.newHires = this.employees.filter(e => {
-      const joinDate = e.jobDetails?.joinDate ? new Date(e.jobDetails.joinDate) : null;
-      return joinDate && joinDate > thirtyDaysAgo;
-    }).length;
-  }
-
-  updatePagination() {
-    this.totalItems = this.filteredEmployees.length;
-    if (this.currentPage > this.totalPages) {
-      this.currentPage = 1;
-    }
-  }
-
   onSearchInput(): void {
     this.searchInput$.next(this.searchTerm);
   }
 
   onSearch() {
+    this.currentPage = 1;
+    this.loadEmployees();
+  }
+
+  clearFilters(): void {
+    this.searchTerm = '';
     this.currentPage = 1;
     this.loadEmployees();
   }
@@ -234,74 +189,6 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
     }
   }
 
-  getPageNumbers(): number[] {
-    const pages: number[] = [];
-    const maxPagesToShow = 5;
-
-    let startPage = Math.max(1, this.currentPage - Math.floor(maxPagesToShow / 2));
-    let endPage = Math.min(this.totalPages, startPage + maxPagesToShow - 1);
-
-    if (endPage - startPage + 1 < maxPagesToShow) {
-      startPage = Math.max(1, endPage - maxPagesToShow + 1);
-    }
-
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
-    }
-
-    return pages;
-  }
-
-
-
-  getStatus(employee: Employee): string {
-    return employee.status || employee.Status || employee.jobDetails?.status || 'Unknown';
-  }
-
-  getStatusClass(employee: Employee): string {
-    const status = this.getStatus(employee);
-    switch (status) {
-      case 'Active': return 'status-active';
-      case 'Resigned': return 'status-resigned';
-      case 'Terminated': return 'status-terminated';
-      case 'On Leave': return 'status-orange';
-      default: return 'status-resigned';
-    }
-  }
-
-  getEmploymentType(employee: Employee): string {
-    // Handle dynamic properties from backend (mixed casing)
-    return employee.employmentType || employee.EmploymentType || employee.jobDetails?.['employmentType'] || 'Full time';
-  }
-
-  getEmploymentTypeClass(employee: Employee): string {
-    const type = this.getEmploymentType(employee).toLowerCase();
-    switch (type) {
-      case 'full time':
-      case 'full-time':
-        return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300';
-      case 'part time':
-      case 'part-time':
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300';
-      case 'contractor':
-      case 'contract':
-        return 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
-      default:
-        return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300';
-    }
-  }
-
-  clearFilters(): void {
-    this.searchTerm = '';
-    this.currentPage = 1;
-    this.loadEmployees();
-  }
-
-  getAvatarUrl(path: string | undefined): string {
-    const url = this.uploadService.getFileUrl(path);
-    return url || 'assets/images/defaults/avatar-1.png';
-  }
-
   exportEmployeesCsv(): void {
     if (!this.employees.length) {
       this.toastService.showWarn('No Data', 'No employees to export.');
@@ -312,31 +199,35 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
       Email: e.email || '',
       Department: this.getDepartmentName(e),
       Position: this.getPositionTitle(e),
-      Status: this.getStatus(e),
-      EmploymentType: this.getEmploymentType(e),
+      Status: e.status || e.Status || e.jobDetails?.status || 'Unknown',
+      EmploymentType: e.employmentType || e.EmploymentType || e.jobDetails?.['employmentType'] || 'Full time',
       JoinDate: e.jobDetails?.joinDate ? new Date(e.jobDetails.joinDate).toLocaleDateString() : ''
     }));
     this.csvExport.export(rows, `Employees_${new Date().toISOString().slice(0, 10)}`);
     this.toastService.showSuccess('Exported', `${rows.length} employees exported to CSV.`);
   }
 
-  trackByEmployeeId(index: number, employee: Employee): string {
-    return employee.id;
+  getDepartmentName(employee: Employee): string {
+    const name = employee.departmentName || employee.DepartmentName;
+    if (name && name !== 'N/A') return name;
+    const id = employee.jobDetails?.departmentId;
+    if (id && this.deptMap[id]) return this.deptMap[id];
+    return name || '-';
   }
 
-  /**
-   * Prefetch employee detail on row hover so the cache is warm by the time
-   * the user clicks "View". A 150 ms debounce avoids firing during fast scrolls.
-   */
+  getPositionTitle(employee: Employee): string {
+    const name = employee.positionName || employee.PositionName;
+    if (name && name !== 'N/A') return name;
+    const id = employee.jobDetails?.positionId;
+    if (id && this.posMap[id]) return this.posMap[id];
+    return name || '-';
+  }
+
   private prefetchTimer: ReturnType<typeof setTimeout> | null = null;
   prefetchEmployee(id: string): void {
     if (this.prefetchTimer) clearTimeout(this.prefetchTimer);
     this.prefetchTimer = setTimeout(() => {
       this.employeeService.getEmployeeById(id).pipe(takeUntil(this.destroy$)).subscribe();
     }, 150);
-  }
-
-  trackByPage(index: number, page: number): number {
-    return page;
   }
 }
