@@ -67,15 +67,16 @@ export class SidebarComponent implements OnInit, OnDestroy {
     public layoutService: LayoutService,
     public langService: LanguageService,
     private cdr: ChangeDetectorRef
-  ) {}
-
-  ngOnInit(): void {
+  ) {
+    // Listen to user changes and update roles
     effect(() => {
       const user = this.authService.user();
       this.userRoles$.set(user?.roles ?? []);
       this.syncExpandedParents();
     }, { allowSignalWrites: true });
+  }
 
+  ngOnInit(): void {
     this.langService.langChange$
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => this.cdr.markForCheck());
