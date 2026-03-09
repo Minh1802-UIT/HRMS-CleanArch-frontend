@@ -252,7 +252,7 @@ describe('AuthService', () => {
   describe('logout', () => {
     it('should clear state and navigate to /login', () => {
       // Seed a user first
-      (service as any).currentUserSubject.next(storedUser());
+      (service as any).currentUserSignal.set(storedUser());
 
       service.logout();
 
@@ -269,7 +269,7 @@ describe('AuthService', () => {
     });
 
     it('should pass custom reason to navigate', () => {
-      (service as any).currentUserSubject.next(storedUser());
+      (service as any).currentUserSignal.set(storedUser());
       service.logout('manual');
 
       // Flush the fire-and-forget logout POST
@@ -292,7 +292,7 @@ describe('AuthService', () => {
 
     it('should return true when token has not expired', () => {
       const user = storedUser();
-      (service as any).currentUserSubject.next(user);
+      (service as any).currentUserSignal.set(user);
       expect(service.isLoggedIn()).toBeTrue();
     });
 
@@ -300,7 +300,7 @@ describe('AuthService', () => {
       // With httpOnly cookie pattern, isLoggedIn() returns true even on expired token.
       // The JWT interceptor handles the 401 and triggers /auth/refresh-token automatically.
       const user = storedUser();
-      (service as any).currentUserSubject.next(user);
+      (service as any).currentUserSignal.set(user);
       (service as any)._accessToken = makeJwt({ exp: pastExp(), nameid: '1', unique_name: 'a' });
       // Should return true — defer to interceptor, not isLoggedIn()
       expect(service.isLoggedIn()).toBeTrue();
@@ -314,7 +314,7 @@ describe('AuthService', () => {
 
     it('should return true when token has no exp claim', () => {
       const user = storedUser({ token: makeJwt({ nameid: '1' }) });
-      (service as any).currentUserSubject.next(user);
+      (service as any).currentUserSignal.set(user);
       expect(service.isLoggedIn()).toBeTrue();
     });
   });
@@ -346,7 +346,7 @@ describe('AuthService', () => {
       const user = storedUser();
       const oldToken = user.token;
       delete user.token;
-      (service as any).currentUserSubject.next(user);
+      (service as any).currentUserSignal.set(user);
       (service as any)._accessToken = oldToken;
       sessionStorage.setItem('currentUser', JSON.stringify(user));
 
@@ -388,7 +388,7 @@ describe('AuthService', () => {
 
     it('should logout when refresh fails', () => {
       const user = storedUser();
-      (service as any).currentUserSubject.next(user);
+      (service as any).currentUserSignal.set(user);
 
       service.refreshAccessToken().subscribe({
         error: () => { /* expected */ }

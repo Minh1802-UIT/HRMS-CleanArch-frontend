@@ -4,8 +4,8 @@ import { DashboardService } from '@features/dashboard/services/dashboard.service
 import { AuditLogService } from '@features/system/services/audit-log.service';
 import { LoggerService } from '@core/services/logger.service';
 import { AuthService } from '@core/services/auth.service';
-import { ChangeDetectorRef } from '@angular/core';
-import { BehaviorSubject, of, throwError } from 'rxjs';
+import { ChangeDetectorRef, signal, WritableSignal } from '@angular/core';
+import { of, throwError } from 'rxjs';
 import { provideRouter } from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { MessageService } from 'primeng/api';
@@ -23,7 +23,7 @@ describe('DashboardComponent', () => {
   let mockDashboardService: jasmine.SpyObj<DashboardService>;
   let mockAuditLogService: jasmine.SpyObj<AuditLogService>;
   let mockLogger: jasmine.SpyObj<LoggerService>;
-  let mockAuthService: { currentUser: BehaviorSubject<User | null> };
+  let mockAuthService: { user: WritableSignal<User | null> };
 
   const mockAdminUser = {
     id: 'user-1',
@@ -51,7 +51,7 @@ describe('DashboardComponent', () => {
     mockDashboardService = jasmine.createSpyObj('DashboardService', ['getDashboardData']);
     mockAuditLogService = jasmine.createSpyObj('AuditLogService', ['getAuditLogs']);
     mockLogger = jasmine.createSpyObj('LoggerService', ['error', 'warn', 'info', 'debug']);
-    mockAuthService = { currentUser: new BehaviorSubject<User | null>(null) };
+    mockAuthService = { user: signal<User | null>(null) };
 
     mockDashboardService.getDashboardData.and.returnValue(of(mockDashboardData as unknown as DashboardData));
     mockAuditLogService.getAuditLogs.and.returnValue(of({ items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0, hasNext: false, hasPrevious: false } as PagedResult<AuditLog>));
@@ -84,7 +84,7 @@ describe('DashboardComponent', () => {
   it('should not load dashboard data when user is not Admin or HR', fakeAsync(() => {
     const regularUser = { ...mockAdminUser, roles: ['Employee'] };
     fixture.detectChanges();
-    mockAuthService.currentUser.next(regularUser);
+    mockAuthService.user.set(regularUser);
     tick();
 
     expect(mockDashboardService.getDashboardData).not.toHaveBeenCalled();
@@ -92,7 +92,7 @@ describe('DashboardComponent', () => {
 
   it('should load dashboard data when Admin user logs in', fakeAsync(() => {
     fixture.detectChanges();
-    mockAuthService.currentUser.next(mockAdminUser);
+    mockAuthService.user.set(mockAdminUser);
     tick();
 
     expect(mockDashboardService.getDashboardData).toHaveBeenCalledTimes(1);
@@ -100,9 +100,9 @@ describe('DashboardComponent', () => {
 
   it('should load dashboard data only once even if user emits multiple times', fakeAsync(() => {
     fixture.detectChanges();
-    mockAuthService.currentUser.next(mockAdminUser);
+    mockAuthService.user.set(mockAdminUser);
     tick();
-    mockAuthService.currentUser.next({ ...mockAdminUser });
+    mockAuthService.user.set({ ...mockAdminUser });
     tick();
 
     expect(mockDashboardService.getDashboardData).toHaveBeenCalledTimes(1);
@@ -111,7 +111,7 @@ describe('DashboardComponent', () => {
   it('should load dashboard data for HR user', fakeAsync(() => {
     const hrUser = { ...mockAdminUser, roles: ['HR'] };
     fixture.detectChanges();
-    mockAuthService.currentUser.next(hrUser);
+    mockAuthService.user.set(hrUser);
     tick();
 
     expect(mockDashboardService.getDashboardData).toHaveBeenCalledTimes(1);
@@ -119,7 +119,7 @@ describe('DashboardComponent', () => {
 
   it('should set userDisplayName from fullName', fakeAsync(() => {
     fixture.detectChanges();
-    mockAuthService.currentUser.next(mockAdminUser);
+    mockAuthService.user.set(mockAdminUser);
     tick();
 
     expect(component.userDisplayName).toBe('Admin User');
@@ -128,7 +128,7 @@ describe('DashboardComponent', () => {
   it('should fall back to username when fullName is absent', fakeAsync(() => {
     const userNoFullName = { ...mockAdminUser, fullName: undefined, username: 'admin_user' };
     fixture.detectChanges();
-    mockAuthService.currentUser.next(userNoFullName);
+    mockAuthService.user.set(userNoFullName);
     tick();
 
     expect(component.userDisplayName).toBe('admin_user');
@@ -136,7 +136,7 @@ describe('DashboardComponent', () => {
 
   it('should set isLoading to false after data loads', fakeAsync(() => {
     fixture.detectChanges();
-    mockAuthService.currentUser.next(mockAdminUser);
+    mockAuthService.user.set(mockAdminUser);
     tick();
 
     expect(component.isLoading).toBeFalse();
@@ -145,7 +145,7 @@ describe('DashboardComponent', () => {
   it('should handle error from getDashboardData gracefully', fakeAsync(() => {
     mockDashboardService.getDashboardData.and.returnValue(throwError(() => new Error('Server error')));
     fixture.detectChanges();
-    mockAuthService.currentUser.next(mockAdminUser);
+    mockAuthService.user.set(mockAdminUser);
     tick();
 
     expect(mockLogger.error).toHaveBeenCalled();
@@ -154,12 +154,12 @@ describe('DashboardComponent', () => {
 
   it('should clean up subscriptions on destroy', fakeAsync(() => {
     fixture.detectChanges();
-    mockAuthService.currentUser.next(mockAdminUser);
+    mockAuthService.user.set(mockAdminUser);
     tick();
 
     fixture.destroy();
     // No error thrown after destroy = subscription cleaned up
-    mockAuthService.currentUser.next({ ...mockAdminUser, fullName: 'Another User' });
+    mockAuthService.user.set({ ...mockAdminUser, fullName: 'Another User' });
     tick();
 
     // userDisplayName should not have changed after destroy
