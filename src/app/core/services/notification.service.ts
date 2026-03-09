@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
 import { environment } from '@env/environment';
 import { ApiResponse } from '@core/models/api-response';
@@ -13,9 +13,9 @@ import { LoggerService } from './logger.service';
 export class NotificationService {
   private apiUrl = `${environment.apiUrl}/notifications`;
 
-  private _unreadCount = new BehaviorSubject<number>(0);
-  /** Observable of unread notification count — subscribe in navbar. */
-  unreadCount$ = this._unreadCount.asObservable();
+  private _unreadCount = signal<number>(0);
+  /** Signal of unread notification count — read in navbar. */
+  readonly unreadCount = this._unreadCount.asReadonly();
 
   constructor(private http: HttpClient, private logger: LoggerService) {}
 
@@ -36,15 +36,14 @@ export class NotificationService {
     this.http.get<ApiResponse<number>>(`${this.apiUrl}/unread-count`).pipe(
       map(res => res.data ?? 0),
       catchError(() => of(0))
-    ).subscribe(count => this._unreadCount.next(count));
+    ).subscribe(count => this._unreadCount.set(count));
   }
 
   markRead(id: string): Observable<void> {
     return this.http.post<ApiResponse<unknown>>(`${this.apiUrl}/${id}/read`, {}).pipe(
       tap(() => {
         // Decrement local count
-        const current = this._unreadCount.getValue();
-        if (current > 0) this._unreadCount.next(current - 1);
+        this._unreadCount.update((current: number) => Math.max(0, current - 1));
       }),
       map(() => void 0),
       catchError(err => {
@@ -56,7 +55,7 @@ export class NotificationService {
 
   markAllRead(): Observable<void> {
     return this.http.post<ApiResponse<unknown>>(`${this.apiUrl}/read-all`, {}).pipe(
-      tap(() => this._unreadCount.next(0)),
+      tap(() => this._unreadCount.set(0)),
       map(() => void 0),
       catchError(err => {
         this.logger.error('NotificationService: markAllRead failed', err);

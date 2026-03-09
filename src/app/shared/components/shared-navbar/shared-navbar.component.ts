@@ -51,7 +51,8 @@ export class SharedNavbarComponent implements OnInit, OnDestroy {
   readonly userFullName = computed(() => this.currentUser()?.fullName ?? '');
   readonly userAvatar = computed(() => this.currentUser()?.avatar ?? 'assets/images/defaults/avatar-1.png');
 
-  unreadCount$: Observable<number>;
+  // Unread notifications signal
+  readonly unreadCount = this.notificationService.unreadCount;
 
   showNotifPanel: boolean = false;
   notifications: NotificationItem[] = [];
@@ -70,7 +71,6 @@ export class SharedNavbarComponent implements OnInit, OnDestroy {
     public langService: LanguageService,
     public layoutService: LayoutService
   ) {
-    this.unreadCount$ = this.notificationService.unreadCount$;
   }
 
   ngOnInit(): void {

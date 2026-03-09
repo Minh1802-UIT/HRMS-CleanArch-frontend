@@ -50,12 +50,12 @@
         title="Notifications"
       >
         <span class="material-symbols-outlined text-[20px]">notifications</span>
-        @if ((unreadCount$ | async) ?? 0; as count) {
-          @if ((count ?? 0) > 0) {
+        @if (unreadCount(); as count) {
+          @if (count > 0) {
             <span
               class="absolute top-1 right-1 flex items-center justify-center min-w-[16px] h-[16px] text-[9px] font-bold text-white bg-[#a78bfa] rounded-full px-0.5 leading-none"
             >
-              {{ (count ?? 0) > 99 ? "99+" : count }}
+              {{ count > 99 ? "99+" : count }}
             </span>
           }
         }

@@ -12,26 +12,10 @@ import { takeUntil } from 'rxjs/operators';
   styleUrl: './confirm-dialog.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ConfirmDialogComponent implements OnInit, OnDestroy {
-  state: ConfirmState | null = null;
-  private destroy$ = new Subject<void>();
-
+export class ConfirmDialogComponent {
   constructor(
-    private confirmService: ConfirmDialogService,
-    private cdr: ChangeDetectorRef
+    public confirmService: ConfirmDialogService
   ) {}
-
-  ngOnInit() {
-    this.confirmService.state$.pipe(takeUntil(this.destroy$)).subscribe(state => {
-      this.state = state;
-      this.cdr.markForCheck();
-    });
-  }
-
-  ngOnDestroy() {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
 
   confirm() { this.confirmService.resolve(true); }
   cancel()  { this.confirmService.resolve(false); }
@@ -43,7 +27,7 @@ export class ConfirmDialogComponent implements OnInit, OnDestroy {
       info: 'pi-info-circle',
       success: 'pi-check-circle'
     };
-    return map[this.state?.type ?? 'danger'] ?? 'pi-question-circle';
+    return map[this.confirmService.state()?.type ?? 'danger'] ?? 'pi-question-circle';
   }
 
   get iconBgClass(): string {
@@ -53,7 +37,7 @@ export class ConfirmDialogComponent implements OnInit, OnDestroy {
       info:    'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400',
       success: 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400'
     };
-    return map[this.state?.type ?? 'danger'] ?? 'bg-red-100 text-red-600';
+    return map[this.confirmService.state()?.type ?? 'danger'] ?? 'bg-red-100 text-red-600';
   }
 
   get confirmBtnClass(): string {
@@ -63,6 +47,6 @@ export class ConfirmDialogComponent implements OnInit, OnDestroy {
       info:    'bg-blue-600 hover:bg-blue-500 focus:ring-blue-500',
       success: 'bg-emerald-600 hover:bg-emerald-500 focus:ring-emerald-500'
     };
-    return map[this.state?.type ?? 'danger'] ?? 'bg-red-600 hover:bg-red-500';
+    return map[this.confirmService.state()?.type ?? 'danger'] ?? 'bg-red-600 hover:bg-red-500';
   }
 }

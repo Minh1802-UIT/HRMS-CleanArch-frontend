@@ -1,23 +1,23 @@
-@if (state?.open) {
+@if (confirmService.state()?.open) {
 <div class="flex fixed inset-0 z-[9999] items-center justify-center">
   <div class="absolute inset-0 backdrop-blur-sm bg-zinc-900/50" (click)="cancel()"></div>
   <div class="relative bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 p-6 w-full max-w-sm mx-4 dialog-card">
     <div class="flex items-center justify-center w-12 h-12 rounded-full mx-auto mb-4" [ngClass]="iconBgClass">
-      <i class="pi text-xl" [ngClass]="state?.icon ?? iconClass"></i>
+      <i class="pi text-xl" [ngClass]="confirmService.state()?.icon ?? iconClass"></i>
     </div>
     <h3 class="text-center text-base font-bold text-gray-900 dark:text-white mb-1">
-      {{ state?.title ?? 'Confirm' }}
+      {{ confirmService.state()?.title ?? 'Confirm' }}
     </h3>
-    <p class="text-center text-sm text-gray-500 dark:text-gray-400 mb-6" [innerHTML]="state?.message"></p>
+    <p class="text-center text-sm text-gray-500 dark:text-gray-400 mb-6" [innerHTML]="confirmService.state()?.message"></p>
     <div class="flex gap-3">
       <button (click)="cancel()"
         class="flex-1 py-2.5 text-sm font-semibold text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl transition-colors">
-        {{ state?.cancelLabel ?? 'Cancel' }}
+        {{ confirmService.state()?.cancelLabel ?? 'Cancel' }}
       </button>
       <button (click)="confirm()"
         class="flex-1 py-2.5 text-sm font-semibold text-white rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2"
         [ngClass]="confirmBtnClass">
-        {{ state?.confirmLabel ?? 'Confirm' }}
+        {{ confirmService.state()?.confirmLabel ?? 'Confirm' }}
       </button>
     </div>
   </div>
