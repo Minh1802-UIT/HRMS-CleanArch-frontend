@@ -116,17 +116,16 @@ export class PayrollComponent implements OnInit, OnDestroy {
     // 1. Fetch Employees (to get Names/Avatars)
     // 2. Fetch Payroll Data (Backend DTO)
     forkJoin({
-      employees: this.employeeService.getLookup('', 500).pipe(map(res => res as any[])), // limit=500 — lấy toàn bộ nhân viên
-      payrolls: this.payrollService.getPayrollData(this.selectedMonth, this.selectedYear).pipe(
-          catchError(err => {
-              this.logger.warn('No payroll data found', err);
-              return of([] as Payroll[]); // Return empty if 404
-          })
-      )
+      employeesResponse: this.employeeService.getEmployees({ pageSize: 500, pageNumber: 1 }).pipe(
+        catchError(() => of({ items: [], totalCount: 0, pageNumber: 1, pageSize: 500 }))
+      ),
+      payrolls: this.payrollService.getPayrollData(this.selectedMonth, this.selectedYear)
+        .pipe(catchError(() => of([]))) // fallback to [] if no payroll generated yet
     }).pipe(
       takeUntil(this.destroy$)
     ).subscribe({
-      next: ({ employees, payrolls }) => {
+      next: ({ employeesResponse, payrolls }) => {
+        const employees = employeesResponse?.items || [];
         this.payrollRecords = this.mapPayrollData(employees, payrolls);
         this.currentPage = 1;
         this.calculateTotals();
@@ -142,15 +141,16 @@ export class PayrollComponent implements OnInit, OnDestroy {
     });
   }
 
-  mapPayrollData(employees: any[], payrolls: Payroll[]): PayrollRecord[] {
-    // If no payrolls exist yet, we can optionally show potential employees or just empty list.
-    // Let's show all employees, and fill payroll info if available, or mark as 'Pending' if not.
-    
+  /**
+   * Combine Employee baseline data with Payroll calculation data
+   */
+  private mapPayrollData(employees: any[], payrolls: Payroll[]): PayrollRecord[] {
     return employees.map(emp => {
-      // LookupDto uses 'secondaryLabel' for employeeCode and 'label' for fullName
-      const code = emp.secondaryLabel || emp.employeeCode || 'Unknown';
-      const name = emp.label || emp.fullName || 'Unknown';
-      
+      // getEmployees returns EmployeeListSummary which has natively 'employeeCode' and 'fullName'
+      const code = emp.employeeCode || 'Unknown';
+      const name = emp.fullName || 'Unknown';
+
+      // find matching payroll record
       const payroll = payrolls.find(p => p.employeeCode === code);
       
       if (payroll) {
