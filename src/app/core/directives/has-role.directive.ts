@@ -10,7 +10,6 @@ export class HasRoleDirective implements OnInit, OnDestroy {
   @Input() appHasRole: string | string[] = [];
   private stop$ = new Subject<void>();
   private isVisible = false;
-  private hasView = false;
 
   constructor(
     private templateRef: TemplateRef<any>,
