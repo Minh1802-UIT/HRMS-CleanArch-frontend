@@ -2,7 +2,7 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { Subject, EMPTY } from 'rxjs';
 import { takeUntil, debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';
 import { EmployeeService, Employee } from '@features/employee/services/employee.service';
@@ -43,6 +43,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
   private logger = inject(LoggerService);
   private csvExport = inject(CsvExportService);
   private cdr = inject(ChangeDetectorRef);
+  private route = inject(ActivatedRoute);
 
   employees: Employee[] = [];
   loading: boolean = false;
@@ -64,6 +65,15 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.loadMasterData();
     this.loadEmployees();
+
+    // Check if we should automatically open the Add Employee drawer
+    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe(params => {
+      if (params['add'] === 'true') {
+        // Wait for the next tick to ensure view is ready
+        setTimeout(() => this.onAddEmployee(), 100);
+      }
+    });
+
     this.searchInput$.pipe(
       debounceTime(350),
       distinctUntilChanged(),

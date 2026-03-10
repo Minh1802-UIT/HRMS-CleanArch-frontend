@@ -19,7 +19,7 @@
           <span class="text-lg material-symbols-outlined" aria-hidden="true">calendar_today</span>
           {{ today | date: "MMM d, y" }}
         </button>
-        <button *appHasRole="['Admin', 'HR']" type="button" routerLink="/employees/add"
+        <button *appHasRole="['Admin', 'HR']" type="button" routerLink="/employees" [queryParams]="{ add: 'true' }"
           class="btn-glow flex gap-2 items-center px-5 py-2.5 text-sm font-bold text-white rounded-xl bg-gradient-premium shadow-lg shadow-violet-600/30">
           <span class="text-lg material-symbols-outlined" aria-hidden="true">add</span>
           Add Employee
