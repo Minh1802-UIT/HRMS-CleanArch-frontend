@@ -52,11 +52,12 @@ export class EmployeeService {
     );
   }
 
-  getLookup(keyword: string = '', limit?: number, departmentId?: string): Observable<Employee[]> {
+  getLookup(keyword: string = '', limit?: number, departmentId?: string, positionId?: string): Observable<Employee[]> {
     const params: Record<string, string> = {};
     if (keyword) params['keyword'] = keyword;
     if (limit && limit > 0) params['limit'] = limit.toString();
     if (departmentId) params['departmentId'] = departmentId;
+    if (positionId) params['positionId'] = positionId;
     return this.http.get<ApiResponse<Array<{ id: string; label: string; secondaryLabel?: string }>>>(`${this.apiUrl}/lookup`, { params }).pipe(
       map(response => (response.data || []).map(item => ({
         id: item.id,

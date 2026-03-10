@@ -10,8 +10,8 @@ import { ShiftService, Shift } from '@features/attendance/services/shift.service
 import { ToastService } from '@core/services/toast.service';
 import { LoggerService } from '@core/services/logger.service';
 import { MasterDataService } from '@features/organization/services/master-data.service';
-import { Subject } from 'rxjs';
-import { takeUntil, distinctUntilChanged } from 'rxjs/operators';
+import { Subject, combineLatest } from 'rxjs';
+import { takeUntil, distinctUntilChanged, startWith } from 'rxjs/operators';
 
 // Import new step components
 import { EmployeeWizardStepsComponent } from './wizard-steps/employee-wizard-steps.component';
@@ -32,7 +32,7 @@ import { StepDocumentsComponent } from './steps/step-documents.component';
     StepJobDetailsComponent,
     StepCompensationComponent,
     StepDocumentsComponent
-],
+  ],
   templateUrl: './add-employee.component.html',
   styleUrls: ['./add-employee.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -55,7 +55,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
   createdEmployeeCode = '';
   createdEmployeeName = '';
   private destroy$ = new Subject<void>();
-  
+
   departments: Department[] = [];
   positions: Position[] = [];
   shifts: Shift[] = [];
@@ -94,8 +94,8 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
       }),
 
       jobDetails: this.fb.group({
-        department: ['', Validators.required], 
-        position: ['', Validators.required], 
+        department: ['', Validators.required],
+        position: ['', Validators.required],
         manager: [''],
         shiftId: ['', Validators.required],
         workLocation: [''],
@@ -107,8 +107,8 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
       }),
 
       compensation: this.fb.group({
-        basicSalary: [0], 
-        payFrequency: ['Monthly'], 
+        basicSalary: [0],
+        payFrequency: ['Monthly'],
         bankName: ['', Validators.required],
         accountNumber: ['', [Validators.required, Validators.pattern(/^[0-9]+$/)]],
         accountHolder: ['', Validators.required],
@@ -128,16 +128,19 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
     this.currentStep = this.initialStep;
     this.loadMasterData();
     if (this.isEditMode && this.employeeId) {
-       this.loadEmployeeData(this.employeeId);
+      this.loadEmployeeData(this.employeeId);
     }
 
-    // Reload managers filtered to the selected department
-    this.employeeForm.get('jobDetails.department')!.valueChanges.pipe(
+    // Reload managers filtered to the selected department and position
+    const deptChange$ = this.employeeForm.get('jobDetails.department')!.valueChanges.pipe(startWith(this.employeeForm.get('jobDetails.department')!.value));
+    const posChange$ = this.employeeForm.get('jobDetails.position')!.valueChanges.pipe(startWith(this.employeeForm.get('jobDetails.position')!.value));
+
+    combineLatest([deptChange$, posChange$]).pipe(
       takeUntil(this.destroy$),
-      distinctUntilChanged()
-    ).subscribe((deptId: string) => {
-      if (deptId) {
-        this.loadManagersByDepartment(deptId);
+      distinctUntilChanged((prev, curr) => prev[0] === curr[0] && prev[1] === curr[1])
+    ).subscribe(([deptId, posId]) => {
+      if (deptId || posId) {
+        this.loadManagers(deptId, posId);
       } else {
         this.managersForDisplay = [];
         this.cdr.markForCheck();
@@ -151,63 +154,63 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
   }
 
   loadEmployeeData(id: string) {
-      this.loading = true;
-      this.employeeService.getEmployeeById(id).pipe(takeUntil(this.destroy$)).subscribe({
-            next: (emp) => {
-                this.storedEmployeeCode = emp.employeeCode;
-                this.employeeVersion = emp.version || 0;
-                this.patchForm(emp);
-                this.loading = false;
-                this.cdr.markForCheck();
-            },
-          error: (err) => {
-              this.logger.error('Failed to load employee for edit', err);
-              this.toastService.showError('Load Error', 'Failed to load employee details');
-              this.loading = false;
-              this.cdr.markForCheck();
-          }
-      });
+    this.loading = true;
+    this.employeeService.getEmployeeById(id).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (emp) => {
+        this.storedEmployeeCode = emp.employeeCode;
+        this.employeeVersion = emp.version || 0;
+        this.patchForm(emp);
+        this.loading = false;
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        this.logger.error('Failed to load employee for edit', err);
+        this.toastService.showError('Load Error', 'Failed to load employee details');
+        this.loading = false;
+        this.cdr.markForCheck();
+      }
+    });
   }
-  
+
   patchForm(emp: Employee) {
-      const nameParts = (emp.fullName || '').trim().split(/\s+/);
-      const firstName = nameParts[0] || '';
-      const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
-      this.employeeForm.patchValue({
-          personalInfo: {
-              firstName,
-              lastName,
-              email: emp.email,
-              phone: emp.personalInfo?.phoneNumber,
-              dob: emp.personalInfo?.dateOfBirth ? new Date(emp.personalInfo.dateOfBirth).toISOString().split('T')[0] : '',
-              gender: emp.personalInfo?.gender,
-              identityCard: emp.personalInfo?.identityCard,
-              address: emp.personalInfo?.address,
-              maritalStatus: emp.personalInfo?.maritalStatus,
-              nationality: emp.personalInfo?.nationality,
-              hometown: emp.personalInfo?.hometown,
-              country: emp.personalInfo?.country,
-              city: emp.personalInfo?.city,
-              postalCode: emp.personalInfo?.postalCode
-          },
-          jobDetails: {
-              department: emp.jobDetails?.departmentId,
-              position: emp.jobDetails?.positionId,
-              manager: emp.jobDetails?.managerId,
-              shiftId: emp.jobDetails?.shiftId,
-              joinDate: emp.jobDetails?.joinDate ? new Date(emp.jobDetails.joinDate).toISOString().split('T')[0] : '',
-              status: emp.jobDetails?.status,
-              employmentType: emp.jobDetails?.employmentType || 'Full-time',
-              workLocationArrangement: 'On-site'
-          },
-          compensation: {
-              bankName: emp.bankDetails?.bankName,
-              accountNumber: emp.bankDetails?.accountNumber,
-              accountHolder: emp.bankDetails?.accountHolder,
-              insuranceCode: emp.bankDetails?.insuranceCode,
-              taxCode: emp.bankDetails?.taxCode
-          }
-      });
+    const nameParts = (emp.fullName || '').trim().split(/\s+/);
+    const firstName = nameParts[0] || '';
+    const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
+    this.employeeForm.patchValue({
+      personalInfo: {
+        firstName,
+        lastName,
+        email: emp.email,
+        phone: emp.personalInfo?.phoneNumber,
+        dob: emp.personalInfo?.dateOfBirth ? new Date(emp.personalInfo.dateOfBirth).toISOString().split('T')[0] : '',
+        gender: emp.personalInfo?.gender,
+        identityCard: emp.personalInfo?.identityCard,
+        address: emp.personalInfo?.address,
+        maritalStatus: emp.personalInfo?.maritalStatus,
+        nationality: emp.personalInfo?.nationality,
+        hometown: emp.personalInfo?.hometown,
+        country: emp.personalInfo?.country,
+        city: emp.personalInfo?.city,
+        postalCode: emp.personalInfo?.postalCode
+      },
+      jobDetails: {
+        department: emp.jobDetails?.departmentId,
+        position: emp.jobDetails?.positionId,
+        manager: emp.jobDetails?.managerId,
+        shiftId: emp.jobDetails?.shiftId,
+        joinDate: emp.jobDetails?.joinDate ? new Date(emp.jobDetails.joinDate).toISOString().split('T')[0] : '',
+        status: emp.jobDetails?.status,
+        employmentType: emp.jobDetails?.employmentType || 'Full-time',
+        workLocationArrangement: 'On-site'
+      },
+      compensation: {
+        bankName: emp.bankDetails?.bankName,
+        accountNumber: emp.bankDetails?.accountNumber,
+        accountHolder: emp.bankDetails?.accountHolder,
+        insuranceCode: emp.bankDetails?.insuranceCode,
+        taxCode: emp.bankDetails?.taxCode
+      }
+    });
   }
 
   loadMasterData() {
@@ -220,44 +223,54 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
     });
 
     this.masterData.getPositions$().pipe(takeUntil(this.destroy$)).subscribe({
-        next: (data: Position[]) => {
-          this.positions = data;
-          this.cdr.markForCheck();
-        },
-        error: (err: any) => this.logger.error('Error loading positions', err)
+      next: (data: Position[]) => {
+        this.positions = data;
+        this.cdr.markForCheck();
+      },
+      error: (err: any) => this.logger.error('Error loading positions', err)
     });
 
     this.shiftService.getShifts().pipe(takeUntil(this.destroy$)).subscribe({
-        next: (data: Shift[]) => {
-          this.shifts = data;
-          this.cdr.markForCheck();
-        },
-        error: (err: any) => this.logger.error('Error loading shifts', err)
+      next: (data: Shift[]) => {
+        this.shifts = data;
+        this.cdr.markForCheck();
+      },
+      error: (err: any) => this.logger.error('Error loading shifts', err)
     });
 
     this.employeeService.getLookup().pipe(takeUntil(this.destroy$)).subscribe({
-        next: (data: Employee[]) => {
-          this.managers = data;
-          this.cdr.markForCheck();
-        },
-        error: (err: unknown) => this.logger.error('Error loading managers', err instanceof Error ? err : undefined)
+      next: (data: Employee[]) => {
+        this.managers = data;
+        this.cdr.markForCheck();
+      },
+      error: (err: unknown) => this.logger.error('Error loading managers', err instanceof Error ? err : undefined)
     });
   }
 
-  loadManagersByDepartment(departmentId: string) {
-    this.employeeService.getLookup('', 100, departmentId).pipe(takeUntil(this.destroy$)).subscribe({
+  loadManagers(departmentId?: string, positionId?: string) {
+    this.employeeService.getLookup('', 100, departmentId, positionId).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: Employee[]) => {
         this.managersForDisplay = data.map(emp => {
-          const positionId = (emp as any).positionId as string;
-          const positionTitle = this.positions.find(p => p.id === positionId)?.title ?? '';
+          const posId = (emp as any).positionId as string;
+          const positionTitle = this.positions.find(p => p.id === posId)?.title ?? '';
           return {
             id: emp.id,
             displayLabel: positionTitle ? `${emp.fullName} — ${positionTitle}` : emp.fullName
           };
         });
+
+        // If the current manager is no longer in the list, clear the selection (unless loading)
+        const currentManagerId = this.employeeForm.get('jobDetails.manager')?.value;
+        if (currentManagerId && !this.managersForDisplay.find(m => m.id === currentManagerId)) {
+          // We only clear if positions/managers arrays are fully loaded. 
+          // If it's the initial load where managers are being populated, we should be careful.
+          // Since `patchForm` is called after basic data is loaded, this might overwrite the patch.
+          // To be safe and let form validation handle it if it's invalid, we won't strictly enforce clearing here to avoid race conditions during edit load.
+        }
+
         this.cdr.markForCheck();
       },
-      error: (err: unknown) => this.logger.error('Error loading managers for department', err instanceof Error ? err : undefined)
+      error: (err: unknown) => this.logger.error('Error loading managers for department/position', err instanceof Error ? err : undefined)
     });
   }
 
@@ -286,127 +299,127 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
     const formatDate = (dateStr: string) => dateStr ? new Date(dateStr).toISOString() : new Date().toISOString();
 
     if (this.isEditMode && this.employeeId) {
-       const updatePayload = {
-           id: this.employeeId,
-           avatarUrl: formValue.avatarUrl,
-           fullName: `${formValue.personalInfo.firstName} ${formValue.personalInfo.lastName}`,
-           email: formValue.personalInfo.email,
-           
-           personalInfo: {
-               dateOfBirth: formatDate(formValue.personalInfo.dob),
-               gender: formValue.personalInfo.gender,
-               phoneNumber: formValue.personalInfo.phone,
-               address: formValue.personalInfo.address,
-               identityCard: formValue.personalInfo.identityCard,
-               maritalStatus: formValue.personalInfo.maritalStatus,
-               nationality: formValue.personalInfo.nationality,
-               hometown: formValue.personalInfo.hometown,
-               country: formValue.personalInfo.country,
-               city: formValue.personalInfo.city,
-               postalCode: formValue.personalInfo.postalCode
-           },
-           
-           jobDetails: {
-               departmentId: formValue.jobDetails.department,
-               positionId: formValue.jobDetails.position,
-               managerId: formValue.jobDetails.manager,
-               shiftId: formValue.jobDetails.shiftId,
-               joinDate: formatDate(formValue.jobDetails.joinDate),
-               status: formValue.jobDetails.status,
-               employmentType: formValue.jobDetails.employmentType,
-               probationEndDate: formValue.jobDetails.probationEndDate ? formatDate(formValue.jobDetails.probationEndDate) : null
-           },
-           
-           bankDetails: {
-               bankName: formValue.compensation.bankName,
-               accountNumber: formValue.compensation.accountNumber,
-               accountHolder: formValue.compensation.accountHolder
-           },
-           version: this.employeeVersion
-       };
+      const updatePayload = {
+        id: this.employeeId,
+        avatarUrl: formValue.avatarUrl,
+        fullName: `${formValue.personalInfo.firstName} ${formValue.personalInfo.lastName}`,
+        email: formValue.personalInfo.email,
 
-       this.employeeService.updateEmployee(this.employeeId, updatePayload as unknown as Partial<Employee>).pipe(takeUntil(this.destroy$)).subscribe({
-           next: () => {
-               this.loading = false;
-               this.success = true;
-               this.createdEmployeeName = `${formValue.personalInfo.firstName} ${formValue.personalInfo.lastName}`;
-               this.toastService.showSuccess('Updated', 'Employee updated successfully');
-               this.employeeAdded.emit();
-               this.cdr.markForCheck();
-           },
-           error: (err) => {
-               this.logger.error('Employee update failed', err);
-               this.toastService.showError('Update Failed', err.error?.message || 'Could not update employee');
-               this.loading = false;
-               this.cdr.markForCheck();
-           }
-       });
+        personalInfo: {
+          dateOfBirth: formatDate(formValue.personalInfo.dob),
+          gender: formValue.personalInfo.gender,
+          phoneNumber: formValue.personalInfo.phone,
+          address: formValue.personalInfo.address,
+          identityCard: formValue.personalInfo.identityCard,
+          maritalStatus: formValue.personalInfo.maritalStatus,
+          nationality: formValue.personalInfo.nationality,
+          hometown: formValue.personalInfo.hometown,
+          country: formValue.personalInfo.country,
+          city: formValue.personalInfo.city,
+          postalCode: formValue.personalInfo.postalCode
+        },
 
-    } else {
-        const now = new Date();
-        const datePart = `${String(now.getFullYear()).slice(-2)}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
-        const randomPart = Array.from(crypto.getRandomValues(new Uint8Array(2)), b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
-        const generatedCode = `EMP-${datePart}-${randomPart}`;
-        
-        const createPayload = {
-            employeeCode: generatedCode,
-            avatarUrl: formValue.avatarUrl,
-            fullName: `${formValue.personalInfo.firstName} ${formValue.personalInfo.lastName}`,
-            email: formValue.personalInfo.email,
-            
-            personalInfo: {
-                dateOfBirth: formatDate(formValue.personalInfo.dob),
-                gender: formValue.personalInfo.gender,
-                phoneNumber: formValue.personalInfo.phone,
-                address: formValue.personalInfo.address,
-                identityCard: formValue.personalInfo.identityCard,
-                maritalStatus: formValue.personalInfo.maritalStatus,
-                nationality: formValue.personalInfo.nationality,
-                hometown: formValue.personalInfo.hometown,
-                country: formValue.personalInfo.country,
-                city: formValue.personalInfo.city,
-                postalCode: formValue.personalInfo.postalCode
-            },
+        jobDetails: {
+          departmentId: formValue.jobDetails.department,
+          positionId: formValue.jobDetails.position,
+          managerId: formValue.jobDetails.manager,
+          shiftId: formValue.jobDetails.shiftId,
+          joinDate: formatDate(formValue.jobDetails.joinDate),
+          status: formValue.jobDetails.status,
+          employmentType: formValue.jobDetails.employmentType,
+          probationEndDate: formValue.jobDetails.probationEndDate ? formatDate(formValue.jobDetails.probationEndDate) : null
+        },
 
-            jobDetails: {
-                departmentId: formValue.jobDetails.department,
-                positionId: formValue.jobDetails.position,
-                managerId: formValue.jobDetails.manager,
-                shiftId: formValue.jobDetails.shiftId,
-                joinDate: formatDate(formValue.jobDetails.joinDate),
-                status: formValue.jobDetails.status,
-                employmentType: formValue.jobDetails.employmentType,
-                probationEndDate: formValue.jobDetails.probationEndDate ? formatDate(formValue.jobDetails.probationEndDate) : null
-            },
-            
-            bankDetails: {
-                bankName: formValue.compensation.bankName,
-                accountNumber: formValue.compensation.accountNumber,
-                accountHolder: formValue.compensation.accountHolder,
-                insuranceCode: formValue.compensation.insuranceCode,
-                taxCode: formValue.compensation.taxCode
-            }
-        };
+        bankDetails: {
+          bankName: formValue.compensation.bankName,
+          accountNumber: formValue.compensation.accountNumber,
+          accountHolder: formValue.compensation.accountHolder
+        },
+        version: this.employeeVersion
+      };
 
-        this.employeeService.addEmployee(createPayload as unknown as Omit<Employee, 'id' | 'version'>).pipe(takeUntil(this.destroy$)).subscribe({
-        next: (emp) => {
-            this.createdEmployeeId = emp.id;
-            this.createdEmployeeCode = generatedCode;
-            this.createdEmployeeName = `${formValue.personalInfo.firstName} ${formValue.personalInfo.lastName}`;
-
-            this.loading = false;
-            this.success = true;
-            this.toastService.showSuccess('Created', 'New employee added successfully');
-            this.employeeAdded.emit();
-            this.cdr.markForCheck();
+      this.employeeService.updateEmployee(this.employeeId, updatePayload as unknown as Partial<Employee>).pipe(takeUntil(this.destroy$)).subscribe({
+        next: () => {
+          this.loading = false;
+          this.success = true;
+          this.createdEmployeeName = `${formValue.personalInfo.firstName} ${formValue.personalInfo.lastName}`;
+          this.toastService.showSuccess('Updated', 'Employee updated successfully');
+          this.employeeAdded.emit();
+          this.cdr.markForCheck();
         },
         error: (err) => {
-            this.logger.error('Employee creation failed', err);
-            this.toastService.showError('Creation Failed', err.error?.message || 'Could not create employee');
-            this.loading = false;
-            this.cdr.markForCheck();
+          this.logger.error('Employee update failed', err);
+          this.toastService.showError('Update Failed', err.error?.message || 'Could not update employee');
+          this.loading = false;
+          this.cdr.markForCheck();
         }
-        });
+      });
+
+    } else {
+      const now = new Date();
+      const datePart = `${String(now.getFullYear()).slice(-2)}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
+      const randomPart = Array.from(crypto.getRandomValues(new Uint8Array(2)), b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
+      const generatedCode = `EMP-${datePart}-${randomPart}`;
+
+      const createPayload = {
+        employeeCode: generatedCode,
+        avatarUrl: formValue.avatarUrl,
+        fullName: `${formValue.personalInfo.firstName} ${formValue.personalInfo.lastName}`,
+        email: formValue.personalInfo.email,
+
+        personalInfo: {
+          dateOfBirth: formatDate(formValue.personalInfo.dob),
+          gender: formValue.personalInfo.gender,
+          phoneNumber: formValue.personalInfo.phone,
+          address: formValue.personalInfo.address,
+          identityCard: formValue.personalInfo.identityCard,
+          maritalStatus: formValue.personalInfo.maritalStatus,
+          nationality: formValue.personalInfo.nationality,
+          hometown: formValue.personalInfo.hometown,
+          country: formValue.personalInfo.country,
+          city: formValue.personalInfo.city,
+          postalCode: formValue.personalInfo.postalCode
+        },
+
+        jobDetails: {
+          departmentId: formValue.jobDetails.department,
+          positionId: formValue.jobDetails.position,
+          managerId: formValue.jobDetails.manager,
+          shiftId: formValue.jobDetails.shiftId,
+          joinDate: formatDate(formValue.jobDetails.joinDate),
+          status: formValue.jobDetails.status,
+          employmentType: formValue.jobDetails.employmentType,
+          probationEndDate: formValue.jobDetails.probationEndDate ? formatDate(formValue.jobDetails.probationEndDate) : null
+        },
+
+        bankDetails: {
+          bankName: formValue.compensation.bankName,
+          accountNumber: formValue.compensation.accountNumber,
+          accountHolder: formValue.compensation.accountHolder,
+          insuranceCode: formValue.compensation.insuranceCode,
+          taxCode: formValue.compensation.taxCode
+        }
+      };
+
+      this.employeeService.addEmployee(createPayload as unknown as Omit<Employee, 'id' | 'version'>).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (emp) => {
+          this.createdEmployeeId = emp.id;
+          this.createdEmployeeCode = generatedCode;
+          this.createdEmployeeName = `${formValue.personalInfo.firstName} ${formValue.personalInfo.lastName}`;
+
+          this.loading = false;
+          this.success = true;
+          this.toastService.showSuccess('Created', 'New employee added successfully');
+          this.employeeAdded.emit();
+          this.cdr.markForCheck();
+        },
+        error: (err) => {
+          this.logger.error('Employee creation failed', err);
+          this.toastService.showError('Creation Failed', err.error?.message || 'Could not create employee');
+          this.loading = false;
+          this.cdr.markForCheck();
+        }
+      });
     }
   }
 
@@ -415,23 +428,23 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
   }
 
   onViewProfile() {
-      if (this.isEditMode && this.employeeId) {
-           this.router.navigate(['/employees', this.employeeId]);
-      } else if (this.createdEmployeeId) {
-           this.router.navigate(['/employees', this.createdEmployeeId]);
-      }
-      this.close.emit();
+    if (this.isEditMode && this.employeeId) {
+      this.router.navigate(['/employees', this.employeeId]);
+    } else if (this.createdEmployeeId) {
+      this.router.navigate(['/employees', this.createdEmployeeId]);
+    }
+    this.close.emit();
   }
 
   addAnother() {
-      this.success = false;
-      this.currentStep = 1;
-      this.createdEmployeeName = '';
-      this.employeeForm.reset();
-      this.employeeForm.patchValue({
-          jobDetails: { status: 'Active', joinDate: new Date().toISOString().split('T')[0] },
-          personalInfo: { gender: 'Male' }
-      });
+    this.success = false;
+    this.currentStep = 1;
+    this.createdEmployeeName = '';
+    this.employeeForm.reset();
+    this.employeeForm.patchValue({
+      jobDetails: { status: 'Active', joinDate: new Date().toISOString().split('T')[0] },
+      personalInfo: { gender: 'Male' }
+    });
   }
 
   getStepIndicatorClass(step: number): string {
