@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 import { Title } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -18,7 +18,6 @@ import { PayrollTableComponent } from './components/payroll-table/payroll-table'
   imports: [
     CommonModule,
     CurrencyPipe,
-    DatePipe,
     PayrollSummaryComponent,
     PayrollControlsComponent,
     PayrollTableComponent
@@ -32,6 +31,7 @@ export class PayrollComponent implements OnInit, OnDestroy {
   loading = false;
   calculating = false;
   markingPaidId: string | null = null;
+  approvingId: string | null = null;
   private destroy$ = new Subject<void>();
 
   // Filter state
@@ -167,6 +167,43 @@ export class PayrollComponent implements OnInit, OnDestroy {
     });
   }
 
+  approvePayroll(record: PayrollRecord) {
+    if (record.status !== 'Draft') return;
+
+    this.confirmService.confirm({
+      title: 'Approve Payroll',
+      message: `Approve the payroll calculation for <strong>${record.employeeName}</strong>?`,
+      type: 'info',
+      confirmLabel: 'Approve'
+    }).subscribe(ok => {
+      if (!ok) return;
+      this.approvingId = record.id;
+      this.cdr.markForCheck();
+      this.payrollService.updateStatus(record.id, 'Approved').pipe(takeUntil(this.destroy$)).subscribe({
+        next: () => {
+          const index = this.payrollRecords.findIndex(r => r.id === record.id);
+          if (index !== -1) {
+            const updatedRecord = { ...this.payrollRecords[index], status: 'Approved' as const };
+            this.payrollRecords = [
+              ...this.payrollRecords.slice(0, index),
+              updatedRecord,
+              ...this.payrollRecords.slice(index + 1)
+            ];
+          }
+          this.toastService.showSuccess('Success', 'Payroll approved');
+          this.approvingId = null;
+          this.cdr.markForCheck();
+        },
+        error: (err: any) => {
+          this.logger.error('Failed to approve payroll', err);
+          this.toastService.showError('Error', err?.error?.message || 'Failed to update status');
+          this.approvingId = null;
+          this.cdr.markForCheck();
+        }
+      });
+    });
+  }
+
   markAsPaid(record: PayrollRecord) {
     if (record.status === 'Paid') return;
 
@@ -179,7 +216,7 @@ export class PayrollComponent implements OnInit, OnDestroy {
       if (!ok) return;
       this.markingPaidId = record.id;
       this.cdr.markForCheck();
-      this.payrollService.markAsPaid(record.id).pipe(takeUntil(this.destroy$)).subscribe({
+      this.payrollService.updateStatus(record.id, 'Paid').pipe(takeUntil(this.destroy$)).subscribe({
         next: () => {
           const index = this.payrollRecords.findIndex(r => r.id === record.id);
           if (index !== -1) {

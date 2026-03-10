@@ -1,11 +1,11 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, TemplateRef } from '@angular/core';
-import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 import { PayrollRecord } from '@features/payroll/services/payroll.service';
 
 @Component({
   selector: 'app-payroll-table',
   standalone: true,
-  imports: [CommonModule, CurrencyPipe, DatePipe],
+  imports: [CommonModule, CurrencyPipe],
   templateUrl: './payroll-table.html',
   styleUrl: './payroll-table.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -15,8 +15,10 @@ export class PayrollTableComponent {
   @Input({ required: true }) loading: boolean = false;
   @Input({ required: true }) searchKeyword: string = '';
   @Input() markingPaidId: string | null = null;
+  @Input() approvingId: string | null = null;
   @Input() calculationTemplate!: TemplateRef<any>;
 
+  @Output() approve = new EventEmitter<PayrollRecord>();
   @Output() markAsPaid = new EventEmitter<PayrollRecord>();
   @Output() downloadPdf = new EventEmitter<PayrollRecord>();
 

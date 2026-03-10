@@ -42,10 +42,10 @@ export class PayrollService {
     );
   }
 
-  markAsPaid(id: string): Observable<void> {
-    return this.http.post<ApiResponse<void>>(`${this.apiUrl}/${id}/status`, { id, status: 'Paid' }).pipe(
+  updateStatus(id: string, status: string): Observable<void> {
+    return this.http.post<ApiResponse<void>>(`${this.apiUrl}/${id}/status`, { id, status }).pipe(
       map(() => void 0),
-      catchError(err => { this.logger.error(`PayrollService: markAsPaid(${id}) failed`, err); return throwError(() => err); })
+      catchError(err => { this.logger.error(`PayrollService: updateStatus(${id}, ${status}) failed`, err); return throwError(() => err); })
     );
   }
 

@@ -19,8 +19,8 @@
       </app-payroll-controls>
 
       <app-payroll-table [records]="payrollRecords" [loading]="loading" [searchKeyword]="searchKeyword"
-        [markingPaidId]="markingPaidId" [calculationTemplate]="calculationHoverTpl" (markAsPaid)="markAsPaid($event)"
-        (downloadPdf)="downloadPdf($event)">
+        [approvingId]="approvingId" [markingPaidId]="markingPaidId" [calculationTemplate]="calculationHoverTpl"
+        (approve)="approvePayroll($event)" (markAsPaid)="markAsPaid($event)" (downloadPdf)="downloadPdf($event)">
       </app-payroll-table>
     </div>
   </div>
