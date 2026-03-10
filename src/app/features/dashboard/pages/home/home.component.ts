@@ -210,15 +210,25 @@ export class HomeComponent {
   activeModuleIndex = signal<number>(4); // Default to Payroll to match the user's screenshot
 
   trustedCompanies = [
-    { name: 'Vingroup', abbr: 'VG', logoSrc: 'https://upload.wikimedia.org/wikipedia/commons/6/6f/Vingroup_logo.svg' },
-    { name: 'FPT Software', abbr: 'FPT', logoSrc: 'https://upload.wikimedia.org/wikipedia/commons/1/11/FPT_logo_2010.svg' },
-    { name: 'Viettel', abbr: 'VТ', logoSrc: 'https://upload.wikimedia.org/wikipedia/commons/0/05/Viettel_logo_2021.svg' },
-    { name: 'Masan Group', abbr: 'MSN', logoSrc: 'https://upload.wikimedia.org/wikipedia/commons/d/d4/Logo-Masan-Group-Symbol.png' },
-    { name: 'Techcombank', abbr: 'TCB', logoSrc: 'https://upload.wikimedia.org/wikipedia/commons/4/4b/Techcombank_logo.svg' },
-    { name: 'VNPT', abbr: 'VNP', logoSrc: 'https://upload.wikimedia.org/wikipedia/commons/0/01/VNPT_Logo.svg' },
-    { name: 'VinFast', abbr: 'VF', logoSrc: 'https://upload.wikimedia.org/wikipedia/commons/5/5a/VinFast_Logo.svg' },
-    { name: 'Sacombank', abbr: 'STB', logoSrc: 'https://upload.wikimedia.org/wikipedia/vi/9/91/Sacombank_logo.svg' },
+    { name: 'Vingroup', abbr: 'VG', logoSrc: 'https://logo.clearbit.com/vingroup.net' },
+    { name: 'FPT Software', abbr: 'FPT', logoSrc: 'https://logo.clearbit.com/fpt.com' },
+    { name: 'Viettel', abbr: 'VТ', logoSrc: 'https://logo.clearbit.com/viettel.vn' },
+    { name: 'Masan Group', abbr: 'MSN', logoSrc: 'https://logo.clearbit.com/masangroup.com' },
+    { name: 'Techcombank', abbr: 'TCB', logoSrc: 'https://logo.clearbit.com/techcombank.com' },
+    { name: 'VNPT', abbr: 'VNP', logoSrc: 'https://logo.clearbit.com/vnpt.com.vn' },
+    { name: 'VinFast', abbr: 'VF', logoSrc: 'https://logo.clearbit.com/vinfastauto.com' },
+    { name: 'Sacombank', abbr: 'STB', logoSrc: 'https://logo.clearbit.com/sacombank.com.vn' },
   ];
+
+  onLogoError(event: Event, companyName: string) {
+    const target = event.target as HTMLImageElement;
+    target.style.display = 'none';
+    const nextSibling = target.nextElementSibling as HTMLElement;
+    if (nextSibling) {
+      nextSibling.classList.remove('hidden');
+      nextSibling.classList.add('hidden-bypass');
+    }
+  }
 
   testimonials = [
     {

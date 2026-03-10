@@ -8,12 +8,29 @@
 }
 
 /* Các biến thể hướng cuộn (Modifiers) - Phải kết hợp cùng reveal-on-scroll */
-.reveal-up { transform: translateY(60px); }
-.reveal-down { transform: translateY(-60px); }
-.reveal-left { transform: translateX(-60px); }
-.reveal-right { transform: translateX(60px); }
-.reveal-zoom { transform: scale(0.9); }
-.reveal-blur { filter: blur(10px); }
+.reveal-up {
+  transform: translateY(60px);
+}
+
+.reveal-down {
+  transform: translateY(-60px);
+}
+
+.reveal-left {
+  transform: translateX(-60px);
+}
+
+.reveal-right {
+  transform: translateX(60px);
+}
+
+.reveal-zoom {
+  transform: scale(0.9);
+}
+
+.reveal-blur {
+  filter: blur(10px);
+}
 
 /* Trạng thái Kích hoạt chung (Active State do IntersectionObserver gán) */
 .reveal-active {
@@ -23,57 +40,114 @@
 }
 
 /* Các khoảng Delay để tạo hiệu ứng Cascading (rơi từng nhịp) */
-.delay-100 { transition-delay: 100ms; }
-.delay-150 { transition-delay: 150ms; }
-.delay-200 { transition-delay: 200ms; }
-.delay-250 { transition-delay: 250ms; }
-.delay-300 { transition-delay: 300ms; }
-.delay-400 { transition-delay: 400ms; }
-.delay-500 { transition-delay: 500ms; }
+.delay-100 {
+  transition-delay: 100ms;
+}
+
+.delay-150 {
+  transition-delay: 150ms;
+}
+
+.delay-200 {
+  transition-delay: 200ms;
+}
+
+.delay-250 {
+  transition-delay: 250ms;
+}
+
+.delay-300 {
+  transition-delay: 300ms;
+}
+
+.delay-400 {
+  transition-delay: 400ms;
+}
+
+.delay-500 {
+  transition-delay: 500ms;
+}
 
 /* Utility to hide scrollbar but keep functionality */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
 .no-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
-/* Infinite marquee for trusted companies */
-@keyframes trusted-scroll {
-  from { transform: translate3d(0, 0, 0); }
-  to   { transform: translate3d(-50%, 0, 0); }
+/* Custom 3D & Floating Logo Area */
+.perspective-1000 {
+  perspective: 1200px;
 }
 
-@keyframes trusted-scroll-reverse {
-  from { transform: translate3d(-50%, 0, 0); }
-  to   { transform: translate3d(0, 0, 0); }
+@keyframes float-logo {
+
+  0%,
+  100% {
+    transform: translateY(0) rotateX(0) rotateY(0);
+  }
+
+  25% {
+    transform: translateY(-8px) rotateX(4deg) rotateY(-4deg);
+  }
+
+  75% {
+    transform: translateY(8px) rotateX(-4deg) rotateY(4deg);
+  }
 }
 
-.trusted-marquee {
-  display: flex;
-  width: max-content;
+.floating-item {
+  animation: float-logo 8s ease-in-out infinite;
+  transform-style: preserve-3d;
   will-change: transform;
-  animation: trusted-scroll 35s linear infinite;
 }
 
-.trusted-marquee-reverse {
-  display: flex;
-  width: max-content;
-  will-change: transform;
-  animation: trusted-scroll-reverse 45s linear infinite;
+.glass-logo-card {
+  background: rgba(24, 24, 27, 0.4);
+  /* zinc-900 */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(63, 63, 70, 0.5);
+  /* zinc-700 */
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3);
+  transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1) !important;
 }
 
-.trusted-marquee:hover,
-.trusted-marquee-reverse:hover {
-  animation-play-state: paused;
+.glass-logo-card:hover {
+  background: rgba(39, 39, 42, 0.8);
+  /* zinc-800 */
+  border-color: rgba(139, 92, 246, 0.6);
+  /* violet-500 */
+  box-shadow: 0 15px 35px rgba(139, 92, 246, 0.15), inset 0 0 20px rgba(139, 92, 246, 0.1);
+  transform: scale(1.08) translateZ(30px) !important;
+  z-index: 10;
+}
+
+.glass-logo-card:hover .hover-target {
+  filter: grayscale(0) drop-shadow(0 0 15px rgba(139, 92, 246, 0.3));
+  opacity: 1;
+}
+
+.glass-logo-card:hover span.hidden-bypass {
+  color: #c4b5fd;
+  /* violet 300 */
+  text-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
 }
 
 /* Infinite marquee ticker for module pills */
 @keyframes marquee-scroll {
-  from { transform: translate3d(0, 0, 0); }
-  to   { transform: translate3d(-50%, 0, 0); }
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
 }
 
 .module-marquee {
@@ -92,9 +166,17 @@
 
 /* 1. Animated gradient text for hero heading */
 @keyframes gradient-shift {
-  0%, 100% { background-position: 0% 50%; }
-  50%       { background-position: 100% 50%; }
+
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
 }
+
 .text-gradient-animate {
   background: linear-gradient(135deg, #c4b5fd, #8b5cf6, #a78bfa, #ddd6fe, #7c3aed);
   background-size: 400% 400%;
@@ -106,13 +188,21 @@
 
 /* 2. CTA button shimmer sweep */
 @keyframes shimmer-sweep {
-  0%        { transform: translateX(-200%); }
-  60%, 100% { transform: translateX(350%); }
+  0% {
+    transform: translateX(-200%);
+  }
+
+  60%,
+  100% {
+    transform: translateX(350%);
+  }
 }
+
 .btn-shimmer {
   position: relative;
   overflow: hidden;
 }
+
 .btn-shimmer::after {
   content: '';
   position: absolute;
@@ -127,9 +217,19 @@
 
 /* 3. Floating hero sparkle particles */
 @keyframes particle-float {
-  0%, 100% { opacity: 0.15; transform: translateY(0px)   scale(1);   }
-  50%       { opacity: 0.55; transform: translateY(-18px) scale(1.4); }
+
+  0%,
+  100% {
+    opacity: 0.15;
+    transform: translateY(0px) scale(1);
+  }
+
+  50% {
+    opacity: 0.55;
+    transform: translateY(-18px) scale(1.4);
+  }
 }
+
 .hero-particle {
   position: absolute;
   border-radius: 50%;
@@ -142,10 +242,17 @@
 
 /* 4. Progress bar glow pulse in hero card */
 @keyframes bar-glow {
-  0%, 100% { box-shadow: 0 0 8px rgba(139,92,246,0.5); }
-  50%       { box-shadow: 0 0 20px rgba(139,92,246,1), 0 0 35px rgba(139,92,246,0.35); }
+
+  0%,
+  100% {
+    box-shadow: 0 0 8px rgba(139, 92, 246, 0.5);
+  }
+
+  50% {
+    box-shadow: 0 0 20px rgba(139, 92, 246, 1), 0 0 35px rgba(139, 92, 246, 0.35);
+  }
 }
+
 .progress-glow {
   animation: bar-glow 2s ease-in-out infinite;
 }
-
