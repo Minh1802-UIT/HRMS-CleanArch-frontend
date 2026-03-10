@@ -131,20 +131,15 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
       this.loadEmployeeData(this.employeeId);
     }
 
-    // Reload managers filtered to the selected department and position
+    // Reload managers filtered ONLY to the selected department (to allow selecting managers in higher positions)
     const deptChange$ = this.employeeForm.get('jobDetails.department')!.valueChanges.pipe(startWith(this.employeeForm.get('jobDetails.department')!.value));
-    const posChange$ = this.employeeForm.get('jobDetails.position')!.valueChanges.pipe(startWith(this.employeeForm.get('jobDetails.position')!.value));
 
-    combineLatest([deptChange$, posChange$]).pipe(
+    deptChange$.pipe(
       takeUntil(this.destroy$),
-      distinctUntilChanged((prev, curr) => prev[0] === curr[0] && prev[1] === curr[1])
-    ).subscribe(([deptId, posId]) => {
-      if (deptId || posId) {
-        this.loadManagers(deptId, posId);
-      } else {
-        this.managersForDisplay = [];
-        this.cdr.markForCheck();
-      }
+      distinctUntilChanged()
+    ).subscribe((deptId) => {
+      // Pass deptId, but NOT positionId, so all roles in the department can be selected as manager
+      this.loadManagers(deptId, undefined);
     });
   }
 

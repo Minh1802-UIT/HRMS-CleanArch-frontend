@@ -158,7 +158,7 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
       });
       this.cdr.markForCheck();
     });
-    this.employeeService.getLookup().pipe(takeUntil(this.destroy$)).subscribe({
+    this.employeeService.getLookup('', 1000).pipe(takeUntil(this.destroy$)).subscribe({
       next: (employees) => {
         employees.forEach(e => {
           if (e.id) this.managersMap[e.id] = e.fullName;
