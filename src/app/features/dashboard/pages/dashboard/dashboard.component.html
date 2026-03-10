@@ -1,16 +1,11 @@
-﻿<div
-  class="min-h-screen transition-colors duration-500 bg-zinc-50 dark:bg-[#09090b]"
->
+﻿<div class="min-h-screen transition-colors duration-500 bg-zinc-50 dark:bg-[#09090b]">
   <main class="max-w-[1600px] mx-auto p-6 space-y-10">
     <!-- Header Section -->
-    <header
-      class="flex flex-col gap-6 justify-between md:flex-row md:items-end animate-fade-in-up"
-    >
+    <header class="flex flex-col gap-6 justify-between md:flex-row md:items-end animate-fade-in-up">
       <div class="space-y-2">
         <p class="label-overline text-violet-500">HR Management Dashboard</p>
         <h1
-          class="flex gap-3 items-center text-4xl font-black tracking-tighter lg:text-5xl text-zinc-900 dark:text-white"
-        >
+          class="flex gap-3 items-center text-4xl font-black tracking-tighter lg:text-5xl text-zinc-900 dark:text-white">
           Hi, <span class="text-gradient-primary">{{ userDisplayName }}</span>
           <span class="animate-bounce inline-block">👋</span>
         </h1>
@@ -18,211 +13,161 @@
           Here's what's happening in your organization today.
         </p>
       </div>
-        <div class="flex gap-3 flex-wrap">
-        <button
-          type="button"
-          aria-label="View current date"
-          class="flex gap-2 items-center px-4 py-2.5 text-sm font-bold bg-white rounded-xl border shadow-sm transition-all dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800"
-        >
+      <div class="flex gap-3 flex-wrap">
+        <button type="button" aria-label="View current date"
+          class="flex gap-2 items-center px-4 py-2.5 text-sm font-bold bg-white rounded-xl border shadow-sm transition-all dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800">
           <span class="text-lg material-symbols-outlined" aria-hidden="true">calendar_today</span>
           {{ today | date: "MMM d, y" }}
         </button>
-        <button
-          *appHasRole="['Admin', 'HR']"
-          type="button"
-          routerLink="/employees/add"
-          class="btn-glow flex gap-2 items-center px-5 py-2.5 text-sm font-bold text-white rounded-xl bg-gradient-premium shadow-lg shadow-violet-600/30"
-        >
+        <button *appHasRole="['Admin', 'HR']" type="button" routerLink="/employees/add"
+          class="btn-glow flex gap-2 items-center px-5 py-2.5 text-sm font-bold text-white rounded-xl bg-gradient-premium shadow-lg shadow-violet-600/30">
           <span class="text-lg material-symbols-outlined" aria-hidden="true">add</span>
           Add Employee
         </button>
-        </div>
+      </div>
     </header>
 
     <!-- Stats Grid -->
-    <section
-      class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"
-      *appHasRole="['Admin', 'HR']"
-    >
+    <section class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4" *appHasRole="['Admin', 'HR']">
       <!-- Skeleton Cards -->
       @if (isLoading) {
-        @for (i of [1, 2, 3, 4]; track trackByIndex($index, i)) {
-          <div class="p-6 rounded-3xl glass-panel shadow-soft">
-            <div class="flex justify-between items-start">
-              <div class="space-y-4 w-full">
-                <div
-                  class="skeleton-avatar bg-slate-200 dark:bg-slate-800"
-                ></div>
-                <div class="space-y-2">
-                  <div class="w-24 skeleton-text"></div>
-                  <div class="w-16 skeleton-title"></div>
-                </div>
-              </div>
-              <div class="w-12 h-6 rounded-full skeleton"></div>
+      @for (i of [1, 2, 3, 4]; track trackByIndex($index, i)) {
+      <div class="p-6 rounded-3xl glass-panel shadow-soft">
+        <div class="flex justify-between items-start">
+          <div class="space-y-4 w-full">
+            <div class="skeleton-avatar bg-slate-200 dark:bg-slate-800"></div>
+            <div class="space-y-2">
+              <div class="w-24 skeleton-text"></div>
+              <div class="w-16 skeleton-title"></div>
             </div>
           </div>
-        }
+          <div class="w-12 h-6 rounded-full skeleton"></div>
+        </div>
+      </div>
+      }
       }
 
       <!-- Real Cards -->
       @if (!isLoading) {
-        @for (
-          card of summaryCards;
-          track trackByIndex(i, card);
-          let i = $index
-        ) {
-          <div
-            class="elevated-card overflow-hidden relative p-6 rounded-2xl glass-panel animate-fade-in-up cursor-default"
-            [style.animation-delay]="i * 75 + 'ms'"
-            [ngClass]="{
+      @for (
+      card of summaryCards;
+      track trackByIndex(i, card);
+      let i = $index
+      ) {
+      <div class="elevated-card overflow-hidden relative p-6 rounded-2xl glass-panel animate-fade-in-up cursor-default"
+        [style.animation-delay]="i * 75 + 'ms'" [ngClass]="{
               'card-accent-violet': i === 0,
               'card-accent-emerald': i === 1,
               'card-accent-amber': i === 2,
               'card-accent-sky': i === 3,
               'card-accent-rose': i >= 4,
-            }"
-          >
-            <!-- Background colour blob -->
-            <div
-              class="absolute -top-10 -right-10 w-36 h-36 rounded-full blur-3xl opacity-[0.12] pointer-events-none"
-              [ngClass]="{
+            }">
+        <!-- Background colour blob -->
+        <div class="absolute -top-10 -right-10 w-36 h-36 rounded-full blur-3xl opacity-[0.12] pointer-events-none"
+          [ngClass]="{
                 'bg-violet-400': i === 0,
                 'bg-emerald-400': i === 1,
                 'bg-amber-400': i === 2,
                 'bg-sky-400': i === 3,
                 'bg-rose-400': i >= 4,
-              }"
-            ></div>
+              }"></div>
 
-            <div class="relative z-10">
-              <!-- Icon row + trend badge -->
-              <div class="flex justify-between items-start mb-5">
-                <span
-                  class="flex justify-center items-center p-3 rounded-xl w-fit"
-                  [ngClass]="{
+        <div class="relative z-10">
+          <!-- Icon row + trend badge -->
+          <div class="flex justify-between items-start mb-5">
+            <span class="flex justify-center items-center p-3 rounded-xl w-fit" [ngClass]="{
                     'icon-bg-violet': i === 0,
                     'icon-bg-emerald': i === 1,
                     'icon-bg-amber': i === 2,
                     'icon-bg-sky': i === 3,
                     'icon-bg-rose': i >= 4,
-                  }"
-                >
-                  <span class="material-symbols-outlined text-2xl">{{
-                    card.icon
-                  }}</span>
-                </span>
+                  }">
+              <span class="material-symbols-outlined text-2xl">{{
+                card.icon
+                }}</span>
+            </span>
 
-                @if (card.trend) {
-                  <div
-                    class="flex gap-1 items-center px-2.5 py-1 text-xs font-bold rounded-full animate-scale-in"
-                    [ngClass]="
+            @if (card.trend) {
+            <div class="flex gap-1 items-center px-2.5 py-1 text-xs font-bold rounded-full animate-scale-in" [ngClass]="
                       card.trend.isPositive
                         ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
                         : 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400'
-                    "
-                  >
-                    <span class="text-xs material-symbols-outlined">{{
-                      card.trend.isPositive ? "trending_up" : "trending_down"
-                    }}</span>
-                    {{ card.trend.value }}%
-                  </div>
-                }
-              </div>
+                    ">
+              <span class="text-xs material-symbols-outlined">{{
+                card.trend.isPositive ? "trending_up" : "trending_down"
+                }}</span>
+              {{ card.trend.value }}%
+            </div>
+            }
+          </div>
 
-              <!-- Overline label -->
-              <p class="label-overline mb-2">{{ card.title }}</p>
+          <!-- Overline label -->
+          <p class="label-overline mb-2">{{ card.title }}</p>
 
-              <!-- Huge vivid number -->
-              <h2
-                class="number-display"
-                [ngClass]="{
+          <!-- Huge vivid number -->
+          <h2 class="number-display" [ngClass]="{
                   'text-violet-700 dark:text-violet-400': i === 0,
                   'text-emerald-700 dark:text-emerald-400': i === 1,
                   'text-amber-700 dark:text-amber-400': i === 2,
                   'text-sky-700 dark:text-sky-400': i === 3,
                   'text-rose-700 dark:text-rose-400': i >= 4,
-                }"
-              >
-                {{ card.value }}
-              </h2>
-            </div>
-          </div>
-        }
+                }">
+            {{ card.value }}
+          </h2>
+        </div>
+      </div>
+      }
       }
     </section>
 
     <!-- Analytics Row -->
-    <section
-      class="grid grid-cols-1 gap-8 lg:grid-cols-3"
-      *appHasRole="['Admin', 'HR']"
-    >
+    <section class="grid grid-cols-1 gap-8 lg:grid-cols-3" *appHasRole="['Admin', 'HR']">
       <!-- Attendance Trend -->
-      <div
-        class="p-8 rounded-3xl lg:col-span-2 elevated-card glass-panel shadow-soft"
-      >
+      <div class="p-8 rounded-3xl lg:col-span-2 elevated-card glass-panel shadow-soft">
         <div class="flex justify-between items-center mb-8">
           <div class="space-y-1">
             <p class="label-overline text-violet-500">Weekly Overview</p>
-            <h3
-              class="text-xl font-black tracking-tight text-slate-900 dark:text-white"
-            >
+            <h3 class="text-xl font-black tracking-tight text-slate-900 dark:text-white">
               Attendance Consistency
             </h3>
             @if (!isLoading) {
-              <p
-                class="text-xs font-semibold text-slate-400 dark:text-slate-400"
-              >
-                Average rate:
-                <span class="text-emerald-600 font-bold">{{ avgAttendanceRate }}%</span>
-              </p>
+            <p class="text-xs font-semibold text-slate-400 dark:text-slate-400">
+              Average rate:
+              <span class="text-emerald-600 font-bold">{{ avgAttendanceRate }}%</span>
+            </p>
             }
           </div>
           <div class="flex p-1 rounded-xl bg-slate-100 dark:bg-slate-800" role="group" aria-label="Chart period">
-            <button
-              type="button"
-              (click)="setChartPeriod('week')"
-              [ngClass]="chartPeriod === 'week'
+            <button type="button" (click)="setChartPeriod('week')" [ngClass]="chartPeriod === 'week'
                 ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm'
                 : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'"
-              class="px-4 py-1.5 text-xs font-bold rounded-lg transition-all"
-            >
+              class="px-4 py-1.5 text-xs font-bold rounded-lg transition-all">
               Week
             </button>
-            <button
-              type="button"
-              (click)="setChartPeriod('month')"
-              [ngClass]="chartPeriod === 'month'
+            <button type="button" (click)="setChartPeriod('month')" [ngClass]="chartPeriod === 'month'
                 ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm'
                 : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'"
-              class="px-4 py-1.5 text-xs font-bold rounded-lg transition-all"
-            >
+              class="px-4 py-1.5 text-xs font-bold rounded-lg transition-all">
               Month
             </button>
           </div>
         </div>
 
         @if (isLoading) {
-          <div class="h-[300px] flex items-end gap-4 px-4 pb-4">
-            @for (
-              h of [40, 70, 55, 90, 65, 80, 45];
-              track trackByIndex($index, h)
-            ) {
-              <div
-                [style.height.%]="h"
-                class="flex-1 rounded-t-xl opacity-60 skeleton"
-              ></div>
-            }
-          </div>
+        <div class="h-[300px] flex items-end gap-4 px-4 pb-4">
+          @for (
+          h of [40, 70, 55, 90, 65, 80, 45];
+          track trackByIndex($index, h)
+          ) {
+          <div [style.height.%]="h" class="flex-1 rounded-t-xl opacity-60 skeleton"></div>
+          }
+        </div>
         }
 
         @if (!isLoading) {
-          <div class="h-[360px] overflow-hidden animate-fade-in-up stagger-1">
-            <p-chart
-              type="line"
-              [data]="chartData"
-              [options]="chartOptions"
-            ></p-chart>
-          </div>
+        <div class="h-[360px] overflow-hidden animate-fade-in-up stagger-1">
+          <p-chart type="line" [data]="chartData" [options]="chartOptions"></p-chart>
+        </div>
         }
       </div>
 
@@ -230,78 +175,57 @@
       <div class="p-8 rounded-3xl elevated-card glass-panel shadow-soft">
         <div class="space-y-1 mb-8">
           <p class="label-overline text-violet-500">Headcount</p>
-          <h3
-            class="text-xl font-black tracking-tight text-slate-900 dark:text-white"
-          >
+          <h3 class="text-xl font-black tracking-tight text-slate-900 dark:text-white">
             Staff Distribution
           </h3>
         </div>
 
         @if (isLoading) {
-          <div class="h-[300px] flex items-center justify-center">
-            <div
-              class="w-48 h-48 rounded-full border-[20px] border-slate-100 dark:border-slate-800 animate-pulse relative"
-            >
-              <div
-                class="absolute inset-4 rounded-full border-[10px] border-slate-50 dark:border-slate-900 opacity-50"
-              ></div>
+        <div class="min-h-[400px] flex items-center justify-center">
+          <div
+            class="w-48 h-48 rounded-full border-[20px] border-slate-100 dark:border-slate-800 animate-pulse relative">
+            <div class="absolute inset-4 rounded-full border-[10px] border-slate-50 dark:border-slate-900 opacity-50">
             </div>
           </div>
+        </div>
         }
 
         @if (!isLoading) {
-          <div class="h-[300px] relative animate-fade-in-up stagger-2">
-            <p-chart
-              type="doughnut"
-              [data]="distributionData"
-              [options]="distributionOptions"
-            ></p-chart>
-          </div>
+        <div class="min-h-[400px] relative animate-fade-in-up stagger-2 flex items-center justify-center">
+          <p-chart type="doughnut" [data]="distributionData" [options]="distributionOptions" class="w-full"></p-chart>
+        </div>
         }
       </div>
     </section>
 
     <!-- Operational Row -->
-    <section
-      class="grid grid-cols-1 gap-8 xl:grid-cols-3"
-      *appHasRole="['Admin', 'HR']"
-    >
+    <section class="grid grid-cols-1 gap-8 xl:grid-cols-3" *appHasRole="['Admin', 'HR']">
       <!-- Recruitment Funnel -->
-      <div
-        class="flex flex-col p-8 rounded-3xl elevated-card glass-panel shadow-soft"
-      >
+      <div class="flex flex-col p-8 rounded-3xl elevated-card glass-panel shadow-soft">
         <div class="flex justify-between items-center mb-8">
           <div class="space-y-1">
             <p class="label-overline text-violet-500">Pipeline</p>
-            <h3
-              class="text-xl font-black tracking-tight text-slate-900 dark:text-white"
-            >
+            <h3 class="text-xl font-black tracking-tight text-slate-900 dark:text-white">
               Recruitment Funnel
             </h3>
           </div>
-          <span
-            class="flex justify-center items-center p-2 rounded-xl bg-accent/10 text-accent"
-          >
+          <span class="flex justify-center items-center p-2 rounded-xl bg-accent/10 text-accent">
             <span class="material-symbols-outlined">filter_list</span>
           </span>
         </div>
 
         @if (isLoading) {
-          <div class="flex-1 min-h-[300px] flex flex-col gap-4">
-            @for (w of [90, 75, 40, 25]; track trackByIndex($index, w)) {
-              <div class="h-8 rounded-lg skeleton" [style.width.%]="w"></div>
-            }
-          </div>
+        <div class="flex-1 min-h-[300px] flex flex-col gap-4">
+          @for (w of [90, 75, 40, 25]; track trackByIndex($index, w)) {
+          <div class="h-8 rounded-lg skeleton" [style.width.%]="w"></div>
+          }
+        </div>
         }
 
         @if (!isLoading) {
-          <div class="flex-1 min-h-[300px] animate-fade-in-up stagger-1">
-            <p-chart
-              type="bar"
-              [data]="funnelData"
-              [options]="funnelOptions"
-            ></p-chart>
-          </div>
+        <div class="flex-1 min-h-[300px] animate-fade-in-up stagger-1">
+          <p-chart type="bar" [data]="funnelData" [options]="funnelOptions"></p-chart>
+        </div>
         }
       </div>
 
@@ -310,105 +234,79 @@
         <div class="flex justify-between items-center mb-8">
           <div class="space-y-1">
             <p class="label-overline text-violet-500">Today</p>
-            <h3
-              class="text-xl font-black tracking-tight text-slate-900 dark:text-white"
-            >
+            <h3 class="text-xl font-black tracking-tight text-slate-900 dark:text-white">
               Interviews
             </h3>
           </div>
           @if (isLoading) {
-            <div class="w-16 h-4 rounded-full skeleton"></div>
+          <div class="w-16 h-4 rounded-full skeleton"></div>
           }
           @if (!isLoading) {
-            <span
-              class="text-xs font-bold tracking-widest uppercase text-slate-400"
-              >{{ todayInterviews.length }} Slots</span
-            >
+          <span class="text-xs font-bold tracking-widest uppercase text-slate-400">{{ todayInterviews.length }}
+            Slots</span>
           }
         </div>
 
         @if (isLoading) {
-          <div class="space-y-4">
-            @for (i of [1, 2, 3]; track trackByIndex($index, i)) {
-              <div
-                class="flex gap-4 items-center p-4 rounded-2xl border bg-slate-50/50 dark:bg-slate-900/50 border-slate-100 dark:border-slate-800"
-              >
-                <div
-                  class="pr-4 space-y-2 w-12 border-r border-slate-200 dark:border-slate-700"
-                >
-                  <div class="w-8 h-3 skeleton"></div>
-                  <div class="w-10 h-2 skeleton"></div>
-                </div>
-                <div class="flex-1 space-y-2">
-                  <div class="w-32 h-4 skeleton"></div>
-                  <div class="w-16 h-2 skeleton"></div>
-                </div>
-              </div>
-            }
+        <div class="space-y-4">
+          @for (i of [1, 2, 3]; track trackByIndex($index, i)) {
+          <div
+            class="flex gap-4 items-center p-4 rounded-2xl border bg-slate-50/50 dark:bg-slate-900/50 border-slate-100 dark:border-slate-800">
+            <div class="pr-4 space-y-2 w-12 border-r border-slate-200 dark:border-slate-700">
+              <div class="w-8 h-3 skeleton"></div>
+              <div class="w-10 h-2 skeleton"></div>
+            </div>
+            <div class="flex-1 space-y-2">
+              <div class="w-32 h-4 skeleton"></div>
+              <div class="w-16 h-2 skeleton"></div>
+            </div>
           </div>
+          }
+        </div>
         }
 
         @if (!isLoading) {
+        <div class="space-y-4 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar animate-fade-in-up stagger-2">
+          @for (
+          interview of todayInterviews;
+          track trackByInterviewId($index, interview)
+          ) {
           <div
-            class="space-y-4 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar animate-fade-in-up stagger-2"
-          >
-            @for (
-              interview of todayInterviews;
-              track trackByInterviewId($index, interview)
-            ) {
-              <div
-                class="flex gap-4 items-center p-4 rounded-2xl border transition-all bg-slate-50/50 dark:bg-slate-900/50 border-slate-100 dark:border-slate-800 group hover:border-primary/30"
-              >
-                <div
-                  class="pr-4 w-12 text-center border-r border-slate-200 dark:border-slate-700"
-                >
-                  <p class="text-sm font-bold text-slate-900 dark:text-white">
-                    {{ interview.time }}
-                  </p>
-                  <p
-                    class="text-xs font-bold text-slate-400 dark:text-slate-500"
-                  >
-                    {{ interview.duration }}
-                  </p>
-                </div>
-                <div class="flex-1">
-                  <p class="text-sm font-bold text-slate-900 dark:text-white">
-                    {{ interview.candidateName }}
-                  </p>
-                  <div class="flex gap-4 items-center mt-1">
-                    <span
-                      class="flex gap-1 items-center text-xs font-bold tracking-tighter uppercase text-primary"
-                    >
-                      <span class="text-xs material-symbols-outlined"
-                        >videocam</span
-                      >
-                      Online
-                    </span>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  [attr.aria-label]="'View interview with ' + interview.candidateName"
-                  class="p-2 rounded-xl shadow-sm opacity-0 transition-all hover:bg-white dark:hover:bg-slate-800 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 text-slate-400 dark:text-slate-500 hover:text-primary focus-visible:text-primary"
-                >
-                  <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
-                </button>
+            class="flex gap-4 items-center p-4 rounded-2xl border transition-all bg-slate-50/50 dark:bg-slate-900/50 border-slate-100 dark:border-slate-800 group hover:border-primary/30">
+            <div class="pr-4 w-12 text-center border-r border-slate-200 dark:border-slate-700">
+              <p class="text-sm font-bold text-slate-900 dark:text-white">
+                {{ interview.time }}
+              </p>
+              <p class="text-xs font-bold text-slate-400 dark:text-slate-500">
+                {{ interview.duration }}
+              </p>
+            </div>
+            <div class="flex-1">
+              <p class="text-sm font-bold text-slate-900 dark:text-white">
+                {{ interview.candidateName }}
+              </p>
+              <div class="flex gap-4 items-center mt-1">
+                <span class="flex gap-1 items-center text-xs font-bold tracking-tighter uppercase text-primary">
+                  <span class="text-xs material-symbols-outlined">videocam</span>
+                  Online
+                </span>
               </div>
-            }
-            @if (todayInterviews.length === 0) {
-              <div class="py-12 text-center">
-                <span
-                  class="mb-2 text-4xl material-symbols-outlined text-slate-200 dark:text-slate-800"
-                  >event_busy</span
-                >
-                <p
-                  class="text-sm font-bold tracking-widest uppercase text-slate-400"
-                >
-                  No scheduled interviews
-                </p>
-              </div>
-            }
+            </div>
+            <button type="button" [attr.aria-label]="'View interview with ' + interview.candidateName"
+              class="p-2 rounded-xl shadow-sm opacity-0 transition-all hover:bg-white dark:hover:bg-slate-800 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 text-slate-400 dark:text-slate-500 hover:text-primary focus-visible:text-primary">
+              <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+            </button>
           </div>
+          }
+          @if (todayInterviews.length === 0) {
+          <div class="py-12 text-center">
+            <span class="mb-2 text-4xl material-symbols-outlined text-slate-200 dark:text-slate-800">event_busy</span>
+            <p class="text-sm font-bold tracking-widest uppercase text-slate-400">
+              No scheduled interviews
+            </p>
+          </div>
+          }
+        </div>
         }
       </div>
 
@@ -417,470 +315,473 @@
         <div class="flex justify-between items-center mb-8">
           <div class="space-y-1">
             <p class="label-overline text-violet-500">Absences</p>
-            <h3
-              class="text-xl font-black tracking-tight text-slate-900 dark:text-white"
-            >
+            <h3 class="text-xl font-black tracking-tight text-slate-900 dark:text-white">
               On Leave Today
             </h3>
           </div>
           @if (isLoading) {
-            <div class="w-24 h-4 rounded-full skeleton"></div>
+          <div class="w-24 h-4 rounded-full skeleton"></div>
           }
           @if (!isLoading) {
-            <span
-              class="px-2.5 py-1 text-xs font-bold tracking-widest text-rose-600 uppercase bg-rose-50 rounded-full dark:bg-rose-900/20"
-              >{{ whoIsOnLeave.length }} Members</span
-            >
+          <span
+            class="px-2.5 py-1 text-xs font-bold tracking-widest text-rose-600 uppercase bg-rose-50 rounded-full dark:bg-rose-900/20">{{
+            whoIsOnLeave.length }} Members</span>
           }
         </div>
 
         @if (isLoading) {
-          <div class="flex flex-wrap gap-4">
-            @for (i of [1, 2, 3, 4, 5]; track trackByIndex($index, i)) {
-              <div class="skeleton-avatar bg-slate-200 dark:bg-slate-800"></div>
-            }
-          </div>
+        <div class="flex flex-wrap gap-4">
+          @for (i of [1, 2, 3, 4, 5]; track trackByIndex($index, i)) {
+          <div class="skeleton-avatar bg-slate-200 dark:bg-slate-800"></div>
+          }
+        </div>
         }
 
         @if (!isLoading) {
-          <div class="flex flex-wrap gap-4 animate-fade-in-up stagger-3">
-            @for (leave of whoIsOnLeave; track trackByLeaveId($index, leave)) {
-              <div class="relative group">
-                <img
-                  [src]="
+        <div class="flex flex-wrap gap-4 animate-fade-in-up stagger-3">
+          @for (leave of whoIsOnLeave; track trackByLeaveId($index, leave)) {
+          <div class="relative group">
+            <img [src]="
                     leave.avatarUrl || 'assets/images/defaults/avatar-1.png'
                   "
-                  class="object-cover w-12 h-12 rounded-2xl ring-2 ring-white shadow-sm transition-all dark:ring-slate-800 group-hover:ring-rose-500"
-                  onerror="this.onerror=null;this.src='assets/images/defaults/avatar-1.png'"
-                />
-                <div
-                  class="absolute -right-1 -bottom-1 w-4 h-4 bg-rose-500 rounded-full border-2 border-white dark:border-slate-800"
-                ></div>
-                <div
-                  class="absolute bottom-full left-1/2 z-50 px-2 py-1 mb-2 text-xs text-white whitespace-nowrap rounded opacity-0 transition-all -translate-x-1/2 pointer-events-none bg-slate-900 group-hover:opacity-100"
-                >
-                  {{ leave.employeeName }}
-                </div>
-              </div>
-            }
-            @if (whoIsOnLeave.length === 0) {
-              <div class="py-12 w-full text-center">
-                <p
-                  class="text-sm font-bold tracking-widest uppercase text-slate-400"
-                >
-                  Full attendance today! 🚀
-                </p>
-              </div>
-            }
+              class="object-cover w-12 h-12 rounded-2xl ring-2 ring-white shadow-sm transition-all dark:ring-slate-800 group-hover:ring-rose-500"
+              onerror="this.onerror=null;this.src='assets/images/defaults/avatar-1.png'" />
+            <div
+              class="absolute -right-1 -bottom-1 w-4 h-4 bg-rose-500 rounded-full border-2 border-white dark:border-slate-800">
+            </div>
+            <div
+              class="absolute bottom-full left-1/2 z-50 px-2 py-1 mb-2 text-xs text-white whitespace-nowrap rounded opacity-0 transition-all -translate-x-1/2 pointer-events-none bg-slate-900 group-hover:opacity-100">
+              {{ leave.employeeName }}
+            </div>
           </div>
+          }
+          @if (whoIsOnLeave.length === 0) {
+          <div class="py-12 w-full text-center">
+            <p class="text-sm font-bold tracking-widest uppercase text-slate-400">
+              Full attendance today! 🚀
+            </p>
+          </div>
+          }
+        </div>
         }
       </div>
     </section>
 
     <!-- Recent Activity & Audit Logs -->
-    <section
-      class="overflow-hidden rounded-3xl elevated-card glass-panel shadow-soft"
-      *appHasRole="['Admin']"
-    >
-      <div
-        class="flex justify-between items-center p-8 border-b border-zinc-100 dark:border-zinc-800"
-      >
+    <section class="overflow-hidden rounded-3xl elevated-card glass-panel shadow-soft" *appHasRole="['Admin']">
+      <div class="flex justify-between items-center p-8 border-b border-zinc-100 dark:border-zinc-800">
         <div class="space-y-1">
           <p class="label-overline text-violet-500">System</p>
-          <h3
-            class="text-xl font-black tracking-tight text-slate-900 dark:text-white"
-          >
+          <h3 class="text-xl font-black tracking-tight text-slate-900 dark:text-white">
             Security &amp; Audit Logs
           </h3>
         </div>
-        <a
-          routerLink="/system/audit-logs"
-          class="text-xs font-bold tracking-widest uppercase text-violet-600 hover:text-violet-500 transition-colors hover:underline"
-        >
+        <a routerLink="/system/audit-logs"
+          class="text-xs font-bold tracking-widest uppercase text-violet-600 hover:text-violet-500 transition-colors hover:underline">
           Full Report
         </a>
       </div>
       <!-- Skeleton loading -->
       @if (isAuditLogsLoading) {
-        <div class="overflow-x-auto" aria-busy="true" aria-label="Loading audit logs">
-          <table class="w-full text-left">
-            <thead class="bg-slate-50/50 dark:bg-slate-900/50">
-              <tr class="text-xs font-bold tracking-widest uppercase text-slate-400">
-                <th class="px-8 py-4">Action</th>
-                <th class="px-8 py-4">Context</th>
-                <th class="px-8 py-4">User</th>
-                <th class="px-8 py-4 text-right">Timestamp</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-50 dark:divide-slate-900">
-              @for (i of [1,2,3,4,5]; track trackByIndex($index, i)) {
-                <tr>
-                  <td class="px-8 py-5"><div class="w-16 h-5 skeleton rounded-lg"></div></td>
-                  <td class="px-8 py-5"><div class="w-32 h-4 skeleton"></div></td>
-                  <td class="px-8 py-5"><div class="w-24 h-4 skeleton"></div></td>
-                  <td class="px-8 py-5 text-right"><div class="w-20 h-4 skeleton ml-auto"></div></td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
+      <div class="overflow-x-auto" aria-busy="true" aria-label="Loading audit logs">
+        <table class="w-full text-left">
+          <thead class="bg-slate-50/50 dark:bg-slate-900/50">
+            <tr class="text-xs font-bold tracking-widest uppercase text-slate-400">
+              <th class="px-8 py-4">Action</th>
+              <th class="px-8 py-4">Context</th>
+              <th class="px-8 py-4">User</th>
+              <th class="px-8 py-4 text-right">Timestamp</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-50 dark:divide-slate-900">
+            @for (i of [1,2,3,4,5]; track trackByIndex($index, i)) {
+            <tr>
+              <td class="px-8 py-5">
+                <div class="w-16 h-5 skeleton rounded-lg"></div>
+              </td>
+              <td class="px-8 py-5">
+                <div class="w-32 h-4 skeleton"></div>
+              </td>
+              <td class="px-8 py-5">
+                <div class="w-24 h-4 skeleton"></div>
+              </td>
+              <td class="px-8 py-5 text-right">
+                <div class="w-20 h-4 skeleton ml-auto"></div>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
       }
 
       <!-- Loaded state -->
       @if (!isAuditLogsLoading) {
-        <div class="overflow-x-auto animate-fade-in">
-          @if (auditLogs.length === 0) {
-            <div class="py-16 text-center">
-              <span class="mb-3 text-5xl material-symbols-outlined text-slate-200 dark:text-slate-800 block">policy</span>
-              <p class="text-sm font-bold tracking-widest uppercase text-slate-400">No audit logs available</p>
-            </div>
-          }
-          @if (auditLogs.length > 0) {
-            <table class="w-full text-left">
-              <thead class="bg-slate-50/50 dark:bg-slate-900/50">
-                <tr
-                  class="text-xs font-bold tracking-widest uppercase text-slate-400"
-                >
-                  <th class="px-8 py-4" scope="col">Action</th>
-                  <th class="px-8 py-4" scope="col">Context</th>
-                  <th class="px-8 py-4" scope="col">User</th>
-                  <th class="px-8 py-4 text-right" scope="col">Timestamp</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-50 dark:divide-slate-900">
-                @for (log of auditLogs; track trackByLogId($index, log)) {
-                  <tr
-                    class="transition-all group hover:bg-slate-50 dark:hover:bg-slate-900/30"
-                  >
-                    <td class="px-8 py-5">
-                      <span
-                        class="px-2.5 py-1 text-xs font-bold tracking-tighter uppercase rounded-lg"
-                        [ngClass]="{
+      <div class="overflow-x-auto animate-fade-in">
+        @if (auditLogs.length === 0) {
+        <div class="py-16 text-center">
+          <span class="mb-3 text-5xl material-symbols-outlined text-slate-200 dark:text-slate-800 block">policy</span>
+          <p class="text-sm font-bold tracking-widest uppercase text-slate-400">No audit logs available</p>
+        </div>
+        }
+        @if (auditLogs.length > 0) {
+        <table class="w-full text-left">
+          <thead class="bg-slate-50/50 dark:bg-slate-900/50">
+            <tr class="text-xs font-bold tracking-widest uppercase text-slate-400">
+              <th class="px-8 py-4" scope="col">Action</th>
+              <th class="px-8 py-4" scope="col">Context</th>
+              <th class="px-8 py-4" scope="col">User</th>
+              <th class="px-8 py-4 text-right" scope="col">Timestamp</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-50 dark:divide-slate-900">
+            @for (log of auditLogs; track trackByLogId($index, log)) {
+            <tr class="transition-all group hover:bg-slate-50 dark:hover:bg-slate-900/30">
+              <td class="px-8 py-5">
+                <span class="px-2.5 py-1 text-xs font-bold tracking-tighter uppercase rounded-lg" [ngClass]="{
                           'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400':
                             log.action === 'CREATE',
                           'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400': log.action === 'UPDATE',
                           'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400': log.action === 'DELETE',
-                        }"
-                      >
-                        {{ log.action }}
-                      </span>
-                    </td>
-                    <td
-                      class="px-8 py-5 text-sm font-bold text-slate-700 dark:text-slate-300"
-                    >
-                      {{ log.tableName }}
-                    </td>
-                    <td
-                      class="px-8 py-5 text-sm text-slate-500 dark:text-slate-400"
-                    >
-                      {{ log.userName }}
-                    </td>
-                    <td
-                      class="px-8 py-5 text-sm text-right text-slate-400 dark:text-slate-500"
-                    >
-                      {{ log.createdAt | date: "MMM dd, HH:mm" }}
-                    </td>
-                  </tr>
-                }
-              </tbody>
-            </table>
-          }
-        </div>
+                        }">
+                  {{ log.action }}
+                </span>
+              </td>
+              <td class="px-8 py-5 text-sm font-bold text-slate-700 dark:text-slate-300">
+                {{ log.tableName }}
+              </td>
+              <td class="px-8 py-5 text-sm text-slate-500 dark:text-slate-400">
+                {{ log.userName }}
+              </td>
+              <td class="px-8 py-5 text-sm text-right text-slate-400 dark:text-slate-500">
+                {{ log.createdAt | date: "MMM dd, HH:mm" }}
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+        }
+      </div>
       }
     </section>
 
     <!-- Employee Self-Service Dashboard -->
-    <div
-      *appHasRole="['Employee']"
-      class="space-y-8"
-    >
+    <div *appHasRole="['Employee']" class="space-y-8">
       <!-- Loading skeleton -->
       @if (isEmployeeDataLoading) {
-        <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
-          @for (i of [1,2,3]; track i) {
-            <div class="p-6 rounded-3xl glass-panel shadow-soft">
-              <div class="space-y-4">
-                <div class="w-32 skeleton-text"></div>
-                <div class="w-20 skeleton-title"></div>
-                <div class="w-full skeleton h-2 rounded"></div>
-              </div>
-            </div>
-          }
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
+        @for (i of [1,2,3]; track i) {
+        <div class="p-6 rounded-3xl glass-panel shadow-soft">
+          <div class="space-y-4">
+            <div class="w-32 skeleton-text"></div>
+            <div class="w-20 skeleton-title"></div>
+            <div class="w-full skeleton h-2 rounded"></div>
+          </div>
         </div>
+        }
+      </div>
       }
 
       @if (!isEmployeeDataLoading) {
-        <!-- Quick Stats Row -->
-        <section class="grid grid-cols-1 gap-6 sm:grid-cols-3">
-          <!-- Today Attendance -->
-          <div class="elevated-card overflow-hidden relative p-6 rounded-2xl glass-panel shadow-soft card-accent-violet">
-            <div class="absolute -top-10 -right-10 w-36 h-36 rounded-full blur-3xl opacity-[0.12] bg-violet-400 pointer-events-none"></div>
-            <div class="relative z-10">
-              <div class="flex justify-between items-start mb-5">
-                <span class="flex justify-center items-center p-3 rounded-xl icon-bg-violet">
-                  <span class="material-symbols-outlined text-2xl">fingerprint</span>
-                </span>
-                <span class="px-2.5 py-1 text-xs font-bold rounded-full"
-                  [ngClass]="todayStatus.hasCheckedIn ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400'">
-                  {{ todayStatus.hasCheckedIn ? 'Checked In' : 'Not Yet' }}
-                </span>
-              </div>
-              <p class="label-overline mb-2">Today's Attendance</p>
-              <h2 class="number-display text-violet-700 dark:text-violet-400">
-                {{ todayStatus.checkInTime ? (todayStatus.checkInTime | date:'HH:mm') : '--:--' }}
-              </h2>
-              <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
-                @if (todayStatus.hasCheckedOut) {
-                  Out: {{ todayStatus.checkOutTime | date:'HH:mm' }}
-                } @else if (todayStatus.hasCheckedIn) {
-                  Still working...
-                } @else {
-                  Haven't checked in yet
-                }
-              </p>
-            </div>
+      <!-- Quick Stats Row -->
+      <section class="grid grid-cols-1 gap-6 sm:grid-cols-3">
+        <!-- Today Attendance -->
+        <div class="elevated-card overflow-hidden relative p-6 rounded-2xl glass-panel shadow-soft card-accent-violet">
+          <div
+            class="absolute -top-10 -right-10 w-36 h-36 rounded-full blur-3xl opacity-[0.12] bg-violet-400 pointer-events-none">
           </div>
-
-          <!-- Latest Payslip -->
-          <div class="elevated-card overflow-hidden relative p-6 rounded-2xl glass-panel shadow-soft card-accent-emerald">
-            <div class="absolute -top-10 -right-10 w-36 h-36 rounded-full blur-3xl opacity-[0.12] bg-emerald-400 pointer-events-none"></div>
-            <div class="relative z-10">
-              <div class="flex justify-between items-start mb-5">
-                <span class="flex justify-center items-center p-3 rounded-xl icon-bg-emerald">
-                  <span class="material-symbols-outlined text-2xl">payments</span>
-                </span>
-                <span class="px-2.5 py-1 text-xs font-bold rounded-full"
-                  [ngClass]="myLatestPayroll?.status === 'Paid' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'">
-                  {{ myLatestPayroll?.status || 'N/A' }}
-                </span>
-              </div>
-              <p class="label-overline mb-2">Net Salary · {{ myLatestPayroll?.month || '–' }}</p>
-              <h2 class="number-display text-emerald-700 dark:text-emerald-400">
-                {{ myLatestPayroll ? (myLatestPayroll.finalNetSalary | currency:'VND':'symbol':'1.0-0') : '–' }}
-              </h2>
-              <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
-                Gross: {{ myLatestPayroll ? (myLatestPayroll.grossIncome | currency:'VND':'symbol':'1.0-0') : '–' }}
-              </p>
+          <div class="relative z-10">
+            <div class="flex justify-between items-start mb-5">
+              <span class="flex justify-center items-center p-3 rounded-xl icon-bg-violet">
+                <span class="material-symbols-outlined text-2xl">fingerprint</span>
+              </span>
+              <span class="px-2.5 py-1 text-xs font-bold rounded-full"
+                [ngClass]="todayStatus.hasCheckedIn ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400'">
+                {{ todayStatus.hasCheckedIn ? 'Checked In' : 'Not Yet' }}
+              </span>
             </div>
+            <p class="label-overline mb-2">Today's Attendance</p>
+            <h2 class="number-display text-violet-700 dark:text-violet-400">
+              {{ todayStatus.checkInTime ? (todayStatus.checkInTime | date:'HH:mm') : '--:--' }}
+            </h2>
+            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+              @if (todayStatus.hasCheckedOut) {
+              Out: {{ todayStatus.checkOutTime | date:'HH:mm' }}
+              } @else if (todayStatus.hasCheckedIn) {
+              Still working...
+              } @else {
+              Haven't checked in yet
+              }
+            </p>
           </div>
+        </div>
 
-          <!-- Leave Requests -->
-          <div class="elevated-card overflow-hidden relative p-6 rounded-2xl glass-panel shadow-soft card-accent-amber">
-            <div class="absolute -top-10 -right-10 w-36 h-36 rounded-full blur-3xl opacity-[0.12] bg-amber-400 pointer-events-none"></div>
-            <div class="relative z-10">
-              <div class="flex justify-between items-start mb-5">
-                <span class="flex justify-center items-center p-3 rounded-xl icon-bg-amber">
-                  <span class="material-symbols-outlined text-2xl">event_available</span>
-                </span>
-                <span class="px-2.5 py-1 text-xs font-bold rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
-                  {{ myLeaveRequests.length }} requests
-                </span>
-              </div>
-              <p class="label-overline mb-2">Leave Requests</p>
-              <h2 class="number-display text-amber-700 dark:text-amber-400">
-                {{ myLeaveRequests.length }}
-              </h2>
-              <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Recent history</p>
-            </div>
+        <!-- Latest Payslip -->
+        <div class="elevated-card overflow-hidden relative p-6 rounded-2xl glass-panel shadow-soft card-accent-emerald">
+          <div
+            class="absolute -top-10 -right-10 w-36 h-36 rounded-full blur-3xl opacity-[0.12] bg-emerald-400 pointer-events-none">
           </div>
-        </section>
-
-        <!-- My Shift & My Payroll -->
-        <section class="grid grid-cols-1 gap-8 lg:grid-cols-2">
-          <!-- My Shift -->
-          <div class="p-8 rounded-3xl glass-panel shadow-soft">
-            <div class="flex justify-between items-center mb-6">
-              <div class="space-y-1">
-                <p class="label-overline text-violet-500">Today</p>
-                <h3 class="text-xl font-black tracking-tight text-zinc-900 dark:text-white">My Shift</h3>
-              </div>
-              <a routerLink="/attendance/check-in"
-                class="flex gap-2 items-center px-4 py-2 text-sm font-bold text-violet-600 bg-violet-50 dark:bg-violet-900/20 rounded-xl hover:bg-violet-100 dark:hover:bg-violet-900/30 transition-colors">
-                <span class="text-base material-symbols-outlined">login</span>
-                Check In/Out
-              </a>
+          <div class="relative z-10">
+            <div class="flex justify-between items-start mb-5">
+              <span class="flex justify-center items-center p-3 rounded-xl icon-bg-emerald">
+                <span class="material-symbols-outlined text-2xl">payments</span>
+              </span>
+              <span class="px-2.5 py-1 text-xs font-bold rounded-full"
+                [ngClass]="myLatestPayroll?.status === 'Paid' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'">
+                {{ myLatestPayroll?.status || 'N/A' }}
+              </span>
             </div>
-            <div class="space-y-4">
-              <!-- Check-in status -->
-              <div class="flex items-center justify-between p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-100 dark:border-zinc-800">
-                <div class="flex items-center gap-3">
-                  <div class="flex items-center justify-center w-10 h-10 rounded-xl"
-                    [ngClass]="todayStatus.hasCheckedIn ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600' : 'bg-zinc-100 dark:bg-zinc-700 text-zinc-400'">
-                    <span class="material-symbols-outlined text-lg">login</span>
-                  </div>
-                  <div>
-                    <p class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Check-In</p>
-                    <p class="text-sm font-bold text-zinc-900 dark:text-white">
-                      {{ todayStatus.checkInTime ? (todayStatus.checkInTime | date:'HH:mm') : '–' }}
-                    </p>
-                  </div>
-                </div>
-                <span class="px-2.5 py-1 text-xs font-bold rounded-full"
-                  [ngClass]="todayStatus.hasCheckedIn ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-zinc-100 text-zinc-500 dark:bg-zinc-700 dark:text-zinc-400'">
-                  {{ todayStatus.hasCheckedIn ? 'Done' : 'Pending' }}
-                </span>
-              </div>
-              <!-- Check-out status -->
-              <div class="flex items-center justify-between p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-100 dark:border-zinc-800">
-                <div class="flex items-center gap-3">
-                  <div class="flex items-center justify-center w-10 h-10 rounded-xl"
-                    [ngClass]="todayStatus.hasCheckedOut ? 'bg-sky-100 dark:bg-sky-900/30 text-sky-600' : 'bg-zinc-100 dark:bg-zinc-700 text-zinc-400'">
-                    <span class="material-symbols-outlined text-lg">logout</span>
-                  </div>
-                  <div>
-                    <p class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Check-Out</p>
-                    <p class="text-sm font-bold text-zinc-900 dark:text-white">
-                      {{ todayStatus.checkOutTime ? (todayStatus.checkOutTime | date:'HH:mm') : '–' }}
-                    </p>
-                  </div>
-                </div>
-                <span class="px-2.5 py-1 text-xs font-bold rounded-full"
-                  [ngClass]="todayStatus.hasCheckedOut ? 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400' : 'bg-zinc-100 text-zinc-500 dark:bg-zinc-700 dark:text-zinc-400'">
-                  {{ todayStatus.hasCheckedOut ? 'Done' : 'Pending' }}
-                </span>
-              </div>
-            </div>
-            <!-- Quick links -->
-            <div class="mt-6 pt-5 border-t border-zinc-100 dark:border-zinc-800">
-              <p class="label-overline text-zinc-400 mb-3">Quick Links</p>
-              <div class="flex gap-3">
-                <a routerLink="/attendance/my-history"
-                  class="flex gap-2 items-center px-3 py-2 text-xs font-bold text-zinc-600 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">
-                  <span class="text-sm material-symbols-outlined">history</span>My History
-                </a>
-                <a routerLink="/leaves"
-                  class="flex gap-2 items-center px-3 py-2 text-xs font-bold text-zinc-600 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">
-                  <span class="text-sm material-symbols-outlined">event_available</span>Leave Request
-                </a>
-              </div>
-            </div>
+            <p class="label-overline mb-2">Net Salary · {{ myLatestPayroll?.month || '–' }}</p>
+            <h2 class="number-display text-emerald-700 dark:text-emerald-400">
+              {{ myLatestPayroll ? (myLatestPayroll.finalNetSalary | currency:'VND':'symbol':'1.0-0') : '–' }}
+            </h2>
+            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+              Gross: {{ myLatestPayroll ? (myLatestPayroll.grossIncome | currency:'VND':'symbol':'1.0-0') : '–' }}
+            </p>
           </div>
+        </div>
 
-          <!-- My Payroll -->
-          <div class="p-8 rounded-3xl glass-panel shadow-soft">
-            <div class="flex justify-between items-center mb-6">
-              <div class="space-y-1">
-                <p class="label-overline text-emerald-500">Latest Payslip</p>
-                <h3 class="text-xl font-black tracking-tight text-zinc-900 dark:text-white">My Payroll</h3>
-              </div>
-              <a routerLink="/profile"
-                class="flex gap-2 items-center px-4 py-2 text-sm font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition-colors">
-                <span class="text-base material-symbols-outlined">receipt_long</span>
-                View Profile
-              </a>
-            </div>
-            @if (myLatestPayroll) {
-              <div class="space-y-3">
-                <div class="flex justify-between items-center py-3 border-b border-zinc-100 dark:border-zinc-800">
-                  <span class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Month</span>
-                  <span class="text-sm font-bold text-zinc-900 dark:text-white">{{ myLatestPayroll.month }}</span>
-                </div>
-                <div class="flex justify-between items-center py-3 border-b border-zinc-100 dark:border-zinc-800">
-                  <span class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Gross Income</span>
-                  <span class="text-sm font-bold text-zinc-900 dark:text-white">{{ myLatestPayroll.grossIncome | currency:'VND':'symbol':'1.0-0' }}</span>
-                </div>
-                <div class="flex justify-between items-center py-3 border-b border-zinc-100 dark:border-zinc-800">
-                  <span class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Total Deductions</span>
-                  <span class="text-sm font-bold text-rose-600 dark:text-rose-400">-{{ myLatestPayroll.totalDeductions | currency:'VND':'symbol':'1.0-0' }}</span>
-                </div>
-                <div class="flex justify-between items-center py-4 rounded-2xl px-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-900/40">
-                  <span class="text-sm font-black text-zinc-700 dark:text-zinc-200 uppercase tracking-widest">Net Salary</span>
-                  <span class="text-lg font-black text-emerald-700 dark:text-emerald-400">{{ myLatestPayroll.finalNetSalary | currency:'VND':'symbol':'1.0-0' }}</span>
-                </div>
-                <div class="flex justify-between items-center pt-2">
-                  <span class="text-xs text-zinc-400">{{ myLatestPayroll.actualWorkingDays }} working days</span>
-                  <span class="px-2.5 py-1 text-xs font-bold rounded-full"
-                    [ngClass]="myLatestPayroll.status === 'Paid' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'">
-                    {{ myLatestPayroll.status }}
-                  </span>
-                </div>
-              </div>
-            } @else {
-              <div class="flex flex-col items-center justify-center py-12 text-center">
-                <span class="material-symbols-outlined text-4xl text-zinc-300 dark:text-zinc-600 mb-3">receipt_long</span>
-                <p class="text-sm font-bold text-zinc-500">No payslip data available yet</p>
-              </div>
-            }
+        <!-- Leave Requests -->
+        <div class="elevated-card overflow-hidden relative p-6 rounded-2xl glass-panel shadow-soft card-accent-amber">
+          <div
+            class="absolute -top-10 -right-10 w-36 h-36 rounded-full blur-3xl opacity-[0.12] bg-amber-400 pointer-events-none">
           </div>
-        </section>
+          <div class="relative z-10">
+            <div class="flex justify-between items-start mb-5">
+              <span class="flex justify-center items-center p-3 rounded-xl icon-bg-amber">
+                <span class="material-symbols-outlined text-2xl">event_available</span>
+              </span>
+              <span
+                class="px-2.5 py-1 text-xs font-bold rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+                {{ myLeaveRequests.length }} requests
+              </span>
+            </div>
+            <p class="label-overline mb-2">Leave Requests</p>
+            <h2 class="number-display text-amber-700 dark:text-amber-400">
+              {{ myLeaveRequests.length }}
+            </h2>
+            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Recent history</p>
+          </div>
+        </div>
+      </section>
 
-        <!-- Recent Leave Requests -->
-        <section class="p-8 rounded-3xl glass-panel shadow-soft">
+      <!-- My Shift & My Payroll -->
+      <section class="grid grid-cols-1 gap-8 lg:grid-cols-2">
+        <!-- My Shift -->
+        <div class="p-8 rounded-3xl glass-panel shadow-soft">
           <div class="flex justify-between items-center mb-6">
             <div class="space-y-1">
-              <p class="label-overline text-amber-500">History</p>
-              <h3 class="text-xl font-black tracking-tight text-zinc-900 dark:text-white">Recent Leave Requests</h3>
+              <p class="label-overline text-violet-500">Today</p>
+              <h3 class="text-xl font-black tracking-tight text-zinc-900 dark:text-white">My Shift</h3>
             </div>
-            <a routerLink="/leaves"
-              class="flex gap-2 items-center px-4 py-2 text-sm font-bold text-amber-600 bg-amber-50 dark:bg-amber-900/20 rounded-xl hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors">
-              <span class="text-base material-symbols-outlined">add</span>
-              New Request
+            <a routerLink="/attendance/check-in"
+              class="flex gap-2 items-center px-4 py-2 text-sm font-bold text-violet-600 bg-violet-50 dark:bg-violet-900/20 rounded-xl hover:bg-violet-100 dark:hover:bg-violet-900/30 transition-colors">
+              <span class="text-base material-symbols-outlined">login</span>
+              Check In/Out
             </a>
           </div>
-          @if (myLeaveRequests.length > 0) {
-            <div class="overflow-x-auto">
-              <table class="w-full">
-                <thead>
-                  <tr class="border-b border-zinc-100 dark:border-zinc-800">
-                    <th class="pb-3 text-left label-overline text-zinc-500 dark:text-zinc-400">Type</th>
-                    <th class="pb-3 text-left label-overline text-zinc-500 dark:text-zinc-400">From</th>
-                    <th class="pb-3 text-left label-overline text-zinc-500 dark:text-zinc-400">To</th>
-                    <th class="pb-3 text-left label-overline text-zinc-500 dark:text-zinc-400">Days</th>
-                    <th class="pb-3 text-left label-overline text-zinc-500 dark:text-zinc-400">Status</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
-                  @for (req of myLeaveRequests; track req.id) {
-                    <tr class="transition-all hover:bg-violet-50/30 dark:hover:bg-zinc-800/40">
-                      <td class="py-3 pr-4 text-sm font-bold text-zinc-900 dark:text-white">{{ req.type }}</td>
-                      <td class="py-3 pr-4 text-sm text-zinc-600 dark:text-zinc-400">{{ req.startDate | date:'dd/MM/yyyy' }}</td>
-                      <td class="py-3 pr-4 text-sm text-zinc-600 dark:text-zinc-400">{{ req.endDate | date:'dd/MM/yyyy' }}</td>
-                      <td class="py-3 pr-4 text-sm font-bold text-zinc-700 dark:text-zinc-300">{{ req.days }}</td>
-                      <td class="py-3">
-                        <span class="px-2.5 py-1 text-xs font-bold rounded-full"
-                          [ngClass]="{
+          <div class="space-y-4">
+            <!-- Check-in status -->
+            <div
+              class="flex items-center justify-between p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-100 dark:border-zinc-800">
+              <div class="flex items-center gap-3">
+                <div class="flex items-center justify-center w-10 h-10 rounded-xl"
+                  [ngClass]="todayStatus.hasCheckedIn ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600' : 'bg-zinc-100 dark:bg-zinc-700 text-zinc-400'">
+                  <span class="material-symbols-outlined text-lg">login</span>
+                </div>
+                <div>
+                  <p class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Check-In</p>
+                  <p class="text-sm font-bold text-zinc-900 dark:text-white">
+                    {{ todayStatus.checkInTime ? (todayStatus.checkInTime | date:'HH:mm') : '–' }}
+                  </p>
+                </div>
+              </div>
+              <span class="px-2.5 py-1 text-xs font-bold rounded-full"
+                [ngClass]="todayStatus.hasCheckedIn ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-zinc-100 text-zinc-500 dark:bg-zinc-700 dark:text-zinc-400'">
+                {{ todayStatus.hasCheckedIn ? 'Done' : 'Pending' }}
+              </span>
+            </div>
+            <!-- Check-out status -->
+            <div
+              class="flex items-center justify-between p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-100 dark:border-zinc-800">
+              <div class="flex items-center gap-3">
+                <div class="flex items-center justify-center w-10 h-10 rounded-xl"
+                  [ngClass]="todayStatus.hasCheckedOut ? 'bg-sky-100 dark:bg-sky-900/30 text-sky-600' : 'bg-zinc-100 dark:bg-zinc-700 text-zinc-400'">
+                  <span class="material-symbols-outlined text-lg">logout</span>
+                </div>
+                <div>
+                  <p class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Check-Out</p>
+                  <p class="text-sm font-bold text-zinc-900 dark:text-white">
+                    {{ todayStatus.checkOutTime ? (todayStatus.checkOutTime | date:'HH:mm') : '–' }}
+                  </p>
+                </div>
+              </div>
+              <span class="px-2.5 py-1 text-xs font-bold rounded-full"
+                [ngClass]="todayStatus.hasCheckedOut ? 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400' : 'bg-zinc-100 text-zinc-500 dark:bg-zinc-700 dark:text-zinc-400'">
+                {{ todayStatus.hasCheckedOut ? 'Done' : 'Pending' }}
+              </span>
+            </div>
+          </div>
+          <!-- Quick links -->
+          <div class="mt-6 pt-5 border-t border-zinc-100 dark:border-zinc-800">
+            <p class="label-overline text-zinc-400 mb-3">Quick Links</p>
+            <div class="flex gap-3">
+              <a routerLink="/attendance/my-history"
+                class="flex gap-2 items-center px-3 py-2 text-xs font-bold text-zinc-600 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">
+                <span class="text-sm material-symbols-outlined">history</span>My History
+              </a>
+              <a routerLink="/leaves"
+                class="flex gap-2 items-center px-3 py-2 text-xs font-bold text-zinc-600 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">
+                <span class="text-sm material-symbols-outlined">event_available</span>Leave Request
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- My Payroll -->
+        <div class="p-8 rounded-3xl glass-panel shadow-soft">
+          <div class="flex justify-between items-center mb-6">
+            <div class="space-y-1">
+              <p class="label-overline text-emerald-500">Latest Payslip</p>
+              <h3 class="text-xl font-black tracking-tight text-zinc-900 dark:text-white">My Payroll</h3>
+            </div>
+            <a routerLink="/profile"
+              class="flex gap-2 items-center px-4 py-2 text-sm font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition-colors">
+              <span class="text-base material-symbols-outlined">receipt_long</span>
+              View Profile
+            </a>
+          </div>
+          @if (myLatestPayroll) {
+          <div class="space-y-3">
+            <div class="flex justify-between items-center py-3 border-b border-zinc-100 dark:border-zinc-800">
+              <span class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Month</span>
+              <span class="text-sm font-bold text-zinc-900 dark:text-white">{{ myLatestPayroll.month }}</span>
+            </div>
+            <div class="flex justify-between items-center py-3 border-b border-zinc-100 dark:border-zinc-800">
+              <span class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Gross Income</span>
+              <span class="text-sm font-bold text-zinc-900 dark:text-white">{{ myLatestPayroll.grossIncome |
+                currency:'VND':'symbol':'1.0-0' }}</span>
+            </div>
+            <div class="flex justify-between items-center py-3 border-b border-zinc-100 dark:border-zinc-800">
+              <span class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Total Deductions</span>
+              <span class="text-sm font-bold text-rose-600 dark:text-rose-400">-{{ myLatestPayroll.totalDeductions |
+                currency:'VND':'symbol':'1.0-0' }}</span>
+            </div>
+            <div
+              class="flex justify-between items-center py-4 rounded-2xl px-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-900/40">
+              <span class="text-sm font-black text-zinc-700 dark:text-zinc-200 uppercase tracking-widest">Net
+                Salary</span>
+              <span class="text-lg font-black text-emerald-700 dark:text-emerald-400">{{ myLatestPayroll.finalNetSalary
+                | currency:'VND':'symbol':'1.0-0' }}</span>
+            </div>
+            <div class="flex justify-between items-center pt-2">
+              <span class="text-xs text-zinc-400">{{ myLatestPayroll.actualWorkingDays }} working days</span>
+              <span class="px-2.5 py-1 text-xs font-bold rounded-full"
+                [ngClass]="myLatestPayroll.status === 'Paid' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'">
+                {{ myLatestPayroll.status }}
+              </span>
+            </div>
+          </div>
+          } @else {
+          <div class="flex flex-col items-center justify-center py-12 text-center">
+            <span class="material-symbols-outlined text-4xl text-zinc-300 dark:text-zinc-600 mb-3">receipt_long</span>
+            <p class="text-sm font-bold text-zinc-500">No payslip data available yet</p>
+          </div>
+          }
+        </div>
+      </section>
+
+      <!-- Recent Leave Requests -->
+      <section class="p-8 rounded-3xl glass-panel shadow-soft">
+        <div class="flex justify-between items-center mb-6">
+          <div class="space-y-1">
+            <p class="label-overline text-amber-500">History</p>
+            <h3 class="text-xl font-black tracking-tight text-zinc-900 dark:text-white">Recent Leave Requests</h3>
+          </div>
+          <a routerLink="/leaves"
+            class="flex gap-2 items-center px-4 py-2 text-sm font-bold text-amber-600 bg-amber-50 dark:bg-amber-900/20 rounded-xl hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors">
+            <span class="text-base material-symbols-outlined">add</span>
+            New Request
+          </a>
+        </div>
+        @if (myLeaveRequests.length > 0) {
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="border-b border-zinc-100 dark:border-zinc-800">
+                <th class="pb-3 text-left label-overline text-zinc-500 dark:text-zinc-400">Type</th>
+                <th class="pb-3 text-left label-overline text-zinc-500 dark:text-zinc-400">From</th>
+                <th class="pb-3 text-left label-overline text-zinc-500 dark:text-zinc-400">To</th>
+                <th class="pb-3 text-left label-overline text-zinc-500 dark:text-zinc-400">Days</th>
+                <th class="pb-3 text-left label-overline text-zinc-500 dark:text-zinc-400">Status</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
+              @for (req of myLeaveRequests; track req.id) {
+              <tr class="transition-all hover:bg-violet-50/30 dark:hover:bg-zinc-800/40">
+                <td class="py-3 pr-4 text-sm font-bold text-zinc-900 dark:text-white">{{ req.type }}</td>
+                <td class="py-3 pr-4 text-sm text-zinc-600 dark:text-zinc-400">{{ req.startDate | date:'dd/MM/yyyy' }}
+                </td>
+                <td class="py-3 pr-4 text-sm text-zinc-600 dark:text-zinc-400">{{ req.endDate | date:'dd/MM/yyyy' }}
+                </td>
+                <td class="py-3 pr-4 text-sm font-bold text-zinc-700 dark:text-zinc-300">{{ req.days }}</td>
+                <td class="py-3">
+                  <span class="px-2.5 py-1 text-xs font-bold rounded-full" [ngClass]="{
                             'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400': req.status === 'Approved',
                             'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400': req.status === 'Rejected',
                             'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400': req.status === 'Pending'
                           }">{{ req.status }}</span>
-                      </td>
-                    </tr>
-                  }
-                </tbody>
-              </table>
-            </div>
-          } @else {
-            <div class="flex flex-col items-center justify-center py-12 text-center">
-              <span class="material-symbols-outlined text-4xl text-zinc-300 dark:text-zinc-600 mb-3">event_available</span>
-              <p class="text-sm font-bold text-zinc-500">No leave requests found</p>
-              <a routerLink="/leaves" class="mt-3 text-sm font-bold text-violet-600 hover:underline">Submit your first request</a>
-            </div>
-          }
-        </section>
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        } @else {
+        <div class="flex flex-col items-center justify-center py-12 text-center">
+          <span class="material-symbols-outlined text-4xl text-zinc-300 dark:text-zinc-600 mb-3">event_available</span>
+          <p class="text-sm font-bold text-zinc-500">No leave requests found</p>
+          <a routerLink="/leaves" class="mt-3 text-sm font-bold text-violet-600 hover:underline">Submit your first
+            request</a>
+        </div>
+        }
+      </section>
 
-        <!-- Quick Actions -->
-        <section class="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          <a routerLink="/profile"
-            class="flex flex-col gap-3 items-start p-5 rounded-2xl border transition-all cursor-pointer border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/50 hover:bg-violet-50 hover:border-violet-200 dark:hover:bg-violet-900/20 group">
-            <span class="material-symbols-outlined text-zinc-400 group-hover:text-violet-600 transition-colors text-2xl">person</span>
-            <span class="text-xs font-bold uppercase tracking-widest text-zinc-600 dark:text-zinc-400 group-hover:text-violet-600 transition-colors">My Profile</span>
-          </a>
-          <a routerLink="/leaves"
-            class="flex flex-col gap-3 items-start p-5 rounded-2xl border transition-all cursor-pointer border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/50 hover:bg-amber-50 hover:border-amber-200 dark:hover:bg-amber-900/20 group">
-            <span class="material-symbols-outlined text-zinc-400 group-hover:text-amber-600 transition-colors text-2xl">event_available</span>
-            <span class="text-xs font-bold uppercase tracking-widest text-zinc-600 dark:text-zinc-400 group-hover:text-amber-600 transition-colors">Request Leave</span>
-          </a>
-          <a routerLink="/attendance/check-in"
-            class="flex flex-col gap-3 items-start p-5 rounded-2xl border transition-all cursor-pointer border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/50 hover:bg-emerald-50 hover:border-emerald-200 dark:hover:bg-emerald-900/20 group">
-            <span class="material-symbols-outlined text-zinc-400 group-hover:text-emerald-600 transition-colors text-2xl">login</span>
-            <span class="text-xs font-bold uppercase tracking-widest text-zinc-600 dark:text-zinc-400 group-hover:text-emerald-600 transition-colors">Check In/Out</span>
-          </a>
-          <a routerLink="/attendance/my-history"
-            class="flex flex-col gap-3 items-start p-5 rounded-2xl border transition-all cursor-pointer border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/50 hover:bg-sky-50 hover:border-sky-200 dark:hover:bg-sky-900/20 group">
-            <span class="material-symbols-outlined text-zinc-400 group-hover:text-sky-600 transition-colors text-2xl">history</span>
-            <span class="text-xs font-bold uppercase tracking-widest text-zinc-600 dark:text-zinc-400 group-hover:text-sky-600 transition-colors">My History</span>
-          </a>
-        </section>
+      <!-- Quick Actions -->
+      <section class="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <a routerLink="/profile"
+          class="flex flex-col gap-3 items-start p-5 rounded-2xl border transition-all cursor-pointer border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/50 hover:bg-violet-50 hover:border-violet-200 dark:hover:bg-violet-900/20 group">
+          <span
+            class="material-symbols-outlined text-zinc-400 group-hover:text-violet-600 transition-colors text-2xl">person</span>
+          <span
+            class="text-xs font-bold uppercase tracking-widest text-zinc-600 dark:text-zinc-400 group-hover:text-violet-600 transition-colors">My
+            Profile</span>
+        </a>
+        <a routerLink="/leaves"
+          class="flex flex-col gap-3 items-start p-5 rounded-2xl border transition-all cursor-pointer border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/50 hover:bg-amber-50 hover:border-amber-200 dark:hover:bg-amber-900/20 group">
+          <span
+            class="material-symbols-outlined text-zinc-400 group-hover:text-amber-600 transition-colors text-2xl">event_available</span>
+          <span
+            class="text-xs font-bold uppercase tracking-widest text-zinc-600 dark:text-zinc-400 group-hover:text-amber-600 transition-colors">Request
+            Leave</span>
+        </a>
+        <a routerLink="/attendance/check-in"
+          class="flex flex-col gap-3 items-start p-5 rounded-2xl border transition-all cursor-pointer border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/50 hover:bg-emerald-50 hover:border-emerald-200 dark:hover:bg-emerald-900/20 group">
+          <span
+            class="material-symbols-outlined text-zinc-400 group-hover:text-emerald-600 transition-colors text-2xl">login</span>
+          <span
+            class="text-xs font-bold uppercase tracking-widest text-zinc-600 dark:text-zinc-400 group-hover:text-emerald-600 transition-colors">Check
+            In/Out</span>
+        </a>
+        <a routerLink="/attendance/my-history"
+          class="flex flex-col gap-3 items-start p-5 rounded-2xl border transition-all cursor-pointer border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/50 hover:bg-sky-50 hover:border-sky-200 dark:hover:bg-sky-900/20 group">
+          <span
+            class="material-symbols-outlined text-zinc-400 group-hover:text-sky-600 transition-colors text-2xl">history</span>
+          <span
+            class="text-xs font-bold uppercase tracking-widest text-zinc-600 dark:text-zinc-400 group-hover:text-sky-600 transition-colors">My
+            History</span>
+        </a>
+      </section>
       }
     </div>
   </main>
