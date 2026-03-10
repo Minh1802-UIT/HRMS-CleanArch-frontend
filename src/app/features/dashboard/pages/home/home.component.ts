@@ -210,14 +210,14 @@ export class HomeComponent {
   activeModuleIndex = signal<number>(4); // Default to Payroll to match the user's screenshot
 
   trustedCompanies = [
-    { name: 'Vingroup',       abbr: 'VG',  color: '#1d4ed8' },
-    { name: 'FPT Software',   abbr: 'FPT', color: '#f97316' },
-    { name: 'Viettel',        abbr: 'VТ',  color: '#dc2626' },
-    { name: 'Masan Group',    abbr: 'MSN', color: '#16a34a' },
-    { name: 'Techcombank',    abbr: 'TCB', color: '#ca8a04' },
-    { name: 'VNPT',           abbr: 'VNP', color: '#7c3aed' },
-    { name: 'VinFast',        abbr: 'VF',  color: '#0ea5e9' },
-    { name: 'Sacombank',      abbr: 'STB', color: '#059669' },
+    { name: 'Vingroup', abbr: 'VG', logoSrc: 'https://upload.wikimedia.org/wikipedia/commons/6/6f/Vingroup_logo.svg' },
+    { name: 'FPT Software', abbr: 'FPT', logoSrc: 'https://upload.wikimedia.org/wikipedia/commons/1/11/FPT_logo_2010.svg' },
+    { name: 'Viettel', abbr: 'VТ', logoSrc: 'https://upload.wikimedia.org/wikipedia/commons/0/05/Viettel_logo_2021.svg' },
+    { name: 'Masan Group', abbr: 'MSN', logoSrc: 'https://upload.wikimedia.org/wikipedia/commons/d/d4/Logo-Masan-Group-Symbol.png' },
+    { name: 'Techcombank', abbr: 'TCB', logoSrc: 'https://upload.wikimedia.org/wikipedia/commons/4/4b/Techcombank_logo.svg' },
+    { name: 'VNPT', abbr: 'VNP', logoSrc: 'https://upload.wikimedia.org/wikipedia/commons/0/01/VNPT_Logo.svg' },
+    { name: 'VinFast', abbr: 'VF', logoSrc: 'https://upload.wikimedia.org/wikipedia/commons/5/5a/VinFast_Logo.svg' },
+    { name: 'Sacombank', abbr: 'STB', logoSrc: 'https://upload.wikimedia.org/wikipedia/vi/9/91/Sacombank_logo.svg' },
   ];
 
   testimonials = [
@@ -243,13 +243,13 @@ export class HomeComponent {
 
 
   scrollModules(direction: 'left' | 'right') {
-    const nextIndex = direction === 'left' 
+    const nextIndex = direction === 'left'
       ? Math.max(0, this.activeModuleIndex() - 1)
       : Math.min(this.moduleFeatures.length - 1, this.activeModuleIndex() + 1);
-    
+
     this.activeModuleIndex.set(nextIndex);
     this.loadedModuleIndices.update(s => new Set(s).add(nextIndex));
-    
+
     // Logic to ensure the active element is visible in the scroll container
     const container = document.getElementById('module-slider');
     if (container) {

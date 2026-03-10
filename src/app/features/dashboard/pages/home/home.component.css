@@ -46,14 +46,27 @@
   to   { transform: translate3d(-50%, 0, 0); }
 }
 
+@keyframes trusted-scroll-reverse {
+  from { transform: translate3d(-50%, 0, 0); }
+  to   { transform: translate3d(0, 0, 0); }
+}
+
 .trusted-marquee {
   display: flex;
   width: max-content;
   will-change: transform;
-  animation: trusted-scroll 25s linear infinite;
+  animation: trusted-scroll 35s linear infinite;
 }
 
-.trusted-marquee:hover {
+.trusted-marquee-reverse {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: trusted-scroll-reverse 45s linear infinite;
+}
+
+.trusted-marquee:hover,
+.trusted-marquee-reverse:hover {
   animation-play-state: paused;
 }
 

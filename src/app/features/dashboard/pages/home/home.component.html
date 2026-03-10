@@ -1,4 +1,5 @@
-﻿<div class="font-display transition-colors duration-300 text-zinc-600 bg-background-light dark:bg-background-dark dark:text-zinc-300">
+﻿<div
+  class="font-display transition-colors duration-300 text-zinc-600 bg-background-light dark:bg-background-dark dark:text-zinc-300">
 
   <!-- Top Banner -->
   <div class="py-2 text-xs font-medium text-center border-b border-zinc-800/50 bg-zinc-950 sm:text-sm">
@@ -24,7 +25,8 @@
         <!-- Nav Links -->
         <div class="hidden items-center space-x-8 md:flex">
           <a class="font-medium transition-colors text-zinc-300 hover:text-white text-[15px]" href="#">Sản phẩm</a>
-          <a class="flex gap-1.5 items-center font-medium transition-colors text-zinc-300 hover:text-white text-[15px]" href="#">
+          <a class="flex gap-1.5 items-center font-medium transition-colors text-zinc-300 hover:text-white text-[15px]"
+            href="#">
             Tính năng <i class="text-[10px] pi pi-chevron-down mt-1"></i>
           </a>
           <a class="font-medium transition-colors text-zinc-300 hover:text-white text-[15px]" href="#">Bảng giá</a>
@@ -33,11 +35,10 @@
 
         <!-- Auth Actions -->
         <div class="hidden flex-1 justify-end items-center gap-4 md:flex">
-          <a class="font-semibold text-zinc-300 hover:text-white text-[15px] transition-colors" routerLink="/login">Đăng nhập</a>
-          <a
-            class="px-5 py-2.5 font-bold text-white bg-violet-600 rounded-xl transition-all hover:bg-violet-500 shadow-lg shadow-violet-600/25 hover:-translate-y-0.5"
-            routerLink="/login"
-          >
+          <a class="font-semibold text-zinc-300 hover:text-white text-[15px] transition-colors" routerLink="/login">Đăng
+            nhập</a>
+          <a class="px-5 py-2.5 font-bold text-white bg-violet-600 rounded-xl transition-all hover:bg-violet-500 shadow-lg shadow-violet-600/25 hover:-translate-y-0.5"
+            routerLink="/login">
             Dùng thử miễn phí
           </a>
         </div>
@@ -53,39 +54,52 @@
 
     <!-- Mobile Menu -->
     @if (isMenuOpen) {
-      <div class="px-4 py-6 space-y-4 bg-zinc-950 border-t border-zinc-800 md:hidden">
-        <a class="block py-2 font-medium text-zinc-300 hover:text-white transition-colors" href="#">Sản phẩm</a>
-        <a class="block py-2 font-medium text-zinc-300 hover:text-white transition-colors" href="#">Tính năng</a>
-        <a class="block py-2 font-medium text-zinc-300 hover:text-white transition-colors" href="#">Bảng giá</a>
-        <a class="block py-2 font-medium text-zinc-300 hover:text-white transition-colors" href="#">Tài liệu</a>
-        <hr class="border-zinc-800" />
-        <div class="flex flex-col gap-3 pt-2">
-          <a class="py-2.5 font-bold text-center text-white border border-zinc-700 rounded-xl hover:bg-zinc-800 transition-colors" routerLink="/login">Đăng nhập</a>
-          <a class="py-2.5 font-bold text-center text-white bg-violet-600 rounded-xl hover:bg-violet-500 transition-colors" routerLink="/login">Dùng thử miễn phí</a>
-        </div>
+    <div class="px-4 py-6 space-y-4 bg-zinc-950 border-t border-zinc-800 md:hidden">
+      <a class="block py-2 font-medium text-zinc-300 hover:text-white transition-colors" href="#">Sản phẩm</a>
+      <a class="block py-2 font-medium text-zinc-300 hover:text-white transition-colors" href="#">Tính năng</a>
+      <a class="block py-2 font-medium text-zinc-300 hover:text-white transition-colors" href="#">Bảng giá</a>
+      <a class="block py-2 font-medium text-zinc-300 hover:text-white transition-colors" href="#">Tài liệu</a>
+      <hr class="border-zinc-800" />
+      <div class="flex flex-col gap-3 pt-2">
+        <a class="py-2.5 font-bold text-center text-white border border-zinc-700 rounded-xl hover:bg-zinc-800 transition-colors"
+          routerLink="/login">Đăng nhập</a>
+        <a class="py-2.5 font-bold text-center text-white bg-violet-600 rounded-xl hover:bg-violet-500 transition-colors"
+          routerLink="/login">Dùng thử miễn phí</a>
       </div>
+    </div>
     }
   </nav>
 
   <!-- Hero Section -->
   <section class="overflow-hidden relative pt-16 pb-24 lg:pt-24 lg:pb-32 bg-zinc-950">
-    <div class="absolute top-0 left-1/4 w-96 h-96 bg-violet-600/15 rounded-full blur-3xl pointer-events-none -z-0"></div>
-    <div class="absolute bottom-0 right-1/4 w-80 h-80 bg-violet-800/10 rounded-full blur-3xl pointer-events-none -z-0"></div>
+    <div class="absolute top-0 left-1/4 w-96 h-96 bg-violet-600/15 rounded-full blur-3xl pointer-events-none -z-0">
+    </div>
+    <div class="absolute bottom-0 right-1/4 w-80 h-80 bg-violet-800/10 rounded-full blur-3xl pointer-events-none -z-0">
+    </div>
     <!-- Dot grid texture -->
-    <div class="absolute inset-0 pointer-events-none" style="background-image: radial-gradient(circle, rgba(139,92,246,0.07) 1px, transparent 1px); background-size: 40px 40px; z-index: 0;"></div>
+    <div class="absolute inset-0 pointer-events-none"
+      style="background-image: radial-gradient(circle, rgba(139,92,246,0.07) 1px, transparent 1px); background-size: 40px 40px; z-index: 0;">
+    </div>
     <!-- Floating sparkle particles -->
-    <div class="hero-particle" style="width:4px;height:4px;top:18%;left:7%;animation-duration:4.2s;animation-delay:0s;"></div>
-    <div class="hero-particle" style="width:3px;height:3px;top:62%;left:14%;animation-duration:5.1s;animation-delay:1.3s;"></div>
-    <div class="hero-particle" style="width:5px;height:5px;top:33%;right:18%;animation-duration:3.8s;animation-delay:0.7s;"></div>
-    <div class="hero-particle" style="width:3px;height:3px;top:72%;right:9%;animation-duration:4.7s;animation-delay:2.1s;"></div>
-    <div class="hero-particle" style="width:4px;height:4px;top:47%;left:38%;animation-duration:6.2s;animation-delay:1.9s;"></div>
-    <div class="hero-particle" style="width:6px;height:6px;top:8%;right:28%;animation-duration:4.4s;animation-delay:3.1s;"></div>
+    <div class="hero-particle" style="width:4px;height:4px;top:18%;left:7%;animation-duration:4.2s;animation-delay:0s;">
+    </div>
+    <div class="hero-particle"
+      style="width:3px;height:3px;top:62%;left:14%;animation-duration:5.1s;animation-delay:1.3s;"></div>
+    <div class="hero-particle"
+      style="width:5px;height:5px;top:33%;right:18%;animation-duration:3.8s;animation-delay:0.7s;"></div>
+    <div class="hero-particle"
+      style="width:3px;height:3px;top:72%;right:9%;animation-duration:4.7s;animation-delay:2.1s;"></div>
+    <div class="hero-particle"
+      style="width:4px;height:4px;top:47%;left:38%;animation-duration:6.2s;animation-delay:1.9s;"></div>
+    <div class="hero-particle"
+      style="width:6px;height:6px;top:8%;right:28%;animation-duration:4.4s;animation-delay:3.1s;"></div>
 
     <div class="relative z-10 px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
       <div class="grid gap-12 items-center lg:grid-cols-2 lg:gap-16">
         <!-- Left: Headline + CTA -->
         <div class="max-w-2xl reveal-on-scroll reveal-left delay-100" #revealElement>
-          <div class="inline-flex gap-2 items-center px-4 py-1.5 mb-6 text-sm font-semibold text-violet-300 rounded-full border bg-zinc-800/80 border-zinc-700">
+          <div
+            class="inline-flex gap-2 items-center px-4 py-1.5 mb-6 text-sm font-semibold text-violet-300 rounded-full border bg-zinc-800/80 border-zinc-700">
             <span class="w-2 h-2 bg-violet-400 rounded-full animate-pulse"></span>
             Giải pháp Nhân sự &amp; Bảng lương số 1 Việt Nam
           </div>
@@ -97,52 +111,51 @@
             và Chấm công FaceID trên Mobile. Tự động hóa 80% quy trình thủ công của bạn.
           </p>
           <div class="flex flex-col gap-4 mb-10 sm:flex-row">
-            <a
-              class="btn-shimmer px-8 py-3.5 font-bold text-center text-white bg-violet-600 rounded-xl shadow-lg transition-all hover:bg-violet-500 shadow-violet-600/25 hover:-translate-y-1"
-              routerLink="/login"
-            >
+            <a class="btn-shimmer px-8 py-3.5 font-bold text-center text-white bg-violet-600 rounded-xl shadow-lg transition-all hover:bg-violet-500 shadow-violet-600/25 hover:-translate-y-1"
+              routerLink="/login">
               Dùng thử miễn phí
             </a>
-            <a
-              class="flex gap-2 justify-center items-center px-8 py-3.5 font-bold text-center text-zinc-200 rounded-xl border transition-all border-zinc-700 bg-zinc-800/80 hover:bg-zinc-700"
-              href="#"
-            >
+            <a class="flex gap-2 justify-center items-center px-8 py-3.5 font-bold text-center text-zinc-200 rounded-xl border transition-all border-zinc-700 bg-zinc-800/80 hover:bg-zinc-700"
+              href="#">
               <i class="text-xl pi pi-play-circle text-violet-400"></i>
               Xem Demo
             </a>
           </div>
           <div class="flex gap-4 items-center text-sm text-zinc-400">
             <div class="flex -space-x-2">
-              <img class="w-9 h-9 rounded-full border-2 border-zinc-950 object-cover" src="https://i.pravatar.cc/100?img=1" alt="User" />
-              <img class="w-9 h-9 rounded-full border-2 border-zinc-950 object-cover" src="https://i.pravatar.cc/100?img=2" alt="User" />
-              <img class="w-9 h-9 rounded-full border-2 border-zinc-950 object-cover" src="https://i.pravatar.cc/100?img=3" alt="User" />
-              <div class="flex justify-center items-center w-9 h-9 text-xs font-bold rounded-full border-2 border-zinc-950 bg-zinc-800 text-zinc-300">+5k</div>
+              <img class="w-9 h-9 rounded-full border-2 border-zinc-950 object-cover"
+                src="https://i.pravatar.cc/100?img=1" alt="User" />
+              <img class="w-9 h-9 rounded-full border-2 border-zinc-950 object-cover"
+                src="https://i.pravatar.cc/100?img=2" alt="User" />
+              <img class="w-9 h-9 rounded-full border-2 border-zinc-950 object-cover"
+                src="https://i.pravatar.cc/100?img=3" alt="User" />
+              <div
+                class="flex justify-center items-center w-9 h-9 text-xs font-bold rounded-full border-2 border-zinc-950 bg-zinc-800 text-zinc-300">
+                +5k</div>
             </div>
             <span>Đã được tin dùng bởi <strong class="text-white">500+</strong> doanh nghiệp.</span>
           </div>
         </div>
 
         <!-- Right: Hero visual -->
-        <div class="relative h-[580px] w-full hidden lg:flex items-center justify-center reveal-on-scroll reveal-zoom delay-300" #revealElement>
-          <div class="absolute right-8 bottom-8 w-64 h-80 bg-zinc-900/60 rounded-tl-[100px] rounded-br-[40px] z-0"></div>
+        <div
+          class="relative h-[580px] w-full hidden lg:flex items-center justify-center reveal-on-scroll reveal-zoom delay-300"
+          #revealElement>
+          <div class="absolute right-8 bottom-8 w-64 h-80 bg-zinc-900/60 rounded-tl-[100px] rounded-br-[40px] z-0">
+          </div>
           <div class="relative z-10 w-[300px] h-[460px]">
-            <img
-              alt="Professional HR"
-              class="w-full h-full object-cover rounded-[40px] shadow-2xl"
+            <img alt="Professional HR" class="w-full h-full object-cover rounded-[40px] shadow-2xl"
               src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=600"
-              decoding="async"
-              fetchpriority="high"
-            />
+              decoding="async" fetchpriority="high" />
           </div>
           <div class="absolute top-16 left-12 z-20 animate-[bounce_4s_ease-in-out_infinite]">
             <div class="flex relative justify-center items-center">
               <div class="absolute inset-0 rounded-full blur-sm scale-125 bg-violet-500/20"></div>
-              <img
-                alt="HR Manager"
+              <img alt="HR Manager"
                 class="object-cover relative z-10 w-20 h-20 rounded-full border-4 border-zinc-950 shadow-2xl"
-                src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=200"
-              />
-              <div class="flex absolute -top-2 -right-8 z-20 gap-1 items-center px-3 py-1 rounded-full border shadow-xl backdrop-blur-md bg-zinc-800/90 border-zinc-700/50">
+                src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=200" />
+              <div
+                class="flex absolute -top-2 -right-8 z-20 gap-1 items-center px-3 py-1 rounded-full border shadow-xl backdrop-blur-md bg-zinc-800/90 border-zinc-700/50">
                 <span class="text-xs font-bold text-white">HR Head</span>
                 <span class="text-xs text-yellow-400">★</span>
               </div>
@@ -152,7 +165,9 @@
             <div class="p-5 w-[320px] bg-zinc-800/90 backdrop-blur-xl rounded-2xl border border-zinc-700/50 shadow-2xl">
               <div class="flex justify-between items-center mb-4">
                 <div class="flex gap-3 items-center">
-                  <div class="flex justify-center items-center w-11 h-11 rounded-full bg-violet-600 shadow-lg shadow-violet-600/30"></div>
+                  <div
+                    class="flex justify-center items-center w-11 h-11 rounded-full bg-violet-600 shadow-lg shadow-violet-600/30">
+                  </div>
                   <div class="flex flex-col gap-1.5">
                     <div class="w-20 h-2.5 rounded-full bg-zinc-600/80"></div>
                     <div class="w-14 h-2 rounded-full bg-zinc-700"></div>
@@ -178,32 +193,91 @@
 
   <!-- Trusted By -->
   <section class="py-12 border-y bg-zinc-900 border-zinc-800 overflow-hidden">
-    <p class="mb-8 text-xs font-semibold tracking-widest text-center uppercase text-zinc-500">Được tin dùng bởi các doanh nghiệp hàng đầu Việt Nam</p>
+    <p class="mb-8 text-xs font-semibold tracking-widest text-center uppercase text-zinc-500">Được tin dùng bởi các
+      doanh nghiệp hàng đầu Việt Nam</p>
     <div class="relative">
       <!-- Left fade mask -->
-      <div class="absolute left-0 top-0 h-full w-32 bg-gradient-to-r from-zinc-900 to-transparent pointer-events-none z-10"></div>
+      <div
+        class="absolute left-0 top-0 h-full w-32 bg-gradient-to-r from-zinc-900 to-transparent pointer-events-none z-10">
+      </div>
       <!-- Right fade mask -->
-      <div class="absolute right-0 top-0 h-full w-32 bg-gradient-to-l from-zinc-900 to-transparent pointer-events-none z-10"></div>
+      <div
+        class="absolute right-0 top-0 h-full w-32 bg-gradient-to-l from-zinc-900 to-transparent pointer-events-none z-10">
+      </div>
 
-      <!-- Marquee track: each copy is a flex row with gap-6 + matching pr-6 so seam spacing = gap -->
-      <div class="trusted-marquee">
-        <!-- Copy 1 -->
-        <div class="flex items-center gap-6 pr-6">
-          @for (company of trustedCompanies; track 'a-' + company.name) {
-            <div class="flex items-center gap-3 px-5 py-3 rounded-xl border border-zinc-800 bg-zinc-800/40 hover:border-zinc-600 hover:bg-zinc-800 transition-all duration-200 cursor-default group shrink-0">
-              <div class="flex justify-center items-center w-8 h-8 rounded-lg text-xs font-black text-white shrink-0 shadow-sm" [style.background]="company.color">{{ company.abbr }}</div>
-              <span class="text-sm font-semibold text-zinc-400 group-hover:text-zinc-200 transition-colors whitespace-nowrap">{{ company.name }}</span>
+      <!-- Marquee tracks container -->
+      <div class="flex flex-col gap-6">
+        <!-- Track 1: Normal Direction -->
+        <div class="trusted-marquee">
+          <!-- Copy 1 -->
+          <div class="flex items-center gap-6 pr-6">
+            @for (company of trustedCompanies; track 'a-' + company.name) {
+            <div
+              class="flex items-center gap-3 px-5 py-3 rounded-xl border border-zinc-800 bg-zinc-800/40 hover:border-zinc-600 hover:bg-zinc-800 transition-all duration-200 cursor-default group shrink-0 shadow-sm backdrop-blur-sm">
+              <div
+                class="flex justify-center items-center w-10 h-10 rounded-lg bg-white shrink-0 shadow-[0_0_15px_rgba(255,255,255,0.1)] p-1.5 overflow-hidden">
+                <img [src]="company.logoSrc" [alt]="company.name"
+                  class="w-full h-full object-contain filter grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300">
+              </div>
+              <span
+                class="text-sm font-semibold text-zinc-400 group-hover:text-zinc-100 transition-colors whitespace-nowrap">{{
+                company.name }}</span>
             </div>
-          }
+            }
+          </div>
+          <!-- Copy 2 — identical, for seamless loop -->
+          <div class="flex items-center gap-6 pr-6" aria-hidden="true">
+            @for (company of trustedCompanies; track 'b-' + company.name) {
+            <div
+              class="flex items-center gap-3 px-5 py-3 rounded-xl border border-zinc-800 bg-zinc-800/40 hover:border-zinc-600 hover:bg-zinc-800 transition-all duration-200 cursor-default group shrink-0 shadow-sm backdrop-blur-sm">
+              <div
+                class="flex justify-center items-center w-10 h-10 rounded-lg bg-white shrink-0 shadow-[0_0_15px_rgba(255,255,255,0.1)] p-1.5 overflow-hidden">
+                <img [src]="company.logoSrc" [alt]="company.name"
+                  class="w-full h-full object-contain filter grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300">
+              </div>
+              <span
+                class="text-sm font-semibold text-zinc-400 group-hover:text-zinc-100 transition-colors whitespace-nowrap">{{
+                company.name }}</span>
+            </div>
+            }
+          </div>
         </div>
-        <!-- Copy 2 — identical, for seamless loop -->
-        <div class="flex items-center gap-6 pr-6" aria-hidden="true">
-          @for (company of trustedCompanies; track 'b-' + company.name) {
-            <div class="flex items-center gap-3 px-5 py-3 rounded-xl border border-zinc-800 bg-zinc-800/40 hover:border-zinc-600 hover:bg-zinc-800 transition-all duration-200 cursor-default group shrink-0">
-              <div class="flex justify-center items-center w-8 h-8 rounded-lg text-xs font-black text-white shrink-0 shadow-sm" [style.background]="company.color">{{ company.abbr }}</div>
-              <span class="text-sm font-semibold text-zinc-400 group-hover:text-zinc-200 transition-colors whitespace-nowrap">{{ company.name }}</span>
+
+        <!-- Track 2: Reversed Direction & Different Order -->
+        <div class="trusted-marquee-reverse">
+          <!-- Copy 1 -->
+          <div class="flex items-center gap-6 pr-6">
+            <!-- Iterate in reverse order to offset visual alignment -->
+            @for (company of trustedCompanies.slice().reverse(); track 'r-a-' + company.name) {
+            <div
+              class="flex items-center gap-3 px-5 py-3 rounded-xl border border-zinc-800 bg-zinc-800/40 hover:border-zinc-600 hover:bg-zinc-800 transition-all duration-200 cursor-default group shrink-0 shadow-sm backdrop-blur-sm">
+              <div
+                class="flex justify-center items-center w-10 h-10 rounded-lg bg-white shrink-0 shadow-[0_0_15px_rgba(255,255,255,0.1)] p-1.5 overflow-hidden">
+                <img [src]="company.logoSrc" [alt]="company.name"
+                  class="w-full h-full object-contain filter grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300">
+              </div>
+              <span
+                class="text-sm font-semibold text-zinc-400 group-hover:text-zinc-100 transition-colors whitespace-nowrap">{{
+                company.name }}</span>
             </div>
-          }
+            }
+          </div>
+          <!-- Copy 2 -->
+          <div class="flex items-center gap-6 pr-6" aria-hidden="true">
+            @for (company of trustedCompanies.slice().reverse(); track 'r-b-' + company.name) {
+            <div
+              class="flex items-center gap-3 px-5 py-3 rounded-xl border border-zinc-800 bg-zinc-800/40 hover:border-zinc-600 hover:bg-zinc-800 transition-all duration-200 cursor-default group shrink-0 shadow-sm backdrop-blur-sm">
+              <div
+                class="flex justify-center items-center w-10 h-10 rounded-lg bg-white shrink-0 shadow-[0_0_15px_rgba(255,255,255,0.1)] p-1.5 overflow-hidden">
+                <img [src]="company.logoSrc" [alt]="company.name"
+                  class="w-full h-full object-contain filter grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300">
+              </div>
+              <span
+                class="text-sm font-semibold text-zinc-400 group-hover:text-zinc-100 transition-colors whitespace-nowrap">{{
+                company.name }}</span>
+            </div>
+            }
+          </div>
         </div>
       </div>
     </div>
@@ -213,7 +287,9 @@
   <section class="py-20 bg-white dark:bg-zinc-900">
     <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 reveal-on-scroll reveal-up" #revealElement>
       <div class="mb-14 text-center">
-        <span class="inline-block mb-3 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-violet-600 bg-violet-50 dark:bg-violet-900/20 rounded-full">Vấn đề</span>
+        <span
+          class="inline-block mb-3 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-violet-600 bg-violet-50 dark:bg-violet-900/20 rounded-full">Vấn
+          đề</span>
         <h2 class="mb-4 text-3xl font-bold font-display text-zinc-900 dark:text-white">
           Quản lý nhân sự đang bào mòn doanh nghiệp của bạn?
         </h2>
@@ -227,25 +303,31 @@
             <i class="text-xl text-red-500 pi pi-file-excel"></i>
           </div>
           <h3 class="mb-2 font-bold text-zinc-900 dark:text-white">Chấm công phân mảnh</h3>
-          <p class="text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">Dữ liệu từ máy vân tay không đồng bộ. Kế toán mất 3 ngày mỗi tháng chỉ để đối soát giờ làm.</p>
+          <p class="text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">Dữ liệu từ máy vân tay không đồng bộ. Kế
+            toán mất 3 ngày mỗi tháng chỉ để đối soát giờ làm.</p>
         </div>
-        <div class="p-7 bg-orange-50 rounded-2xl border border-orange-100 dark:bg-orange-900/10 dark:border-orange-900/30">
+        <div
+          class="p-7 bg-orange-50 rounded-2xl border border-orange-100 dark:bg-orange-900/10 dark:border-orange-900/30">
           <div class="flex justify-center items-center w-12 h-12 mb-4 bg-orange-100 dark:bg-orange-900/30 rounded-xl">
             <i class="text-xl text-orange-500 pi pi-envelope"></i>
           </div>
           <h3 class="mb-2 font-bold text-zinc-900 dark:text-white">Duyệt phép thủ công chậm chạp</h3>
-          <p class="text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">Nhân viên gửi email, sếp quên duyệt, quỹ phép năm bị tính sai dẫn đến khiếu nại liên tục.</p>
+          <p class="text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">Nhân viên gửi email, sếp quên duyệt, quỹ
+            phép năm bị tính sai dẫn đến khiếu nại liên tục.</p>
         </div>
-        <div class="p-7 bg-violet-50 rounded-2xl border border-violet-100 dark:bg-violet-900/10 dark:border-violet-900/30">
+        <div
+          class="p-7 bg-violet-50 rounded-2xl border border-violet-100 dark:bg-violet-900/10 dark:border-violet-900/30">
           <div class="flex justify-center items-center w-12 h-12 mb-4 bg-violet-100 dark:bg-violet-900/30 rounded-xl">
             <i class="text-xl text-violet-600 pi pi-database"></i>
           </div>
           <h3 class="mb-2 font-bold text-zinc-900 dark:text-white">Dữ liệu phân tán nhiều nơi</h3>
-          <p class="text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">Hồ sơ ứng viên ở Word, hợp đồng trong tủ tài liệu. Khó xây dựng một sơ đồ tổ chức đồng nhất.</p>
+          <p class="text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">Hồ sơ ứng viên ở Word, hợp đồng trong tủ
+            tài liệu. Khó xây dựng một sơ đồ tổ chức đồng nhất.</p>
         </div>
       </div>
       <div class="mt-10 text-center">
-        <div class="inline-flex gap-2 items-center px-6 py-3 font-semibold text-violet-700 dark:text-violet-300 bg-violet-50 dark:bg-violet-900/20 rounded-full border border-violet-200 dark:border-violet-800">
+        <div
+          class="inline-flex gap-2 items-center px-6 py-3 font-semibold text-violet-700 dark:text-violet-300 bg-violet-50 dark:bg-violet-900/20 rounded-full border border-violet-200 dark:border-violet-800">
           <i class="pi pi-check-circle text-violet-600"></i>
           ZenithHR giải quyết tất cả chỉ trên 1 nền tảng duy nhất.
         </div>
@@ -257,7 +339,9 @@
   <section class="py-20 lg:py-28 bg-background-light dark:bg-background-dark">
     <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 reveal-on-scroll reveal-up delay-100" #revealElement>
       <div class="mb-16 text-center">
-        <span class="inline-block mb-3 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-violet-600 bg-violet-50 dark:bg-violet-900/20 rounded-full">Tính năng</span>
+        <span
+          class="inline-block mb-3 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-violet-600 bg-violet-50 dark:bg-violet-900/20 rounded-full">Tính
+          năng</span>
         <h2 class="mb-4 text-4xl font-extrabold font-display md:text-5xl text-zinc-900 dark:text-white">
           Giải pháp <span class="text-violet-600">Toàn diện</span>
         </h2>
@@ -269,80 +353,69 @@
       <div class="grid gap-10 items-start lg:grid-cols-12">
         <div class="space-y-3 lg:col-span-4">
           @for (feature of features; track feature.id) {
-            <div
-              (click)="setActiveFeature(feature.id)"
-              [ngClass]="
+          <div (click)="setActiveFeature(feature.id)" [ngClass]="
                 activeFeatureId() === feature.id
                   ? 'bg-white dark:bg-zinc-800 border-violet-500 shadow-lg shadow-violet-500/10 scale-[1.02]'
                   : 'bg-transparent border-transparent hover:bg-zinc-50 dark:hover:bg-zinc-800/50 opacity-60 hover:opacity-100'
-              "
-              class="p-5 rounded-2xl border-2 transition-all duration-300 cursor-pointer"
-            >
-              <div class="flex gap-4 items-start">
-                <div
-                  [ngClass]="
+              " class="p-5 rounded-2xl border-2 transition-all duration-300 cursor-pointer">
+            <div class="flex gap-4 items-start">
+              <div [ngClass]="
                     activeFeatureId() === feature.id
                       ? 'bg-violet-100 dark:bg-violet-900/30 text-violet-600'
                       : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400'
-                  "
-                  class="flex flex-shrink-0 justify-center items-center w-12 h-12 rounded-xl transition-colors"
-                >
-                  <i class="pi {{ feature.icon }} text-xl"></i>
-                </div>
-                <div>
-                  <h3
-                    [ngClass]="
+                  " class="flex flex-shrink-0 justify-center items-center w-12 h-12 rounded-xl transition-colors">
+                <i class="pi {{ feature.icon }} text-xl"></i>
+              </div>
+              <div>
+                <h3 [ngClass]="
                       activeFeatureId() === feature.id
                         ? 'text-violet-700 dark:text-white font-bold'
                         : 'text-zinc-700 dark:text-zinc-300 font-semibold'
-                    "
-                    class="mb-1.5 text-base transition-colors"
-                  >
-                    {{ feature.title }}
-                  </h3>
-                  <p
-                    [ngClass]="
+                    " class="mb-1.5 text-base transition-colors">
+                  {{ feature.title }}
+                </h3>
+                <p [ngClass]="
                       activeFeatureId() === feature.id
                         ? 'text-zinc-500 dark:text-zinc-400 max-h-24 opacity-100'
                         : 'max-h-0 opacity-0 overflow-hidden'
-                    "
-                    class="text-sm leading-relaxed transition-all duration-500 ease-in-out"
-                  >
-                    {{ feature.description }}
-                  </p>
-                </div>
+                    " class="text-sm leading-relaxed transition-all duration-500 ease-in-out">
+                  {{ feature.description }}
+                </p>
               </div>
             </div>
+          </div>
           }
         </div>
 
         <div class="relative lg:col-span-8">
-          <div class="absolute inset-0 bg-gradient-to-tr from-violet-600/8 to-transparent rounded-[2.5rem] rotate-1 scale-[1.02] -z-10"></div>
-          <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200/50 dark:border-zinc-800 overflow-hidden relative h-[300px] sm:h-[380px] md:h-[480px] flex flex-col hover:-translate-y-1 transition-transform duration-500">
-            <div class="flex items-center px-4 h-10 border-b bg-zinc-100 dark:bg-zinc-800/60 border-zinc-200 dark:border-zinc-800 shrink-0">
+          <div
+            class="absolute inset-0 bg-gradient-to-tr from-violet-600/8 to-transparent rounded-[2.5rem] rotate-1 scale-[1.02] -z-10">
+          </div>
+          <div
+            class="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200/50 dark:border-zinc-800 overflow-hidden relative h-[300px] sm:h-[380px] md:h-[480px] flex flex-col hover:-translate-y-1 transition-transform duration-500">
+            <div
+              class="flex items-center px-4 h-10 border-b bg-zinc-100 dark:bg-zinc-800/60 border-zinc-200 dark:border-zinc-800 shrink-0">
               <div class="flex gap-1.5">
                 <div class="w-3 h-3 bg-red-400 rounded-full"></div>
                 <div class="w-3 h-3 bg-yellow-400 rounded-full"></div>
                 <div class="w-3 h-3 bg-green-400 rounded-full"></div>
               </div>
-              <div class="flex gap-2 justify-center items-center px-3 py-1 mx-auto w-1/2 bg-white dark:bg-zinc-900 rounded-md border shadow-sm border-zinc-200 dark:border-zinc-700">
+              <div
+                class="flex gap-2 justify-center items-center px-3 py-1 mx-auto w-1/2 bg-white dark:bg-zinc-900 rounded-md border shadow-sm border-zinc-200 dark:border-zinc-700">
                 <i class="pi pi-lock text-[10px] text-green-600 dark:text-green-400"></i>
-                <span class="text-[11px] text-zinc-500 dark:text-zinc-400 font-mono tracking-wide">app.zenithhr.com/dashboard</span>
+                <span
+                  class="text-[11px] text-zinc-500 dark:text-zinc-400 font-mono tracking-wide">app.zenithhr.com/dashboard</span>
               </div>
             </div>
             <div class="relative flex-1 bg-zinc-50 dark:bg-zinc-900/40">
               @for (feature of features; track feature.id) {
-                <img
-                  [src]="loadedFeatureIds().has(feature.id) ? feature.imageUrl : ''"
-                  [alt]="feature.title"
-                  decoding="async"
-                  [ngClass]="
+              <img [src]="loadedFeatureIds().has(feature.id) ? feature.imageUrl : ''" [alt]="feature.title"
+                decoding="async" [ngClass]="
                     activeFeatureId() === feature.id
                       ? 'opacity-100 translate-y-0 z-10 scale-100'
                       : 'opacity-0 translate-y-4 z-0 scale-[0.98]'
                   "
-                  class="absolute inset-0 w-full h-full object-cover rounded-xl transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]"
-                />
+                class="absolute inset-0 w-full h-full object-cover rounded-xl transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]" />
               }
             </div>
           </div>
@@ -354,13 +427,19 @@
   <!-- Module Showcase (unified) -->
   <section class="relative py-16 lg:py-20 bg-zinc-950 overflow-hidden reveal-on-scroll reveal-up" #revealElement>
     <!-- Subtle corner glows only, not center -->
-    <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-violet-800/10 rounded-full blur-[120px] pointer-events-none"></div>
-    <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-violet-900/10 rounded-full blur-[100px] pointer-events-none"></div>
+    <div
+      class="absolute top-0 right-0 w-[500px] h-[500px] bg-violet-800/10 rounded-full blur-[120px] pointer-events-none">
+    </div>
+    <div
+      class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-violet-900/10 rounded-full blur-[100px] pointer-events-none">
+    </div>
 
     <div class="relative z-10 px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
       <!-- Section header -->
       <div class="mb-12 text-center">
-        <span class="inline-block mb-3 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-violet-400 bg-violet-900/30 border border-violet-800/50 rounded-full">Khám phá tính năng</span>
+        <span
+          class="inline-block mb-3 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-violet-400 bg-violet-900/30 border border-violet-800/50 rounded-full">Khám
+          phá tính năng</span>
         <h2 class="text-3xl font-extrabold text-white font-display md:text-4xl">
           Mọi thứ bạn cần, <span class="text-violet-400">trong một nền tảng</span>
         </h2>
@@ -369,42 +448,44 @@
       <!-- Pill Tab Navigation (Infinite Marquee) -->
       <div class="mb-10 relative overflow-hidden py-1">
         <!-- Left edge fade -->
-        <div class="absolute left-0 top-0 h-full w-24 bg-gradient-to-r from-zinc-950 to-transparent pointer-events-none z-10"></div>
+        <div
+          class="absolute left-0 top-0 h-full w-24 bg-gradient-to-r from-zinc-950 to-transparent pointer-events-none z-10">
+        </div>
         <!-- Right edge fade -->
-        <div class="absolute right-0 top-0 h-full w-24 bg-gradient-to-l from-zinc-950 to-transparent pointer-events-none z-10"></div>
+        <div
+          class="absolute right-0 top-0 h-full w-24 bg-gradient-to-l from-zinc-950 to-transparent pointer-events-none z-10">
+        </div>
 
         <!-- Marquee track: each copy is a flex row with gap-3 + matching pr-3 so seam spacing = gap -->
         <div class="module-marquee">
           <!-- Copy 1 -->
           <div class="flex items-center gap-3 pr-3">
             @for (module of moduleFeatures; track 'a-' + module.id; let i = $index) {
-              <button
-                type="button"
-                class="module-item flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-200"
-                [ngClass]="i === activeModuleIndex()
+            <button type="button"
+              class="module-item flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-200"
+              [ngClass]="i === activeModuleIndex()
                   ? 'bg-violet-600 text-white shadow-lg shadow-violet-600/30'
                   : 'bg-zinc-800/80 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200 border border-zinc-700'"
-                (click)="setActiveModule(i)"
-              >
-                <i class="pi {{ module.icon }} text-xs" [ngClass]="i === activeModuleIndex() ? 'text-violet-200' : 'text-zinc-500'"></i>
-                {{ module.name }}
-              </button>
+              (click)="setActiveModule(i)">
+              <i class="pi {{ module.icon }} text-xs"
+                [ngClass]="i === activeModuleIndex() ? 'text-violet-200' : 'text-zinc-500'"></i>
+              {{ module.name }}
+            </button>
             }
           </div>
           <!-- Copy 2 — identical, for seamless loop -->
           <div class="flex items-center gap-3 pr-3" aria-hidden="true">
             @for (module of moduleFeatures; track 'b-' + module.id; let i = $index) {
-              <button
-                type="button"
-                class="module-item flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-200"
-                [ngClass]="i === activeModuleIndex()
+            <button type="button"
+              class="module-item flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-200"
+              [ngClass]="i === activeModuleIndex()
                   ? 'bg-violet-600 text-white shadow-lg shadow-violet-600/30'
                   : 'bg-zinc-800/80 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200 border border-zinc-700'"
-                (click)="setActiveModule(i)"
-              >
-                <i class="pi {{ module.icon }} text-xs" [ngClass]="i === activeModuleIndex() ? 'text-violet-200' : 'text-zinc-500'"></i>
-                {{ module.name }}
-              </button>
+              (click)="setActiveModule(i)">
+              <i class="pi {{ module.icon }} text-xs"
+                [ngClass]="i === activeModuleIndex() ? 'text-violet-200' : 'text-zinc-500'"></i>
+              {{ module.name }}
+            </button>
             }
           </div>
         </div>
@@ -415,95 +496,89 @@
         <!-- Left: Info (2 cols) -->
         <div class="relative lg:col-span-2 flex flex-col min-h-[420px] sm:min-h-[380px] lg:min-h-0">
           @for (module of moduleFeatures; track module.id; let i = $index) {
-            <div
-              class="flex flex-col flex-1 transition-all duration-500 ease-in-out"
-              [ngClass]="{
+          <div class="flex flex-col flex-1 transition-all duration-500 ease-in-out" [ngClass]="{
                 'opacity-100 translate-y-0 relative': i === activeModuleIndex(),
                 'opacity-0 translate-y-6 absolute inset-0 pointer-events-none': i !== activeModuleIndex()
-              }"
-            >
-              <!-- Module index label -->
-              <div class="flex items-center gap-3 mb-5">
-                <span class="text-xs font-bold tracking-widest uppercase text-zinc-600">
-                  Tính năng {{ (activeModuleIndex() + 1).toString().padStart(2, '0') }} / {{ moduleFeatures.length.toString().padStart(2, '0') }}
-                </span>
-                <div class="flex-1 h-px bg-zinc-800"></div>
+              }">
+            <!-- Module index label -->
+            <div class="flex items-center gap-3 mb-5">
+              <span class="text-xs font-bold tracking-widest uppercase text-zinc-600">
+                Tính năng {{ (activeModuleIndex() + 1).toString().padStart(2, '0') }} / {{
+                moduleFeatures.length.toString().padStart(2, '0') }}
+              </span>
+              <div class="flex-1 h-px bg-zinc-800"></div>
+            </div>
+
+            <!-- Icon + Title -->
+            <div class="flex items-start gap-4 mb-5">
+              <div
+                class="flex justify-center items-center w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-600/30 to-violet-900/20 border border-violet-500/20 shrink-0">
+                <i class="pi {{ module.icon }} text-2xl text-violet-400"></i>
               </div>
-
-              <!-- Icon + Title -->
-              <div class="flex items-start gap-4 mb-5">
-                <div class="flex justify-center items-center w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-600/30 to-violet-900/20 border border-violet-500/20 shrink-0">
-                  <i class="pi {{ module.icon }} text-2xl text-violet-400"></i>
-                </div>
-                <div>
-                  <h3 class="text-2xl font-extrabold text-white font-display leading-tight">{{ module.title }}</h3>
-                  <span class="text-xs font-semibold text-violet-400/70 tracking-wide">ZenithHR · {{ module.name }}</span>
-                </div>
-              </div>
-
-              <!-- Description -->
-              <p class="mb-6 text-sm leading-relaxed text-zinc-400 border-l-2 border-violet-700/40 pl-4">{{ module.description }}</p>
-
-              <!-- Bullet features -->
-              <ul class="space-y-2.5 mb-8 flex-1">
-                @for (b of module.bullets; track b; let bi = $index) {
-                  <li class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-zinc-900/60 border border-zinc-800/80">
-                    <span class="flex justify-center items-center w-5 h-5 rounded-full bg-violet-600/20 border border-violet-500/30 shrink-0">
-                      <i class="pi pi-check text-[10px] text-violet-400"></i>
-                    </span>
-                    <span class="text-sm font-medium text-zinc-300">{{ b }}</span>
-                  </li>
-                }
-              </ul>
-
-              <!-- Bottom: progress dots + nav + CTA -->
-              <div class="space-y-4">
-                <!-- Progress bar -->
-                <div class="w-full h-0.5 bg-zinc-800 rounded-full overflow-hidden">
-                  <div
-                    class="h-full bg-gradient-to-r from-violet-600 to-violet-400 rounded-full transition-all duration-500"
-                    [style.width.%]="((activeModuleIndex() + 1) / moduleFeatures.length) * 100"
-                  ></div>
-                </div>
-                <!-- Nav + CTA row -->
-                <div class="flex items-center gap-3">
-                  <button
-                    type="button"
-                    (click)="scrollModules('left')"
-                    class="w-9 h-9 rounded-full bg-zinc-800 border border-zinc-700 text-zinc-400 flex items-center justify-center hover:bg-zinc-700 hover:text-white hover:border-zinc-500 active:scale-95 transition-all shrink-0"
-                    aria-label="Module trước"
-                  >
-                    <i class="pi pi-chevron-left text-xs"></i>
-                  </button>
-                  <button
-                    type="button"
-                    (click)="scrollModules('right')"
-                    class="w-9 h-9 rounded-full bg-zinc-800 border border-zinc-700 text-zinc-400 flex items-center justify-center hover:bg-zinc-700 hover:text-white hover:border-zinc-500 active:scale-95 transition-all shrink-0"
-                    aria-label="Module tiếp theo"
-                  >
-                    <i class="pi pi-chevron-right text-xs"></i>
-                  </button>
-                  <a
-                    routerLink="/auth/register"
-                    class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-full bg-violet-600 hover:bg-violet-500 text-white text-sm font-semibold transition-all duration-200 hover:shadow-lg hover:shadow-violet-600/25 active:scale-95 group"
-                  >
-                    Dùng thử miễn phí
-                    <i class="pi pi-arrow-right text-xs transition-transform group-hover:translate-x-0.5"></i>
-                  </a>
-                </div>
+              <div>
+                <h3 class="text-2xl font-extrabold text-white font-display leading-tight">{{ module.title }}</h3>
+                <span class="text-xs font-semibold text-violet-400/70 tracking-wide">ZenithHR · {{ module.name }}</span>
               </div>
             </div>
+
+            <!-- Description -->
+            <p class="mb-6 text-sm leading-relaxed text-zinc-400 border-l-2 border-violet-700/40 pl-4">{{
+              module.description }}</p>
+
+            <!-- Bullet features -->
+            <ul class="space-y-2.5 mb-8 flex-1">
+              @for (b of module.bullets; track b; let bi = $index) {
+              <li class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-zinc-900/60 border border-zinc-800/80">
+                <span
+                  class="flex justify-center items-center w-5 h-5 rounded-full bg-violet-600/20 border border-violet-500/30 shrink-0">
+                  <i class="pi pi-check text-[10px] text-violet-400"></i>
+                </span>
+                <span class="text-sm font-medium text-zinc-300">{{ b }}</span>
+              </li>
+              }
+            </ul>
+
+            <!-- Bottom: progress dots + nav + CTA -->
+            <div class="space-y-4">
+              <!-- Progress bar -->
+              <div class="w-full h-0.5 bg-zinc-800 rounded-full overflow-hidden">
+                <div
+                  class="h-full bg-gradient-to-r from-violet-600 to-violet-400 rounded-full transition-all duration-500"
+                  [style.width.%]="((activeModuleIndex() + 1) / moduleFeatures.length) * 100"></div>
+              </div>
+              <!-- Nav + CTA row -->
+              <div class="flex items-center gap-3">
+                <button type="button" (click)="scrollModules('left')"
+                  class="w-9 h-9 rounded-full bg-zinc-800 border border-zinc-700 text-zinc-400 flex items-center justify-center hover:bg-zinc-700 hover:text-white hover:border-zinc-500 active:scale-95 transition-all shrink-0"
+                  aria-label="Module trước">
+                  <i class="pi pi-chevron-left text-xs"></i>
+                </button>
+                <button type="button" (click)="scrollModules('right')"
+                  class="w-9 h-9 rounded-full bg-zinc-800 border border-zinc-700 text-zinc-400 flex items-center justify-center hover:bg-zinc-700 hover:text-white hover:border-zinc-500 active:scale-95 transition-all shrink-0"
+                  aria-label="Module tiếp theo">
+                  <i class="pi pi-chevron-right text-xs"></i>
+                </button>
+                <a routerLink="/auth/register"
+                  class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-full bg-violet-600 hover:bg-violet-500 text-white text-sm font-semibold transition-all duration-200 hover:shadow-lg hover:shadow-violet-600/25 active:scale-95 group">
+                  Dùng thử miễn phí
+                  <i class="pi pi-arrow-right text-xs transition-transform group-hover:translate-x-0.5"></i>
+                </a>
+              </div>
+            </div>
+          </div>
           }
         </div>
 
         <!-- Right: App Mockup (3 cols) -->
         <div class="relative lg:col-span-3">
           <!-- Decorative large module number background -->
-          <div class="hidden lg:block absolute -top-4 -right-4 text-[120px] font-black text-zinc-800/30 font-display leading-none select-none pointer-events-none z-0 tabular-nums">
+          <div
+            class="hidden lg:block absolute -top-4 -right-4 text-[120px] font-black text-zinc-800/30 font-display leading-none select-none pointer-events-none z-0 tabular-nums">
             {{ (activeModuleIndex() + 1).toString().padStart(2, '0') }}
           </div>
           <!-- macOS window frame -->
-          <div class="relative z-10 rounded-2xl overflow-hidden border border-zinc-700/60 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.8)] bg-zinc-900">
+          <div
+            class="relative z-10 rounded-2xl overflow-hidden border border-zinc-700/60 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.8)] bg-zinc-900">
             <!-- Titlebar -->
             <div class="flex items-center gap-2 px-4 h-9 bg-zinc-800/80 border-b border-zinc-700/50 shrink-0">
 
@@ -522,20 +597,17 @@
             <!-- Image viewport (16:10 ratio) -->
             <div class="relative aspect-[16/10] bg-zinc-800">
               @for (module of moduleFeatures; track module.id; let i = $index) {
-                <img
-                  [src]="loadedModuleIndices().has(i) ? module.imageUrl : ''"
-                  [alt]="module.title"
-                  decoding="async"
-                  loading="lazy"
-                  class="absolute inset-0 w-full h-full object-cover transition-all duration-600 ease-in-out"
-                  [ngClass]="{
+              <img [src]="loadedModuleIndices().has(i) ? module.imageUrl : ''" [alt]="module.title" decoding="async"
+                loading="lazy"
+                class="absolute inset-0 w-full h-full object-cover transition-all duration-600 ease-in-out" [ngClass]="{
                     'opacity-100 z-10': i === activeModuleIndex(),
                     'opacity-0 z-0 pointer-events-none': i !== activeModuleIndex()
-                  }"
-                />
+                  }" />
               }
               <!-- Overlay shimmer at bottom for depth -->
-              <div class="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-zinc-900/60 to-transparent pointer-events-none z-20"></div>
+              <div
+                class="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-zinc-900/60 to-transparent pointer-events-none z-20">
+              </div>
             </div>
           </div>
           <!-- Reflection / glow under frame -->
@@ -550,56 +622,62 @@
     <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
       <div class="flex flex-col gap-16 items-center lg:flex-row">
         <div class="lg:w-1/2 reveal-on-scroll reveal-left" #revealElement>
-          <span class="inline-block mb-3 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-violet-600 bg-violet-50 dark:bg-violet-900/20 rounded-full">Mobile App</span>
+          <span
+            class="inline-block mb-3 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-violet-600 bg-violet-50 dark:bg-violet-900/20 rounded-full">Mobile
+            App</span>
           <h2 class="mt-3 mb-6 text-4xl font-extrabold text-zinc-900 dark:text-white">
             Gói gọn cả phòng Nhân sự<br /><span class="text-violet-600">trong túi áo bạn</span>
           </h2>
           <p class="mb-8 text-lg text-zinc-500 dark:text-zinc-400">
-            Không còn rào cản về không gian và thời gian. ZenithHR App giúp nhân viên chủ động trong mọi tác vụ, từ chấm công đến nhận lương.
+            Không còn rào cản về không gian và thời gian. ZenithHR App giúp nhân viên chủ động trong mọi tác vụ, từ chấm
+            công đến nhận lương.
           </p>
           <ul class="space-y-6">
             <li class="flex gap-4 items-start">
-              <div class="flex justify-center items-center w-12 h-12 bg-green-100 rounded-xl dark:bg-green-900/30 shrink-0">
+              <div
+                class="flex justify-center items-center w-12 h-12 bg-green-100 rounded-xl dark:bg-green-900/30 shrink-0">
                 <i class="text-green-600 pi pi-qrcode"></i>
               </div>
               <div>
                 <h4 class="font-bold text-zinc-900 dark:text-white">Chấm công QR &amp; GPS</h4>
-                <p class="text-sm text-zinc-500 dark:text-zinc-400">Check-in nhanh chóng tại văn phòng qua mã QR hoặc từ xa qua định vị GPS bảo mật.</p>
+                <p class="text-sm text-zinc-500 dark:text-zinc-400">Check-in nhanh chóng tại văn phòng qua mã QR hoặc từ
+                  xa qua định vị GPS bảo mật.</p>
               </div>
             </li>
             <li class="flex gap-4 items-start">
-              <div class="flex justify-center items-center w-12 h-12 bg-violet-100 rounded-xl dark:bg-violet-900/30 shrink-0">
+              <div
+                class="flex justify-center items-center w-12 h-12 bg-violet-100 rounded-xl dark:bg-violet-900/30 shrink-0">
                 <i class="text-violet-600 pi pi-file-pdf"></i>
               </div>
               <div>
                 <h4 class="font-bold text-zinc-900 dark:text-white">Tra cứu Bảng lương</h4>
-                <p class="text-sm text-zinc-500 dark:text-zinc-400">Xem và tải phiếu lương (Payslip) hàng tháng ngay khi có thông báo, bảo mật bằng lớp khóa thứ 2.</p>
+                <p class="text-sm text-zinc-500 dark:text-zinc-400">Xem và tải phiếu lương (Payslip) hàng tháng ngay khi
+                  có thông báo, bảo mật bằng lớp khóa thứ 2.</p>
               </div>
             </li>
             <li class="flex gap-4 items-start">
-              <div class="flex justify-center items-center w-12 h-12 bg-orange-100 rounded-xl dark:bg-orange-900/30 shrink-0">
+              <div
+                class="flex justify-center items-center w-12 h-12 bg-orange-100 rounded-xl dark:bg-orange-900/30 shrink-0">
                 <i class="text-orange-600 pi pi-send"></i>
               </div>
               <div>
                 <h4 class="font-bold text-zinc-900 dark:text-white">Duyệt phép thần tốc</h4>
-                <p class="text-sm text-zinc-500 dark:text-zinc-400">Tạo yêu cầu và nhận kết quả phê duyệt trong chưa đầy 1 phút. Quản lý quỹ phép minh bạch.</p>
+                <p class="text-sm text-zinc-500 dark:text-zinc-400">Tạo yêu cầu và nhận kết quả phê duyệt trong chưa đầy
+                  1 phút. Quản lý quỹ phép minh bạch.</p>
               </div>
             </li>
           </ul>
         </div>
         <div class="flex relative justify-center lg:w-1/2 reveal-on-scroll reveal-right" #revealElement>
           <div class="absolute inset-0 rounded-full blur-3xl scale-150 bg-violet-500/8 -z-10"></div>
-          <div class="relative w-[280px] h-[560px] bg-zinc-900 rounded-[3rem] border-8 border-zinc-800 shadow-2xl overflow-hidden">
+          <div
+            class="relative w-[280px] h-[560px] bg-zinc-900 rounded-[3rem] border-8 border-zinc-800 shadow-2xl overflow-hidden">
             <div class="absolute top-0 left-1/2 z-20 w-1/3 h-6 rounded-b-xl -translate-x-1/2 bg-zinc-800"></div>
-            <img
-              src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&q=80&w=400"
-              alt="ZenithHR Mobile App"
-              class="object-cover w-full h-full"
-              loading="lazy"
-              decoding="async"
-            />
+            <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&q=80&w=400"
+              alt="ZenithHR Mobile App" class="object-cover w-full h-full" loading="lazy" decoding="async" />
           </div>
-          <div class="absolute -bottom-4 -left-4 p-5 bg-white dark:bg-zinc-800 rounded-2xl border border-zinc-200 dark:border-zinc-700 shadow-xl animate-[bounce_3s_ease-in-out_infinite]">
+          <div
+            class="absolute -bottom-4 -left-4 p-5 bg-white dark:bg-zinc-800 rounded-2xl border border-zinc-200 dark:border-zinc-700 shadow-xl animate-[bounce_3s_ease-in-out_infinite]">
             <div class="flex gap-3 items-center">
               <div class="flex justify-center items-center w-10 h-10 text-white bg-green-500 rounded-full shrink-0">
                 <i class="text-lg pi pi-check"></i>
@@ -619,34 +697,42 @@
   <section class="py-12 border-t bg-zinc-50 dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800">
     <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 delay-150 reveal-on-scroll reveal-zoom" #revealElement>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:auto-rows-[260px]">
-        <div class="flex overflow-hidden relative flex-col justify-center p-8 rounded-3xl shadow-xl md:col-span-2 bg-violet-700 group">
+        <div
+          class="flex overflow-hidden relative flex-col justify-center p-8 rounded-3xl shadow-xl md:col-span-2 bg-violet-700 group">
           <div class="absolute right-0 bottom-0 w-64 h-64 rounded-tl-full pointer-events-none bg-white/10"></div>
           <h3 class="relative z-10 mb-3 text-3xl font-bold text-white font-display">Tự động hoá Onboarding</h3>
           <p class="relative z-10 max-w-sm text-lg text-violet-100">Mạch luồng ký kết hợp đồng 100% không giấy tờ.</p>
-          <div class="absolute right-[-20px] bottom-[-20px] opacity-30 group-hover:opacity-60 group-hover:rotate-12 transition-all duration-500">
+          <div
+            class="absolute right-[-20px] bottom-[-20px] opacity-30 group-hover:opacity-60 group-hover:rotate-12 transition-all duration-500">
             <i class="pi pi-file-edit text-[150px] text-white/30"></i>
           </div>
         </div>
-        <div class="flex overflow-hidden flex-col justify-center items-center p-8 text-center text-white rounded-3xl shadow-xl bg-violet-600 transition-transform duration-300 group hover:-translate-y-2">
+        <div
+          class="flex overflow-hidden flex-col justify-center items-center p-8 text-center text-white rounded-3xl shadow-xl bg-violet-600 transition-transform duration-300 group hover:-translate-y-2">
           <div class="flex items-baseline mb-2 text-5xl font-black">80 <span class="text-2xl ml-0.5">%</span></div>
           <p class="font-medium text-violet-100">Tiết kiệm thời gian xử lý thủ công</p>
         </div>
         <div class="overflow-hidden relative p-8 rounded-3xl border shadow-xl bg-zinc-900 border-zinc-800 group">
           <h3 class="mb-2 text-xl font-bold text-white">Dark Mode Sẵn Sàng</h3>
           <p class="text-sm text-zinc-400">Giao diện bảo vệ mắt 24/7.</p>
-          <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-gradient-to-tr from-violet-600 to-violet-400 rounded-full opacity-15 blur-2xl transition-opacity group-hover:opacity-35"></div>
+          <div
+            class="absolute -right-10 -bottom-10 w-40 h-40 bg-gradient-to-tr from-violet-600 to-violet-400 rounded-full opacity-15 blur-2xl transition-opacity group-hover:opacity-35">
+          </div>
           <i class="absolute right-6 bottom-6 text-6xl pi pi-moon text-zinc-700"></i>
         </div>
-        <div class="flex overflow-hidden justify-between items-center p-8 bg-white dark:bg-zinc-800 rounded-3xl border shadow-lg md:col-span-2 border-zinc-100 dark:border-zinc-700 group">
+        <div
+          class="flex overflow-hidden justify-between items-center p-8 bg-white dark:bg-zinc-800 rounded-3xl border shadow-lg md:col-span-2 border-zinc-100 dark:border-zinc-700 group">
           <div>
             <div class="flex justify-center items-center w-12 h-12 mb-4 bg-green-100 dark:bg-green-900/30 rounded-xl">
               <i class="text-xl text-green-600 pi pi-shield"></i>
             </div>
             <h3 class="mb-2 text-xl font-bold text-zinc-800 dark:text-white">Bảo mật cấp doanh nghiệp</h3>
-            <p class="max-w-sm text-zinc-500 dark:text-zinc-400">Dữ liệu được mã hoá AES-256. Hạ tầng đám mây tin cậy với SLA 99.9%.</p>
+            <p class="max-w-sm text-zinc-500 dark:text-zinc-400">Dữ liệu được mã hoá AES-256. Hạ tầng đám mây tin cậy
+              với SLA 99.9%.</p>
           </div>
           <div class="hidden sm:block shrink-0">
-            <div class="flex flex-col justify-center items-center w-28 h-28 rounded-full border-8 border-green-50 dark:border-green-900/20 transition-transform duration-500 group-hover:scale-110">
+            <div
+              class="flex flex-col justify-center items-center w-28 h-28 rounded-full border-8 border-green-50 dark:border-green-900/20 transition-transform duration-500 group-hover:scale-110">
               <i class="text-4xl text-green-500 pi pi-check"></i>
             </div>
           </div>
@@ -657,8 +743,11 @@
 
   <!-- ROI Stats Strip -->
   <section #roiSection class="overflow-hidden relative py-16 text-white bg-violet-700">
-    <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 32px 32px;"></div>
-    <div class="relative z-10 px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 delay-100 reveal-on-scroll reveal-up" #revealElement>
+    <div class="absolute inset-0 opacity-10"
+      style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 32px 32px;">
+    </div>
+    <div class="relative z-10 px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 delay-100 reveal-on-scroll reveal-up"
+      #revealElement>
       <div class="mb-12 text-center">
         <h2 class="mb-3 text-3xl font-bold font-display md:text-4xl">Khoản đầu tư sinh lời ngay từ tháng đầu tiên</h2>
         <p class="text-violet-200">Cam kết bằng số liệu từ hơn 500 khách hàng đã triển khai ZenithHR.</p>
@@ -670,11 +759,13 @@
         </div>
         <div class="px-4 text-center">
           <div class="mb-2 text-5xl font-black">{{ countedStats().recruiting }}</div>
-          <p class="text-sm font-medium text-violet-100">Thời gian tuyển dụng ứng viên nhờ hệ thống Pipeline thông minh</p>
+          <p class="text-sm font-medium text-violet-100">Thời gian tuyển dụng ứng viên nhờ hệ thống Pipeline thông minh
+          </p>
         </div>
         <div class="px-4 text-center">
           <div class="mb-2 text-5xl font-black">{{ countedStats().speed }}</div>
-          <p class="text-sm font-medium text-violet-100">Tăng tốc độ Onboarding nhân sự mới với hồ sơ số hóa tập trung</p>
+          <p class="text-sm font-medium text-violet-100">Tăng tốc độ Onboarding nhân sự mới với hồ sơ số hóa tập trung
+          </p>
         </div>
         <div class="px-4 text-center">
           <div class="mb-2 text-5xl font-black">24/7</div>
@@ -688,28 +779,31 @@
   <section class="py-20 bg-white dark:bg-zinc-900">
     <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 reveal-on-scroll reveal-up" #revealElement>
       <div class="mb-14 text-center">
-        <span class="inline-block mb-3 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-violet-600 bg-violet-50 dark:bg-violet-900/20 rounded-full">Khách hàng</span>
+        <span
+          class="inline-block mb-3 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-violet-600 bg-violet-50 dark:bg-violet-900/20 rounded-full">Khách
+          hàng</span>
         <h2 class="mb-4 text-3xl font-bold font-display text-zinc-900 dark:text-white">
           Doanh nghiệp nói gì về <span class="text-violet-600">ZenithHR</span>?
         </h2>
       </div>
       <div class="grid gap-6 md:grid-cols-3">
         @for (t of testimonials; track t.name) {
-          <div class="flex flex-col p-7 bg-zinc-50 dark:bg-zinc-800 rounded-2xl border border-zinc-200 dark:border-zinc-700">
-            <div class="flex gap-1 mb-4">
-              @for (star of [1,2,3,4,5]; track star) {
-                <i class="text-yellow-400 pi pi-star-fill text-sm"></i>
-              }
-            </div>
-            <p class="flex-1 mb-6 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300 italic">"{{ t.quote }}"</p>
-            <div class="flex items-center gap-3">
-              <img [src]="t.avatar" [alt]="t.name" class="w-10 h-10 rounded-full object-cover" loading="lazy" />
-              <div>
-                <div class="text-sm font-bold text-zinc-900 dark:text-white">{{ t.name }}</div>
-                <div class="text-xs text-zinc-400">{{ t.role }}</div>
-              </div>
+        <div
+          class="flex flex-col p-7 bg-zinc-50 dark:bg-zinc-800 rounded-2xl border border-zinc-200 dark:border-zinc-700">
+          <div class="flex gap-1 mb-4">
+            @for (star of [1,2,3,4,5]; track star) {
+            <i class="text-yellow-400 pi pi-star-fill text-sm"></i>
+            }
+          </div>
+          <p class="flex-1 mb-6 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300 italic">"{{ t.quote }}"</p>
+          <div class="flex items-center gap-3">
+            <img [src]="t.avatar" [alt]="t.name" class="w-10 h-10 rounded-full object-cover" loading="lazy" />
+            <div>
+              <div class="text-sm font-bold text-zinc-900 dark:text-white">{{ t.name }}</div>
+              <div class="text-xs text-zinc-400">{{ t.role }}</div>
             </div>
           </div>
+        </div>
         }
       </div>
     </div>
@@ -719,31 +813,28 @@
   <section class="py-20 bg-background-light dark:bg-background-dark">
     <div class="px-4 mx-auto max-w-4xl delay-200 reveal-on-scroll reveal-up" #revealElement>
       <div class="mb-12 text-center">
-        <span class="inline-block mb-3 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-violet-600 bg-violet-50 dark:bg-violet-900/20 rounded-full">FAQ</span>
-        <h2 class="mb-4 text-3xl font-bold font-display md:text-4xl text-zinc-900 dark:text-white">Câu hỏi thường gặp</h2>
+        <span
+          class="inline-block mb-3 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-violet-600 bg-violet-50 dark:bg-violet-900/20 rounded-full">FAQ</span>
+        <h2 class="mb-4 text-3xl font-bold font-display md:text-4xl text-zinc-900 dark:text-white">Câu hỏi thường gặp
+        </h2>
         <p class="text-zinc-500 dark:text-zinc-400">Mọi thắc mắc của bạn trước khi đưa ra quyết định chuyển đổi số.</p>
       </div>
       <div class="space-y-3">
         @for (faq of faqs(); track faq.id) {
-          <div class="overflow-hidden bg-white dark:bg-zinc-800 rounded-2xl border transition-all duration-300 border-zinc-200 dark:border-zinc-700">
-            <button
-              type="button"
-              (click)="toggleFaq(faq.id)"
-              class="flex justify-between items-center p-6 w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500"
-            >
-              <span class="text-base font-bold text-zinc-800 dark:text-zinc-200">{{ faq.question }}</span>
-              <i
-                class="transition-transform duration-300 transform pi pi-chevron-down text-zinc-400 shrink-0 ml-4"
-                [ngClass]="{ 'rotate-180': faq.isOpen }"
-              ></i>
-            </button>
-            <div
-              class="px-6 transition-all duration-300 ease-in-out text-zinc-500 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-900/50"
-              [ngClass]="faq.isOpen ? 'max-h-40 py-4 opacity-100' : 'max-h-0 py-0 opacity-0 overflow-hidden'"
-            >
-              {{ faq.answer }}
-            </div>
+        <div
+          class="overflow-hidden bg-white dark:bg-zinc-800 rounded-2xl border transition-all duration-300 border-zinc-200 dark:border-zinc-700">
+          <button type="button" (click)="toggleFaq(faq.id)"
+            class="flex justify-between items-center p-6 w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500">
+            <span class="text-base font-bold text-zinc-800 dark:text-zinc-200">{{ faq.question }}</span>
+            <i class="transition-transform duration-300 transform pi pi-chevron-down text-zinc-400 shrink-0 ml-4"
+              [ngClass]="{ 'rotate-180': faq.isOpen }"></i>
+          </button>
+          <div
+            class="px-6 transition-all duration-300 ease-in-out text-zinc-500 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-900/50"
+            [ngClass]="faq.isOpen ? 'max-h-40 py-4 opacity-100' : 'max-h-0 py-0 opacity-0 overflow-hidden'">
+            {{ faq.answer }}
           </div>
+        </div>
         }
       </div>
     </div>
@@ -754,25 +845,23 @@
     <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 delay-200 reveal-on-scroll reveal-zoom" #revealElement>
       <div class="relative overflow-hidden p-10 lg:p-16 rounded-3xl bg-zinc-950 text-center">
         <div class="absolute top-0 left-1/3 w-80 h-80 bg-violet-700/25 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute bottom-0 right-1/3 w-64 h-64 bg-violet-500/15 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute bottom-0 right-1/3 w-64 h-64 bg-violet-500/15 rounded-full blur-3xl pointer-events-none">
+        </div>
         <div class="relative z-10 max-w-2xl mx-auto">
           <h2 class="mb-5 text-3xl font-bold font-display text-white leading-tight sm:text-4xl">
             Sẵn sàng thiết lập lại chuẩn mực <span class="text-violet-400">Doanh nghiệp của bạn?</span>
           </h2>
           <p class="mb-8 text-zinc-400 text-lg">
-            Trải nghiệm toàn bộ tính năng cao cấp với bản dùng thử 14 ngày. Tư vấn trực tiếp bởi kỹ sư vận hành hệ thống.
+            Trải nghiệm toàn bộ tính năng cao cấp với bản dùng thử 14 ngày. Tư vấn trực tiếp bởi kỹ sư vận hành hệ
+            thống.
           </p>
           <div class="flex flex-col gap-4 justify-center sm:flex-row">
-            <a
-              class="btn-shimmer px-8 py-3.5 font-bold text-center text-white bg-violet-600 rounded-xl shadow-lg transition-all hover:bg-violet-500 shadow-violet-600/30 hover:-translate-y-1"
-              routerLink="/login"
-            >
+            <a class="btn-shimmer px-8 py-3.5 font-bold text-center text-white bg-violet-600 rounded-xl shadow-lg transition-all hover:bg-violet-500 shadow-violet-600/30 hover:-translate-y-1"
+              routerLink="/login">
               Bắt đầu dùng thử Miễn phí
             </a>
-            <a
-              class="px-8 py-3.5 font-bold text-center text-zinc-200 border border-zinc-700 rounded-xl transition-all hover:bg-zinc-800"
-              href="#"
-            >
+            <a class="px-8 py-3.5 font-bold text-center text-zinc-200 border border-zinc-700 rounded-xl transition-all hover:bg-zinc-800"
+              href="#">
               Trò chuyện với Chuyên gia
             </a>
           </div>
@@ -834,12 +923,16 @@
           </ul>
         </div>
       </div>
-      <div class="flex flex-col gap-4 justify-between items-center pt-8 text-xs border-t border-zinc-200 dark:border-zinc-800 md:flex-row text-zinc-400">
+      <div
+        class="flex flex-col gap-4 justify-between items-center pt-8 text-xs border-t border-zinc-200 dark:border-zinc-800 md:flex-row text-zinc-400">
         <span>© 2026 ZenithHR, Inc. Mọi quyền được bảo lưu.</span>
         <div class="flex items-center gap-4">
-          <a href="#" class="hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"><i class="pi pi-twitter"></i></a>
-          <a href="#" class="hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"><i class="pi pi-linkedin"></i></a>
-          <a href="#" class="hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"><i class="pi pi-facebook"></i></a>
+          <a href="#" class="hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"><i
+              class="pi pi-twitter"></i></a>
+          <a href="#" class="hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"><i
+              class="pi pi-linkedin"></i></a>
+          <a href="#" class="hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"><i
+              class="pi pi-facebook"></i></a>
         </div>
       </div>
     </div>
