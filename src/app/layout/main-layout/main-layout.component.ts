@@ -30,7 +30,7 @@ import { Subject, filter, map, takeUntil } from 'rxjs';
         <app-shared-navbar [activePage]="activePage"></app-shared-navbar>
 
         <!-- Scrollable page area -->
-        <main class="flex-1 overflow-y-auto">
+        <main class="flex-1 overflow-y-auto p-6">
           <router-outlet></router-outlet>
         </main>
       </div>
