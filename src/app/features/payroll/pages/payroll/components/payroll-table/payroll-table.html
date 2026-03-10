@@ -17,7 +17,8 @@
                 @if (loading) {
                 <tr>
                     <td colspan="7" class="py-12 text-center text-zinc-500">
-                        <i class="mb-2 text-2xl fas fa-circle-notch fa-spin text-violet-500"></i>
+                        <span
+                            class="mb-2 text-2xl material-symbols-outlined animate-spin text-violet-500">progress_activity</span>
                         <p>Loading payroll records...</p>
                     </td>
                 </tr>
@@ -25,7 +26,7 @@
                 <tr>
                     <td colspan="7" class="py-12 text-center text-zinc-500">
                         <div class="p-4 mx-auto mb-3 w-16 h-16 bg-zinc-100 dark:bg-zinc-800 rounded-full">
-                            <i class="text-2xl fas fa-folder-open text-zinc-400"></i>
+                            <span class="text-2xl material-symbols-outlined text-zinc-400">folder_open</span>
                         </div>
                         <p class="text-lg font-medium text-zinc-700 dark:text-zinc-300">No records found</p>
                         <p class="mt-1 text-sm text-zinc-500 text-balance">
@@ -64,7 +65,7 @@
                     <td class="px-6 py-4 font-medium text-right text-red-600 dark:text-red-400 group relative">
                         <div class="flex justify-end items-center cursor-help">
                             {{ record.totalDeductions | currency:'VND':'symbol-narrow':'1.0-0' }}
-                            <i class="ml-1 text-xs fas fa-info-circle opacity-50"></i>
+                            <span class="ml-1 text-xs material-symbols-outlined opacity-50">info</span>
                         </div>
                         <div
                             class="absolute right-6 bottom-full z-10 hidden p-2 mb-2 w-48 text-xs text-left bg-zinc-800 dark:bg-zinc-900 rounded shadow-lg opacity-0 transition-opacity group-hover:block group-hover:opacity-100">
@@ -95,16 +96,16 @@
                                 class="p-2 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 rounded transition-colors disabled:opacity-50"
                                 title="Mark as Paid">
                                 @if (markingPaidId === record.id) {
-                                <i class="fas fa-spinner fa-spin"></i>
+                                <span class="material-symbols-outlined animate-spin">progress_activity</span>
                                 } @else {
-                                <i class="fas fa-check-double"></i>
+                                <span class="material-symbols-outlined">done_all</span>
                                 }
                             </button>
                             }
                             <button (click)="downloadPdf.emit(record)"
                                 class="p-2 text-zinc-500 hover:text-violet-600 hover:bg-violet-50 dark:hover:bg-violet-900/30 rounded transition-colors"
                                 title="Download Payslip PDF">
-                                <i class="fas fa-file-pdf"></i>
+                                <span class="material-symbols-outlined">picture_as_pdf</span>
                             </button>
                         </div>
                     </td>
