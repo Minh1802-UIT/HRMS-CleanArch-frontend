@@ -1,0 +1,67 @@
+<div class="grid grid-cols-1 gap-6 mb-8 md:grid-cols-3">
+    <!-- Total Payout -->
+    <div
+        class="p-6 bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 shadow-sm transition-shadow hover:shadow-md">
+        <div class="flex justify-between items-start">
+            <div>
+                <p class="text-sm font-medium text-zinc-500 truncate">Total Payout</p>
+                <p class="mt-2 text-3xl font-bold text-zinc-900 dark:text-zinc-100">
+                    {{ totalNetSalary | currency:'VND':'symbol-narrow':'1.0-0' }}
+                </p>
+            </div>
+            <div class="p-3 text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg">
+                <i class="text-xl fas fa-money-bill-wave"></i>
+            </div>
+        </div>
+        <div class="mt-4 text-sm text-zinc-500">
+            <span class="text-emerald-600 dark:text-emerald-400">
+                <i class="mr-1 fas fa-check-circle"></i> Estimated
+            </span>
+            for {{ titlePeriod }}
+        </div>
+    </div>
+
+    <!-- Employees Processed -->
+    <div
+        class="p-6 bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 shadow-sm transition-shadow hover:shadow-md">
+        <div class="flex justify-between items-start">
+            <div>
+                <p class="text-sm font-medium text-zinc-500 truncate">Records Generated</p>
+                <p class="mt-2 text-3xl font-bold text-zinc-900 dark:text-zinc-100">
+                    {{ totalEmployees }}
+                </p>
+            </div>
+            <div class="p-3 text-blue-600 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <i class="text-xl fas fa-users"></i>
+            </div>
+        </div>
+        <div class="mt-4 text-sm text-zinc-500">
+            <span class="text-blue-600 dark:text-blue-400">
+                <i class="mr-1 fas fa-info-circle"></i> Active contracts
+            </span>
+            found
+        </div>
+    </div>
+
+    <!-- Quick Info -->
+    <div
+        class="p-6 bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 shadow-sm transition-shadow hover:shadow-md">
+        <div class="flex justify-between items-start">
+            <div>
+                <p class="text-sm font-medium text-zinc-500 truncate">Payroll Status</p>
+                <p class="mt-2 text-2xl font-bold text-zinc-900 dark:text-zinc-100">
+                    {{ titlePeriod }} Review
+                </p>
+            </div>
+            <div class="p-3 text-violet-600 bg-violet-50 dark:bg-violet-900/20 rounded-lg">
+                <i class="text-xl fas fa-calendar-check"></i>
+            </div>
+        </div>
+        <div class="mt-5">
+            <div class="w-full bg-zinc-200 dark:bg-zinc-700 rounded-full h-1.5">
+                <div class="bg-violet-600 h-1.5 rounded-full" style="width: 100%"></div>
+            </div>
+            <p class="mt-2 text-xs text-zinc-500">Processing complete</p>
+        </div>
+    </div>
+</div>

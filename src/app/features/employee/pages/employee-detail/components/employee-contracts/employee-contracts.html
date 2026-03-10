@@ -1,0 +1,217 @@
+<div class="space-y-6">
+    <!-- Actions -->
+    <div class="flex justify-between items-center">
+        <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100">Contract History</h2>
+        <button type="button" (click)="openContractModal()"
+            class="px-4 py-2 font-medium text-white bg-blue-600 rounded-lg shadow-sm transition-colors hover:bg-blue-700">
+            Renew / New Contract
+        </button>
+    </div>
+    <!-- Active Contract Highlight -->
+    @if (activeContract) {
+    <div
+        class="overflow-hidden relative p-6 bg-gradient-to-br from-blue-50 to-white dark:from-zinc-800 dark:to-zinc-900 rounded-xl border border-blue-200 dark:border-zinc-700 shadow-sm">
+        <div class="absolute top-0 right-0 px-3 py-1 text-xs font-bold text-white bg-blue-600 rounded-bl-lg">
+            CURRENT ACTIVE
+        </div>
+        <div class="grid grid-cols-1 gap-8 md:grid-cols-4">
+            <div>
+                <span class="block text-xs tracking-wide text-gray-500 uppercase">Contract Code</span>
+                <span class="font-mono text-lg font-bold text-gray-800 dark:text-gray-100">
+                    {{ activeContract.contractCode }}
+                </span>
+                <div class="mt-2 text-sm font-medium text-blue-700 dark:text-blue-400">
+                    {{ activeContract.type }}
+                </div>
+            </div>
+            <div>
+                <span class="block text-xs tracking-wide text-gray-500 uppercase">Duration</span>
+                <div class="mt-1 font-medium text-gray-800 dark:text-gray-200">
+                    {{ activeContract.startDate | date: "mediumDate" }}
+                    <span class="mx-1 text-gray-400">→</span>
+                    {{
+                    activeContract.endDate
+                    ? (activeContract.endDate | date: "mediumDate")
+                    : "Indefinite"
+                    }}
+                </div>
+            </div>
+            <div>
+                <span class="block text-xs tracking-wide text-gray-500 uppercase">Basic Salary</span>
+                <div class="mt-1 text-xl font-bold text-green-700 dark:text-green-500">
+                    {{ activeContract.salary.basicSalary | currency:'VND':'symbol-narrow':'1.0-0' }}
+                </div>
+            </div>
+            <div class="flex flex-col justify-center">
+                <button (click)="terminateContract(activeContract)"
+                    class="px-4 py-2 text-sm font-medium text-center text-red-600 bg-red-50 rounded border border-red-200 transition-colors hover:bg-red-100 dark:bg-red-900/20 dark:border-red-800/50 dark:hover:bg-red-900/40">
+                    Terminate Contract
+                </button>
+            </div>
+        </div>
+        <!-- Allowances Dropdown/Grid -->
+        <div class="grid grid-cols-3 gap-4 pt-6 mt-6 border-t border-blue-100 dark:border-zinc-700">
+            <div>
+                <span class="block text-xs text-gray-500">Transport Allowance</span>
+                <span class="font-medium text-gray-700 dark:text-gray-300">
+                    {{ activeContract.salary.transportAllowance | currency:'VND':'symbol-narrow':'1.0-0' }}
+                </span>
+            </div>
+            <div>
+                <span class="block text-xs text-gray-500">Lunch Allowance</span>
+                <span class="font-medium text-gray-700 dark:text-gray-300">
+                    {{ activeContract.salary.lunchAllowance | currency:'VND':'symbol-narrow':'1.0-0' }}
+                </span>
+            </div>
+            <div>
+                <span class="block text-xs text-gray-500">Other Allowance</span>
+                <span class="font-medium text-gray-700 dark:text-gray-300">
+                    {{ activeContract.salary.otherAllowance | currency:'VND':'symbol-narrow':'1.0-0' }}
+                </span>
+            </div>
+        </div>
+    </div>
+    }
+
+    <!-- History List -->
+    <div
+        class="overflow-hidden bg-white dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700 shadow-sm">
+        <table class="w-full text-sm text-left text-zinc-800 dark:text-zinc-200">
+            <thead
+                class="font-medium text-zinc-500 bg-zinc-50 dark:bg-zinc-900/50 border-b border-zinc-200 dark:border-zinc-700">
+                <tr>
+                    <th class="px-6 py-3">Code</th>
+                    <th class="px-6 py-3">Type</th>
+                    <th class="px-6 py-3">Start Date</th>
+                    <th class="px-6 py-3">End Date</th>
+                    <th class="px-6 py-3">Status</th>
+                    <th class="px-6 py-3 text-right">Basic Salary</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 dark:divide-zinc-700">
+                @for (c of contracts; track trackByIndex($index)) {
+                <tr [ngClass]="{
+                    'bg-blue-50 dark:bg-blue-900/10': c.status === 'Active'
+                }">
+                    <td class="px-6 py-4 font-mono">{{ c.contractCode }}</td>
+                    <td class="px-6 py-4">{{ c.type }}</td>
+                    <td class="px-6 py-4 text-gray-600 dark:text-gray-400">
+                        {{ c.startDate | date: "mediumDate" }}
+                    </td>
+                    <td class="px-6 py-4 text-gray-600 dark:text-gray-400">
+                        {{ c.endDate ? (c.endDate | date: "mediumDate") : "-" }}
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-0.5 text-xs font-bold uppercase rounded" [ngClass]="{
+                                'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300': c.status === 'Active',
+                                'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400': c.status !== 'Active'
+                              }">
+                            {{ c.status }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 font-medium text-right">
+                        {{ c.salary.basicSalary | currency:'VND':'symbol-narrow':'1.0-0' }}
+                    </td>
+                </tr>
+                } @empty {
+                <tr>
+                    <td colspan="6" class="px-6 py-8 text-center text-gray-400">
+                        No contracts found.
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Contract Modal -->
+@if (isContractModalOpen) {
+<div class="flex fixed inset-0 z-50 justify-center items-center backdrop-blur-sm bg-black/50">
+    <div
+        class="bg-white dark:bg-zinc-900 rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden max-h-[90vh] overflow-y-auto">
+        <div
+            class="flex justify-between items-center px-6 py-4 bg-zinc-50 dark:bg-zinc-800/50 border-b border-zinc-100 dark:border-zinc-700">
+            <h3 class="text-lg font-bold text-zinc-800 dark:text-zinc-100">New Contract / Renewal</h3>
+            <button type="button" (click)="closeContractModal()"
+                class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300">
+                ✕
+            </button>
+        </div>
+        <form [formGroup]="contractForm" (ngSubmit)="saveContract()" class="p-6 space-y-6">
+            <div class="grid grid-cols-2 gap-6">
+                <div>
+                    <label class="block mb-1 text-sm font-medium text-zinc-700 dark:text-zinc-300">Contract Code</label>
+                    <input formControlName="contractCode"
+                        class="px-3 py-2 w-full bg-zinc-50 dark:bg-zinc-800 rounded-md border dark:border-zinc-700 outline-none focus:ring-2 focus:ring-violet-500/20 dark:text-zinc-200"
+                        readonly />
+                </div>
+                <div>
+                    <label class="block mb-1 text-sm font-medium text-zinc-700 dark:text-zinc-300">Type</label>
+                    <select formControlName="type"
+                        class="px-3 py-2 w-full bg-white dark:bg-zinc-800 rounded-md border dark:border-zinc-700 outline-none focus:ring-2 focus:ring-violet-500/20 dark:text-zinc-200">
+                        <option value="Fixed-Term">Fixed-Term (Defined End Date)</option>
+                        <option value="Indefinite">Indefinite (No End Date)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-6">
+                <div>
+                    <label class="block mb-1 text-sm font-medium text-zinc-700 dark:text-zinc-300">Start Date</label>
+                    <input type="date" formControlName="startDate"
+                        class="px-3 py-2 w-full bg-white dark:bg-zinc-800 rounded-md border dark:border-zinc-700 outline-none focus:ring-2 focus:ring-violet-500/20 dark:text-zinc-200" />
+                </div>
+                <div>
+                    <label class="block mb-1 text-sm font-medium text-zinc-700 dark:text-zinc-300">End Date
+                        (Optional)</label>
+                    <input type="date" formControlName="endDate"
+                        class="px-3 py-2 w-full bg-white dark:bg-zinc-800 rounded-md border dark:border-zinc-700 outline-none focus:ring-2 focus:ring-violet-500/20 dark:text-zinc-200" />
+                </div>
+            </div>
+            <div class="pt-4 border-t border-zinc-100 dark:border-zinc-700">
+                <h4 class="mb-4 font-medium text-zinc-800 dark:text-zinc-200">Compensation Package</h4>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="col-span-2">
+                        <label class="block mb-1 text-sm font-medium text-gray-700 dark:text-zinc-300">
+                            Basic Salary <span class="text-red-500">*</span>
+                        </label>
+                        <div class="relative">
+                            <span class="absolute top-2 left-3 text-gray-500 pointer-events-none">₫</span>
+                            <input type="number" formControlName="basicSalary"
+                                class="py-2 pr-3 pl-7 w-full font-bold bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-100 rounded-md border dark:border-zinc-700 outline-none focus:ring-2 focus:ring-violet-500/20" />
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700 dark:text-zinc-300">Transport
+                            Allowance</label>
+                        <input type="number" formControlName="transportAllowance"
+                            class="px-3 py-2 w-full bg-white dark:bg-zinc-800 rounded-md border dark:border-zinc-700 outline-none focus:ring-violet-500 dark:text-zinc-200" />
+                    </div>
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700 dark:text-zinc-300">Lunch
+                            Allowance</label>
+                        <input type="number" formControlName="lunchAllowance"
+                            class="px-3 py-2 w-full bg-white dark:bg-zinc-800 rounded-md border dark:border-zinc-700 outline-none focus:ring-violet-500 dark:text-zinc-200" />
+                    </div>
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700 dark:text-zinc-300">Other
+                            Allowance</label>
+                        <input type="number" formControlName="otherAllowance"
+                            class="px-3 py-2 w-full bg-white dark:bg-zinc-800 rounded-md border dark:border-zinc-700 outline-none focus:ring-violet-500 dark:text-zinc-200" />
+                    </div>
+                </div>
+            </div>
+            <div class="flex gap-3 justify-end pt-4">
+                <button type="button" (click)="closeContractModal()"
+                    class="px-4 py-2 text-zinc-600 dark:text-zinc-300 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800">
+                    Cancel
+                </button>
+                <button type="submit" [disabled]="contractForm.invalid"
+                    class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50">
+                    Save Contract
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+}

@@ -1,0 +1,117 @@
+<div class="overflow-hidden bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 shadow-sm">
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left text-zinc-800 dark:text-zinc-200">
+            <thead
+                class="text-xs tracking-wider text-zinc-500 uppercase bg-zinc-50 dark:bg-zinc-900/50 border-b border-zinc-200 dark:border-zinc-700">
+                <tr>
+                    <th class="px-6 py-4 font-semibold">Employee</th>
+                    <th class="px-6 py-4 font-semibold text-right">Basic Salary</th>
+                    <th class="px-6 py-4 font-semibold text-right">Allowances</th>
+                    <th class="px-6 py-4 font-semibold text-right">Deductions</th>
+                    <th class="px-6 py-4 font-semibold text-right">Net Salary</th>
+                    <th class="px-6 py-4 text-center">Status</th>
+                    <th class="px-6 py-4 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-100 dark:divide-zinc-700">
+                @if (loading) {
+                <tr>
+                    <td colspan="7" class="py-12 text-center text-zinc-500">
+                        <i class="mb-2 text-2xl fas fa-circle-notch fa-spin text-violet-500"></i>
+                        <p>Loading payroll records...</p>
+                    </td>
+                </tr>
+                } @else if (filteredRecords.length === 0) {
+                <tr>
+                    <td colspan="7" class="py-12 text-center text-zinc-500">
+                        <div class="p-4 mx-auto mb-3 w-16 h-16 bg-zinc-100 dark:bg-zinc-800 rounded-full">
+                            <i class="text-2xl fas fa-folder-open text-zinc-400"></i>
+                        </div>
+                        <p class="text-lg font-medium text-zinc-700 dark:text-zinc-300">No records found</p>
+                        <p class="mt-1 text-sm text-zinc-500 text-balance">
+                            Try running a calculation for this period or change your search filter.
+                        </p>
+                    </td>
+                </tr>
+                } @else {
+                @for (record of filteredRecords; track trackByIndex($index)) {
+                <tr class="transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-700/50">
+                    <td class="px-6 py-4">
+                        <div class="flex gap-3 items-center">
+                            <div
+                                class="flex justify-center items-center w-8 h-8 font-bold text-violet-700 bg-violet-100 dark:bg-violet-900/40 dark:text-violet-300 rounded-full">
+                                {{ record.employeeName.charAt(0) }}
+                            </div>
+                            <div>
+                                <div class="font-medium text-zinc-900 dark:text-zinc-100">
+                                    {{ record.employeeName }}
+                                </div>
+                                <div class="font-mono text-xs text-zinc-500">
+                                    {{ record.employeeCode }}
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 font-medium text-right text-zinc-700 dark:text-zinc-300">
+                        {{ record.baseSalary | currency:'VND':'symbol-narrow':'1.0-0' }}
+                    </td>
+                    <!-- Allowances Dropdown trigger or hover info could go here. For now, just sum. -->
+                    <td class="px-6 py-4 font-medium text-right text-emerald-600 dark:text-emerald-400 group relative">
+                        <div class="flex justify-end items-center">
+                            {{ record.allowances | currency:'VND':'symbol-narrow':'1.0-0' }}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 font-medium text-right text-red-600 dark:text-red-400 group relative">
+                        <div class="flex justify-end items-center cursor-help">
+                            {{ record.totalDeductions | currency:'VND':'symbol-narrow':'1.0-0' }}
+                            <i class="ml-1 text-xs fas fa-info-circle opacity-50"></i>
+                        </div>
+                        <div
+                            class="absolute right-6 bottom-full z-10 hidden p-2 mb-2 w-48 text-xs text-left bg-zinc-800 dark:bg-zinc-900 rounded shadow-lg opacity-0 transition-opacity group-hover:block group-hover:opacity-100">
+                            <ng-container
+                                *ngTemplateOutlet="calculationTemplate; context: { allowances: { 'socialInsurance': record.socialInsurance, 'healthInsurance': record.healthInsurance, 'unemploymentInsurance': record.unemploymentInsurance, 'personalIncomeTax': record.personalIncomeTax } }"></ng-container>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-lg font-bold text-right text-zinc-900 dark:text-zinc-100">
+                        {{ record.finalNetSalary | currency:'VND':'symbol-narrow':'1.0-0' }}
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <span [class.bg-emerald-100]="isPaid(record.status)"
+                            [class.text-emerald-700]="isPaid(record.status)"
+                            [class.dark:bg-emerald-900]="isPaid(record.status)"
+                            [class.dark:text-emerald-300]="isPaid(record.status)"
+                            [class.bg-amber-100]="!isPaid(record.status)"
+                            [class.text-amber-700]="!isPaid(record.status)"
+                            [class.dark:bg-amber-900]="!isPaid(record.status)"
+                            [class.dark:text-amber-300]="!isPaid(record.status)"
+                            class="px-2.5 py-1 text-xs font-bold uppercase rounded-full">
+                            {{ record.status }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex gap-2 justify-end">
+                            @if (!isPaid(record.status)) {
+                            <button (click)="markAsPaid.emit(record)" [disabled]="markingPaidId === record.id"
+                                class="p-2 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 rounded transition-colors disabled:opacity-50"
+                                title="Mark as Paid">
+                                @if (markingPaidId === record.id) {
+                                <i class="fas fa-spinner fa-spin"></i>
+                                } @else {
+                                <i class="fas fa-check-double"></i>
+                                }
+                            </button>
+                            }
+                            <button (click)="downloadPdf.emit(record)"
+                                class="p-2 text-zinc-500 hover:text-violet-600 hover:bg-violet-50 dark:hover:bg-violet-900/30 rounded transition-colors"
+                                title="Download Payslip PDF">
+                                <i class="fas fa-file-pdf"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,357 +1,234 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Subject, forkJoin, of, Observable } from 'rxjs';
-import { takeUntil, catchError, map } from 'rxjs/operators';
-import { PayrollService, PayrollRecord, Payroll } from '@features/payroll/services/payroll.service';
-import { EmployeeService, Employee } from '@features/employee/services/employee.service';
+import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
+import { Title } from '@angular/platform-browser';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { PayrollService, PayrollRecord } from '@features/payroll/services/payroll.service';
+import { ConfirmDialogService } from '@core/services/confirm-dialog.service';
 import { ToastService } from '@core/services/toast.service';
 import { LoggerService } from '@core/services/logger.service';
-import { UploadService } from '@features/employee/services/upload.service';
-import { CsvExportService } from '@core/services/csv-export.service';
-import { formatMonthYear } from '@shared/utils/date.utils';
+
+import { PayrollSummaryComponent } from './components/payroll-summary/payroll-summary';
+import { PayrollControlsComponent } from './components/payroll-controls/payroll-controls';
+import { PayrollTableComponent } from './components/payroll-table/payroll-table';
 
 @Component({
   selector: 'app-payroll',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    CurrencyPipe,
+    DatePipe,
+    PayrollSummaryComponent,
+    PayrollControlsComponent,
+    PayrollTableComponent
+  ],
   templateUrl: './payroll.component.html',
   styleUrl: './payroll.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PayrollComponent implements OnInit, OnDestroy {
-  private destroy$ = new Subject<void>();
-  selectedMonth: string = new Date().toLocaleString('en-US', { month: 'long' });
-  selectedYear: number = new Date().getFullYear();
-  
-  months: string[] = [
-    'January', 'February', 'March', 'April', 'May', 'June', 
-    'July', 'August', 'September', 'October', 'November', 'December'
-  ];
-  
-  years: number[] = [new Date().getFullYear(), new Date().getFullYear() - 1, new Date().getFullYear() - 2];
-  
   payrollRecords: PayrollRecord[] = [];
-  loading: boolean = false;
-  calculating: boolean = false;
-  markingPaid: string | null = null;
-  totalNetSalary: number = 0;
+  loading = false;
+  calculating = false;
+  markingPaidId: string | null = null;
+  private destroy$ = new Subject<void>();
 
-  // Search
+  // Filter state
+  selectedMonth: string;
+  selectedYear: number;
   searchKeyword: string = '';
 
-  // Pagination
-  currentPage: number = 1;
-  pageSize: number = 10;
-  readonly pageSizeOptions = [10, 20, 50];
+  months = [
+    { value: '01', label: 'January' },
+    { value: '02', label: 'February' },
+    { value: '03', label: 'March' },
+    { value: '04', label: 'April' },
+    { value: '05', label: 'May' },
+    { value: '06', label: 'June' },
+    { value: '07', label: 'July' },
+    { value: '08', label: 'August' },
+    { value: '09', label: 'September' },
+    { value: '10', label: 'October' },
+    { value: '11', label: 'November' },
+    { value: '12', label: 'December' }
+  ];
 
-  // Confirmation dialog state
-  showConfirmDialog: boolean = false;
-  confirmTitle: string = '';
-  confirmMessage: string = '';
-  private _pendingAction: (() => void) | null = null;
-
-  get filteredRecords(): PayrollRecord[] {
-    const kw = this.searchKeyword.trim().toLowerCase();
-    if (!kw) return this.payrollRecords;
-    return this.payrollRecords.filter(r =>
-      (r.employeeName?.toLowerCase().includes(kw)) ||
-      (r.employeeCode?.toLowerCase().includes(kw))
-    );
-  }
-
-  get pagedRecords(): PayrollRecord[] {
-    const start = (this.currentPage - 1) * this.pageSize;
-    return this.filteredRecords.slice(start, start + this.pageSize);
-  }
-
-  get totalPages(): number {
-    return Math.max(1, Math.ceil(this.filteredRecords.length / this.pageSize));
-  }
-
-  get pageNumbers(): number[] {
-    const total = this.totalPages;
-    const current = this.currentPage;
-    const delta = 2;
-    const range: number[] = [];
-    for (let i = Math.max(1, current - delta); i <= Math.min(total, current + delta); i++) {
-      range.push(i);
-    }
-    return range;
-  }
-
-  onSearch() {
-    this.currentPage = 1;
-    this.cdr.markForCheck();
-  }
-
-  goToPage(page: number) {
-    if (page < 1 || page > this.totalPages) return;
-    this.currentPage = page;
-    this.cdr.markForCheck();
-  }
-
-  onPageSizeChange() {
-    this.currentPage = 1;
-    this.cdr.markForCheck();
-  }
+  years: number[] = [];
 
   constructor(
+    private titleService: Title,
     private payrollService: PayrollService,
-    private employeeService: EmployeeService,
+    private confirmService: ConfirmDialogService,
     private toastService: ToastService,
     private logger: LoggerService,
-    private uploadService: UploadService,
-    private csvExport: CsvExportService,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) {
+    this.titleService.setTitle('Payroll Management - HRMS');
+    const now = new Date();
+    this.selectedMonth = String(now.getMonth() + 1).padStart(2, '0');
+    // If it's January, default to calculating December of previous year
+    if (this.selectedMonth === '01') {
+      this.selectedMonth = '12';
+      this.selectedYear = now.getFullYear() - 1;
+    } else {
+      this.selectedMonth = String(now.getMonth()).padStart(2, '0');
+      this.selectedYear = now.getFullYear();
+    }
+
+    // Generate years dynamically (e.g. 5 years back, 1 year forward)
+    const currentYear = now.getFullYear();
+    for (let i = currentYear - 5; i <= currentYear + 1; i++) {
+      this.years.push(i);
+    }
+  }
 
   ngOnInit() {
-    this.loadPayrollData();
+    this.loadPayroll();
   }
 
-  loadPayrollData() {
-    this.loading = true;
-    
-    // 1. Fetch Employees (to get Names/Avatars)
-    // 2. Fetch Payroll Data (Backend DTO)
-    forkJoin({
-      employeesResponse: this.employeeService.getEmployees({ pageSize: 500, pageNumber: 1 }).pipe(
-        catchError(() => of({ items: [], totalCount: 0, pageNumber: 1, pageSize: 500 }))
-      ),
-      payrolls: this.payrollService.getPayrollData(this.selectedMonth, this.selectedYear)
-        .pipe(catchError(() => of([]))) // fallback to [] if no payroll generated yet
-    }).pipe(
-      takeUntil(this.destroy$)
-    ).subscribe({
-      next: ({ employeesResponse, payrolls }) => {
-        const employees = employeesResponse?.items || [];
-        this.payrollRecords = this.mapPayrollData(employees, payrolls);
-        this.currentPage = 1;
-        this.calculateTotals();
-        this.loading = false;
-        this.cdr.markForCheck();
-      },
-      error: (err) => {
-        this.logger.error('Error loading payroll data', err);
-        this.toastService.showError('Load Error', 'Failed to load payroll data');
-        this.loading = false;
-        this.cdr.markForCheck();
-      }
-    });
-  }
-
-  /**
-   * Combine Employee baseline data with Payroll calculation data
-   */
-  private mapPayrollData(employees: any[], payrolls: Payroll[]): PayrollRecord[] {
-    return employees.map(emp => {
-      // getEmployees returns EmployeeListSummary which has natively 'employeeCode' and 'fullName'
-      const code = emp.employeeCode || 'Unknown';
-      const name = emp.fullName || 'Unknown';
-
-      // find matching payroll record
-      const payroll = payrolls.find(p => p.employeeCode === code);
-      
-      if (payroll) {
-        // Found calculated payroll
-        return {
-          ...payroll,
-          employeeName: name,
-          avatar: emp.avatarUrl ? this.uploadService.getFileUrl(emp.avatarUrl) : `https://ui-avatars.com/api/?name=${name}&background=random`,
-          displayNetSalary: payroll.finalNetSalary,
-          displayWorkingHours: payroll.actualWorkingDays * 8
-        } as PayrollRecord;
-      } else {
-        // Not yet calculated
-        return {
-          id: '',
-          employeeCode: code,
-          employeeName: name,
-          month: `${this.selectedMonth}-${this.selectedYear}`,
-          grossIncome: 0,
-          baseSalary: 0,
-          allowances: 0,
-          actualWorkingDays: 0,
-          totalDeductions: 0,
-          finalNetSalary: 0,
-          status: 'Pending',
-          avatar: emp.avatarUrl ? this.uploadService.getFileUrl(emp.avatarUrl) : `https://ui-avatars.com/api/?name=${name}&background=random`,
-          displayNetSalary: 0,
-          displayWorkingHours: 0
-        } as PayrollRecord;
-      }
-    });
-  }
-
-  calculateTotals() {
-    this.totalNetSalary = this.payrollRecords.reduce((sum, record) => sum + (record.finalNetSalary || 0), 0);
-  }
-
-  onCalculate() {
-    this.confirmTitle = 'Run Payroll Calculation';
-    this.confirmMessage = `Tính lương lại cho khỳ ${this.selectedMonth} ${this.selectedYear}?\nHành động này sẽ ghi đè tất cả bảng lương chưa thanh toán.`;
-    this._pendingAction = () => this._doCalculate();
-    this.showConfirmDialog = true;
-    this.cdr.markForCheck();
-  }
-
-  private _doCalculate() {
-    this.calculating = true;
-    this.payrollService.calculatePayroll(this.selectedMonth, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
-        next: (count) => {
-             this.calculating = false;
-             this.cdr.markForCheck();
-             this.loadPayrollData();
-             this.toastService.showSuccess('Calculation Complete', `Processed ${count} record(s) for ${this.selectedMonth} ${this.selectedYear}`);
-        },
-        error: (err) => {
-             this.logger.error('Payroll calculation error', err);
-             this.toastService.showError('Calculation Error', 'Failed to calculate payroll');
-             this.calculating = false;
-             this.cdr.markForCheck();
-        }
-    });
-  }
-
-  onMarkAsPaid(record: PayrollRecord) {
-    if (!record.id) {
-      this.toastService.showWarn('Not Calculated', 'Please calculate payroll before marking as paid');
-      return;
-    }
-    if (record.status === 'Paid') {
-      this.toastService.showWarn('Already Paid', 'This payroll record is already marked as Paid');
-      return;
-    }
-    if (record.status !== 'Approved') {
-      this.toastService.showWarn('Not Approved', `Phiếu lương phải được duyệt (Approved) trước khi thanh toán. Trạng thái hiện tại: ${record.status}.`);
-      return;
-    }
-    this.confirmTitle = 'Mark as Paid';
-    this.confirmMessage = `Xác nhận đã thanh toán lương cho ${record.employeeName}?\nHanh động này không thể hoàn tác.`;
-    this._pendingAction = () => this._doMarkAsPaid(record);
-    this.showConfirmDialog = true;
-    this.cdr.markForCheck();
-  }
-
-  private _doMarkAsPaid(record: PayrollRecord) {
-    this.markingPaid = record.id;
-    this.payrollService.markAsPaid(record.id).pipe(takeUntil(this.destroy$)).subscribe({
-      next: () => {
-        record.status = 'Paid';
-        this.markingPaid = null;
-        this.cdr.markForCheck();
-        this.toastService.showSuccess('Marked as Paid', `Lương của ${record.employeeName} đã được thanh toán.`);
-      },
-      error: (err) => {
-        this.logger.error('Mark as paid error', err);
-        const msg = err?.error?.message || err?.error?.error || 'Could not mark payroll as Paid';
-        this.toastService.showError('Failed', msg);
-        this.markingPaid = null;
-        this.cdr.markForCheck();
-      }
-    });
-  }
-
-  confirmExecute() {
-    this.showConfirmDialog = false;
-    this.cdr.markForCheck();
-    if (this._pendingAction) {
-      this._pendingAction();
-      this._pendingAction = null;
-    }
-  }
-
-  confirmCancel() {
-    this.showConfirmDialog = false;
-    this._pendingAction = null;
-    this.cdr.markForCheck();
-  }
-
-  onExport() {
-    this.logger.info('Exporting payroll data');
-    const monthYear = formatMonthYear(this.selectedMonth, this.selectedYear);
-    this.toastService.showInfo('Exporting', `Generating Payroll_${monthYear}.xlsx...`);
-
-    this.payrollService.exportPayroll(monthYear).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (blob) => {
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `Payroll_${monthYear}.xlsx`;
-        link.click();
-        window.URL.revokeObjectURL(url);
-        this.toastService.showSuccess('Export Success', `Payroll report for ${monthYear} downloaded.`);
-      },
-      error: (err) => {
-        this.logger.error('Excel export error', err);
-        this.toastService.showError('Export Failed', 'Failed to export payroll Excel');
-      }
-    });
-  }
-
-  onDownloadPdf(record: PayrollRecord) {
-    if (!record.id) {
-      this.toastService.showWarn('Not Calculated', 'Please calculate payroll before exporting PDF');
-      return;
-    }
-
-    this.payrollService.downloadPayslip(record.id).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (blob) => {
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `Payslip_${record.employeeCode}_${this.selectedMonth}_${this.selectedYear}.pdf`;
-        link.click();
-        window.URL.revokeObjectURL(url);
-        this.toastService.showSuccess('Export Success', `Payslip for ${record.employeeName} downloaded.`);
-      },
-      error: (err) => {
-        this.logger.error('PDF download error', err);
-        this.toastService.showError('Export Failed', 'Failed to download payslip PDF');
-      }
-    });
-  }
-
-  formatCurrency(value: number | undefined): string {
-    return new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(value || 0);
-  }
-
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
-
-
-  exportPayrollCsv(): void {
-    const source = this.filteredRecords; // export theo kết quả search hiện tại
-    if (!source.length) {
-      this.toastService.showWarn('No Data', 'No payroll records to export.');
-      return;
-    }
-    const rows = source.map(r => ({
-      EmployeeCode: r.employeeCode || '',
-      Name: r.employeeName || '',
-      Month: r.month || `${this.selectedMonth}-${this.selectedYear}`,
-      BaseSalary: r.baseSalary ?? 0,
-      Allowances: r.allowances ?? 0,
-      GrossIncome: r.grossIncome ?? 0,
-      TotalDeductions: r.totalDeductions ?? 0,
-      NetSalary: r.finalNetSalary ?? 0,
-      Status: r.status || ''
-    }));
-    const filename = `Payroll_${this.selectedMonth}_${this.selectedYear}`;
-    this.csvExport.export(rows, filename);
-    this.toastService.showSuccess('Exported', `${rows.length} payroll records exported to CSV.`);
+  get periodFormat(): string {
+    return `${this.selectedYear}-${this.selectedMonth}-01`;
   }
 
-  trackByMonth(index: number, month: string): string { return month; }
-  trackByYear(index: number, year: number): number { return year; }
-  trackByRecord(index: number, record: PayrollRecord): string { return record.employeeCode || String(index); }
+  get titlePeriod(): string {
+    const m = this.months.find(m => m.value === this.selectedMonth)?.label || '';
+    return `${m} ${this.selectedYear}`;
+  }
+
+  get totalNetSalary(): number {
+    return this.payrollRecords.reduce((sum, record) => sum + record.finalNetSalary, 0);
+  }
+
+  loadPayroll() {
+    this.loading = true;
+    this.payrollService.getPayrollData(this.selectedMonth, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data: PayrollRecord[]) => {
+        this.payrollRecords = data;
+        this.loading = false;
+        this.cdr.markForCheck();
+      },
+      error: (err: any) => {
+        this.logger.error('Failed to load payroll', err);
+        this.toastService.showError('Error', err?.error?.message || 'Failed to load payroll records for ' + this.titlePeriod);
+        this.loading = false;
+        this.payrollRecords = [];
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  onMonthChange(month: string) {
+    this.selectedMonth = month;
+    this.loadPayroll();
+  }
+
+  onYearChange(year: number) {
+    this.selectedYear = year;
+    this.loadPayroll();
+  }
+
+  onSearchChange(keyword: string) {
+    this.searchKeyword = keyword;
+    this.cdr.markForCheck();
+  }
+
+  runCalculation() {
+    this.confirmService.confirm({
+      title: 'Calculate Payroll',
+      message: `Are you sure you want to run the payroll calculation for <strong>${this.titlePeriod}</strong>?<br/>This will overwrite any existing Draft calculations for this period.`,
+      type: 'warning',
+      confirmLabel: 'Calculate Now'
+    }).subscribe(ok => {
+      if (!ok) return;
+
+      this.calculating = true;
+      this.cdr.markForCheck();
+
+      this.payrollService.calculatePayroll(this.selectedMonth, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (count: number) => {
+          this.calculating = false;
+          this.toastService.showSuccess('Success', `Payroll calculated for ${count} employees`);
+          this.cdr.markForCheck();
+          this.loadPayroll(); // Refresh the list
+        },
+        error: (err: any) => {
+          this.logger.error('Calculation Failed', err);
+          this.toastService.showError('Calculation Failed', err?.error?.message || 'Failed to calculate payroll');
+          this.calculating = false;
+          this.cdr.markForCheck();
+        }
+      });
+    });
+  }
+
+  markAsPaid(record: PayrollRecord) {
+    if (record.status === 'Paid') return;
+
+    this.confirmService.confirm({
+      title: 'Confirm Payment',
+      message: `Mark the payroll record for <strong>${record.employeeName}</strong> as Paid?`,
+      type: 'info',
+      confirmLabel: 'Confirm'
+    }).subscribe(ok => {
+      if (!ok) return;
+      this.markingPaidId = record.id;
+      this.cdr.markForCheck();
+      this.payrollService.markAsPaid(record.id).pipe(takeUntil(this.destroy$)).subscribe({
+        next: () => {
+          const index = this.payrollRecords.findIndex(r => r.id === record.id);
+          if (index !== -1) {
+            // Immutable update for CD
+            const updatedRecord = { ...this.payrollRecords[index], status: 'Paid' as const };
+            this.payrollRecords = [
+              ...this.payrollRecords.slice(0, index),
+              updatedRecord,
+              ...this.payrollRecords.slice(index + 1)
+            ];
+          }
+          this.toastService.showSuccess('Success', 'Payment confirmed');
+          this.markingPaidId = null;
+          this.cdr.markForCheck();
+        },
+        error: (err: any) => {
+          this.logger.error('Failed to mark as paid', err);
+          this.toastService.showError('Error', 'Failed to update status');
+          this.markingPaidId = null;
+          this.cdr.markForCheck();
+        }
+      });
+    });
+  }
+
+  downloadPdf(record: PayrollRecord) {
+    this.toastService.showInfo('Coming Soon', 'PDF Payslip generation is not implemented on the backend yet.');
+  }
+
+  exportCsv() {
+    this.toastService.showInfo('Coming Soon', 'CSV Export feature will be implemented soon.');
+  }
+
+  exportExcel() {
+    const monthYear = `${this.selectedMonth}-${this.selectedYear}`;
+    this.payrollService.exportPayroll(monthYear).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Payroll_${this.selectedYear}_${this.selectedMonth}.xlsx`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+        this.toastService.showSuccess('Exported', 'Excel file downloaded successfully');
+      },
+      error: (err: any) => {
+        this.logger.error('Export failed', err);
+        this.toastService.showError('Export Failed', 'Could not generate Excel file');
+      }
+    });
+  }
 }
