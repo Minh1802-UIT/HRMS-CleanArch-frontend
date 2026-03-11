@@ -44,7 +44,7 @@ export class RecruitmentComponent implements OnInit, OnDestroy {
   filteredCandidates: Candidate[] = [];
   stages: RecruitmentStage[] = [];
   selectedJobDetail: JobVacancy | null = null;
-  kanbanStages = ['Applied', 'CV Review', '1st Interview', 'Task Sent', '2nd Interview'];
+  kanbanStages = ['Applied', 'Interviewing', 'Test', 'Hired'];
   // Track candidate lists per stage for drag and drop
   stageCandidates: { [stage: string]: Candidate[] } = {};
   
@@ -97,19 +97,13 @@ export class RecruitmentComponent implements OnInit, OnDestroy {
         employmentType: v.employmentType || 'Full time',
         totalCandidates: v.totalCandidates ?? 0
       }));
+      this.updateJobCandidateCounts();
       this.applyFilters();
-      if (this.jobs.length > 0) {
-        this.loadCandidatesForFirstJob();
-      }
       this.cdr.markForCheck();
     });
   }
 
-  loadCandidatesForFirstJob() {
-    if (this.jobs.length > 0) {
-      this.loadCandidates(this.jobs[0].id);
-    }
-  }
+  // removed loadCandidatesForFirstJob as we load all
 
   loadCandidates(vacancyId?: string) {
     const observable = vacancyId 
@@ -127,11 +121,20 @@ export class RecruitmentComponent implements OnInit, OnDestroy {
         employmentType: this.jobs.find(j => j.id === c.jobVacancyId)?.employmentType || 'Full time',
         status: (c.status as string) || 'New'
       }));
+      this.updateJobCandidateCounts();
       this.applyCandidateFilters();
       this.refreshStageCounts();
       this.updateStageCandidates();
       this.cdr.markForCheck();
     });
+  }
+
+  updateJobCandidateCounts() {
+    if (this.jobs.length > 0 && this.candidates.length > 0 && this.viewMode !== 'kanban') {
+      this.jobs.forEach(job => {
+        job.totalCandidates = this.candidates.filter(c => c.jobVacancyId === job.id).length;
+      });
+    }
   }
 
   updateStageCandidates(): void {
@@ -142,26 +145,18 @@ export class RecruitmentComponent implements OnInit, OnDestroy {
 
   loadStages() {
     this.stages = [
-      { id: 'S1', name: 'CV Review', count: 0, icon: 'description', color: 'bg-blue-500' },
-      { id: 'S2', name: 'Interview', count: 0, icon: 'group', color: 'bg-orange-500' },
-      { id: 'S3', name: 'Technical Test', count: 0, icon: 'terminal', color: 'bg-purple-500' },
-      { id: 'S4', name: 'Offer', count: 0, icon: 'verified', color: 'bg-emerald-500' },
-      { id: 'S5', name: 'Hired', count: 0, icon: 'check_circle', color: 'bg-indigo-500' }
+      { id: 'S1', name: 'Applied', count: 0, icon: 'description', color: 'bg-blue-500' },
+      { id: 'S2', name: 'Interviewing', count: 0, icon: 'group', color: 'bg-orange-500' },
+      { id: 'S3', name: 'Test', count: 0, icon: 'terminal', color: 'bg-purple-500' },
+      { id: 'S4', name: 'Hired', count: 0, icon: 'check_circle', color: 'bg-indigo-500' }
     ];
   }
 
   /** Recompute stage counts from the actual candidates list. */
   refreshStageCounts() {
-    const stageStatusMap: Record<string, string> = {
-      'CV Review': 'Screening',
-      'Interview': 'Interview',
-      'Technical Test': 'Technical Test',
-      'Offer': 'Offer',
-      'Hired': 'Hired'
-    };
     this.stages = this.stages.map(stage => ({
       ...stage,
-      count: this.candidates.filter(c => c.status === stageStatusMap[stage.name]).length
+      count: this.candidates.filter(c => c.status === stage.name).length
     }));
   }
 
@@ -218,17 +213,9 @@ export class RecruitmentComponent implements OnInit, OnDestroy {
   }
 
   getCandidatesByStage(stage: string): Candidate[] {
-    const statusMap: { [key: string]: string } = {
-      'Applied': 'New',
-      'CV Review': 'Screening',
-      '1st Interview': 'Interview',
-      'Task Sent': 'Technical Test',
-      '2nd Interview': 'Offer'
-    };
-    const status = statusMap[stage] || stage;
     return this.candidates.filter(c => 
       c.jobTitle === this.selectedJobDetail?.title && 
-      (c.status === status || (stage === 'TASK SENT' && c.status === 'Screening'))
+      c.status === stage
     );
   }
 
@@ -240,6 +227,7 @@ export class RecruitmentComponent implements OnInit, OnDestroy {
   goBackToJobs() {
     this.viewMode = 'list';
     this.selectedJobDetail = null;
+    this.loadCandidates(); // reload all candidates for candidates tab
   }
 
   viewCandidates(job: JobVacancy) {
