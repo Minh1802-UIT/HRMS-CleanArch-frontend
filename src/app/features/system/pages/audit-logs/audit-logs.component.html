@@ -45,15 +45,15 @@
       </div>
 
       <!-- Search -->
-      <div class="space-y-1 lg:col-span-2 xl:col-span-2">
-        <div class="flex justify-between items-center">
-          <label class="label-overline text-zinc-500 dark:text-zinc-400">Search</label>
+      <div class="space-y-1 lg:col-span-2 xl:col-span-2 flex flex-col justify-end">
+        <label class="label-overline text-zinc-500 dark:text-zinc-400 flex justify-between items-center w-full mb-1">
+          <span>Search</span>
           @if (hasActiveFilters) {
           <button type="button" (click)="clearFilters()"
             class="text-xs font-medium text-violet-600 hover:underline">Clear all</button>
           }
-        </div>
-        <div class="relative">
+        </label>
+        <div class="relative w-full">
           <span class="flex absolute inset-y-0 left-0 items-center pl-3 text-zinc-400 pointer-events-none">
             <span class="text-sm material-symbols-outlined">search</span>
           </span>

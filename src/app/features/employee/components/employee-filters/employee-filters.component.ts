@@ -30,8 +30,8 @@ import { FormsModule } from '@angular/forms';
             </div>
             <input
               type="text"
-              [(ngModel)]="searchTerm"
-              (input)="onSearchInput()"
+              [ngModel]="searchTerm"
+              (ngModelChange)="onSearchTermChange($event)"
               (keyup.enter)="onSearch()"
               class="block py-2 pr-8 pl-10 w-full text-sm placeholder-zinc-400 text-zinc-900 bg-zinc-50 rounded-lg border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500"
               placeholder="Search employees..."
@@ -61,12 +61,15 @@ import { FormsModule } from '@angular/forms';
 })
 export class EmployeeFiltersComponent {
   @Input() searchTerm: string = '';
+  @Output() searchTermChange = new EventEmitter<string>();
   @Output() searchInput = new EventEmitter<void>();
   @Output() search = new EventEmitter<void>();
   @Output() clear = new EventEmitter<void>();
   @Output() exportCsv = new EventEmitter<void>();
 
-  onSearchInput(): void {
+  onSearchTermChange(val: string): void {
+    this.searchTerm = val;
+    this.searchTermChange.emit(this.searchTerm);
     this.searchInput.emit();
   }
 
@@ -75,6 +78,8 @@ export class EmployeeFiltersComponent {
   }
 
   clearFilters(): void {
+    this.searchTerm = '';
+    this.searchTermChange.emit(this.searchTerm);
     this.clear.emit();
   }
 }

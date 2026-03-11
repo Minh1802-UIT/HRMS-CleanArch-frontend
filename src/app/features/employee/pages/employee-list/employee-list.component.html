@@ -46,7 +46,7 @@
 
   <!-- Filters Component -->
   <app-employee-filters
-    [searchTerm]="searchTerm"
+    [(searchTerm)]="searchTerm"
     (searchInput)="onSearchInput()"
     (search)="onSearch()"
     (clear)="clearFilters()"
