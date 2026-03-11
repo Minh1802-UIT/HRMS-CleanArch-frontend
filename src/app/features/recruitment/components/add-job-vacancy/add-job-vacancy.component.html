@@ -1,0 +1,92 @@
+<div class="flex flex-col h-full bg-white dark:bg-zinc-900 overflow-hidden relative rounded-xl shadow-2xl">
+  <!-- Header -->
+  <div class="flex sticky top-0 z-20 justify-between items-center px-8 py-6 bg-white dark:bg-zinc-900 border-b border-gray-100 dark:border-zinc-800">
+    <div>
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-zinc-100">
+        {{ isEditMode ? "Edit Job Vacancy" : "Add New Job Vacancy" }}
+      </h2>
+      <p class="mt-1 text-sm text-gray-500 dark:text-zinc-400">
+        {{ isEditMode ? "Update the details for this job opening." : "Fill in the details to publish a new job opening." }}
+      </p>
+    </div>
+    <button (click)="close.emit()" class="text-gray-400 focus:outline-none dark:text-zinc-500 transition-colors hover:text-gray-600 dark:hover:text-zinc-200">
+      <span class="text-2xl material-symbols-outlined">close</span>
+    </button>
+  </div>
+
+  <!-- Form -->
+  <div class="overflow-y-auto flex-1 bg-white dark:bg-zinc-900">
+    <div class="px-8 py-10 mx-auto max-w-4xl">
+      <form [formGroup]="jobForm" class="space-y-6">
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="space-y-2 col-span-2">
+            <label class="block text-sm font-semibold text-zinc-900 dark:text-zinc-100">Job Title <span class="text-red-500">*</span></label>
+            <input type="text" formControlName="title" class="form-input w-full px-4 py-2.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-all" placeholder="e.g. Senior Frontend Engineer" />
+          </div>
+
+          <div class="space-y-2 col-span-2">
+            <label class="block text-sm font-semibold text-zinc-900 dark:text-zinc-100">Description <span class="text-red-500">*</span></label>
+            <textarea formControlName="description" rows="4" class="form-input w-full px-4 py-2.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-all" placeholder="Describe the role..."></textarea>
+          </div>
+
+          <div class="space-y-2 col-span-2">
+            <label class="block text-sm font-semibold text-zinc-900 dark:text-zinc-100">Requirements (one per line) <span class="text-red-500">*</span></label>
+            <textarea formControlName="requirements" rows="4" class="form-input w-full px-4 py-2.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-all" placeholder="- 5+ years of Angular experience
+- Strong CSS skills..."></textarea>
+          </div>
+
+          <div class="space-y-2">
+            <label class="block text-sm font-semibold text-zinc-900 dark:text-zinc-100">Number of Vacancies <span class="text-red-500">*</span></label>
+            <input type="number" formControlName="vacancies" class="form-input w-full px-4 py-2.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-all" min="1" />
+          </div>
+
+          <div class="space-y-2">
+            <label class="block text-sm font-semibold text-zinc-900 dark:text-zinc-100">Expired Date <span class="text-red-500">*</span></label>
+            <input type="date" formControlName="expiredDate" class="form-input w-full px-4 py-2.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-all" />
+          </div>
+
+          <div class="space-y-2">
+            <label class="block text-sm font-semibold text-zinc-900 dark:text-zinc-100">Department</label>
+            <select formControlName="department" class="form-select w-full px-4 py-2.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-all cursor-pointer">
+              <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+            </select>
+          </div>
+
+          <div class="space-y-2">
+            <label class="block text-sm font-semibold text-zinc-900 dark:text-zinc-100">Office</label>
+            <select formControlName="office" class="form-select w-full px-4 py-2.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-all cursor-pointer">
+              <option *ngFor="let off of offices" [value]="off">{{ off }}</option>
+            </select>
+          </div>
+
+          <div class="space-y-2">
+            <label class="block text-sm font-semibold text-zinc-900 dark:text-zinc-100">Employment Type</label>
+            <select formControlName="employmentType" class="form-select w-full px-4 py-2.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-all cursor-pointer">
+              <option *ngFor="let type of employmentTypes" [value]="type">{{ type }}</option>
+            </select>
+          </div>
+
+          <div class="space-y-2">
+            <label class="block text-sm font-semibold text-zinc-900 dark:text-zinc-100">Status</label>
+            <select formControlName="status" class="form-select w-full px-4 py-2.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-all cursor-pointer">
+              <option *ngFor="let stat of statuses" [value]="stat">{{ stat }}</option>
+            </select>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer Actions -->
+  <div class="flex sticky bottom-0 z-20 justify-end items-center px-8 py-6 gap-4 bg-white dark:bg-zinc-900 border-t border-gray-100 dark:border-zinc-800">
+    <button type="button" (click)="close.emit()" class="px-6 py-2.5 text-sm font-semibold text-gray-700 dark:text-zinc-300 bg-white dark:bg-zinc-800 rounded-lg border border-gray-300 dark:border-zinc-600 transition-colors hover:bg-gray-50 dark:hover:bg-zinc-700">
+      Cancel
+    </button>
+    <button type="button" (click)="onSubmit()" [disabled]="jobForm.invalid || loading" class="flex gap-2 items-center px-8 py-2.5 text-sm font-semibold text-white bg-violet-600 rounded-lg shadow-sm transition-colors hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed">
+      <span *ngIf="loading" class="material-symbols-outlined animate-spin text-sm">sync</span>
+      {{ isEditMode ? "Save Changes" : "Create Job Vacancy" }}
+    </button>
+  </div>
+</div>

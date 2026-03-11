@@ -1,0 +1,90 @@
+<div class="flex flex-col h-full bg-white dark:bg-zinc-900 overflow-hidden relative rounded-xl shadow-2xl">
+  <!-- Header -->
+  <div class="flex sticky top-0 z-20 justify-between items-center px-8 py-6 bg-white dark:bg-zinc-900 border-b border-gray-100 dark:border-zinc-800">
+    <div>
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-zinc-100">
+        Job Details
+      </h2>
+      <p class="mt-1 text-sm text-gray-500 dark:text-zinc-400">
+        {{ job.title }}
+      </p>
+    </div>
+    <div class="flex items-center gap-3">
+      <button type="button" (click)="edit.emit(job)" class="flex gap-2 items-center px-4 py-2 text-sm font-semibold text-zinc-700 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg shadow-sm transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-700 dark:text-zinc-300">
+        <span class="material-symbols-outlined text-sm">edit</span> Edit
+      </button>
+      <button (click)="close.emit()" class="text-gray-400 focus:outline-none dark:text-zinc-500 transition-colors hover:text-gray-600 dark:hover:text-zinc-200 ml-2">
+        <span class="text-2xl material-symbols-outlined">close</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="overflow-y-auto flex-1 bg-white dark:bg-zinc-900">
+    <div class="px-8 py-10 mx-auto max-w-4xl space-y-8">
+      
+      <!-- Meta attributes -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 p-6 rounded-xl bg-violet-50 dark:bg-violet-900/10 border border-violet-100 dark:border-violet-800/20">
+        <div>
+          <p class="text-xs font-bold text-violet-500 dark:text-violet-400 uppercase tracking-wider mb-1">Department</p>
+          <p class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{{ job.department || 'N/A' }}</p>
+        </div>
+        <div>
+          <p class="text-xs font-bold text-violet-500 dark:text-violet-400 uppercase tracking-wider mb-1">Office</p>
+          <p class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{{ job.office || 'N/A' }}</p>
+        </div>
+        <div>
+          <p class="text-xs font-bold text-violet-500 dark:text-violet-400 uppercase tracking-wider mb-1">Type</p>
+          <p class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{{ job.employmentType || 'N/A' }}</p>
+        </div>
+        <div>
+          <p class="text-xs font-bold text-violet-500 dark:text-violet-400 uppercase tracking-wider mb-1">Status</p>
+          <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold"
+                [ngClass]="{
+                  'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400': job.status === 'Published',
+                  'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-400': job.status === 'Draft',
+                  'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400': job.status === 'Closed'
+                }">
+            {{ job.status }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-bold text-zinc-900 dark:text-white border-b border-zinc-100 dark:border-zinc-800 pb-2">Description</h3>
+        <p class="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed whitespace-pre-wrap">{{ job.description }}</p>
+      </div>
+
+      <!-- Requirements -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-bold text-zinc-900 dark:text-white border-b border-zinc-100 dark:border-zinc-800 pb-2">Requirements</h3>
+        <ul class="list-disc pl-5 space-y-2 text-sm text-zinc-600 dark:text-zinc-300">
+          <li *ngFor="let req of job.requirements">{{ req }}</li>
+        </ul>
+      </div>
+
+      <!-- Additional Details -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800">
+        <div class="flex items-center gap-3">
+          <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-orange-100 text-orange-600 dark:bg-orange-500/20 dark:text-orange-400">
+            <span class="material-symbols-outlined">group</span>
+          </div>
+          <div>
+            <p class="text-xs font-medium text-zinc-500 dark:text-zinc-400">Open Vacancies</p>
+            <p class="font-bold text-zinc-900 dark:text-white">{{ job.vacancies }} positions</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400">
+            <span class="material-symbols-outlined">event_busy</span>
+          </div>
+          <div>
+            <p class="text-xs font-medium text-zinc-500 dark:text-zinc-400">Expiration Date</p>
+            <p class="font-bold text-zinc-900 dark:text-white">{{ job.expiredDate | date:'mediumDate' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

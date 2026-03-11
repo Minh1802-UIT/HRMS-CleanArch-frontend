@@ -8,13 +8,17 @@ import { LoggerService } from '@core/services/logger.service';
 import { ToastService } from '@core/services/toast.service';
 import { RecruitmentService } from '@features/recruitment/services/recruitment.service';
 import { JobVacancy, Candidate, RecruitmentStage } from '@features/recruitment/models/recruitment.model';
+import { DragDropModule, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { AddJobVacancyComponent } from '../../components/add-job-vacancy/add-job-vacancy.component';
+import { AddCandidateComponent } from '../../components/add-candidate/add-candidate.component';
+import { JobVacancyDetailComponent } from '../../components/job-vacancy-detail/job-vacancy-detail.component';
 
 // interfaces removed, now using external models
 
 @Component({
   selector: 'app-recruitment',
   standalone: true,
-  imports: [NgClass, DatePipe, FormsModule, RouterModule],
+  imports: [NgClass, DatePipe, FormsModule, RouterModule, DragDropModule, AddJobVacancyComponent, AddCandidateComponent, JobVacancyDetailComponent],
   templateUrl: './recruitment.component.html',
   styleUrl: './recruitment.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -41,6 +45,8 @@ export class RecruitmentComponent implements OnInit, OnDestroy {
   stages: RecruitmentStage[] = [];
   selectedJobDetail: JobVacancy | null = null;
   kanbanStages = ['Applied', 'CV Review', '1st Interview', 'Task Sent', '2nd Interview'];
+  // Track candidate lists per stage for drag and drop
+  stageCandidates: { [stage: string]: Candidate[] } = {};
   
   // Pagination
   currentPage: number = 1;
@@ -50,6 +56,18 @@ export class RecruitmentComponent implements OnInit, OnDestroy {
   // Action menu
   openMenuId: string | null = null;
   openCandidateMenuId: string | null = null;
+
+  // Add Job Drawer
+  showAddJobDrawer = false;
+  editingJob: JobVacancy | null = null;
+
+  // Add Candidate Drawer
+  showAddCandidateDrawer = false;
+  editingCandidate: Candidate | null = null;
+  
+  // Job Details Drawer
+  showJobDetailsDrawer = false;
+  viewingJob: JobVacancy | null = null;
 
   constructor(
     private logger: LoggerService,
@@ -111,7 +129,14 @@ export class RecruitmentComponent implements OnInit, OnDestroy {
       }));
       this.applyCandidateFilters();
       this.refreshStageCounts();
+      this.updateStageCandidates();
       this.cdr.markForCheck();
+    });
+  }
+
+  updateStageCandidates(): void {
+    this.kanbanStages.forEach(stage => {
+      this.stageCandidates[stage] = this.getCandidatesByStage(stage);
     });
   }
 
@@ -254,20 +279,96 @@ export class RecruitmentComponent implements OnInit, OnDestroy {
   }
 
   viewJobDetails(job: JobVacancy) {
-    this.logger.debug('View details for:', job.title);
-    this.toastService.showInfo('Job Details', `Detailed view for "${job.title}" will be available in a future update.`);
+    this.viewingJob = job;
+    this.showJobDetailsDrawer = true;
     this.closeMenu();
   }
 
+  closeJobDetailsDrawer() {
+    this.showJobDetailsDrawer = false;
+    this.viewingJob = null;
+  }
+
   openSettings(job: JobVacancy) {
-    this.logger.debug('Settings for:', job.title);
-    this.toastService.showInfo('Job Settings', 'Job settings panel will be available in a future update.');
+    this.editingJob = job;
+    this.showAddJobDrawer = true;
     this.closeMenu();
   }
 
   addNewJob() {
-    this.logger.debug('Add new job');
-    this.toastService.showInfo('New Position', 'Job creation form will be available in a future update.');
+    this.editingJob = null;
+    this.showAddJobDrawer = true;
+  }
+
+  closeJobDrawer() {
+    this.showAddJobDrawer = false;
+    this.editingJob = null;
+  }
+
+  onJobSaved() {
+    this.closeJobDrawer();
+    this.loadJobs();
+  }
+
+  // Candidate Actions
+  addNewCandidate(presetStage?: string) {
+    this.editingCandidate = null;
+    
+    // If opened from Kanban board for a specific job/stage
+    if (this.selectedJobDetail || presetStage) {
+      const statusMap: { [key: string]: string } = {
+        'Applied': 'New',
+        'CV Review': 'Screening',
+        '1st Interview': 'Interview',
+        'Task Sent': 'Technical Test',
+        '2nd Interview': 'Offer'
+      };
+      
+      this.editingCandidate = {
+        id: '',
+        fullName: '',
+        email: '',
+        phone: '',
+        jobVacancyId: this.selectedJobDetail?.id || '',
+        status: presetStage ? (statusMap[presetStage] || presetStage) : 'New',
+        resumeUrl: '',
+        appliedDate: new Date().toISOString().substring(0, 10)
+      } as any;
+    }
+    
+    this.showAddCandidateDrawer = true;
+  }
+
+  editCandidate(candidate: Candidate) {
+    this.editingCandidate = candidate;
+    this.showAddCandidateDrawer = true;
+    this.closeMenu();
+  }
+
+  closeCandidateDrawer() {
+    this.showAddCandidateDrawer = false;
+    this.editingCandidate = null;
+  }
+
+  onCandidateSaved() {
+    this.closeCandidateDrawer();
+    this.loadCandidates(this.selectedJobDetail?.id);
+  }
+
+  deleteCandidate(candidate: Candidate) {
+    if (confirm(`Are you sure you want to delete ${candidate.fullName || candidate.name}?`)) {
+      this.recruitmentService.deleteCandidate(candidate.id).subscribe({
+        next: (success) => {
+          if (success) {
+            this.toastService.showSuccess('Deleted', 'Candidate deleted successfully');
+            this.loadCandidates(this.selectedJobDetail?.id);
+          } else {
+            this.toastService.showError('Error', 'Failed to delete candidate');
+          }
+        },
+        error: () => this.toastService.showError('Error', 'Failed to delete candidate')
+      });
+    }
   }
 
   toggleJobSelection(job: JobVacancy) {
@@ -325,4 +426,60 @@ export class RecruitmentComponent implements OnInit, OnDestroy {
   trackByCandidateId(index: number, candidate: Candidate): string { return candidate.id; }
   trackByIndex(index: number, item?: unknown): number { return index; }
   trackByStageId(index: number, stage: RecruitmentStage): string { return stage.id; }
+
+  // Drag and Drop
+  onDrop(event: CdkDragDrop<Candidate[]>, newStageName: string) {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex,
+      );
+      
+      const movedCandidate = event.container.data[event.currentIndex];
+      
+      const statusMap: { [key: string]: string } = {
+        'Applied': 'New',
+        'CV Review': 'Screening',
+        '1st Interview': 'Interview',
+        'Task Sent': 'Technical Test',
+        '2nd Interview': 'Offer'
+      };
+      const newStatus = statusMap[newStageName] || newStageName;
+      movedCandidate.status = newStatus;
+
+      this.recruitmentService.updateCandidateStatus(movedCandidate.id, newStatus).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (success) => {
+          if (success) {
+            this.toastService.showSuccess('Status Updated', `${movedCandidate.name} moved to ${newStageName}`);
+            this.refreshStageCounts();
+          } else {
+            this.toastService.showError('Error', 'Failed to update candidate status');
+            // Revert changes
+            transferArrayItem(
+              event.container.data,
+              event.previousContainer.data,
+              event.currentIndex,
+              event.previousIndex,
+            );
+          }
+          this.cdr.markForCheck();
+        },
+        error: () => {
+          this.toastService.showError('Error', 'Failed to connect to server');
+          // Revert changes
+          transferArrayItem(
+            event.container.data,
+            event.previousContainer.data,
+            event.currentIndex,
+            event.previousIndex,
+          );
+          this.cdr.markForCheck();
+        }
+      });
+    }
+  }
 }

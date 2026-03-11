@@ -460,6 +460,7 @@
         <!-- Board -->
         <div
           class="flex gap-6 overflow-x-auto pb-8 custom-scrollbar h-[calc(100vh-320px)] min-h-[500px]"
+          cdkDropListGroup
         >
           @for (stage of kanbanStages; track trackByStage($index, stage)) {
             <div class="flex flex-col w-80 shrink-0">
@@ -476,6 +477,7 @@
                 </div>
                 <button
                   type="button"
+                  (click)="addNewCandidate(stage)"
                   aria-label="Add candidate to stage"
                   class="text-zinc-400 transition-colors hover:text-violet-600"
                 >
@@ -483,15 +485,22 @@
                 </button>
               </div>
               <div
-                class="overflow-y-auto flex-1 pr-1 space-y-4 custom-scrollbar"
+                class="overflow-y-auto flex-1 pr-1 space-y-4 custom-scrollbar min-h-[150px]"
+                cdkDropList
+                [cdkDropListData]="stageCandidates[stage]"
+                (cdkDropListDropped)="onDrop($event, stage)"
               >
                 @for (
-                  c of getCandidatesByStage(stage);
+                  c of stageCandidates[stage];
                   track trackByCandidateId($index, c)
                 ) {
                   <div
-                    class="p-5 bg-white rounded-xl border border-transparent shadow-sm transition-all cursor-pointer group dark:bg-zinc-800 hover:border-violet-400/40 hover:shadow-lg hover:-translate-y-1"
+                    cdkDrag
+                    class="p-5 bg-white rounded-xl border border-transparent shadow-sm transition-all cursor-move group dark:bg-zinc-800 hover:border-violet-400/40 hover:shadow-lg hover:-translate-y-1"
                   >
+                    <div *cdkDragPreview class="p-5 bg-white rounded-xl shadow-2xl opacity-80 border-2 border-violet-500 w-80 dark:bg-zinc-800">
+                       <p class="font-bold text-sm">{{ c.name }}</p>
+                    </div>
                     <div class="flex justify-between items-start mb-4">
                       <div class="flex gap-3.5">
                         <div class="relative">
@@ -524,10 +533,11 @@
                       </div>
                       <button
                         type="button"
-                        aria-label="More options"
-                        class="text-zinc-300 transition-colors hover:text-zinc-600 dark:hover:text-zinc-200"
+                        (click)="editCandidate(c)"
+                        aria-label="Edit candidate"
+                        class="text-zinc-300 transition-colors hover:text-blue-600 dark:hover:text-blue-400"
                       >
-                        <i class="pi pi-ellipsis-h" aria-hidden="true"></i>
+                        <span class="material-symbols-outlined text-sm pt-1" aria-hidden="true">edit</span>
                       </button>
                     </div>
                     <div
@@ -548,23 +558,16 @@
                           ></i>
                         }
                       </div>
-                      <div
-                        class="flex justify-center items-center w-6 h-6 bg-zinc-50 rounded dark:bg-zinc-700"
+                      <a
+                        [href]="c.resumeUrl"
+                        target="_blank"
+                        class="flex justify-center items-center w-6 h-6 bg-zinc-50 rounded dark:bg-zinc-700 transition-colors hover:bg-violet-100 hover:text-violet-600"
                       >
-                        <i class="pi pi-paperclip text-xs text-zinc-400" aria-hidden="true"></i>
-                      </div>
+                        <i class="pi pi-paperclip text-xs text-zinc-400 hover:text-violet-600" aria-hidden="true"></i>
+                      </a>
                     </div>
                   </div>
                 }
-                <!-- Drop Zone -->
-                <div
-                  class="flex justify-center items-center p-8 rounded-xl border-2 border-zinc-200 border-dashed opacity-0 transition-all dark:border-zinc-700 group-hover:opacity-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/10 hover:border-violet-400/30"
-                >
-                  <span
-                    class="text-xs font-bold text-zinc-300 dark:text-zinc-600"
-                    >Drop candidate here</span
-                  >
-                </div>
               </div>
             </div>
           }
@@ -574,6 +577,14 @@
 
     <!-- Candidates Tab -->
     @if (activeTab === "candidates") {
+      <!-- Header Actions -->
+      <div class="flex justify-between items-center mb-6 mt-6">
+        <h2 class="text-xl font-bold text-zinc-900 dark:text-white">All Candidates</h2>
+        <button type="button" (click)="addNewCandidate()" class="flex gap-2 items-center px-4 py-2 font-semibold text-white bg-violet-600 rounded-lg shadow-md transition-colors hover:bg-violet-500 btn-glow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500">
+          <span class="material-symbols-outlined" aria-hidden="true">person_add</span> Add Candidate
+        </button>
+      </div>
+
       <!-- Filters Section -->
       <div
         class="flex flex-col gap-4 justify-between items-start mt-6 mb-6 xl:flex-row xl:items-center"
@@ -734,15 +745,16 @@
                     {{ c.status }}
                   </td>
                   <td class="p-4 text-center">
-                    <button
-                      type="button"
+                    <a
+                      [href]="c.resumeUrl"
+                      target="_blank"
                       [attr.aria-label]="'View CV for ' + c.name"
-                      class="text-zinc-400 transition-colors hover:text-violet-600"
+                      class="inline-block text-zinc-400 transition-colors hover:text-violet-600"
                     >
                       <span class="text-lg material-symbols-outlined" aria-hidden="true"
                         >article</span
                       >
-                    </button>
+                    </a>
                   </td>
                   <td class="p-4 font-medium text-zinc-500 dark:text-zinc-400">
                     {{ c.appliedDate | date: "dd/MM/yyyy" }}
@@ -757,13 +769,22 @@
                       {{ c.employmentType }}
                     </span>
                   </td>
-                  <td class="p-4 text-center">
+                  <td class="p-4 text-center flex justify-center gap-2">
                     <button
                       type="button"
-                      [attr.aria-label]="'More actions for ' + c.name"
-                      class="text-zinc-400 transition-colors hover:text-zinc-600 dark:hover:text-zinc-200"
+                      (click)="editCandidate(c)"
+                      [attr.aria-label]="'Edit ' + c.name"
+                      class="text-zinc-400 transition-colors hover:text-blue-600"
                     >
-                      <i class="pi pi-ellipsis-h" aria-hidden="true"></i>
+                      <span class="material-symbols-outlined text-sm pt-1" aria-hidden="true">edit</span>
+                    </button>
+                    <button
+                      type="button"
+                      (click)="deleteCandidate(c)"
+                      [attr.aria-label]="'Delete ' + c.name"
+                      class="text-zinc-400 transition-colors hover:text-red-600"
+                    >
+                      <span class="material-symbols-outlined text-sm pt-1" aria-hidden="true">delete</span>
                     </button>
                   </td>
                 </tr>
@@ -955,3 +976,24 @@
     }
   </div>
 </div>
+
+<!-- Edit/Add Job Drawer -->
+@if (showAddJobDrawer) {
+  <div class="flex fixed inset-0 z-50 justify-end items-center">
+    <!-- Backdrop -->
+    <div
+      class="absolute inset-0 backdrop-blur-sm transition-opacity bg-zinc-900/50 dark:bg-black/60"
+      (click)="closeJobDrawer()"
+    ></div>
+    <!-- Drawer Panel -->
+    <div
+      class="overflow-hidden relative w-full h-full max-w-2xl bg-white border-l border-zinc-200 shadow-2xl dark:bg-zinc-900 dark:border-zinc-800 animate-slide-in-right"
+    >
+      <app-add-job-vacancy
+        [editJob]="editingJob"
+        (close)="closeJobDrawer()"
+        (jobSaved)="onJobSaved()"
+      ></app-add-job-vacancy>
+    </div>
+  </div>
+}
