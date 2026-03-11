@@ -24,6 +24,7 @@ export class AddCandidateComponent implements OnInit {
   candidateForm!: FormGroup;
   loading = false;
   isEditMode = false;
+  isParsing = false;
 
   statuses = ['New', 'Screening', 'Interview', 'Technical Test', 'Offer', 'Hired', 'Rejected'];
 
@@ -41,6 +42,45 @@ export class AddCandidateComponent implements OnInit {
       status: [this.editCandidate?.status || 'New', Validators.required],
       resumeUrl: [this.editCandidate?.resumeUrl || '', Validators.required],
       appliedDate: [this.editCandidate?.appliedDate ? new Date(this.editCandidate.appliedDate).toISOString().substring(0, 10) : new Date().toISOString().substring(0, 10), Validators.required]
+    });
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      this.parseCv(file);
+      // Reset input so the same file can be selected again if needed
+      input.value = '';
+    }
+  }
+
+  parseCv(file: File): void {
+    if (file.type !== 'application/pdf') {
+      this.toastService.showWarn('Invalid File', 'Please upload a PDF file for AI parsing.');
+      return;
+    }
+
+    this.isParsing = true;
+    this.recruitmentService.parseCv(file).subscribe({
+      next: (data) => {
+        this.isParsing = false;
+        if (data) {
+          const fullName = [data.firstName, data.lastName].filter(Boolean).join(' ').trim();
+          this.candidateForm.patchValue({
+            fullName: fullName || this.candidateForm.value.fullName,
+            email: data.email || this.candidateForm.value.email,
+            phone: data.phoneNumber || this.candidateForm.value.phone,
+          });
+          this.toastService.showSuccess('AI Success', 'CV parsed successfully');
+        } else {
+          this.toastService.showError('AI Error', 'Failed to extract data from CV');
+        }
+      },
+      error: () => {
+        this.isParsing = false;
+        this.toastService.showError('AI Error', 'An error occurred while parsing CV');
+      }
     });
   }
 

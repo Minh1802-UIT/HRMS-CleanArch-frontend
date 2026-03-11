@@ -146,6 +146,37 @@ export class RecruitmentService {
     );
   }
 
+  // =====================================================================
+  //  AI Integration
+  // =====================================================================
+
+  parseCv(file: File): Observable<{ firstName?: string, lastName?: string, email?: string, phoneNumber?: string, skills?: string[] } | null> {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/candidates/parse-cv`, formData).pipe(
+      map(res => res.data),
+      catchError(err => {
+        this.logger.error('Failed to parse CV with AI', err);
+        return of(null);
+      })
+    );
+  }
+
+  scoreCandidate(candidateId: string): Observable<boolean> {
+    return this.http.post<ApiResponse<boolean>>(`${this.apiUrl}/candidates/${candidateId}/score`, {}).pipe(
+      map(res => res.succeeded),
+      catchError(err => {
+        this.logger.error(`Failed to score candidate ${candidateId} with AI`, err);
+        return of(false);
+      })
+    );
+  }
+
+  // =====================================================================
+  //  Onboarding
+  // =====================================================================
+
   onboardCandidate(id: string, onboardData: { employeeId?: string; startDate?: string }): Observable<boolean> {
     return this.http.post<ApiResponse<boolean>>(`${this.apiUrl}/candidates/${id}/onboard`, onboardData).pipe(
       map(res => res.succeeded),

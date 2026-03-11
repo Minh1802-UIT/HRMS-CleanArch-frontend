@@ -59,6 +59,18 @@
                       <span class="text-lg material-symbols-outlined">mail</span> Email
                     </button>
                     <button
+                      (click)="scoreWithAi()"
+                      [disabled]="isScoring"
+                      class="flex gap-2 items-center px-4 py-2 text-sm font-bold text-violet-700 bg-violet-50 rounded-lg border border-violet-200 shadow-sm transition-all hover:bg-violet-100 dark:bg-violet-900/20 dark:border-violet-800/50 dark:text-violet-300 dark:hover:bg-violet-900/40 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                      @if (isScoring) {
+                        <span class="text-lg material-symbols-outlined animate-spin">sync</span>
+                      } @else {
+                        <span class="text-lg material-symbols-outlined">auto_awesome</span>
+                      }
+                      {{ isScoring ? 'Scoring...' : 'Score with AI' }}
+                    </button>
+                    <button
                       (click)="moveToNextStage()"
                       class="flex gap-2 items-center px-5 py-2 text-sm font-bold text-white rounded-lg shadow-md transition-all bg-brand-orange hover:bg-orange-600"
                       >
@@ -153,6 +165,20 @@
                                       >
                                     </div>
                                   </div>
+                                  <!-- AI Score -->
+                                  @if (candidate.aiScore !== undefined && candidate.aiScore !== null) {
+                                    <div class="my-8 w-full h-px bg-gray-100 dark:bg-gray-700/50"></div>
+                                    <div class="flex flex-col gap-3 items-center w-full bg-violet-50 dark:bg-violet-900/10 p-5 rounded-2xl border border-violet-100 dark:border-violet-900/30">
+                                      <span class="text-xs text-violet-600 dark:text-violet-400 uppercase font-bold tracking-widest flex items-center gap-1.5">
+                                        <span class="material-symbols-outlined text-sm">auto_awesome</span>
+                                        Match Score
+                                      </span>
+                                      <div class="text-4xl font-black text-violet-700 dark:text-violet-300">
+                                        {{ candidate.aiScore }}<span class="text-sm font-bold text-violet-500/70 ml-1">/ 100</span>
+                                      </div>
+                                    </div>
+                                  }
+
                                   <div class="my-8 w-full h-px bg-gray-100 dark:bg-gray-700/50"></div>
                                   <div class="flex flex-col gap-2 items-center w-full">
                                     <span
@@ -669,6 +695,19 @@
                                                                                                             </p>
                                                                                                           </div>
                                                                                                         </div>
+                                                                                                        
+                                                                                                        @if (candidate.aiMatchingSummary) {
+                                                                                                          <div class="mb-8 p-4 bg-white/50 rounded-xl border border-blue-100 shrink-0 dark:bg-gray-800/50 dark:border-blue-900/30">
+                                                                                                            <p class="text-[10px] uppercase tracking-widest text-blue-800 font-bold mb-2 dark:text-blue-300 flex items-center gap-1">
+                                                                                                              <span class="material-symbols-outlined text-[14px]">psychology</span>
+                                                                                                              Matching Summary
+                                                                                                            </p>
+                                                                                                            <p class="text-sm text-gray-700 dark:text-gray-300 font-medium leading-relaxed">
+                                                                                                              {{ candidate.aiMatchingSummary }}
+                                                                                                            </p>
+                                                                                                          </div>
+                                                                                                        }
+
                                                                                                         <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
                                                                                                           <div class="space-y-6">
                                                                                                             <div>

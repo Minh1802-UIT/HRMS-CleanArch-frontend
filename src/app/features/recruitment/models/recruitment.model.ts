@@ -24,6 +24,9 @@ export interface Candidate {
   status: string;
   resumeUrl: string;
   appliedDate: string;
+  aiScore?: number;
+  aiMatchingSummary?: string;
+  extractedSkills?: string;
   // UI helper fields
   score?: number;
   avatar?: string;

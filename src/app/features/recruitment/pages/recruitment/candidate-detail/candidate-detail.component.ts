@@ -69,6 +69,9 @@ interface CandidateDetail {
   gender: string;
   dob: string;
   address: string;
+  aiScore?: number;
+  aiMatchingSummary?: string;
+  extractedSkills?: string;
   experience: Experience[];
   education: Education[];
   timeline: TimelineEvent[];
@@ -90,6 +93,7 @@ interface CandidateDetail {
 export class CandidateDetailComponent implements OnInit, OnDestroy {
   candidate: CandidateDetail | null = null;
   loading = false;
+  isScoring = false;
   activeTab: 'overview' | 'resume' | 'notes' | 'history' = 'resume';
   private destroy$ = new Subject<void>();
 
@@ -155,8 +159,11 @@ export class CandidateDetailComponent implements OnInit, OnDestroy {
               documents: apiCandidate.resumeUrl
                 ? [{ name: 'Resume', size: '', type: 'pdf', url: apiCandidate.resumeUrl }]
                 : [],
-              skills: [],
-              tools: []
+              skills: apiCandidate.extractedSkills ? apiCandidate.extractedSkills.split(',').map((s: string) => s.trim()).filter(Boolean) : [],
+              tools: [],
+              aiScore: apiCandidate.aiScore,
+              aiMatchingSummary: apiCandidate.aiMatchingSummary,
+              extractedSkills: apiCandidate.extractedSkills
             };
           } else {
             this.candidate = null;
@@ -210,6 +217,28 @@ export class CandidateDetailComponent implements OnInit, OnDestroy {
   moveToNextStage() {
     this.logger.debug('Move to next stage');
     this.toastService.showInfo('Move to Next Stage', 'Pipeline stage management will be available in a future update.');
+  }
+
+  scoreWithAi() {
+    if (!this.candidate) return;
+    this.isScoring = true;
+    this.recruitmentService.scoreCandidate(this.candidate.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (ok) => {
+          this.isScoring = false;
+          if (ok) {
+            this.toastService.showSuccess('AI Success', 'Candidate has been scored successfully.');
+            this.loadCandidate(this.candidate!.id); // reload data
+          } else {
+            this.toastService.showError('AI Error', 'Failed to score candidate. Make sure the candidate has a CV/Resume.');
+          }
+        },
+        error: () => {
+          this.isScoring = false;
+          this.toastService.showError('AI Error', 'An error occurred while scoring the candidate.');
+        }
+      });
   }
 
   trackByIndex(index: number, item?: unknown): number { return index; }
