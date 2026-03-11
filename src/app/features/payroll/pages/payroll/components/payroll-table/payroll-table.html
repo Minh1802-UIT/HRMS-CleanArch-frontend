@@ -5,6 +5,7 @@
                 class="text-xs tracking-wider text-zinc-500 uppercase bg-zinc-50 dark:bg-zinc-900/50 border-b border-zinc-200 dark:border-zinc-700">
                 <tr>
                     <th class="px-6 py-4 font-semibold">Employee</th>
+                    <th class="px-6 py-4 font-semibold text-center">Working Hrs</th>
                     <th class="px-6 py-4 font-semibold text-right">Basic Salary</th>
                     <th class="px-6 py-4 font-semibold text-right">Allowances</th>
                     <th class="px-6 py-4 font-semibold text-right">Deductions</th>
@@ -16,7 +17,7 @@
             <tbody class="divide-y divide-zinc-100 dark:divide-zinc-700">
                 @if (loading) {
                 <tr>
-                    <td colspan="7" class="py-12 text-center text-zinc-500">
+                    <td colspan="8" class="py-12 text-center text-zinc-500">
                         <span
                             class="mb-2 text-2xl material-symbols-outlined animate-spin text-violet-500">progress_activity</span>
                         <p>Loading payroll records...</p>
@@ -24,7 +25,7 @@
                 </tr>
                 } @else if (filteredRecords.length === 0) {
                 <tr>
-                    <td colspan="7" class="py-12 text-center text-zinc-500">
+                    <td colspan="8" class="py-12 text-center text-zinc-500">
                         <div class="p-4 mx-auto mb-3 w-16 h-16 bg-zinc-100 dark:bg-zinc-800 rounded-full">
                             <span class="text-2xl material-symbols-outlined text-zinc-400">folder_open</span>
                         </div>
@@ -52,6 +53,9 @@
                                 </div>
                             </div>
                         </div>
+                    </td>
+                    <td class="px-6 py-4 font-medium text-center text-zinc-700 dark:text-zinc-300">
+                        {{ record.actualWorkingDays * 8 }}h
                     </td>
                     <td class="px-6 py-4 font-medium text-right text-zinc-700 dark:text-zinc-300">
                         {{ record.baseSalary | currency:'VND':'symbol-narrow':'1.0-0' }}
