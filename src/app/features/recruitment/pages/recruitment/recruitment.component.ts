@@ -108,7 +108,7 @@ export class RecruitmentComponent implements OnInit, OnDestroy {
   loadCandidates(vacancyId?: string) {
     const observable = vacancyId 
       ? this.recruitmentService.getCandidatesByVacancy(vacancyId)
-      : of([]); // or fetch all if needed
+      : this.recruitmentService.getAllCandidates();
 
     observable.pipe(takeUntil(this.destroy$)).subscribe(candidates => {
       this.candidates = candidates.map(c => ({
@@ -152,12 +152,21 @@ export class RecruitmentComponent implements OnInit, OnDestroy {
     ];
   }
 
-  /** Recompute stage counts from the actual candidates list. */
   refreshStageCounts() {
-    this.stages = this.stages.map(stage => ({
-      ...stage,
-      count: this.candidates.filter(c => c.status === stage.name).length
-    }));
+    const stageStatusMap: { [key: string]: string[] } = {
+      'Applied': ['New', 'Applied', 'CV Applied'],
+      'Interviewing': ['Screening', 'Interview', '1st Interview', '2nd Interview'],
+      'Test': ['Technical Test', 'Test', 'Task sent', 'Task Sent'],
+      'Hired': ['Offer', 'Hired']
+    };
+
+    this.stages = this.stages.map(stage => {
+      const validStatuses = stageStatusMap[stage.name] || [stage.name];
+      return {
+        ...stage,
+        count: this.candidates.filter(c => validStatuses.includes(c.status)).length
+      };
+    });
   }
 
   applyFilters() {
@@ -213,9 +222,16 @@ export class RecruitmentComponent implements OnInit, OnDestroy {
   }
 
   getCandidatesByStage(stage: string): Candidate[] {
+    const stageStatusMap: { [key: string]: string[] } = {
+      'Applied': ['New', 'Applied', 'CV Applied'],
+      'Interviewing': ['Screening', 'Interview', '1st Interview', '2nd Interview'],
+      'Test': ['Technical Test', 'Test', 'Task sent', 'Task Sent'],
+      'Hired': ['Offer', 'Hired']
+    };
+    const validStatuses = stageStatusMap[stage] || [stage];
     return this.candidates.filter(c => 
       c.jobTitle === this.selectedJobDetail?.title && 
-      c.status === stage
+      validStatuses.includes(c.status)
     );
   }
 
@@ -375,6 +391,11 @@ export class RecruitmentComponent implements OnInit, OnDestroy {
   get paginatedJobs(): JobVacancy[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     return this.filteredJobs.slice(start, start + this.itemsPerPage);
+  }
+
+  get paginatedCandidates(): Candidate[] {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    return this.filteredCandidates.slice(start, start + this.itemsPerPage);
   }
 
   get totalPages(): number {
