@@ -225,18 +225,14 @@ export class CandidateDetailComponent implements OnInit, OnDestroy {
     this.recruitmentService.scoreCandidate(this.candidate.id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (ok) => {
+        next: () => {
           this.isScoring = false;
-          if (ok) {
-            this.toastService.showSuccess('AI Success', 'Candidate has been scored successfully.');
-            this.loadCandidate(this.candidate!.id); // reload data
-          } else {
-            this.toastService.showError('AI Error', 'Failed to score candidate. Make sure the candidate has a CV/Resume.');
-          }
+          this.toastService.showSuccess('AI Success', 'Candidate has been scored successfully.');
+          this.loadCandidate(this.candidate!.id); // reload data
         },
-        error: () => {
+        error: (err: Error) => {
           this.isScoring = false;
-          this.toastService.showError('AI Error', 'An error occurred while scoring the candidate.');
+          this.toastService.showError('AI Scoring Failed', err.message || 'An error occurred while scoring the candidate.');
         }
       });
   }

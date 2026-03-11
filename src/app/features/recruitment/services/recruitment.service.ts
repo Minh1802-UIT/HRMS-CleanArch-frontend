@@ -165,10 +165,16 @@ export class RecruitmentService {
 
   scoreCandidate(candidateId: string): Observable<boolean> {
     return this.http.post<ApiResponse<boolean>>(`${this.apiUrl}/candidates/${candidateId}/score`, {}).pipe(
-      map(res => res.succeeded),
+      map(res => {
+        if (!res.succeeded) {
+          throw new Error(res.message || 'Scoring failed');
+        }
+        return true;
+      }),
       catchError(err => {
         this.logger.error(`Failed to score candidate ${candidateId} with AI`, err);
-        return of(false);
+        const message = err?.error?.message || err?.message || 'An unknown error occurred';
+        throw new Error(message);
       })
     );
   }
