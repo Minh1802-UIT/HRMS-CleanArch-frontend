@@ -3,6 +3,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { LeaveRequestService } from './leave-request.service';
 import { LeaveRequest } from '../models/leave-request.model';
 import { LoggerService } from '@core/services/logger.service';
+import { ToastService } from '@core/services/toast.service';
 import { environment } from '../../../../environments/environment';
 
 /** Build a raw API item (as MongoDB/backend returns it) */
@@ -37,7 +38,8 @@ describe('LeaveRequestService', () => {
       imports: [HttpClientTestingModule],
       providers: [
         LeaveRequestService,
-        { provide: LoggerService, useValue: loggerSpy }
+        { provide: LoggerService, useValue: loggerSpy },
+        ToastService
       ]
     });
 
@@ -112,15 +114,14 @@ describe('LeaveRequestService', () => {
   // getAllRequests
   // --------------------------------------------------
   describe('getAllRequests()', () => {
-    it('should POST /leaves/list with empty body and return mapped LeaveRequest[]', () => {
+    it('should GET /leaves/list with no params and return mapped LeaveRequest[]', () => {
       const rawItems = [makeApiItem({ status: 'Approved' })];
       let result: LeaveRequest[] = [];
 
       service.getAllRequests().subscribe(r => result = r);
 
       const req = httpMock.expectOne(`${apiUrl}/list`);
-      expect(req.request.method).toBe('POST');
-      expect(req.request.body).toEqual({});
+      expect(req.request.method).toBe('GET');
       req.flush({ succeeded: true, message: '', data: { items: rawItems, totalCount: 1, pageNumber: 1, pageSize: 10 } });
 
       expect(result.length).toBe(1);

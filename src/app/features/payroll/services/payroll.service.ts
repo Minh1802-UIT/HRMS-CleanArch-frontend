@@ -6,6 +6,7 @@ import { environment } from '@env/environment';
 import { ApiResponse, PagedResult } from '@core/models/api-response';
 import { Payroll, AnnualTaxReport } from '../models/payroll.model';
 import { LoggerService } from '@core/services/logger.service';
+import { ToastService } from '@core/services/toast.service';
 import { formatMonthYear } from '@shared/utils/date.utils';
 
 export { Payroll, PayrollRecord } from '../models/payroll.model';
@@ -16,7 +17,7 @@ export { Payroll, PayrollRecord } from '../models/payroll.model';
 export class PayrollService {
   private apiUrl = `${environment.apiUrl}/payrolls`;
 
-  constructor(private http: HttpClient, private logger: LoggerService) { }
+  constructor(private http: HttpClient, private logger: LoggerService, private toastService: ToastService) { }
 
   getPayrollData(month: string, year: number): Observable<Payroll[]> {
     const monthYear = formatMonthYear(month, year);
@@ -51,13 +52,21 @@ export class PayrollService {
 
   downloadPayslip(id: string): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/${id}/pdf`, { responseType: 'blob' }).pipe(
-      catchError(err => { this.logger.error(`PayrollService: downloadPayslip(${id}) failed`, err); return throwError(() => err); })
+      catchError(err => {
+        this.logger.error(`PayrollService: downloadPayslip(${id}) failed`, err);
+        this.toastService.showError('Download Failed', err?.error?.message || 'Could not download payslip PDF. Please try again.');
+        return throwError(() => err);
+      })
     );
   }
 
   exportPayroll(monthYear: string): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/export?month=${monthYear}`, { responseType: 'blob' }).pipe(
-      catchError(err => { this.logger.error('PayrollService: exportPayroll failed', err); return throwError(() => err); })
+      catchError(err => {
+        this.logger.error('PayrollService: exportPayroll failed', err);
+        this.toastService.showError('Export Failed', err?.error?.message || 'Could not generate Excel file. Please try again.');
+        return throwError(() => err);
+      })
     );
   }
 

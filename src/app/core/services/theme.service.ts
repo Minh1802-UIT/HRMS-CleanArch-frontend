@@ -1,6 +1,13 @@
 import { Injectable, signal } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
+/**
+ * Stores the user's theme preference in localStorage.
+ * The value is a simple boolean serialized as 'dark'/'light' string —
+ * no PII, tokens, or sensitive data is persisted here.
+ * Note: localStorage is synchronous and accessible to JS on the same origin;
+ * do not expand this storage to include auth tokens or personal data.
+ */
 export class ThemeService {
   private readonly STORAGE_KEY = 'hrms-theme';
 

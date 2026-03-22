@@ -5,6 +5,7 @@ import { map, catchError } from 'rxjs/operators';
 import { environment } from '@env/environment';
 import { ApiResponse } from '@core/models/api-response';
 import { LoggerService } from '@core/services/logger.service';
+import { ToastService } from '@core/services/toast.service';
 import { PerformanceReview, PerformanceGoal } from '../models/performance.model';
 
 @Injectable({
@@ -15,7 +16,8 @@ export class PerformanceService {
 
   constructor(
     private http: HttpClient,
-    private logger: LoggerService
+    private logger: LoggerService,
+    private toastService: ToastService
   ) {}
 
   getEmployeeGoals(employeeId: string): Observable<PerformanceGoal[]> {
@@ -33,6 +35,7 @@ export class PerformanceService {
       map(res => res.data || ''),
       catchError(err => {
         this.logger.error('Failed to create performance goal', err);
+        this.toastService.showError('Create Failed', err?.error?.message || 'Could not create performance goal.');
         return of('');
       })
     );
@@ -43,6 +46,7 @@ export class PerformanceService {
       map(res => res.succeeded),
       catchError(err => {
         this.logger.error(`Failed to update progress for goal ${id}`, err);
+        this.toastService.showError('Update Failed', err?.error?.message || 'Could not update goal progress.');
         return of(false);
       })
     );
@@ -63,6 +67,7 @@ export class PerformanceService {
       map(res => res.data || ''),
       catchError(err => {
         this.logger.error('Failed to create performance review', err);
+        this.toastService.showError('Create Failed', err?.error?.message || 'Could not create performance review.');
         return of('');
       })
     );
@@ -73,6 +78,7 @@ export class PerformanceService {
       map(res => res.succeeded),
       catchError(err => {
         this.logger.error(`Failed to update performance review ${id}`, err);
+        this.toastService.showError('Update Failed', err?.error?.message || 'Could not update performance review.');
         return of(false);
       })
     );

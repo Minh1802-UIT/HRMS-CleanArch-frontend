@@ -175,7 +175,7 @@ export class DepartmentsComponent implements OnInit, OnDestroy {
       message: `Are you sure you want to delete <strong>${dept.name}</strong>? This action cannot be undone.`,
       type: 'danger',
       confirmLabel: 'Delete'
-    }).subscribe(ok => {
+    }).pipe(takeUntil(this.destroy$)).subscribe(ok => {
       if (!ok) return;
       this.deptService.deleteDepartment(dept.id!).pipe(takeUntil(this.destroy$)).subscribe({
         next: () => {
@@ -286,7 +286,7 @@ export class DepartmentsComponent implements OnInit, OnDestroy {
         message: `Are you sure you want to delete <strong>${pos.title}</strong>? This action cannot be undone.`,
         type: 'danger',
         confirmLabel: 'Delete'
-      }).subscribe(ok => {
+      }).pipe(takeUntil(this.destroy$)).subscribe(ok => {
         if (!ok) return;
           this.posService.deletePosition(pos.id!).pipe(takeUntil(this.destroy$)).subscribe({
               next: () => {

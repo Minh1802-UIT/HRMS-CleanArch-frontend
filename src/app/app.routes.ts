@@ -63,7 +63,7 @@ export const routes: Routes = [
       { path: 'performance', loadComponent: () => import('./features/performance/pages/performance/performance.component').then(m => m.PerformanceComponent), canActivate: [roleGuard], data: { roles: ['Admin', 'HR', 'Manager'], activePage: 'performance' } },
 
       { path: 'employees/:id', loadComponent: () => import('./features/employee/pages/employee-profile/employee-profile.component').then(m => m.EmployeeProfileComponent), canActivate: [roleGuard], data: { roles: ['Admin', 'HR', 'Manager'], activePage: 'employees' } },
-      { path: 'profile', loadComponent: () => import('./features/employee/pages/employee-profile/employee-profile.component').then(m => m.EmployeeProfileComponent), data: { activePage: 'profile' } },
+      { path: 'profile', loadComponent: () => import('./features/employee/pages/employee-profile/employee-profile.component').then(m => m.EmployeeProfileComponent), canActivate: [authGuard], data: { activePage: 'profile' } },
     ]
   },
 

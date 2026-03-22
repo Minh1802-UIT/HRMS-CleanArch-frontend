@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { environment } from '@env/environment';
 import { ApiResponse } from '@core/models/api-response';
 import { JobVacancy, Candidate } from '../models/recruitment.model';
 import { LoggerService } from '@core/services/logger.service';
+import { ToastService } from '@core/services/toast.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,8 @@ export class RecruitmentService {
 
   constructor(
     private http: HttpClient,
-    private logger: LoggerService
+    private logger: LoggerService,
+    private toastService: ToastService
   ) {}
 
   getVacancies(): Observable<JobVacancy[]> {
@@ -63,6 +65,7 @@ export class RecruitmentService {
       map(res => res.succeeded),
       catchError(err => {
         this.logger.error(`Failed to update status for candidate ${id}`, err);
+        this.toastService.showError('Update Failed', err?.error?.message || 'Could not update candidate status.');
         return of(false);
       })
     );
@@ -77,6 +80,7 @@ export class RecruitmentService {
       map(res => res.data),
       catchError(err => {
         this.logger.error('Failed to create vacancy', err);
+        this.toastService.showError('Create Failed', err?.error?.message || 'Could not create vacancy.');
         return of(null);
       })
     );
@@ -87,6 +91,7 @@ export class RecruitmentService {
       map(res => res.succeeded),
       catchError(err => {
         this.logger.error(`Failed to update vacancy ${id}`, err);
+        this.toastService.showError('Update Failed', err?.error?.message || 'Could not update vacancy.');
         return of(false);
       })
     );
@@ -97,6 +102,7 @@ export class RecruitmentService {
       map(res => res.succeeded),
       catchError(err => {
         this.logger.error(`Failed to delete vacancy ${id}`, err);
+        this.toastService.showError('Delete Failed', err?.error?.message || 'Could not delete vacancy.');
         return of(false);
       })
     );
@@ -121,6 +127,7 @@ export class RecruitmentService {
       map(res => res.data),
       catchError(err => {
         this.logger.error('Failed to create candidate', err);
+        this.toastService.showError('Create Failed', err?.error?.message || 'Could not create candidate.');
         return of(null);
       })
     );
@@ -131,6 +138,7 @@ export class RecruitmentService {
       map(res => res.succeeded),
       catchError(err => {
         this.logger.error(`Failed to update candidate ${id}`, err);
+        this.toastService.showError('Update Failed', err?.error?.message || 'Could not update candidate.');
         return of(false);
       })
     );
@@ -141,6 +149,7 @@ export class RecruitmentService {
       map(res => res.succeeded),
       catchError(err => {
         this.logger.error(`Failed to delete candidate ${id}`, err);
+        this.toastService.showError('Delete Failed', err?.error?.message || 'Could not delete candidate.');
         return of(false);
       })
     );
@@ -153,11 +162,12 @@ export class RecruitmentService {
   parseCv(file: File): Observable<{ firstName?: string, lastName?: string, email?: string, phoneNumber?: string, skills?: string[] } | null> {
     const formData = new FormData();
     formData.append('file', file);
-    
+
     return this.http.post<ApiResponse<any>>(`${this.apiUrl}/candidates/parse-cv`, formData).pipe(
       map(res => res.data),
       catchError(err => {
         this.logger.error('Failed to parse CV with AI', err);
+        this.toastService.showError('CV Parse Failed', err?.error?.message || 'Could not parse CV. Please try again or enter details manually.');
         return of(null);
       })
     );
@@ -174,7 +184,8 @@ export class RecruitmentService {
       catchError(err => {
         this.logger.error(`Failed to score candidate ${candidateId} with AI`, err);
         const message = err?.error?.message || err?.message || 'An unknown error occurred';
-        throw new Error(message);
+        this.toastService.showError('AI Scoring Failed', message);
+        return of(false);
       })
     );
   }
@@ -188,6 +199,7 @@ export class RecruitmentService {
       map(res => res.succeeded),
       catchError(err => {
         this.logger.error(`Failed to onboard candidate ${id}`, err);
+        this.toastService.showError('Onboarding Failed', err?.error?.message || 'Could not onboard candidate.');
         return of(false);
       })
     );

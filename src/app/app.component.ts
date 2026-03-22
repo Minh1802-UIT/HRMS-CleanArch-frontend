@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ThemeService } from '@core/services/theme.service';
 import { ApiWarmupService } from '@core/services/api-warmup.service';
+import { CspService } from '@core/services/csp.service';
 import { ConfirmDialogComponent } from '@shared/components/confirm-dialog/confirm-dialog.component';
 import { NotificationToastComponent } from '@shared/components/notification-toast/notification-toast.component';
 @Component({
@@ -14,7 +15,12 @@ import { NotificationToastComponent } from '@shared/components/notification-toas
 })
 export class AppComponent {
   title = 'hrms-dashboard';
-  constructor(private _theme: ThemeService, warmup: ApiWarmupService) {
+  constructor(
+    private _theme: ThemeService,
+    warmup: ApiWarmupService,
+    csp: CspService
+  ) {
     warmup.warmup();
+    csp.applyCsp();
   }
 }

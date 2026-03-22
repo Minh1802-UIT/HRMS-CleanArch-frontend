@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { map, catchError } from 'rxjs/operators';
 import { environment } from '@env/environment';
 import { ApiResponse, PagedResult } from '@core/models/api-response';
 import { LoggerService } from '@core/services/logger.service';
+import { ToastService } from '@core/services/toast.service';
 import { LeaveRequest, LeaveStatus } from '../models/leave-request.model';
 
 export { LeaveRequest, LeaveStatus } from '../models/leave-request.model';
@@ -30,6 +31,12 @@ interface LeaveRequestRawDto {
   requestDate?: string;
 }
 
+export interface LeaveRequestFilters {
+  status?: string;
+  employeeId?: string;
+  leaveType?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -38,7 +45,8 @@ export class LeaveRequestService {
 
   constructor(
     private http: HttpClient,
-    private logger: LoggerService
+    private logger: LoggerService,
+    private toastService: ToastService
   ) { }
 
   getLeaveHistory(): Observable<LeaveRequest[]> {
@@ -51,11 +59,17 @@ export class LeaveRequestService {
     );
   }
 
-  getAllRequests(): Observable<LeaveRequest[]> {
-    return this.http.post<ApiResponse<PagedResult<LeaveRequestRawDto>>>(`${this.apiUrl}/list`, {}).pipe(
+  getAllRequests(filters?: LeaveRequestFilters): Observable<LeaveRequest[]> {
+    let params = new HttpParams();
+    if (filters?.status) params = params.set('status', filters.status);
+    if (filters?.employeeId) params = params.set('employeeId', filters.employeeId);
+    if (filters?.leaveType) params = params.set('leaveType', filters.leaveType);
+
+    return this.http.get<ApiResponse<PagedResult<LeaveRequestRawDto>>>(`${this.apiUrl}/list`, { params }).pipe(
       map(response => (response.data?.items || []).map((item: LeaveRequestRawDto) => this.mapToModel(item))),
       catchError(err => {
         this.logger.error('Get all leave requests failed', err);
+        this.toastService.showError('Error', 'Failed to load leave requests. Please try again.');
         return of([]);
       })
     );
@@ -90,7 +104,11 @@ export class LeaveRequestService {
       managerComment: comment || 'Approved via UI'
     }).pipe(
       map(response => response.succeeded),
-      catchError(() => of(false))
+      catchError(err => {
+        this.logger.error('Failed to approve leave request', err);
+        this.toastService.showError('Error', err?.error?.message || 'Failed to approve leave request. Please try again.');
+        return of(false);
+      })
     );
   }
 
@@ -101,7 +119,11 @@ export class LeaveRequestService {
       managerComment: comment || 'Rejected via UI'
     }).pipe(
       map(response => response.succeeded),
-      catchError(() => of(false))
+      catchError(err => {
+        this.logger.error('Failed to reject leave request', err);
+        this.toastService.showError('Error', err?.error?.message || 'Failed to reject leave request. Please try again.');
+        return of(false);
+      })
     );
   }
 

@@ -72,7 +72,7 @@ export class PayrollComponent implements OnInit, OnDestroy {
       this.selectedMonth = '12';
       this.selectedYear = now.getFullYear() - 1;
     } else {
-      this.selectedMonth = String(now.getMonth()).padStart(2, '0');
+      this.selectedMonth = String(now.getMonth() + 1).padStart(2, '0'); // +1 because getMonth() is 0-indexed
       this.selectedYear = now.getFullYear();
     }
 
@@ -139,107 +139,17 @@ export class PayrollComponent implements OnInit, OnDestroy {
   }
 
   runCalculation() {
-    this.confirmService.confirm({
-      title: 'Calculate Payroll',
-      message: `Are you sure you want to run the payroll calculation for <strong>${this.titlePeriod}</strong>?<br/>This will overwrite any existing Draft calculations for this period.`,
-      type: 'warning',
-      confirmLabel: 'Calculate Now'
-    }).subscribe(ok => {
-      if (!ok) return;
-
-      this.calculating = true;
-      this.cdr.markForCheck();
-
-      this.payrollService.calculatePayroll(this.selectedMonth, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
-        next: (count: number) => {
-          this.calculating = false;
-          this.toastService.showSuccess('Success', `Payroll calculated for ${count} employees`);
-          this.cdr.markForCheck();
-          this.loadPayroll(); // Refresh the list
-        },
-        error: (err: any) => {
-          this.logger.error('Calculation Failed', err);
-          this.toastService.showError('Calculation Failed', err?.error?.message || 'Failed to calculate payroll');
-          this.calculating = false;
-          this.cdr.markForCheck();
-        }
-      });
-    });
+    this.confirmAndCalculate();
   }
 
   approvePayroll(record: PayrollRecord) {
     if (record.status !== 'Draft') return;
-
-    this.confirmService.confirm({
-      title: 'Approve Payroll',
-      message: `Approve the payroll calculation for <strong>${record.employeeName}</strong>?`,
-      type: 'info',
-      confirmLabel: 'Approve'
-    }).subscribe(ok => {
-      if (!ok) return;
-      this.approvingId = record.id;
-      this.cdr.markForCheck();
-      this.payrollService.updateStatus(record.id, 'Approved').pipe(takeUntil(this.destroy$)).subscribe({
-        next: () => {
-          const index = this.payrollRecords.findIndex(r => r.id === record.id);
-          if (index !== -1) {
-            const updatedRecord = { ...this.payrollRecords[index], status: 'Approved' as const };
-            this.payrollRecords = [
-              ...this.payrollRecords.slice(0, index),
-              updatedRecord,
-              ...this.payrollRecords.slice(index + 1)
-            ];
-          }
-          this.toastService.showSuccess('Success', 'Payroll approved');
-          this.approvingId = null;
-          this.cdr.markForCheck();
-        },
-        error: (err: any) => {
-          this.logger.error('Failed to approve payroll', err);
-          this.toastService.showError('Error', err?.error?.message || 'Failed to update status');
-          this.approvingId = null;
-          this.cdr.markForCheck();
-        }
-      });
-    });
+    this.confirmAndApprove(record);
   }
 
   markAsPaid(record: PayrollRecord) {
     if (record.status === 'Paid') return;
-
-    this.confirmService.confirm({
-      title: 'Confirm Payment',
-      message: `Mark the payroll record for <strong>${record.employeeName}</strong> as Paid?`,
-      type: 'info',
-      confirmLabel: 'Confirm'
-    }).subscribe(ok => {
-      if (!ok) return;
-      this.markingPaidId = record.id;
-      this.cdr.markForCheck();
-      this.payrollService.updateStatus(record.id, 'Paid').pipe(takeUntil(this.destroy$)).subscribe({
-        next: () => {
-          const index = this.payrollRecords.findIndex(r => r.id === record.id);
-          if (index !== -1) {
-            // Immutable update for CD
-            const updatedRecord = { ...this.payrollRecords[index], status: 'Paid' as const };
-            this.payrollRecords = [
-              ...this.payrollRecords.slice(0, index),
-              updatedRecord,
-              ...this.payrollRecords.slice(index + 1)
-            ];
-          }
-          this.toastService.showSuccess('Success', 'Payment confirmed');
-          this.markingPaidId = null;
-          this.cdr.markForCheck();
-        },
-        error: (err: any) => {
-          this.logger.error('Failed to mark as paid', err);
-          this.toastService.showError('Error', 'Failed to update status');
-          this.markingPaidId = null;
-          this.cdr.markForCheck();
-        }
-      });
-    });
+    this.confirmAndMarkPaid(record);
   }
 
   downloadPdf(record: PayrollRecord) {
@@ -264,8 +174,104 @@ export class PayrollComponent implements OnInit, OnDestroy {
       },
       error: (err: any) => {
         this.logger.error('Export failed', err);
-        this.toastService.showError('Export Failed', 'Could not generate Excel file');
+        this.toastService.showError('Export Failed', err?.error?.message || 'Could not generate Excel file');
       }
+    });
+  }
+
+  // ── Private confirm helpers (prevent memory leaks) ──────────────────────────
+  private confirmAndCalculate(): void {
+    this.confirmService.confirm({
+      title: 'Calculate Payroll',
+      message: `Are you sure you want to run the payroll calculation for <strong>${this.titlePeriod}</strong>?<br/>This will overwrite any existing Draft calculations for this period.`,
+      type: 'warning',
+      confirmLabel: 'Calculate Now'
+    }).pipe(takeUntil(this.destroy$)).subscribe(ok => {
+      if (!ok) return;
+      this.calculating = true;
+      this.cdr.markForCheck();
+      this.payrollService.calculatePayroll(this.selectedMonth, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (count: number) => {
+          this.calculating = false;
+          this.toastService.showSuccess('Success', `Payroll calculated for ${count} employees`);
+          this.cdr.markForCheck();
+          this.loadPayroll();
+        },
+        error: (err: any) => {
+          this.logger.error('Calculation Failed', err);
+          this.toastService.showError('Calculation Failed', err?.error?.message || 'Failed to calculate payroll');
+          this.calculating = false;
+          this.cdr.markForCheck();
+        }
+      });
+    });
+  }
+
+  private confirmAndApprove(record: PayrollRecord): void {
+    this.confirmService.confirm({
+      title: 'Approve Payroll',
+      message: `Approve the payroll calculation for <strong>${record.employeeName}</strong>?`,
+      type: 'info',
+      confirmLabel: 'Approve'
+    }).pipe(takeUntil(this.destroy$)).subscribe(ok => {
+      if (!ok) return;
+      this.approvingId = record.id;
+      this.cdr.markForCheck();
+      this.payrollService.updateStatus(record.id, 'Approved').pipe(takeUntil(this.destroy$)).subscribe({
+        next: () => {
+          const index = this.payrollRecords.findIndex(r => r.id === record.id);
+          if (index !== -1) {
+            this.payrollRecords = [
+              ...this.payrollRecords.slice(0, index),
+              { ...this.payrollRecords[index], status: 'Approved' as const },
+              ...this.payrollRecords.slice(index + 1)
+            ];
+          }
+          this.toastService.showSuccess('Success', 'Payroll approved');
+          this.approvingId = null;
+          this.cdr.markForCheck();
+        },
+        error: (err: any) => {
+          this.logger.error('Failed to approve payroll', err);
+          this.toastService.showError('Error', err?.error?.message || 'Failed to update status');
+          this.approvingId = null;
+          this.cdr.markForCheck();
+        }
+      });
+    });
+  }
+
+  private confirmAndMarkPaid(record: PayrollRecord): void {
+    this.confirmService.confirm({
+      title: 'Confirm Payment',
+      message: `Mark the payroll record for <strong>${record.employeeName}</strong> as Paid?`,
+      type: 'info',
+      confirmLabel: 'Confirm'
+    }).pipe(takeUntil(this.destroy$)).subscribe(ok => {
+      if (!ok) return;
+      this.markingPaidId = record.id;
+      this.cdr.markForCheck();
+      this.payrollService.updateStatus(record.id, 'Paid').pipe(takeUntil(this.destroy$)).subscribe({
+        next: () => {
+          const index = this.payrollRecords.findIndex(r => r.id === record.id);
+          if (index !== -1) {
+            this.payrollRecords = [
+              ...this.payrollRecords.slice(0, index),
+              { ...this.payrollRecords[index], status: 'Paid' as const },
+              ...this.payrollRecords.slice(index + 1)
+            ];
+          }
+          this.toastService.showSuccess('Success', 'Payment confirmed');
+          this.markingPaidId = null;
+          this.cdr.markForCheck();
+        },
+        error: (err: any) => {
+          this.logger.error('Failed to mark as paid', err);
+          this.toastService.showError('Error', err?.error?.message || 'Failed to update status');
+          this.markingPaidId = null;
+          this.cdr.markForCheck();
+        }
+      });
     });
   }
 }

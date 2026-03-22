@@ -7,16 +7,25 @@
   <base href="/" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!--
-      Content-Security-Policy (meta tag — HTTP header preferred for full coverage in production).
-      frame-ancestors cannot be set via meta tag; configure it in the web server / reverse proxy.
-      Adjust connect-src to include your production API domain.
+      Content-Security-Policy.
+
+      IMPORTANT: This static CSP is a FALLBACK placeholder only.
+      The CspService (app.component.ts) applies the environment-specific CSP
+      from environment.ts / environment.production.ts at runtime, overriding
+      this tag.  Both environments must be kept in sync with this fallback.
+
+      - Development: localhost URLs + http://localhost:5055
+      - Production: live domains (vercel.app, onrender.com, unsplash, pravatar)
+
+      frame-ancestors cannot be set via meta tag; configure it in the web
+      server / reverse proxy for full coverage.
     -->
   <meta http-equiv="Content-Security-Policy" content="
         default-src 'self';
         script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live;
         style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
         font-src 'self' https://fonts.gstatic.com data: https://*.vercel.app;
-        img-src 'self' data: blob: https:;
+        img-src 'self' data: blob: https: https://images.unsplash.com https://i.pravatar.cc https://*.supabase.co https://*.onrender.com;
         connect-src 'self' http://localhost:5055 https://localhost:5055 https://hrms-backend-api-n0bq.onrender.com https://*.onrender.com https://vercel.live https://*.vercel.app;
         worker-src 'self' blob:;
         object-src 'none';

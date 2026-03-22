@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ChartModule } from 'primeng/chart';
-import { debounceTime, Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
+import { debounceTime, takeUntil } from 'rxjs/operators';
 import { LayoutService } from '@layout/layout.service';
 
 @Component({
@@ -12,21 +13,26 @@ import { LayoutService } from '@layout/layout.service';
         <p-chart type="bar" [data]="chartData" [options]="chartOptions" class="h-100" />
     </div>`
 })
-export class RevenueStreamWidget {
+export class RevenueStreamWidget implements OnInit, OnDestroy {
     chartData: { labels: string[]; datasets: { type?: string; label: string; data: number[]; backgroundColor: string; borderColor?: string; borderWidth?: number; barThickness?: number; borderRadius?: { topLeft?: number; topRight?: number; bottomLeft?: number; bottomRight?: number }; borderSkipped?: boolean }[] } | null = null;
-
     chartOptions: { [key: string]: unknown } | null = null;
 
-    subscription!: Subscription;
+    private readonly destroy$ = new Subject<void>();
 
     constructor(public layoutService: LayoutService) {
-        this.subscription = this.layoutService.configUpdate$.pipe(debounceTime(25)).subscribe(() => {
-            this.initChart();
-        });
+        this.layoutService.configUpdate$.pipe(
+            debounceTime(25),
+            takeUntil(this.destroy$)
+        ).subscribe(() => this.initChart());
     }
 
-    ngOnInit() {
+    ngOnInit(): void {
         this.initChart();
+    }
+
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     initChart() {
@@ -103,11 +109,5 @@ export class RevenueStreamWidget {
                 }
             }
         };
-    }
-
-    ngOnDestroy() {
-        if (this.subscription) {
-            this.subscription.unsubscribe();
-        }
     }
 }
