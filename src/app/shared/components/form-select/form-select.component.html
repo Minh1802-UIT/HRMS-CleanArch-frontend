@@ -1,24 +1,39 @@
-<div [formGroup]="formGroup">
-  <label class="block mb-1 text-sm font-medium text-gray-700 dark:text-zinc-300">
+<div [formGroup]="formGroup" class="relative">
+  <label class="block mb-1.5 text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
     {{ label }}
     @if (required) {
     <span class="text-red-500">*</span>
     }
   </label>
 
-  <select [formControlName]="controlName"
-    class="w-full pr-10 rounded-lg border-gray-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-gray-900 dark:text-zinc-100 shadow-sm focus:ring-violet-500 focus:border-violet-500 dark:focus:ring-violet-400 dark:focus:border-violet-400">
-    <option value="">{{ placeholder }}</option>
-    @for (option of options; track trackByOption($index, option)) {
-    <option [value]="option[optionValue]">
-      {{ option[optionLabel] }}
-    </option>
-    }
-  </select>
+  <div class="relative">
+    <select
+      [formControlName]="controlName"
+      class="w-full px-4 py-2.5 pr-10 rounded-xl border bg-zinc-50 dark:bg-zinc-800 transition-all duration-200
+        appearance-none cursor-pointer
+        border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100
+        focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 focus:outline-none
+        hover:border-zinc-300 dark:hover:border-zinc-600
+        disabled:opacity-50 disabled:cursor-not-allowed"
+      [class.border-red-400]="showError"
+      [class.dark:border-red-500]="showError"
+    >
+      <option value="" disabled>{{ placeholder }}</option>
+      @for (option of options; track trackByOption($index, option)) {
+        <option [value]="option[optionValue]">
+          {{ option[optionLabel] }}
+        </option>
+      }
+    </select>
+    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none">
+      <span class="material-symbols-outlined text-xl">expand_more</span>
+    </span>
+  </div>
 
   @if (showError) {
-  <small class="block mt-1 text-xs text-red-600">
-    {{ errorMessage }}
-  </small>
+    <small class="flex items-center gap-1 mt-1.5 text-xs text-red-500 animate-fade-in">
+      <span class="material-symbols-outlined text-sm">error</span>
+      {{ errorMessage }}
+    </small>
   }
 </div>

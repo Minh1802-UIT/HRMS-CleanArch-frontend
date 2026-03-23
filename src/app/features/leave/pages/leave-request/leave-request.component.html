@@ -1,7 +1,7 @@
-﻿<div class="max-w-[1600px] mx-auto">
+<div class="max-w-[1600px] mx-auto page-enter">
   <!-- Header -->
   <div
-    class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4"
+    class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4 animate-fade-in-up"
   >
     <div>
       <p class="label-overline text-violet-500 mb-1">Time & Leave</p>
@@ -18,13 +18,11 @@
       <button
         type="button"
         (click)="loadHistory(); loadBalances()"
-        class="p-2 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg shadow-sm hover:bg-zinc-50 transition-colors"
+        class="p-2.5 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl shadow-sm hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-all hover:scale-105"
         title="Refresh Data"
         aria-label="Refresh leave data"
       >
-        <span class="material-symbols-outlined text-zinc-500 dark:text-zinc-400"
-          >refresh</span
-        >
+        <span class="material-symbols-outlined text-zinc-500 dark:text-zinc-400">refresh</span>
       </button>
     </div>
   </div>

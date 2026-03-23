@@ -65,7 +65,7 @@ export class LeaveRequestService {
     if (filters?.employeeId) params = params.set('employeeId', filters.employeeId);
     if (filters?.leaveType) params = params.set('leaveType', filters.leaveType);
 
-    return this.http.get<ApiResponse<PagedResult<LeaveRequestRawDto>>>(`${this.apiUrl}/list`, { params }).pipe(
+    return this.http.get<ApiResponse<PagedResult<LeaveRequestRawDto>>>(this.apiUrl, { params }).pipe(
       map(response => (response.data?.items || []).map((item: LeaveRequestRawDto) => this.mapToModel(item))),
       catchError(err => {
         this.logger.error('Get all leave requests failed', err);

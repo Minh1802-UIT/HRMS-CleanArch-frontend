@@ -114,13 +114,13 @@ describe('LeaveRequestService', () => {
   // getAllRequests
   // --------------------------------------------------
   describe('getAllRequests()', () => {
-    it('should GET /leaves/list with no params and return mapped LeaveRequest[]', () => {
+    it('should GET /leaves (root) with no params and return mapped LeaveRequest[]', () => {
       const rawItems = [makeApiItem({ status: 'Approved' })];
       let result: LeaveRequest[] = [];
 
       service.getAllRequests().subscribe(r => result = r);
 
-      const req = httpMock.expectOne(`${apiUrl}/list`);
+      const req = httpMock.expectOne(apiUrl);
       expect(req.request.method).toBe('GET');
       req.flush({ succeeded: true, message: '', data: { items: rawItems, totalCount: 1, pageNumber: 1, pageSize: 10 } });
 
@@ -132,7 +132,7 @@ describe('LeaveRequestService', () => {
       let result: LeaveRequest[] = [{ id: 'x' } as LeaveRequest];
       service.getAllRequests().subscribe(r => result = r);
 
-      const req = httpMock.expectOne(`${apiUrl}/list`);
+      const req = httpMock.expectOne(apiUrl);
       req.flush('Error', { status: 500, statusText: 'Internal Server Error' });
 
       expect(result).toEqual([]);
@@ -142,7 +142,7 @@ describe('LeaveRequestService', () => {
       let result: LeaveRequest[] = [{ id: 'x' } as LeaveRequest];
       service.getAllRequests().subscribe(r => result = r);
 
-      const req = httpMock.expectOne(`${apiUrl}/list`);
+      const req = httpMock.expectOne(apiUrl);
       req.flush({ succeeded: true, message: '', data: { items: null } });
 
       expect(result).toEqual([]);

@@ -19,26 +19,61 @@ if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
 }
 
-logos.forEach(logo => {
-    const filePath = path.join(dir, logo.name);
-    const file = fs.createWriteStream(filePath);
+function downloadLogo(logo, delay) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            const filePath = path.join(dir, logo.name);
+            const file = fs.createWriteStream(filePath);
 
-    https.get(logo.url, {
-        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }
-    }, function (response) {
-        if (response.statusCode === 200) {
-            response.pipe(file);
-            file.on('finish', function () {
-                file.close();
-                console.log(`Downloaded: ${logo.name}`);
+            const req = https.get(logo.url, {
+                headers: { 
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+                }
+            }, function (response) {
+                if (response.statusCode === 200) {
+                    response.pipe(file);
+                    file.on('finish', function () {
+                        file.close();
+                        console.log(`Downloaded: ${logo.name}`);
+                        resolve(true);
+                    });
+                } else {
+                    console.error(`Failed to download ${logo.name}: ${response.statusCode}`);
+                    file.close();
+                    fs.unlink(filePath, () => { });
+                    resolve(false);
+                }
             });
-        } else {
-            console.error(`Failed to download ${logo.name}: ${response.statusCode}`);
-            file.close();
-            fs.unlink(filePath, () => { });
-        }
-    }).on('error', function (err) {
-        fs.unlink(filePath, () => { });
-        console.error(`Error downloading ${logo.name}: ${err.message}`);
+
+            req.on('error', function (err) {
+                fs.unlink(filePath, () => { });
+                console.error(`Error downloading ${logo.name}: ${err.message}`);
+                resolve(false);
+            });
+
+            req.setTimeout(15000, () => {
+                req.destroy();
+                console.error(`Timeout downloading ${logo.name}`);
+                resolve(false);
+            });
+        }, delay);
     });
-});
+}
+
+async function main() {
+    console.log('Starting logo downloads with delays...');
+    let successCount = 0;
+    
+    for (let i = 0; i < logos.length; i++) {
+        const result = await downloadLogo(logos[i], i * 2000); // 2 second delay between each
+        if (result) successCount++;
+    }
+    
+    console.log(`\nDownload complete: ${successCount}/${logos.length} logos downloaded`);
+    
+    // Check what files were created
+    const files = fs.readdirSync(dir);
+    console.log('Files in partners folder:', files);
+}
+
+main();

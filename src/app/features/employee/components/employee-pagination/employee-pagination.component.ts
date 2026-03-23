@@ -7,14 +7,14 @@ import { NgClass } from '@angular/common';
   imports: [NgClass],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="flex flex-col justify-between items-center px-1 mt-6 sm:flex-row">
+    <div class="flex flex-col justify-between items-center px-1 mt-6 sm:flex-row animate-fade-in">
       <div class="mb-4 text-sm text-zinc-500 dark:text-zinc-400 sm:mb-0">
         Showing
-        <span class="font-semibold text-zinc-900 dark:text-white">{{ startItem }}</span>
+        <span class="font-bold text-zinc-900 dark:text-white">{{ startItem }}</span>
         &ndash;
-        <span class="font-semibold text-zinc-900 dark:text-white">{{ endItem }}</span>
+        <span class="font-bold text-zinc-900 dark:text-white">{{ endItem }}</span>
         of
-        <span class="font-semibold text-zinc-900 dark:text-white">{{ totalItems }}</span>
+        <span class="font-bold text-zinc-900 dark:text-white">{{ totalItems }}</span>
         results
       </div>
       <nav aria-label="Pagination" class="flex items-center gap-1">
@@ -23,9 +23,9 @@ import { NgClass } from '@angular/common';
           (click)="goToPage.emit(currentPage - 1)"
           [disabled]="currentPage === 1"
           aria-label="Previous page"
-          class="inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-zinc-500 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          class="inline-flex items-center justify-center w-9 h-9 text-sm font-bold rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 dark:text-zinc-400 hover:bg-violet-50 dark:hover:bg-violet-900/20 hover:border-violet-200 dark:hover:border-violet-800 hover:text-violet-600 dark:hover:text-violet-400 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-zinc-200 transition-all"
         >
-          <span class="text-base material-symbols-outlined">chevron_left</span>
+          <span class="text-lg material-symbols-outlined">chevron_left</span>
         </button>
         @for (page of pageNumbers; track page) {
           <button
@@ -35,10 +35,10 @@ import { NgClass } from '@angular/common';
             [attr.aria-current]="page === currentPage ? 'page' : null"
             [ngClass]="
               page === currentPage
-                ? 'bg-violet-600 border-violet-600 text-white shadow-sm'
-                : 'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800'
+                ? 'bg-violet-600 border-violet-600 text-white shadow-lg shadow-violet-600/25'
+                : 'bg-white dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-violet-50 dark:hover:bg-violet-900/20 hover:border-violet-200 dark:hover:border-violet-800 hover:text-violet-600 dark:hover:text-violet-400'
             "
-            class="inline-flex items-center justify-center w-8 h-8 text-sm font-semibold rounded-lg border transition-colors"
+            class="inline-flex items-center justify-center w-9 h-9 text-sm font-bold rounded-xl border transition-all"
           >
             {{ page }}
           </button>
@@ -48,9 +48,9 @@ import { NgClass } from '@angular/common';
           (click)="goToPage.emit(currentPage + 1)"
           [disabled]="currentPage === totalPages"
           aria-label="Next page"
-          class="inline-flex items-center justify-center w-8 h-8 text-sm font-medium text-zinc-500 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          class="inline-flex items-center justify-center w-9 h-9 text-sm font-bold rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 dark:text-zinc-400 hover:bg-violet-50 dark:hover:bg-violet-900/20 hover:border-violet-200 dark:hover:border-violet-800 hover:text-violet-600 dark:hover:text-violet-400 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-zinc-200 transition-all"
         >
-          <span class="text-base material-symbols-outlined">chevron_right</span>
+          <span class="text-lg material-symbols-outlined">chevron_right</span>
         </button>
       </nav>
     </div>

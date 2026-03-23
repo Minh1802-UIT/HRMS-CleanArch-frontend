@@ -197,6 +197,7 @@ body {
 /* Custom Scrollbar — violet accent */
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
@@ -214,5 +215,309 @@ body {
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #a78bfa;
+}
+
+/* ===== Enhanced Focus States ===== */
+.focus-ring:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.3);
+}
+
+.focus-ring-dark:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.4);
+}
+
+/* ===== Enhanced Form Inputs ===== */
+.form-input-enhanced {
+  @apply w-full px-4 py-2.5 rounded-xl border bg-zinc-50 dark:bg-zinc-800 transition-all duration-200;
+  @apply border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100;
+  @apply placeholder-zinc-400 dark:placeholder-zinc-500;
+  @apply focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 focus:outline-none;
+  @apply hover:border-zinc-300 dark:hover:border-zinc-600;
+}
+
+.form-input-error {
+  @apply border-red-400 dark:border-red-500 focus:ring-red-500/20 focus:border-red-500;
+}
+
+.form-label {
+  @apply block mb-1.5 text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400;
+}
+
+/* ===== Card Hover Effects ===== */
+.card-hover {
+  @apply transition-all duration-300 ease-out;
+}
+
+.card-hover:hover {
+  @apply -translate-y-1 shadow-xl;
+}
+
+/* ===== Badge Variants ===== */
+.badge {
+  @apply inline-flex items-center px-2.5 py-1 text-xs font-bold rounded-full;
+}
+
+.badge-violet {
+  @apply bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400;
+}
+
+.badge-emerald {
+  @apply bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400;
+}
+
+.badge-amber {
+  @apply bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400;
+}
+
+.badge-rose {
+  @apply bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400;
+}
+
+.badge-sky {
+  @apply bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400;
+}
+
+/* ===== Page Section Headers ===== */
+.page-header {
+  @apply mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4;
+}
+
+.page-title {
+  @apply space-y-1;
+}
+
+.page-title h1 {
+  @apply text-2xl font-black tracking-tight text-zinc-900 dark:text-white;
+}
+
+.page-title p {
+  @apply text-sm text-zinc-500 dark:text-zinc-400;
+}
+
+/* ===== Section Headers within Pages ===== */
+.section-header {
+  @apply flex justify-between items-center mb-6;
+}
+
+.section-title {
+  @apply text-lg font-black tracking-tight text-zinc-900 dark:text-white;
+}
+
+/* ===== Table Enhancements ===== */
+.table-container {
+  @apply overflow-hidden rounded-2xl glass-panel;
+}
+
+.table-enhanced {
+  @apply w-full text-sm;
+}
+
+.table-enhanced th {
+  @apply px-6 py-4 text-left label-overline text-zinc-500 dark:text-zinc-400 bg-zinc-50/80 dark:bg-zinc-900/60 border-b border-zinc-100 dark:border-zinc-800;
+}
+
+.table-enhanced td {
+  @apply px-6 py-4 text-zinc-700 dark:text-zinc-300 border-b border-zinc-100 dark:border-zinc-800;
+}
+
+.table-enhanced tr:hover td {
+  @apply bg-violet-50/30 dark:bg-zinc-800/40;
+}
+
+/* ===== Button Variants ===== */
+.btn {
+  @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-bold rounded-xl transition-all duration-200;
+}
+
+.btn-primary {
+  @apply bg-violet-600 text-white hover:bg-violet-500 shadow-lg shadow-violet-600/25 btn-glow;
+}
+
+.btn-secondary {
+  @apply bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-700;
+}
+
+.btn-ghost {
+  @apply text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800;
+}
+
+.btn-sm {
+  @apply px-3 py-1.5 text-xs;
+}
+
+.btn-lg {
+  @apply px-6 py-3 text-base;
+}
+
+/* ===== Empty States ===== */
+.empty-state {
+  @apply flex flex-col items-center justify-center py-16 text-center;
+}
+
+.empty-state-icon {
+  @apply flex items-center justify-center w-16 h-16 mb-4 bg-zinc-100 dark:bg-zinc-800 rounded-full;
+}
+
+.empty-state-title {
+  @apply text-lg font-bold text-zinc-800 dark:text-white;
+}
+
+.empty-state-description {
+  @apply text-sm text-zinc-500 dark:text-zinc-400 max-w-xs mt-1;
+}
+
+/* ===== Loading States ===== */
+.skeleton-pulse {
+  @apply bg-zinc-200 dark:bg-zinc-700 rounded animate-pulse;
+}
+
+.skeleton-wave {
+  background: linear-gradient(90deg, #f4f4f5 25%, #e4e4e7 50%, #f4f4f5 75%);
+  background-size: 400% 100%;
+  animation: pulse-skeleton 2s infinite ease-in-out;
+}
+
+.dark .skeleton-wave {
+  background: linear-gradient(90deg, #27272a 25%, #3f3f46 50%, #27272a 75%);
+  background-size: 400% 100%;
+}
+
+/* ===== Stagger Animation Delays ===== */
+.stagger-item {
+  @apply opacity-0 animate-fade-in;
+}
+
+.stagger-item:nth-child(1) { animation-delay: 0ms; }
+.stagger-item:nth-child(2) { animation-delay: 50ms; }
+.stagger-item:nth-child(3) { animation-delay: 100ms; }
+.stagger-item:nth-child(4) { animation-delay: 150ms; }
+.stagger-item:nth-child(5) { animation-delay: 200ms; }
+.stagger-item:nth-child(6) { animation-delay: 250ms; }
+.stagger-item:nth-child(7) { animation-delay: 300ms; }
+.stagger-item:nth-child(8) { animation-delay: 350ms; }
+
+/* ===== Glass Card Variants ===== */
+.glass-card {
+  @apply p-6 rounded-2xl glass-panel border border-zinc-100 dark:border-zinc-800;
+}
+
+.glass-card-interactive {
+  @apply glass-card transition-all duration-300 cursor-pointer;
+}
+
+.glass-card-interactive:hover {
+  @apply border-violet-200 dark:border-violet-800 shadow-lg;
+}
+
+/* ===== Tab Navigation ===== */
+.tabs-nav {
+  @apply flex space-x-1 bg-zinc-100 dark:bg-zinc-800 p-1 rounded-xl;
+}
+
+.tabs-nav button {
+  @apply px-4 py-2 text-sm font-bold rounded-lg transition-all;
+}
+
+.tabs-nav button.active {
+  @apply bg-white dark:bg-zinc-700 text-violet-600 dark:text-violet-400 shadow-sm;
+}
+
+.tabs-nav button:not(.active) {
+  @apply text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200;
+}
+
+/* ===== Avatar Sizes ===== */
+.avatar-xs { @apply w-6 h-6 rounded-full; }
+.avatar-sm { @apply w-8 h-8 rounded-full; }
+.avatar-md { @apply w-10 h-10 rounded-full; }
+.avatar-lg { @apply w-12 h-12 rounded-full; }
+.avatar-xl { @apply w-16 h-16 rounded-full; }
+.avatar-2xl { @apply w-20 h-20 rounded-full; }
+
+/* ===== Status Indicators ===== */
+.status-dot {
+  @apply w-2 h-2 rounded-full;
+}
+
+.status-dot-active { @apply bg-emerald-500; }
+.status-dot-inactive { @apply bg-zinc-400; }
+.status-dot-pending { @apply bg-amber-500; }
+.status-dot-error { @apply bg-red-500; }
+
+/* ===== Tooltip Enhancement ===== */
+.tooltip {
+  @apply absolute z-50 px-2 py-1 text-xs font-bold text-white bg-zinc-900 dark:bg-zinc-700 rounded-lg opacity-0 pointer-events-none transition-opacity;
+}
+
+.tooltip.show {
+  @apply opacity-100;
+}
+
+/* ===== Backdrop Blur Overlay ===== */
+.backdrop-overlay {
+  @apply fixed inset-0 z-40 backdrop-blur-sm bg-zinc-900/50 dark:bg-black/60;
+}
+
+/* ===== Drawer Panel ===== */
+.drawer-panel {
+  @apply fixed top-0 right-0 z-50 h-full w-full max-w-2xl bg-white dark:bg-zinc-900 border-l border-zinc-200 dark:border-zinc-800 shadow-2xl;
+  animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* ===== Progress Bar Enhancements ===== */
+.progress-bar {
+  @apply w-full h-2 bg-zinc-200 dark:bg-zinc-700 rounded-full overflow-hidden;
+}
+
+.progress-bar-fill {
+  @apply h-full rounded-full transition-all duration-500 ease-out;
+}
+
+/* ===== Status Card Accents ===== */
+.status-card {
+  @apply relative overflow-hidden;
+}
+
+.status-card::before {
+  content: '';
+  @apply absolute top-0 left-0 w-1 h-full;
+}
+
+.status-card.pending::before { @apply bg-amber-500; }
+.status-card.approved::before { @apply bg-emerald-500; }
+.status-card.rejected::before { @apply bg-rose-500; }
+.status-card.info::before { @apply bg-sky-500; }
+
+/* ===== Page Transition ===== */
+.page-enter {
+  animation: fadeInUp 0.4s ease-out both;
+}
+
+.page-leave {
+  animation: fadeOutDown 0.3s ease-in both;
+}
+
+@keyframes fadeOutDown {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
 }
 

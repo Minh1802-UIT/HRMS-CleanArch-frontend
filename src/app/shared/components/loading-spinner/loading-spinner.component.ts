@@ -7,13 +7,16 @@ import { NgClass } from '@angular/common';
   imports: [NgClass],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="flex items-center justify-center" [ngClass]="containerClass">
-      <div 
-        class="animate-spin rounded-full border-2 border-violet-200"
+    <div class="flex flex-col items-center justify-center" [ngClass]="containerClass">
+      <div
+        class="relative animate-spin"
         [ngClass]="spinnerClass"
-      ></div>
+      >
+        <div class="absolute inset-0 rounded-full border-2 border-violet-200 dark:border-violet-800 opacity-50"></div>
+        <div class="absolute inset-0 rounded-full border-2 border-transparent border-t-violet-600 dark:border-t-violet-400"></div>
+      </div>
       @if (message) {
-        <span class="ml-3 text-sm text-zinc-500 dark:text-zinc-400">{{ message }}</span>
+        <span class="mt-3 text-sm font-medium text-zinc-500 dark:text-zinc-400 animate-pulse">{{ message }}</span>
       }
     </div>
   `,
