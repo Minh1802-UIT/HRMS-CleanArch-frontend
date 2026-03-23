@@ -755,12 +755,12 @@
                                                                                                               <p
                                                                                                                 class="text-sm font-bold leading-tight text-gray-900 dark:text-white"
                                                                                                                 >
-                                                                                                                {{ candidate.education?.[0]?.degree || 'Unknown Degree' }}
+                                                                                                                {{ (candidate.education && candidate.education.length > 0) ? candidate.education[0].degree : 'Unknown Degree' }}
                                                                                                               </p>
                                                                                                               <p
                                                                                                                 class="text-xs text-gray-500 font-bold mt-2 uppercase tracking-wide"
                                                                                                                 >
-                                                                                                                {{ candidate.education?.[0]?.school || 'Unknown School' }}
+                                                                                                                {{ (candidate.education && candidate.education.length > 0) ? candidate.education[0].school : 'Unknown School' }}
                                                                                                               </p>
                                                                                                             </div>
                                                                                                           </div>
