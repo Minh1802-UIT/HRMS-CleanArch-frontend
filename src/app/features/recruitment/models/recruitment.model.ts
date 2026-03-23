@@ -44,3 +44,14 @@ export interface RecruitmentStage {
   icon: string;
   color: string;
 }
+
+export interface Interview {
+  id: string;
+  candidateId: string;
+  interviewerId: string;
+  scheduledTime: string;
+  durationMinutes: number;
+  location: string;
+  status: string;
+  feedback: string;
+}

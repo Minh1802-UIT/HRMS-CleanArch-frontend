@@ -4,7 +4,7 @@ import { Observable, of, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { environment } from '@env/environment';
 import { ApiResponse } from '@core/models/api-response';
-import { JobVacancy, Candidate } from '../models/recruitment.model';
+import { JobVacancy, Candidate, Interview } from '../models/recruitment.model';
 import { LoggerService } from '@core/services/logger.service';
 import { ToastService } from '@core/services/toast.service';
 
@@ -194,12 +194,76 @@ export class RecruitmentService {
   //  Onboarding
   // =====================================================================
 
-  onboardCandidate(id: string, onboardData: { employeeId?: string; startDate?: string }): Observable<boolean> {
-    return this.http.post<ApiResponse<boolean>>(`${this.apiUrl}/candidates/${id}/onboard`, onboardData).pipe(
+  onboardCandidate(id: string, onboardData: {
+    employeeCode?: string;
+    departmentId?: string;
+    positionId?: string;
+    managerId?: string;
+    joinDate?: string;
+    dateOfBirth?: string;
+  }): Observable<boolean> {
+    const body = {
+      employeeCode: onboardData.employeeCode || '',
+      departmentId: onboardData.departmentId || '',
+      positionId: onboardData.positionId || '',
+      managerId: onboardData.managerId,
+      joinDate: onboardData.joinDate || new Date().toISOString(),
+      dateOfBirth: onboardData.dateOfBirth || ''
+    };
+    return this.http.post<ApiResponse<boolean>>(`${this.apiUrl}/candidates/${id}/onboard`, body).pipe(
       map(res => res.succeeded),
       catchError(err => {
         this.logger.error(`Failed to onboard candidate ${id}`, err);
         this.toastService.showError('Onboarding Failed', err?.error?.message || 'Could not onboard candidate.');
+        return of(false);
+      })
+    );
+  }
+
+  // =====================================================================
+  //  Interview Management
+  // =====================================================================
+
+  getInterviews(candidateId?: string): Observable<Interview[]> {
+    const params: Record<string, string> = {};
+    if (candidateId) params['candidateId'] = candidateId;
+    return this.http.get<ApiResponse<Interview[]>>(`${this.apiUrl}/interviews`, { params }).pipe(
+      map(res => res.data || []),
+      catchError(err => {
+        this.logger.error('Failed to fetch interviews', err);
+        return of([]);
+      })
+    );
+  }
+
+  createInterview(interview: Partial<Interview>): Observable<boolean> {
+    return this.http.post<ApiResponse<boolean>>(`${this.apiUrl}/interviews`, interview).pipe(
+      map(res => res.succeeded),
+      catchError(err => {
+        this.logger.error('Failed to create interview', err);
+        this.toastService.showError('Create Failed', err?.error?.message || 'Could not create interview.');
+        return of(false);
+      })
+    );
+  }
+
+  updateInterview(id: string, interview: Partial<Interview>): Observable<boolean> {
+    return this.http.patch<ApiResponse<boolean>>(`${this.apiUrl}/interviews/${id}`, interview).pipe(
+      map(res => res.succeeded),
+      catchError(err => {
+        this.logger.error(`Failed to update interview ${id}`, err);
+        this.toastService.showError('Update Failed', err?.error?.message || 'Could not update interview.');
+        return of(false);
+      })
+    );
+  }
+
+  deleteInterview(id: string): Observable<boolean> {
+    return this.http.delete<ApiResponse<boolean>>(`${this.apiUrl}/interviews/${id}`).pipe(
+      map(res => res.succeeded),
+      catchError(err => {
+        this.logger.error(`Failed to delete interview ${id}`, err);
+        this.toastService.showError('Delete Failed', err?.error?.message || 'Could not delete interview.');
         return of(false);
       })
     );

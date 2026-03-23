@@ -1,0 +1,105 @@
+<div class="flex flex-col h-full bg-white dark:bg-zinc-900 overflow-hidden relative rounded-xl shadow-2xl">
+  <!-- Header -->
+  <div class="flex sticky top-0 z-20 justify-between items-center px-8 py-6 bg-white dark:bg-zinc-900 border-b border-gray-100 dark:border-zinc-800">
+    <div>
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-zinc-100">
+        {{ isEditMode ? "Edit Interview" : "Schedule Interview" }}
+      </h2>
+      <p class="mt-1 text-sm text-gray-500 dark:text-zinc-400">
+        {{ isEditMode ? "Update the interview details." : "Schedule a new interview for a candidate." }}
+      </p>
+    </div>
+    <button (click)="close.emit()" class="text-gray-400 focus:outline-none dark:text-zinc-500 transition-colors hover:text-gray-600 dark:hover:text-zinc-200">
+      <span class="text-2xl material-symbols-outlined">close</span>
+    </button>
+  </div>
+
+  <!-- Form -->
+  <div class="overflow-y-auto flex-1 bg-white dark:bg-zinc-900">
+    <div class="px-8 py-10 mx-auto max-w-4xl space-y-6">
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="space-y-2 col-span-2">
+          <label class="block text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+            Candidate <span class="text-red-500">*</span>
+          </label>
+          @if (candidate) {
+            <div class="px-4 py-2.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 text-sm font-medium">
+              {{ candidate.fullName || candidate.name }} ({{ candidate.email }})
+            </div>
+          } @else {
+            <input type="text" [(ngModel)]="form.candidateId" class="form-input w-full px-4 py-2.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-all" placeholder="Candidate ID" />
+          }
+        </div>
+
+        <div class="space-y-2 col-span-2">
+          <label class="block text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+            Interviewer <span class="text-red-500">*</span>
+          </label>
+          <select [(ngModel)]="form.interviewerId"
+            class="form-select w-full px-4 py-2.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-all cursor-pointer">
+            <option value="" disabled>Select an interviewer...</option>
+            @for (emp of interviewers; track emp.id) {
+              <option [value]="emp.id">{{ emp.fullName }} ({{ emp.email }})</option>
+            }
+          </select>
+        </div>
+
+        <div class="space-y-2">
+          <label class="block text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+            Date <span class="text-red-500">*</span>
+          </label>
+          <input type="date" [(ngModel)]="form.scheduledDate"
+            class="form-input w-full px-4 py-2.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-all" />
+        </div>
+
+        <div class="space-y-2">
+          <label class="block text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+            Time <span class="text-red-500">*</span>
+          </label>
+          <input type="time" [(ngModel)]="form.scheduledTime"
+            class="form-input w-full px-4 py-2.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-all" />
+        </div>
+
+        <div class="space-y-2">
+          <label class="block text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+            Duration (minutes)
+          </label>
+          <select [(ngModel)]="form.durationMinutes"
+            class="form-select w-full px-4 py-2.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-all cursor-pointer">
+            <option [value]="30">30 minutes</option>
+            <option [value]="45">45 minutes</option>
+            <option [value]="60">1 hour</option>
+            <option [value]="90">1.5 hours</option>
+            <option [value]="120">2 hours</option>
+          </select>
+        </div>
+
+        <div class="space-y-2">
+          <label class="block text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+            Location / Meeting Type
+          </label>
+          <select [(ngModel)]="form.location"
+            class="form-select w-full px-4 py-2.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-all cursor-pointer">
+            <option value="Online">Online</option>
+            <option value="In-Person">In-Person</option>
+            <option value="Phone Call">Phone Call</option>
+          </select>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer Actions -->
+  <div class="flex sticky bottom-0 z-20 justify-end items-center px-8 py-6 gap-4 bg-white dark:bg-zinc-900 border-t border-gray-100 dark:border-zinc-800">
+    <button type="button" (click)="close.emit()" class="px-6 py-2.5 text-sm font-semibold text-gray-700 dark:text-zinc-300 bg-white dark:bg-zinc-800 rounded-lg border border-gray-300 dark:border-zinc-600 transition-colors hover:bg-gray-50 dark:hover:bg-zinc-700">
+      Cancel
+    </button>
+    <button type="button" (click)="onSubmit()" [disabled]="loading"
+      class="flex gap-2 items-center px-8 py-2.5 text-sm font-semibold text-white bg-violet-600 rounded-lg shadow-sm transition-colors hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed">
+      <span *ngIf="loading" class="material-symbols-outlined animate-spin text-sm">sync</span>
+      {{ isEditMode ? "Save Changes" : "Schedule Interview" }}
+    </button>
+  </div>
+</div>

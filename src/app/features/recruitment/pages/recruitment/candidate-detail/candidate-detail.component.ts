@@ -1,11 +1,16 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { NgClass } from '@angular/common';
+import { NgClass, DatePipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { LoggerService } from '@core/services/logger.service';
 import { ToastService } from '@core/services/toast.service';
 import { RecruitmentService } from '@features/recruitment/services/recruitment.service';
+import { DepartmentService } from '@features/organization/services/department.service';
+import { PositionService } from '@features/organization/services/position.service';
+import { Department } from '@features/organization/services/department.service';
+import { Position } from '@features/organization/services/position.service';
 
 interface Experience {
   id: string;
@@ -85,7 +90,7 @@ interface CandidateDetail {
 @Component({
   selector: 'app-candidate-detail',
   standalone: true,
-  imports: [NgClass, RouterModule],
+  imports: [NgClass, FormsModule, RouterModule, DatePipe],
   templateUrl: './candidate-detail.component.html',
   styleUrl: './candidate-detail.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -94,14 +99,41 @@ export class CandidateDetailComponent implements OnInit, OnDestroy {
   candidate: CandidateDetail | null = null;
   loading = false;
   isScoring = false;
-  activeTab: 'overview' | 'resume' | 'notes' | 'history' = 'resume';
+  activeTab: 'overview' | 'resume' | 'notes' | 'history' | 'interviews' = 'resume';
   private destroy$ = new Subject<void>();
+
+  // Interviews
+  candidateInterviews: any[] = [];
+  showScheduleInterviewModal = false;
+  isSchedulingInterview = false;
+  newInterviewDate = new Date().toISOString().substring(0, 10);
+  newInterviewTime = '10:00';
+  newInterviewDuration = 60;
+  newInterviewLocation = 'Online';
+  newInterviewerId = '';
+
+  // Onboarding
+  showOnboardModal = false;
+  isOnboarding = false;
+  departments: Department[] = [];
+  positions: Position[] = [];
+  filteredPositions: Position[] = [];
+  onboardForm = {
+    employeeCode: '',
+    departmentId: '',
+    positionId: '',
+    managerId: '',
+    joinDate: new Date().toISOString().substring(0, 10),
+    dateOfBirth: ''
+  };
 
   constructor(
     private route: ActivatedRoute,
     private logger: LoggerService,
     private toastService: ToastService,
     private recruitmentService: RecruitmentService,
+    private departmentService: DepartmentService,
+    private positionService: PositionService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -184,8 +216,79 @@ export class CandidateDetailComponent implements OnInit, OnDestroy {
     return Array(5).fill(0).map((_, i) => i < stars ? 1 : 0);
   }
 
-  onTabChange(tab: 'overview' | 'resume' | 'notes' | 'history') {
+  onTabChange(tab: 'overview' | 'resume' | 'notes' | 'history' | 'interviews') {
     this.activeTab = tab;
+    if (tab === 'interviews' && this.candidate) {
+      this.loadInterviews(this.candidate.id);
+    }
+  }
+
+  loadInterviews(candidateId: string) {
+    this.recruitmentService.getInterviews(candidateId).pipe(takeUntil(this.destroy$)).subscribe(interviews => {
+      this.candidateInterviews = interviews;
+      this.cdr.markForCheck();
+    });
+  }
+
+  openScheduleInterview() {
+    this.showScheduleInterviewModal = true;
+    this.isSchedulingInterview = false;
+    this.newInterviewDate = new Date().toISOString().substring(0, 10);
+    this.newInterviewTime = '10:00';
+    this.newInterviewDuration = 60;
+    this.newInterviewLocation = 'Online';
+    this.newInterviewerId = '';
+  }
+
+  closeScheduleInterviewModal() {
+    this.showScheduleInterviewModal = false;
+  }
+
+  submitScheduleInterview() {
+    if (!this.candidate || !this.newInterviewerId || !this.newInterviewDate || !this.newInterviewTime) {
+      this.toastService.showWarn('Missing Fields', 'Please fill in all required fields.');
+      return;
+    }
+    this.isSchedulingInterview = true;
+    const scheduledTime = new Date(`${this.newInterviewDate}T${this.newInterviewTime}`).toISOString();
+    this.recruitmentService.createInterview({
+      candidateId: this.candidate.id,
+      interviewerId: this.newInterviewerId,
+      scheduledTime,
+      durationMinutes: this.newInterviewDuration,
+      location: this.newInterviewLocation,
+      status: 'Scheduled'
+    }).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (ok) => {
+        this.isSchedulingInterview = false;
+        if (ok) {
+          this.toastService.showSuccess('Scheduled', 'Interview has been scheduled.');
+          this.closeScheduleInterviewModal();
+          this.loadInterviews(this.candidate!.id);
+        } else {
+          this.toastService.showError('Failed', 'Could not schedule interview.');
+        }
+      },
+      error: () => {
+        this.isSchedulingInterview = false;
+        this.toastService.showError('Failed', 'Could not schedule interview.');
+      }
+    });
+  }
+
+  deleteInterview(interviewId: string) {
+    if (!confirm('Delete this interview?')) return;
+    this.recruitmentService.deleteInterview(interviewId).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (ok) => {
+        if (ok) {
+          this.toastService.showSuccess('Deleted', 'Interview deleted.');
+          if (this.candidate) this.loadInterviews(this.candidate.id);
+        } else {
+          this.toastService.showError('Failed', 'Could not delete interview.');
+        }
+      },
+      error: () => this.toastService.showError('Failed', 'Could not delete interview.')
+    });
   }
 
   reject() {
@@ -215,8 +318,108 @@ export class CandidateDetailComponent implements OnInit, OnDestroy {
   }
 
   moveToNextStage() {
-    this.logger.debug('Move to next stage');
-    this.toastService.showInfo('Move to Next Stage', 'Pipeline stage management will be available in a future update.');
+    if (!this.candidate) return;
+    const current = this.candidate.status;
+    const nextStageMap: { [key: string]: string } = {
+      'New': 'Screening',
+      'Screening': 'Interview',
+      'Interview': 'Technical Test',
+      'Technical Test': 'Offer',
+      'Offer': 'Hired'
+    };
+    const next = nextStageMap[current];
+    if (!next) {
+      this.toastService.showInfo('No Next Stage', 'This candidate is already at the final stage.');
+      return;
+    }
+    this.recruitmentService.updateCandidateStatus(this.candidate.id, next)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (ok) => {
+          if (ok) {
+            this.toastService.showSuccess('Stage Updated', `${this.candidate!.name} moved to ${next}`);
+            this.candidate!.status = next;
+            this.cdr.markForCheck();
+          } else {
+            this.toastService.showError('Update Failed', 'Could not update candidate stage.');
+          }
+        },
+        error: () => this.toastService.showError('Update Failed', 'Could not update candidate stage.')
+      });
+  }
+
+  openOnboardModal() {
+    this.showOnboardModal = true;
+    this.isOnboarding = false;
+    this.departmentService.getDepartments().pipe(takeUntil(this.destroy$)).subscribe(depts => {
+      this.departments = depts;
+      this.cdr.markForCheck();
+    });
+    this.positionService.getPositions().pipe(takeUntil(this.destroy$)).subscribe(poss => {
+      this.positions = poss;
+      this.filterPositions();
+      this.cdr.markForCheck();
+    });
+  }
+
+  closeOnboardModal() {
+    this.showOnboardModal = false;
+    this.isOnboarding = false;
+    this.onboardForm = {
+      employeeCode: '',
+      departmentId: '',
+      positionId: '',
+      managerId: '',
+      joinDate: new Date().toISOString().substring(0, 10),
+      dateOfBirth: ''
+    };
+  }
+
+  filterPositions() {
+    if (this.onboardForm.departmentId) {
+      this.filteredPositions = this.positions.filter(p => !p.departmentId || p.departmentId === this.onboardForm.departmentId);
+    } else {
+      this.filteredPositions = this.positions;
+    }
+    if (this.onboardForm.positionId && !this.filteredPositions.find(p => p.id === this.onboardForm.positionId)) {
+      this.onboardForm.positionId = '';
+    }
+  }
+
+  submitOnboard() {
+    if (!this.candidate) return;
+    if (!this.onboardForm.employeeCode || !this.onboardForm.departmentId || !this.onboardForm.positionId || !this.onboardForm.joinDate || !this.onboardForm.dateOfBirth) {
+      this.toastService.showWarn('Missing Fields', 'Please fill in all required fields.');
+      return;
+    }
+    this.isOnboarding = true;
+    const body: any = {
+      employeeCode: this.onboardForm.employeeCode,
+      departmentId: this.onboardForm.departmentId,
+      positionId: this.onboardForm.positionId,
+      managerId: this.onboardForm.managerId || undefined,
+      joinDate: new Date(this.onboardForm.joinDate).toISOString(),
+      dateOfBirth: new Date(this.onboardForm.dateOfBirth).toISOString()
+    };
+    this.recruitmentService.onboardCandidate(this.candidate.id, body).pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: (ok) => {
+        this.isOnboarding = false;
+        if (ok) {
+          this.toastService.showSuccess('Onboarding Complete', `${this.candidate!.name} has been successfully onboarded.`);
+          this.closeOnboardModal();
+          this.loadCandidate(this.candidate!.id);
+        } else {
+          this.toastService.showError('Onboarding Failed', 'Could not onboard the candidate.');
+        }
+      },
+      error: (err: Error) => {
+        this.isOnboarding = false;
+        this.toastService.showError('Onboarding Failed', err.message || 'An error occurred.');
+        this.cdr.markForCheck();
+      }
+    });
   }
 
   scoreWithAi() {

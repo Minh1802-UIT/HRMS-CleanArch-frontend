@@ -314,6 +314,12 @@ export class RecruitmentComponent implements OnInit, OnDestroy {
     this.loadJobs();
   }
 
+  onVacancyClosed(vacancyId: string) {
+    const vacancy = this.jobs.find(j => j.id === vacancyId);
+    if (vacancy) vacancy.status = 'Closed';
+    this.closeJobDetailsDrawer();
+  }
+
   // Candidate Actions
   addNewCandidate(presetStage?: string) {
     this.editingCandidate = null;

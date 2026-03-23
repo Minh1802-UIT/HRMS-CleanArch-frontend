@@ -70,6 +70,15 @@
                       }
                       {{ isScoring ? 'Scoring...' : 'Score with AI' }}
                     </button>
+                    @if (candidate.status === 'Offer' || candidate.status === 'Hired') {
+                    <button
+                      (click)="openOnboardModal()"
+                      class="flex gap-2 items-center px-5 py-2 text-sm font-bold text-white rounded-lg shadow-md transition-all bg-emerald-600 hover:bg-emerald-700"
+                      >
+                      <span class="text-lg material-symbols-outlined">how_to_reg</span>
+                      Hire &amp; Onboard
+                    </button>
+                    } @else {
                     <button
                       (click)="moveToNextStage()"
                       class="flex gap-2 items-center px-5 py-2 text-sm font-bold text-white rounded-lg shadow-md transition-all bg-brand-orange hover:bg-orange-600"
@@ -77,6 +86,7 @@
                       Move to next stage
                       <span class="text-lg material-symbols-outlined">arrow_forward</span>
                     </button>
+                    }
                   </div>
                 </div>
               </header>
