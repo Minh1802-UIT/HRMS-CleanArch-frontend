@@ -6,7 +6,7 @@ import { AuthService } from '@core/services/auth.service';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
 import { LoggerService } from '@core/services/logger.service';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { finalize, takeUntil, timeout } from 'rxjs/operators';
 
 @Component({
   selector: 'app-login',
@@ -45,9 +45,18 @@ export class LoginComponent implements OnDestroy {
     this.isLoading = true;
     this.errorMessage = '';
 
-    this.authService.login(this.loginForm.value).pipe(takeUntil(this.destroy$)).subscribe({
+    this.authService
+      .login(this.loginForm.value)
+      .pipe(
+        takeUntil(this.destroy$),
+        timeout(120000),
+        finalize(() => {
+          this.isLoading = false;
+          this.cdr.markForCheck();
+        })
+      )
+      .subscribe({
       next: () => {
-        this.isLoading = false;
         const user = this.authService.currentUserValue;
         if (user?.mustChangePassword) {
           this.errorHandler.showSuccess('Welcome! Please set a new password to continue.', 'First Login');
@@ -59,9 +68,11 @@ export class LoginComponent implements OnDestroy {
         this.cdr.markForCheck();
       },
       error: (err) => {
-        this.isLoading = false;
         this.logger.error('Login error', err);
-        const msg = err.error?.message || 'Invalid credentials or server error';
+        const msg =
+          err?.name === 'TimeoutError'
+            ? 'Server took too long to respond (cold start). Please try again in a moment.'
+            : err.error?.message || 'Invalid credentials or server error';
         this.errorMessage = msg;
         this.errorHandler.handleHttpError(err, 'Login');
         this.cdr.markForCheck();

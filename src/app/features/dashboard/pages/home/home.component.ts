@@ -209,15 +209,59 @@ export class HomeComponent {
 
   activeModuleIndex = signal<number>(4); // Default to Payroll to match the user's screenshot
 
+  /**
+   * Partner logos — use stable public URLs (Wikimedia Commons), not Clearbit.
+   * Clearbit Logo API is unreliable / deprecated and often returns redirects or
+   * fails CSP; see download_logos.js for the same asset sources.
+   */
   trustedCompanies = [
-    { name: 'Vingroup', abbr: 'VG', logoSrc: 'https://logo.clearbit.com/vingroup.net' },
-    { name: 'FPT Software', abbr: 'FPT', logoSrc: 'https://logo.clearbit.com/fpt.com' },
-    { name: 'Viettel', abbr: 'VТ', logoSrc: 'https://logo.clearbit.com/viettel.vn' },
-    { name: 'Masan Group', abbr: 'MSN', logoSrc: 'https://logo.clearbit.com/masangroup.com' },
-    { name: 'Techcombank', abbr: 'TCB', logoSrc: 'https://logo.clearbit.com/techcombank.com' },
-    { name: 'VNPT', abbr: 'VNP', logoSrc: 'https://logo.clearbit.com/vnpt.com.vn' },
-    { name: 'VinFast', abbr: 'VF', logoSrc: 'https://logo.clearbit.com/vinfastauto.com' },
-    { name: 'Sacombank', abbr: 'STB', logoSrc: 'https://logo.clearbit.com/sacombank.com.vn' },
+    {
+      name: 'Vingroup',
+      abbr: 'VG',
+      logoSrc:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Vingroup_logo.svg/512px-Vingroup_logo.svg.png'
+    },
+    {
+      name: 'FPT Software',
+      abbr: 'FPT',
+      logoSrc:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/FPT_logo_2010.svg/512px-FPT_logo_2010.svg.png'
+    },
+    {
+      name: 'Viettel',
+      abbr: 'VT',
+      logoSrc:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Viettel_logo_2021.svg/512px-Viettel_logo_2021.svg.png'
+    },
+    {
+      name: 'Masan Group',
+      abbr: 'MSN',
+      logoSrc:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Logo-Masan-Group-Symbol.png/512px-Logo-Masan-Group-Symbol.png'
+    },
+    {
+      name: 'Techcombank',
+      abbr: 'TCB',
+      logoSrc:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Techcombank_logo.svg/512px-Techcombank_logo.svg.png'
+    },
+    {
+      name: 'VNPT',
+      abbr: 'VNP',
+      logoSrc: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/VNPT_Logo.svg/512px-VNPT_Logo.svg.png'
+    },
+    {
+      name: 'VinFast',
+      abbr: 'VF',
+      logoSrc:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/VinFast_Logo.svg/512px-VinFast_Logo.svg.png'
+    },
+    {
+      name: 'Sacombank',
+      abbr: 'STB',
+      logoSrc:
+        'https://upload.wikimedia.org/wikipedia/vi/thumb/9/91/Sacombank_logo.svg/512px-Sacombank_logo.svg.png'
+    }
   ];
 
   onLogoError(event: Event, companyName: string) {

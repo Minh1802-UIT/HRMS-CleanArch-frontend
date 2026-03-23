@@ -16,8 +16,10 @@ const prodCsp: CspConfig = {
   'script-src': "'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live",
   'style-src': "'self' 'unsafe-inline' https://fonts.googleapis.com",
   'font-src': "'self' https://fonts.gstatic.com data: https://*.vercel.app",
-  'img-src': "'self' data: blob: https: https://images.unsplash.com https://i.pravatar.cc https://*.supabase.co https://*.onrender.com",
-  'connect-src': "'self' https://*.onrender.com https://vercel.live https://*.vercel.app",
+  'img-src':
+    "'self' data: blob: https: https://images.unsplash.com https://i.pravatar.cc https://upload.wikimedia.org https://*.supabase.co https://*.onrender.com",
+  'connect-src':
+    "'self' https://hrms-backend-api-n0bq.onrender.com https://*.onrender.com https://vercel.live https://*.vercel.app",
   'worker-src': "'self' blob:",
   'object-src': "'none'",
   'base-uri': "'self'",
