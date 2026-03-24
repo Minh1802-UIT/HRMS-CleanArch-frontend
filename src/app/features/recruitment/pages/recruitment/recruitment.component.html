@@ -654,9 +654,9 @@
               class="form-select pl-3 pr-8 py-2 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-sm text-zinc-700 dark:text-zinc-200 focus:ring-2 focus:ring-violet-500/20 focus:outline-none cursor-pointer min-w-[180px]"
             >
               <option value="">All Employment Type</option>
-              <option value="Full time">Full time</option>
-              <option value="Part time">Part time</option>
-              <option value="Contract">Contract</option>
+              @for (type of employmentTypesList; track type) {
+                <option [value]="type">{{ type }}</option>
+              }
             </select>
           </div>
         </div>
@@ -1009,6 +1009,28 @@
         (deleted)="loadJobs()"
         (closed)="onVacancyClosed($event)"
       ></app-job-vacancy-detail>
+    </div>
+  </div>
+}
+
+<!-- Add/Edit Candidate Drawer -->
+@if (showAddCandidateDrawer) {
+  <div class="flex fixed inset-0 z-50 justify-end items-center">
+    <!-- Backdrop -->
+    <div
+      class="absolute inset-0 backdrop-blur-sm transition-opacity bg-zinc-900/50 dark:bg-black/60"
+      (click)="closeCandidateDrawer()"
+    ></div>
+    <!-- Drawer Panel -->
+    <div
+      class="overflow-hidden relative w-full h-full max-w-2xl bg-white border-l border-zinc-200 shadow-2xl dark:bg-zinc-900 dark:border-zinc-800 animate-slide-in-right"
+    >
+      <app-add-candidate
+        [editCandidate]="editingCandidate"
+        [jobs]="jobs"
+        (close)="closeCandidateDrawer()"
+        (candidateSaved)="onCandidateSaved()"
+      ></app-add-candidate>
     </div>
   </div>
 }

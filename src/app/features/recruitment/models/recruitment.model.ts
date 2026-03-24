@@ -27,6 +27,10 @@ export interface Candidate {
   aiScore?: number;
   aiMatchingSummary?: string;
   extractedSkills?: string;
+  // Extended fields
+  experience?: string[];
+  education?: string[];
+  notes?: string[];
   // UI helper fields
   score?: number;
   avatar?: string;

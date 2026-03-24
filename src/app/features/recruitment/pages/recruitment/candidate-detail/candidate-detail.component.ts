@@ -158,10 +158,7 @@ export class CandidateDetailComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (apiCandidate) => {
           if (apiCandidate) {
-            // Map the API Candidate model to the UI CandidateDetail shape.
-            // Extended fields (experience, education, notes, etc.) are not yet
-            // returned by the backend — they display as empty until those
-            // endpoints are added.
+            // Map the API Candidate model to the UI CandidateDetail shape
             this.candidate = {
               id: apiCandidate.id,
               name: apiCandidate.fullName,
@@ -176,8 +173,20 @@ export class CandidateDetailComponent implements OnInit, OnDestroy {
               gender: '',
               dob: '',
               address: '',
-              experience: [],
-              education: [],
+              experience: (apiCandidate.experience || []).map((exp: string, i: number) => ({
+                id: `exp-${i}`,
+                role: exp,
+                company: '',
+                period: '',
+                description: '',
+                isCurrent: false
+              })),
+              education: (apiCandidate.education || []).map((edu: string, i: number) => ({
+                id: `edu-${i}`,
+                degree: edu,
+                school: '',
+                period: ''
+              })),
               timeline: [
                 { id: 't1', stage: 'Applied', date: apiCandidate.appliedDate, status: 'completed' },
                 { id: 't2', stage: 'CV Review', date: '', status: apiCandidate.status === 'Screening' ? 'current' : 'pending' },
@@ -443,4 +452,66 @@ export class CandidateDetailComponent implements OnInit, OnDestroy {
   trackByIndex(index: number, item?: unknown): number { return index; }
   trackBySkill(index: number, skill: string): string { return skill; }
   trackByTool(index: number, tool: string): string { return tool; }
+
+  hasResume(): boolean {
+    return !!(this.candidate?.documents && this.candidate.documents.length > 0 && this.candidate.documents[0].url);
+  }
+
+  getResumeFileName(): string {
+    if (!this.candidate?.documents?.[0]?.url) return 'Resume';
+    try {
+      const url = this.candidate.documents[0].url;
+      const segments = url.split('/');
+      const fileName = segments[segments.length - 1];
+      const namePart = fileName.split('?')[0];
+      const displayName = decodeURIComponent(namePart);
+      return displayName.length > 40 ? displayName.substring(0, 37) + '...' : displayName;
+    } catch {
+      return 'Resume';
+    }
+  }
+
+  getResumeDownloadUrl(): string | undefined {
+    return this.candidate?.documents?.[0]?.url;
+  }
+
+  getFirstEducation(): string {
+    if (this.candidate?.education && this.candidate.education.length > 0) {
+      const edu = this.candidate.education[0];
+      return edu.degree && edu.degree.trim() ? edu.degree : '';
+    }
+    return '';
+  }
+
+  getFirstEducationSchool(): string {
+    if (this.candidate?.education && this.candidate.education.length > 0) {
+      const edu = this.candidate.education[0];
+      return edu.school && edu.school.trim() ? edu.school : '';
+    }
+    return '';
+  }
+
+  isEmptyOrNA(value: string | undefined | null): boolean {
+    return !value || value.trim() === '' || value === 'N/A';
+  }
+
+  hasAnyActivities(): boolean {
+    return !!(this.candidate?.activities && this.candidate.activities.length > 0);
+  }
+
+  hasAnyExperience(): boolean {
+    return !!(this.candidate?.experience && this.candidate.experience.length > 0 && this.candidate.experience.some(e => e.role || e.company));
+  }
+
+  hasAnyEducation(): boolean {
+    return !!(this.candidate?.education && this.candidate.education.length > 0 && this.candidate.education.some(e => e.degree || e.school));
+  }
+
+  hasAnySkills(): boolean {
+    return !!(this.candidate?.skills && this.candidate.skills.length > 0);
+  }
+
+  hasAnyTools(): boolean {
+    return !!(this.candidate?.tools && this.candidate.tools.length > 0);
+  }
 }

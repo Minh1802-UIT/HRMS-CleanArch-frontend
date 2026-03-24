@@ -49,8 +49,64 @@
                 class="text-zinc-500 font-bold uppercase tracking-widest text-sm flex items-center justify-center md:justify-start gap-2"
                 >
                 <span class="material-symbols-outlined text-base">badge</span>
-                {{ currentUserName }}
+                {{ selectedEmployee ? selectedEmployee.fullName : currentUserName }}
               </p>
+              <!-- Employee Selector for HR/Manager -->
+              @if (isManagerOrHR) {
+                <div class="relative mt-3 max-w-sm">
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold text-zinc-400 uppercase tracking-widest">Viewing:</span>
+                    <div class="relative flex-1">
+                      <input
+                        type="text"
+                        [ngModel]="employeeSearchTerm"
+                        (ngModelChange)="onEmployeeSearch($event)"
+                        (focus)="showEmployeeDropdown = true"
+                        (blur)="closeEmployeeDropdown()"
+                        placeholder="Search employee to view their performance..."
+                        class="w-full px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-white text-xs font-medium focus:outline-none focus:ring-2 focus:ring-violet-500"
+                      />
+                      @if (selectedEmployee) {
+                        <button
+                          type="button"
+                          (click)="clearSelectedEmployee()"
+                          class="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-rose-500 transition-colors"
+                          title="Clear and view own performance">
+                          <span class="material-symbols-outlined text-sm">close</span>
+                        </button>
+                      }
+                      @if (isSearchingEmployee) {
+                        <div class="absolute right-2 top-1/2 -translate-y-1/2">
+                          <span class="w-4 h-4 border-2 border-zinc-300 border-t-violet-500 rounded-full animate-spin block"></span>
+                        </div>
+                      }
+                      @if (showEmployeeDropdown && employeeSearchResults.length > 0) {
+                        <ul class="absolute z-50 top-full left-0 right-0 mt-1 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl shadow-xl overflow-hidden max-h-48 overflow-y-auto">
+                          @for (emp of employeeSearchResults; track emp.id) {
+                            <li>
+                              <button
+                                type="button"
+                                (click)="selectEmployee(emp)"
+                                class="w-full text-left px-4 py-2.5 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-colors flex items-center gap-3"
+                                >
+                                <div class="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs flex-shrink-0">
+                                  {{ emp.fullName.charAt(0) }}
+                                </div>
+                                <div class="min-w-0">
+                                  <p class="text-sm font-bold text-zinc-900 dark:text-white truncate">{{ emp.fullName }}</p>
+                                  <p class="text-[10px] text-zinc-400 font-medium truncate">
+                                    {{ emp.departmentName || emp.DepartmentName || 'N/A' }} · {{ emp.employeeCode }}
+                                  </p>
+                                </div>
+                              </button>
+                            </li>
+                          }
+                        </ul>
+                      }
+                    </div>
+                  </div>
+                </div>
+              }
             }
           </div>
 
@@ -145,9 +201,13 @@
           <section
             class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate-fade-in-up stagger-2"
             >
-            @for (goal of goals; track trackByGoalId($index, goal)) {
+              @for (goal of goals; track trackByGoalId($index, goal)) {
               <div
-                class="glass-panel p-8 rounded-[2rem] shadow-soft hover:shadow-premium hover:-translate-y-1 transition-all duration-500 group"
+                class="glass-panel p-8 rounded-[2rem] shadow-soft hover:shadow-premium hover:-translate-y-1 transition-all duration-500 group cursor-pointer"
+                (click)="openGoalDetail(goal)"
+                role="button"
+                tabindex="0"
+                (keydown.enter)="openGoalDetail(goal)"
                 >
                 <div class="flex justify-between items-start mb-6">
                   <div
@@ -427,6 +487,225 @@
           }
         </button>
       </div>
+    </div>
+  </div>
+}
+
+<!-- Goal Detail Modal -->
+@if (isGoalDetailModalOpen && selectedGoal) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+    (click)="closeGoalDetail()"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="goal-detail-title"
+    >
+    <div
+      class="w-full max-w-lg bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl p-8 space-y-6"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="p-3 bg-violet-100 dark:bg-violet-900/30 rounded-2xl">
+            <span class="material-symbols-outlined text-2xl font-bold text-violet-600">rocket_launch</span>
+          </div>
+          <div>
+            <h2 id="goal-detail-title" class="text-lg font-black text-zinc-900 dark:text-white">{{ selectedGoal.title }}</h2>
+            <span [ngClass]="getStatusStyles(selectedGoal.status)"
+              class="mt-1 inline-block px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest">
+              {{ getGoalStatusLabel(selectedGoal.status) }}
+            </span>
+          </div>
+        </div>
+        <button
+          type="button"
+          (click)="closeGoalDetail()"
+          class="p-2 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 transition"
+          aria-label="Close"
+        >
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      @if (selectedGoal.description) {
+        <div>
+          <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-1">Description</p>
+          <p class="text-sm text-zinc-600 dark:text-zinc-300">{{ selectedGoal.description }}</p>
+        </div>
+      }
+
+      <div class="grid grid-cols-2 gap-4">
+        <div class="bg-zinc-50 dark:bg-zinc-800 rounded-2xl p-4">
+          <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-1">Target Date</p>
+          <p class="text-sm font-extrabold text-zinc-900 dark:text-white">{{ selectedGoal.targetDate | date: 'MMM dd, yyyy' }}</p>
+        </div>
+        <div class="bg-zinc-50 dark:bg-zinc-800 rounded-2xl p-4">
+          <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-1">Created</p>
+          <p class="text-sm font-extrabold text-zinc-900 dark:text-white">{{ selectedGoal.createdAt | date: 'MMM dd, yyyy' }}</p>
+        </div>
+      </div>
+
+      <div class="bg-zinc-50 dark:bg-zinc-800 rounded-2xl p-5 space-y-4">
+        <div class="flex items-center justify-between">
+          <p class="text-xs font-bold uppercase tracking-widest text-zinc-400">Current Progress</p>
+          @if (!editingProgress && selectedGoal.status !== PerformanceGoalStatus.Completed && selectedGoal.status !== PerformanceGoalStatus.Cancelled) {
+            <button
+              type="button"
+              (click)="startEditProgress()"
+              class="text-xs font-bold text-violet-600 hover:text-violet-700 transition-colors flex items-center gap-1"
+            >
+              <span class="material-symbols-outlined text-sm">edit</span>
+              Update Progress
+            </button>
+          }
+        </div>
+
+        @if (!editingProgress) {
+          <div class="flex items-center gap-3">
+            <div class="flex-1 h-3 bg-zinc-200 dark:bg-zinc-700 rounded-full overflow-hidden">
+              <div
+                [style.width.%]="selectedGoal.progress"
+                class="h-full bg-gradient-to-r from-violet-500 to-primary rounded-full transition-all duration-700"
+              ></div>
+            </div>
+            <span class="text-lg font-black text-violet-600 w-12 text-right">{{ selectedGoal.progress }}%</span>
+          </div>
+        }
+
+        @if (editingProgress) {
+          <div class="space-y-3">
+            <div class="flex items-center gap-3">
+              <input
+                type="range"
+                [(ngModel)]="progressInput"
+                min="0"
+                max="100"
+                step="5"
+                class="flex-1 accent-violet-600"
+              />
+              <input
+                type="number"
+                [(ngModel)]="progressInput"
+                min="0"
+                max="100"
+                class="w-16 px-2 py-1 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-center text-sm font-bold text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500"
+              />
+              <span class="text-sm font-bold text-zinc-400">%</span>
+            </div>
+            <div class="flex justify-end gap-2">
+              <button
+                type="button"
+                (click)="cancelEditProgress()"
+                [disabled]="savingProgress"
+                class="px-4 py-2 rounded-xl border border-zinc-200 dark:border-zinc-700 text-xs font-bold text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                (click)="saveProgress()"
+                [disabled]="savingProgress"
+                class="px-5 py-2 rounded-xl bg-violet-600 text-white text-xs font-bold shadow-lg shadow-violet-600/30 hover:-translate-y-0.5 transition disabled:opacity-50 flex items-center gap-2"
+              >
+                @if (savingProgress) {
+                  <span class="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                  Saving...
+                } @else {
+                  <span class="material-symbols-outlined text-sm">check</span>
+                  Save
+                }
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Review Detail Modal -->
+@if (isReviewDetailModalOpen && selectedReview) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+    (click)="closeReviewDetail()"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="review-detail-title"
+    >
+    <div
+      class="w-full max-w-lg bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl p-8 space-y-6"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="p-3 bg-amber-100 dark:bg-amber-900/30 rounded-2xl">
+            <span class="material-symbols-outlined text-2xl font-bold text-amber-600">history_edu</span>
+          </div>
+          <div>
+            <h2 id="review-detail-title" class="text-lg font-black text-zinc-900 dark:text-white">Performance Review</h2>
+            <p class="text-xs text-zinc-400 font-medium mt-0.5">
+              {{ selectedReview.periodStart | date: 'MMM yyyy' }} — {{ selectedReview.periodEnd | date: 'MMM yyyy' }}
+            </p>
+          </div>
+        </div>
+        <button
+          type="button"
+          (click)="closeReviewDetail()"
+          class="p-2 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 transition"
+          aria-label="Close"
+        >
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div class="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 rounded-2xl p-6 text-center">
+        <p class="text-xs font-bold uppercase tracking-widest text-amber-600 mb-3">Overall Score</p>
+        <div class="flex items-center justify-center gap-2">
+          <span class="text-5xl font-black text-zinc-900 dark:text-white">{{ selectedReview.overallScore }}</span>
+          <span class="text-2xl font-bold text-amber-500">/ 100</span>
+        </div>
+        <div class="flex justify-center gap-1 mt-3">
+          @for (star of [1,2,3,4,5]; track star) {
+            <span class="material-symbols-outlined text-xl"
+              [class.text-amber-400]="selectedReview.overallScore >= star * 20"
+              [class.text-zinc-200]="selectedReview.overallScore < star * 20"
+            >
+              star
+            </span>
+          }
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div class="bg-zinc-50 dark:bg-zinc-800 rounded-2xl p-4">
+          <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-1">Employee</p>
+          <p class="text-sm font-extrabold text-zinc-900 dark:text-white">{{ selectedReview.employeeName }}</p>
+        </div>
+        <div class="bg-zinc-50 dark:bg-zinc-800 rounded-2xl p-4">
+          <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-1">Reviewer</p>
+          <p class="text-sm font-extrabold text-zinc-900 dark:text-white">{{ selectedReview.reviewerName }}</p>
+        </div>
+        <div class="bg-zinc-50 dark:bg-zinc-800 rounded-2xl p-4">
+          <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-1">Status</p>
+          <span [ngClass]="getStatusClass(selectedReview.status)"
+            class="inline-block mt-1 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">
+            {{ getReviewStatusLabel(selectedReview.status) }}
+          </span>
+        </div>
+        <div class="bg-zinc-50 dark:bg-zinc-800 rounded-2xl p-4">
+          <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-1">Reviewed On</p>
+          <p class="text-sm font-extrabold text-zinc-900 dark:text-white">{{ selectedReview.createdAt | date: 'MMM dd, yyyy' }}</p>
+        </div>
+      </div>
+
+      @if (selectedReview.notes) {
+        <div>
+          <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-2">Review Notes</p>
+          <div class="bg-zinc-50 dark:bg-zinc-800 rounded-2xl p-4">
+            <p class="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed whitespace-pre-wrap">{{ selectedReview.notes }}</p>
+          </div>
+        </div>
+      }
     </div>
   </div>
 }

@@ -1,0 +1,375 @@
+<div class="min-h-screen bg-zinc-50 dark:bg-zinc-950 transition-colors duration-300">
+  <main class="max-w-[1600px] mx-auto p-6 space-y-8">
+    <!-- Header -->
+    <header class="animate-fade-in-up">
+      <div class="glass-panel p-8 rounded-[2.5rem] shadow-premium overflow-hidden relative">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
+        <div class="flex flex-col md:flex-row items-center gap-8 relative z-10">
+          <div class="p-4 bg-amber-100 dark:bg-amber-900/30 rounded-3xl">
+            <span class="material-symbols-outlined text-4xl text-amber-600 font-bold">medical_services</span>
+          </div>
+          <div class="flex-1 text-center md:text-left">
+            <h1 class="text-4xl font-extrabold text-zinc-900 bg-clip-text text-transparent bg-gradient-to-r from-zinc-900 to-zinc-600 dark:from-white dark:to-zinc-400">
+              Performance Improvement Plans
+            </h1>
+            <p class="text-zinc-500 font-bold uppercase tracking-widest text-sm mt-1 flex items-center justify-center md:justify-start gap-2">
+              <span class="material-symbols-outlined text-base">warning</span>
+              PIP Management for HR &amp; Managers
+            </p>
+          </div>
+          <button type="button" (click)="openCreateModal()"
+            class="px-6 py-3 bg-amber-500 text-white rounded-2xl font-extrabold shadow-lg shadow-amber-500/30 hover:-translate-y-0.5 transition-all flex items-center gap-2">
+            <span class="material-symbols-outlined text-base">add</span>
+            New PIP
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Filters -->
+    <section class="animate-fade-in-up stagger-1">
+      <div class="flex flex-col sm:flex-row gap-3">
+        <div class="relative flex-1">
+          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 text-lg">search</span>
+          <input type="text" [(ngModel)]="searchTerm"
+            placeholder="Search by title, employee name..."
+            class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-500" />
+        </div>
+        <select [(ngModel)]="statusFilter"
+          class="px-4 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-500">
+          <option value="all">All Status</option>
+          <option [value]="0">Draft</option>
+          <option [value]="1">In Progress</option>
+          <option [value]="2">Completed</option>
+          <option [value]="3">Failed</option>
+          <option [value]="4">Cancelled</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- PIP List -->
+    <section class="space-y-4 animate-fade-in-up stagger-2">
+      @if (isLoading) {
+        <div class="space-y-4">
+          @for (i of [1,2,3]; track i) {
+            <div class="h-32 w-full skeleton rounded-3xl opacity-50"></div>
+          }
+        </div>
+      }
+      @if (!isLoading) {
+        @if (filteredPIPs.length > 0) {
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @for (pip of filteredPIPs; track trackById($index, pip)) {
+              <div class="glass-panel p-6 rounded-[2rem] shadow-soft hover:shadow-premium hover:-translate-y-1 transition-all duration-500 cursor-pointer group"
+                (click)="openDetail(pip)">
+                <div class="flex justify-between items-start mb-4">
+                  <div class="p-2.5 bg-amber-100 dark:bg-amber-900/30 rounded-xl text-amber-600 group-hover:scale-110 transition-transform">
+                    <span class="material-symbols-outlined text-xl font-bold">medical_services</span>
+                  </div>
+                  <span [ngClass]="getStatusStyle(pip.status)"
+                    class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">
+                    {{ getStatusLabel(pip.status) }}
+                  </span>
+                </div>
+                <h3 class="text-base font-black text-zinc-900 dark:text-white mb-1 leading-tight">{{ pip.title }}</h3>
+                <p class="text-xs text-zinc-400 font-medium mb-3 flex items-center gap-1">
+                  <span class="material-symbols-outlined text-xs">person</span>
+                  {{ pip.employeeName }}
+                </p>
+                <!-- Progress Bar -->
+                <div class="space-y-1.5">
+                  <div class="flex justify-between text-[10px] font-bold uppercase tracking-widest">
+                    <span class="text-zinc-400">Progress</span>
+                    <span class="text-amber-600">{{ pip.overallProgress | number:'1.0-0' }}%</span>
+                  </div>
+                  <div class="h-2 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
+                    <div [style.width.%]="pip.overallProgress"
+                      class="h-full bg-gradient-to-r from-amber-400 to-amber-600 rounded-full transition-all duration-700"></div>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between mt-4 pt-4 border-t border-zinc-100 dark:border-zinc-800">
+                  <p class="text-[10px] text-zinc-400 font-medium">
+                    {{ pip.startDate | date:'MMM dd' }} - {{ pip.endDate | date:'MMM dd, yyyy' }}
+                  </p>
+                  <p class="text-[10px] font-bold text-zinc-400">
+                    {{ pip.objectives.length }} objectives
+                  </p>
+                </div>
+              </div>
+            }
+          </div>
+        }
+        @if (filteredPIPs.length === 0) {
+          <div class="py-20 text-center glass-panel rounded-[2rem]">
+            <span class="material-symbols-outlined text-6xl text-slate-200 dark:text-slate-800 mb-4 scale-150 block">medical_services</span>
+            <h3 class="text-2xl font-black text-slate-400">No Active PIPs</h3>
+            <p class="text-slate-400 mt-2 font-bold uppercase tracking-widest text-xs">
+              Create a new PIP to help employees improve their performance
+            </p>
+          </div>
+        }
+      }
+    </section>
+  </main>
+</div>
+
+<!-- Create PIP Modal -->
+@if (isCreateModalOpen) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+    (click)="closeCreateModal()" role="dialog" aria-modal="true" aria-labelledby="pip-modal-title">
+    <div class="w-full max-w-2xl bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl p-8 space-y-6 max-h-[90vh] overflow-y-auto"
+      (click)="$event.stopPropagation()">
+      <div class="flex items-center justify-between">
+        <h2 id="pip-modal-title" class="text-xl font-black text-zinc-900 dark:text-white flex items-center gap-2">
+          <span class="material-symbols-outlined text-amber-600">medical_services</span>
+          Create Performance Improvement Plan
+        </h2>
+        <button type="button" (click)="closeCreateModal()"
+          class="p-2 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-400 transition">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div class="space-y-5">
+        <!-- Employee Search -->
+        <div class="relative">
+          <label class="block text-xs font-bold uppercase tracking-widest text-zinc-500 mb-2">Employee <span class="text-rose-500">*</span></label>
+          <input type="text" [ngModel]="employeeSearchTerm" (ngModelChange)="onEmployeeSearch($event)"
+            (focus)="showEmployeeDropdown = true" (blur)="closeEmployeeDropdown()"
+            placeholder="Search employee..."
+            class="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-500" />
+          @if (showEmployeeDropdown && employeeSearchResults.length > 0) {
+            <ul class="absolute z-50 w-full mt-1 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl shadow-xl max-h-48 overflow-y-auto">
+              @for (emp of employeeSearchResults; track emp.id) {
+                <li>
+                  <button type="button" (click)="selectEmployee(emp)"
+                    class="w-full text-left px-4 py-2.5 hover:bg-amber-50 dark:hover:bg-amber-900/20 transition flex items-center gap-3">
+                    <div class="w-7 h-7 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 font-bold text-xs">
+                      {{ emp.fullName.charAt(0) }}
+                    </div>
+                    <div>
+                      <p class="text-sm font-bold text-zinc-900 dark:text-white">{{ emp.fullName }}</p>
+                      <p class="text-[10px] text-zinc-400">{{ emp.employeeCode }}</p>
+                    </div>
+                  </button>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+
+        <!-- Title -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-widest text-zinc-500 mb-2">Title <span class="text-rose-500">*</span></label>
+          <input type="text" [(ngModel)]="newPip.title" maxlength="200"
+            placeholder="e.g. Q2 Performance Improvement Plan"
+            class="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-500" />
+        </div>
+
+        <!-- Description -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-widest text-zinc-500 mb-2">Description</label>
+          <textarea [(ngModel)]="newPip.description" rows="2" maxlength="500"
+            placeholder="Brief description of the PIP..."
+            class="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-500 resize-none"></textarea>
+        </div>
+
+        <!-- Dates -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-widest text-zinc-500 mb-2">Start Date <span class="text-rose-500">*</span></label>
+            <input type="date" [(ngModel)]="newPip.startDate"
+              class="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-widest text-zinc-500 mb-2">End Date <span class="text-rose-500">*</span></label>
+            <input type="date" [(ngModel)]="newPip.endDate"
+              class="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-500" />
+          </div>
+        </div>
+
+        <!-- Objectives -->
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <label class="text-xs font-bold uppercase tracking-widest text-zinc-500">
+              Objectives <span class="text-rose-500">*</span>
+            </label>
+            <button type="button" (click)="addObjective()"
+              class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1 transition">
+              <span class="material-symbols-outlined text-sm">add</span>
+              Add Objective
+            </button>
+          </div>
+          <div class="space-y-3">
+            @for (obj of newPip.objectives; track $index) {
+              <div class="bg-zinc-50 dark:bg-zinc-800 rounded-xl p-4 space-y-2">
+                <div class="flex items-center justify-between">
+                  <p class="text-xs font-bold text-zinc-400">Objective {{ $index + 1 }}</p>
+                  @if (newPip.objectives.length > 1) {
+                    <button type="button" (click)="removeObjective($index)"
+                      class="text-rose-400 hover:text-rose-600 transition">
+                      <span class="material-symbols-outlined text-sm">delete</span>
+                    </button>
+                  }
+                </div>
+                <input type="text" [(ngModel)]="obj.description"
+                  placeholder="What the employee needs to achieve..."
+                  class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-500" />
+                <input type="text" [(ngModel)]="obj.successCriteria"
+                  placeholder="Success criteria (optional)"
+                  class="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-500" />
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-3 pt-2">
+        <button type="button" (click)="closeCreateModal()" [disabled]="isSubmitting"
+          class="px-5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-sm font-bold text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition disabled:opacity-50">
+          Cancel
+        </button>
+        <button type="button" (click)="submitPIP()" [disabled]="isSubmitting"
+          class="px-6 py-2.5 rounded-xl bg-amber-500 text-white text-sm font-bold shadow-lg shadow-amber-500/30 hover:-translate-y-0.5 transition disabled:opacity-50 flex items-center gap-2">
+          @if (isSubmitting) {
+            <span class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+            Creating...
+          } @else {
+            <span class="material-symbols-outlined text-base">check</span>
+            Create PIP
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- PIP Detail Modal -->
+@if (isDetailModalOpen && selectedPip) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+    (click)="closeDetail()" role="dialog" aria-modal="true" aria-labelledby="pip-detail-title">
+    <div class="w-full max-w-2xl bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl p-8 space-y-6 max-h-[90vh] overflow-y-auto"
+      (click)="$event.stopPropagation()">
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="p-3 bg-amber-100 dark:bg-amber-900/30 rounded-2xl">
+            <span class="material-symbols-outlined text-2xl font-bold text-amber-600">medical_services</span>
+          </div>
+          <div>
+            <h2 id="pip-detail-title" class="text-lg font-black text-zinc-900 dark:text-white">{{ selectedPip.title }}</h2>
+            <span [ngClass]="getStatusStyle(selectedPip.status)"
+              class="mt-1 inline-block px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest">
+              {{ getStatusLabel(selectedPip.status) }}
+            </span>
+          </div>
+        </div>
+        <button type="button" (click)="closeDetail()"
+          class="p-2 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-400 transition">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      @if (selectedPip.description) {
+        <p class="text-sm text-zinc-600 dark:text-zinc-300">{{ selectedPip.description }}</p>
+      }
+
+      <!-- Info Grid -->
+      <div class="grid grid-cols-2 gap-4">
+        <div class="bg-zinc-50 dark:bg-zinc-800 rounded-2xl p-4">
+          <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-1">Employee</p>
+          <p class="text-sm font-extrabold text-zinc-900 dark:text-white">{{ selectedPip.employeeName }}</p>
+        </div>
+        <div class="bg-zinc-50 dark:bg-zinc-800 rounded-2xl p-4">
+          <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-1">Manager</p>
+          <p class="text-sm font-extrabold text-zinc-900 dark:text-white">{{ selectedPip.managerName }}</p>
+        </div>
+        <div class="bg-zinc-50 dark:bg-zinc-800 rounded-2xl p-4">
+          <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-1">Start Date</p>
+          <p class="text-sm font-extrabold text-zinc-900 dark:text-white">{{ selectedPip.startDate | date:'MMM dd, yyyy' }}</p>
+        </div>
+        <div class="bg-zinc-50 dark:bg-zinc-800 rounded-2xl p-4">
+          <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-1">End Date</p>
+          <p class="text-sm font-extrabold text-zinc-900 dark:text-white">{{ selectedPip.endDate | date:'MMM dd, yyyy' }}</p>
+        </div>
+      </div>
+
+      <!-- Overall Progress -->
+      <div class="bg-amber-50 dark:bg-amber-950/20 rounded-2xl p-5 space-y-3">
+        <div class="flex justify-between text-xs font-bold uppercase tracking-widest">
+          <span class="text-amber-700 dark:text-amber-400">Overall Progress</span>
+          <span class="text-amber-700 dark:text-amber-400 font-black text-lg">{{ selectedPip.overallProgress | number:'1.0-0' }}%</span>
+        </div>
+        <div class="h-3 bg-amber-200 dark:bg-amber-900/50 rounded-full overflow-hidden">
+          <div [style.width.%]="selectedPip.overallProgress"
+            class="h-full bg-gradient-to-r from-amber-400 to-amber-600 rounded-full transition-all duration-700"></div>
+        </div>
+      </div>
+
+      <!-- Objectives -->
+      @if (selectedPip.objectives.length > 0) {
+        <div>
+          <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-3">Objectives</p>
+          <div class="space-y-3">
+            @for (obj of selectedPip.objectives; track $index) {
+              <div class="bg-zinc-50 dark:bg-zinc-800 rounded-xl p-4">
+                <div class="flex items-start justify-between gap-2 mb-2">
+                  <div class="flex items-start gap-2">
+                    <span class="mt-0.5 w-5 h-5 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 text-[10px] font-black flex-shrink-0">{{ $index + 1 }}</span>
+                    <p class="text-sm font-bold text-zinc-900 dark:text-white">{{ obj.description }}</p>
+                  </div>
+                  <span class="text-sm font-black text-amber-600 flex-shrink-0">{{ obj.progress | number:'1.0-0' }}%</span>
+                </div>
+                @if (obj.successCriteria) {
+                  <p class="text-xs text-zinc-400 ml-7">{{ obj.successCriteria }}</p>
+                }
+                <div class="mt-2 ml-7 h-1.5 bg-zinc-200 dark:bg-zinc-700 rounded-full overflow-hidden">
+                  <div [style.width.%]="obj.progress" class="h-full bg-amber-400 rounded-full transition-all"></div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Outcome Notes -->
+      @if (selectedPip.outcomeNotes) {
+        <div class="bg-zinc-50 dark:bg-zinc-800 rounded-2xl p-4">
+          <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-2">Outcome</p>
+          <p class="text-sm text-zinc-600 dark:text-zinc-300">{{ selectedPip.outcomeNotes }}</p>
+        </div>
+      }
+
+      <!-- Actions -->
+      <div class="flex flex-wrap justify-end gap-2 pt-2 border-t border-zinc-100 dark:border-zinc-800">
+        @if (selectedPip.status === 0) {
+          <!-- Draft -> Start -->
+          <button type="button" (click)="startPIP(selectedPip)"
+            class="px-5 py-2.5 rounded-xl bg-amber-500 text-white text-sm font-bold shadow-lg shadow-amber-500/30 hover:-translate-y-0.5 transition flex items-center gap-2">
+            <span class="material-symbols-outlined text-base">play_arrow</span>
+            Start PIP
+          </button>
+        }
+        @if (selectedPip.status === 1) {
+          <!-- InProgress -> Complete/Fail -->
+          <button type="button" (click)="completePIP(selectedPip, true)"
+            class="px-5 py-2.5 rounded-xl bg-emerald-500 text-white text-sm font-bold shadow-lg shadow-emerald-500/30 hover:-translate-y-0.5 transition flex items-center gap-2">
+            <span class="material-symbols-outlined text-base">check</span>
+            Mark Completed
+          </button>
+          <button type="button" (click)="completePIP(selectedPip, false)"
+            class="px-5 py-2.5 rounded-xl bg-rose-500 text-white text-sm font-bold shadow-lg shadow-rose-500/30 hover:-translate-y-0.5 transition flex items-center gap-2">
+            <span class="material-symbols-outlined text-base">close</span>
+            Mark Failed
+          </button>
+        }
+        @if (selectedPip.status === 0 || selectedPip.status === 1) {
+          <!-- Draft/InProgress -> Cancel -->
+          <button type="button" (click)="cancelPIP(selectedPip)"
+            class="px-5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-sm font-bold text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition">
+            Cancel PIP
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+}

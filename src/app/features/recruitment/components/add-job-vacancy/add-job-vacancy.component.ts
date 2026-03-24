@@ -24,14 +24,24 @@ export class AddJobVacancyComponent implements OnInit {
   loading = false;
   isEditMode = false;
 
-  departments = ['Products', 'Marketing', 'Sales', 'HR', 'Engineering'];
-  offices = ['New York', 'London', 'Remote', 'San Francisco'];
-  employmentTypes = ['Full time', 'Part time', 'Contract', 'Internship'];
+  departments: string[] = ['Products', 'Marketing', 'Sales', 'HR', 'Engineering'];
+  offices: string[] = ['New York', 'London', 'Remote', 'San Francisco'];
+  employmentTypes: string[] = ['Full time', 'Part time', 'Contract', 'Internship'];
   statuses = ['Draft', 'Published', 'Closed'];
 
   ngOnInit(): void {
     this.isEditMode = !!this.editJob;
     this.initForm();
+    this.loadOptions();
+  }
+
+  loadOptions() {
+    this.recruitmentService.getRecruitmentOptions().subscribe(opts => {
+      if (opts) {
+        this.offices = opts.offices;
+        this.employmentTypes = opts.employmentTypes;
+      }
+    });
   }
 
   initForm(): void {

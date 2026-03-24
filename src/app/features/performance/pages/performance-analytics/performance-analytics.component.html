@@ -1,0 +1,202 @@
+<div class="min-h-screen bg-zinc-50 dark:bg-zinc-950 transition-colors duration-300">
+  <main class="max-w-[1600px] mx-auto p-6 space-y-8">
+    <!-- Header -->
+    <header class="animate-fade-in-up">
+      <div class="glass-panel p-8 rounded-[2.5rem] shadow-premium overflow-hidden relative">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-violet-500/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
+        <div class="flex flex-col md:flex-row items-center gap-8 relative z-10">
+          <div class="p-4 bg-violet-100 dark:bg-violet-900/30 rounded-3xl">
+            <span class="material-symbols-outlined text-4xl text-violet-600 font-bold">analytics</span>
+          </div>
+          <div class="flex-1 text-center md:text-left">
+            <h1 class="text-4xl font-extrabold text-zinc-900 bg-clip-text text-transparent bg-gradient-to-r from-zinc-900 to-zinc-600 dark:from-white dark:to-zinc-400">
+              Performance Analytics
+            </h1>
+            <p class="text-zinc-500 font-bold uppercase tracking-widest text-sm mt-1 flex items-center justify-center md:justify-start gap-2">
+              <span class="material-symbols-outlined text-base">insights</span>
+              Dashboard Overview
+            </p>
+          </div>
+          <button type="button" (click)="loadAnalytics()"
+            class="px-5 py-3 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-2xl font-extrabold text-zinc-700 dark:text-zinc-300 shadow-sm hover:shadow-md transition-all flex items-center gap-2 text-sm">
+            <span class="material-symbols-outlined text-base">refresh</span>
+            Refresh
+          </button>
+        </div>
+      </div>
+    </header>
+
+    @if (isLoading) {
+      <section class="grid grid-cols-2 md:grid-cols-4 gap-4 animate-fade-in-up stagger-1">
+        @for (i of [1,2,3,4]; track i) {
+          <div class="glass-panel p-5 rounded-[1.5rem]">
+            <div class="skeleton h-3 w-20 mb-3"></div>
+            <div class="skeleton h-8 w-16"></div>
+          </div>
+        }
+      </section>
+    }
+
+    @if (!isLoading && analytics) {
+      <!-- KPI Stats -->
+      <section class="grid grid-cols-2 md:grid-cols-4 gap-4 animate-fade-in-up stagger-1">
+        <div class="glass-panel p-5 rounded-[1.5rem] text-center">
+          <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-2">Avg Score</p>
+          <p class="text-3xl font-black" [ngClass]="analytics.averageReviewScore >= 60 ? 'text-emerald-600' : analytics.averageReviewScore >= 40 ? 'text-amber-600' : 'text-rose-600'">
+            {{ analytics.averageReviewScore }}
+          </p>
+          <p class="text-[10px] text-zinc-400 mt-1 font-medium">out of 100</p>
+        </div>
+        <div class="glass-panel p-5 rounded-[1.5rem] text-center">
+          <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-2">Total Reviews</p>
+          <p class="text-3xl font-black text-zinc-900 dark:text-white">{{ analytics.totalReviews }}</p>
+          <p class="text-[10px] text-zinc-400 mt-1 font-medium">completed</p>
+        </div>
+        <div class="glass-panel p-5 rounded-[1.5rem] text-center">
+          <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-2">Goal Completion</p>
+          <p class="text-3xl font-black text-violet-600">{{ analytics.goalCompletionRate }}%</p>
+          <p class="text-[10px] text-zinc-400 mt-1 font-medium">{{ analytics.completedGoals }} / {{ analytics.activeGoals + analytics.completedGoals + analytics.overdueGoals }}</p>
+        </div>
+        <div class="glass-panel p-5 rounded-[1.5rem] text-center">
+          <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-2">Avg Goal Progress</p>
+          <p class="text-3xl font-black text-blue-600">{{ analytics.averageGoalProgress }}%</p>
+          <p class="text-[10px] text-zinc-400 mt-1 font-medium">{{ analytics.activeGoals }} active goals</p>
+        </div>
+      </section>
+
+      <!-- Secondary Stats Row -->
+      <section class="grid grid-cols-2 md:grid-cols-6 gap-4 animate-fade-in-up stagger-2">
+        <div class="glass-panel p-4 rounded-[1.5rem] text-center">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-1">Active Goals</p>
+          <p class="text-xl font-black text-blue-600">{{ analytics.activeGoals }}</p>
+        </div>
+        <div class="glass-panel p-4 rounded-[1.5rem] text-center">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-1">Overdue</p>
+          <p class="text-xl font-black text-rose-600">{{ analytics.overdueGoals }}</p>
+        </div>
+        <div class="glass-panel p-4 rounded-[1.5rem] text-center">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-1">Active PIPs</p>
+          <p class="text-xl font-black text-amber-600">{{ analytics.activePIPs }}</p>
+        </div>
+        <div class="glass-panel p-4 rounded-[1.5rem] text-center">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-1">Completed PIPs</p>
+          <p class="text-xl font-black text-emerald-600">{{ analytics.completedPIPs }}</p>
+        </div>
+        <div class="glass-panel p-4 rounded-[1.5rem] text-center">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-1">Failed PIPs</p>
+          <p class="text-xl font-black text-rose-600">{{ analytics.failedPIPs }}</p>
+        </div>
+        <div class="glass-panel p-4 rounded-[1.5rem] text-center">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-1">Avg Progress</p>
+          <p class="text-xl font-black text-violet-600">{{ analytics.averageGoalProgress }}%</p>
+        </div>
+      </section>
+
+      <!-- Charts Row -->
+      <section class="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-fade-in-up stagger-3">
+        <div class="glass-panel p-6 rounded-[2rem] shadow-soft">
+          <div class="flex items-center gap-2 mb-6">
+            <span class="material-symbols-outlined text-violet-600">bar_chart</span>
+            <h2 class="text-lg font-black text-zinc-900 dark:text-white">Score Distribution</h2>
+          </div>
+          <div class="relative h-72">
+            <canvas id="scoreDistributionChart"></canvas>
+          </div>
+        </div>
+
+        <div class="glass-panel p-6 rounded-[2rem] shadow-soft">
+          <div class="flex items-center gap-2 mb-6">
+            <span class="material-symbols-outlined text-blue-600">timeline</span>
+            <h2 class="text-lg font-black text-zinc-900 dark:text-white">Monthly Goal Activity</h2>
+          </div>
+          <div class="relative h-72">
+            <canvas id="monthlyGoalsChart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- At-Risk Employees -->
+      @if (analytics.atRiskEmployees.length > 0) {
+        <section class="animate-fade-in-up stagger-4">
+          <div class="glass-panel p-6 rounded-[2rem] shadow-soft">
+            <div class="flex items-center gap-2 mb-6">
+              <span class="material-symbols-outlined text-rose-600">warning</span>
+              <h2 class="text-lg font-black text-zinc-900 dark:text-white">At-Risk Employees</h2>
+              <span class="px-2 py-0.5 bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400 rounded-full text-[10px] font-black uppercase tracking-widest">
+                Needs Attention
+              </span>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left">
+                <thead class="bg-zinc-50/80 dark:bg-zinc-900/60">
+                  <tr class="text-xs font-bold text-zinc-400 uppercase tracking-widest">
+                    <th class="px-6 py-4">Employee</th>
+                    <th class="px-6 py-4">Department</th>
+                    <th class="px-6 py-4">Avg Score</th>
+                    <th class="px-6 py-4">Reviews</th>
+                    <th class="px-6 py-4">Status</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
+                  @for (emp of analytics.atRiskEmployees; track trackById($index, emp)) {
+                    <tr class="hover:bg-rose-50/50 dark:hover:bg-rose-950/10 transition-all">
+                      <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                          <div class="w-8 h-8 rounded-full bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center text-rose-600 font-bold text-xs">
+                            {{ emp.employeeName.charAt(0) }}
+                          </div>
+                          <p class="text-sm font-extrabold text-zinc-900 dark:text-white">{{ emp.employeeName }}</p>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4">
+                        <p class="text-sm font-medium text-zinc-500">{{ emp.departmentName || 'N/A' }}</p>
+                      </td>
+                      <td class="px-6 py-4">
+                        <div class="flex items-center gap-2">
+                          <div class="w-16 h-2 bg-zinc-100 dark:bg-zinc-700 rounded-full overflow-hidden">
+                            <div [style.width.%]="emp.averageScore"
+                              [ngClass]="emp.averageScore >= 60 ? 'bg-emerald-500' : emp.averageScore >= 40 ? 'bg-amber-500' : 'bg-rose-500'"
+                              class="h-full rounded-full transition-all"></div>
+                          </div>
+                          <span class="text-sm font-black" [ngClass]="emp.averageScore >= 60 ? 'text-emerald-600' : emp.averageScore >= 40 ? 'text-amber-600' : 'text-rose-600'">
+                            {{ emp.averageScore }}
+                          </span>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4">
+                        <p class="text-sm font-medium text-zinc-500">{{ emp.reviewCount }}</p>
+                      </td>
+                      <td class="px-6 py-4">
+                        <span class="px-3 py-1 bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400 rounded-full text-[10px] font-black uppercase tracking-widest">
+                          {{ getScoreLabel(emp.averageScore) }}
+                        </span>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      }
+
+      @if (analytics.atRiskEmployees.length === 0) {
+        <section class="animate-fade-in-up stagger-4">
+          <div class="glass-panel p-12 rounded-[2rem] text-center shadow-soft">
+            <span class="material-symbols-outlined text-6xl text-emerald-200 dark:text-emerald-800 mb-4 scale-150 block">verified</span>
+            <h3 class="text-xl font-black text-emerald-600">All Employees Performing Well</h3>
+            <p class="text-zinc-400 mt-2 font-medium text-sm">No at-risk employees identified based on current reviews.</p>
+          </div>
+        </section>
+      }
+    }
+
+    @if (!isLoading && !analytics) {
+      <section class="glass-panel p-12 rounded-[2rem] text-center shadow-soft">
+        <span class="material-symbols-outlined text-6xl text-zinc-200 dark:text-zinc-800 mb-4 scale-150 block">analytics</span>
+        <h3 class="text-xl font-black text-zinc-400">No Analytics Data</h3>
+        <p class="text-zinc-400 mt-2 font-medium text-sm">Start creating reviews and goals to see performance analytics.</p>
+      </section>
+    }
+  </main>
+</div>

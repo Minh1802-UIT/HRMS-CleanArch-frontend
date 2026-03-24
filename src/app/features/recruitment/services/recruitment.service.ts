@@ -30,6 +30,16 @@ export class RecruitmentService {
     );
   }
 
+  getRecruitmentOptions(): Observable<{ offices: string[]; employmentTypes: string[] } | null> {
+    return this.http.get<ApiResponse<{ offices: string[]; employmentTypes: string[] }>>(`${this.apiUrl}/vacancies/options`).pipe(
+      map(res => res.data || null),
+      catchError(err => {
+        this.logger.error('Failed to fetch recruitment options', err);
+        return of(null);
+      })
+    );
+  }
+
   getVacancyById(id: string): Observable<JobVacancy | null> {
     return this.http.get<ApiResponse<JobVacancy>>(`${this.apiUrl}/vacancies/${id}`).pipe(
       map(res => res.data),
@@ -151,6 +161,62 @@ export class RecruitmentService {
         this.logger.error(`Failed to delete candidate ${id}`, err);
         this.toastService.showError('Delete Failed', err?.error?.message || 'Could not delete candidate.');
         return of(false);
+      })
+    );
+  }
+
+  // =====================================================================
+  //  Paginated Queries (server-side pagination)
+  // =====================================================================
+
+  getVacanciesPaged(params: {
+    pageNumber?: number;
+    pageSize?: number;
+    searchTerm?: string;
+    sortBy?: string;
+    isDescending?: boolean;
+  }): Observable<{ items: JobVacancy[]; totalCount: number; pageNumber: number; pageSize: number }> {
+    const httpParams: Record<string, string> = {};
+    if (params.pageNumber) httpParams['pageNumber'] = String(params.pageNumber);
+    if (params.pageSize) httpParams['pageSize'] = String(params.pageSize);
+    if (params.searchTerm) httpParams['searchTerm'] = params.searchTerm;
+    if (params.sortBy) httpParams['sortBy'] = params.sortBy;
+    if (params.isDescending !== undefined) httpParams['isDescending'] = String(params.isDescending);
+
+    return this.http.get<ApiResponse<{ items: JobVacancy[]; totalCount: number; pageNumber: number; pageSize: number }>>(
+      `${this.apiUrl}/vacancies`, { params: httpParams }
+    ).pipe(
+      map(res => res.data || { items: [], totalCount: 0, pageNumber: 1, pageSize: 20 }),
+      catchError(err => {
+        this.logger.error('Failed to fetch paginated vacancies', err);
+        return of({ items: [], totalCount: 0, pageNumber: 1, pageSize: 20 });
+      })
+    );
+  }
+
+  getCandidatesPaged(params: {
+    pageNumber?: number;
+    pageSize?: number;
+    searchTerm?: string;
+    sortBy?: string;
+    isDescending?: boolean;
+    vacancyId?: string;
+  }): Observable<{ items: Candidate[]; totalCount: number; pageNumber: number; pageSize: number }> {
+    const httpParams: Record<string, string> = {};
+    if (params.pageNumber) httpParams['pageNumber'] = String(params.pageNumber);
+    if (params.pageSize) httpParams['pageSize'] = String(params.pageSize);
+    if (params.searchTerm) httpParams['searchTerm'] = params.searchTerm;
+    if (params.sortBy) httpParams['sortBy'] = params.sortBy;
+    if (params.isDescending !== undefined) httpParams['isDescending'] = String(params.isDescending);
+    if (params.vacancyId) httpParams['vacancyId'] = params.vacancyId;
+
+    return this.http.get<ApiResponse<{ items: Candidate[]; totalCount: number; pageNumber: number; pageSize: number }>>(
+      `${this.apiUrl}/candidates`, { params: httpParams }
+    ).pipe(
+      map(res => res.data || { items: [], totalCount: 0, pageNumber: 1, pageSize: 20 }),
+      catchError(err => {
+        this.logger.error('Failed to fetch paginated candidates', err);
+        return of({ items: [], totalCount: 0, pageNumber: 1, pageSize: 20 });
       })
     );
   }

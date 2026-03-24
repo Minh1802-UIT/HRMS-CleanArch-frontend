@@ -27,6 +27,10 @@ export class RecruitmentComponent implements OnInit, OnDestroy {
   activeTab: 'jobs' | 'candidates' | 'process' = 'jobs';
   viewMode: 'list' | 'kanban' = 'list';
   private destroy$ = new Subject<void>();
+
+  // Dynamic filter options loaded from API
+  recruitmentOffices: string[] = [];
+  recruitmentEmploymentTypes: string[] = [];
   
   // Filters
   searchTerm: string = '';
@@ -80,6 +84,17 @@ export class RecruitmentComponent implements OnInit, OnDestroy {
     this.loadJobs();
     this.loadCandidates();
     this.loadStages();
+    this.loadFilterOptions();
+  }
+
+  loadFilterOptions() {
+    this.recruitmentService.getRecruitmentOptions().pipe(takeUntil(this.destroy$)).subscribe(opts => {
+      if (opts) {
+        this.recruitmentOffices = opts.offices;
+        this.recruitmentEmploymentTypes = opts.employmentTypes;
+        this.cdr.markForCheck();
+      }
+    });
   }
 
   ngOnDestroy(): void {
@@ -219,6 +234,22 @@ export class RecruitmentComponent implements OnInit, OnDestroy {
     this.selectedStage = '';
     this.applyFilters();
     this.applyCandidateFilters();
+  }
+
+  get offices(): string[] {
+    if (this.recruitmentOffices.length > 0) return this.recruitmentOffices;
+    const fromJobs = this.jobs.map(j => j.office).filter((o): o is string => !!o);
+    return fromJobs.length > 0 ? [...new Set(fromJobs)] : ['New York', 'London', 'Remote', 'San Francisco'];
+  }
+
+  get departments(): string[] {
+    const fromJobs = this.jobs.map(j => j.department).filter((d): d is string => !!d);
+    return fromJobs.length > 0 ? [...new Set(fromJobs)] : ['Products', 'Marketing', 'Sales', 'HR', 'Engineering'];
+  }
+
+  get employmentTypesList(): string[] {
+    if (this.recruitmentEmploymentTypes.length > 0) return this.recruitmentEmploymentTypes;
+    return ['Full time', 'Part time', 'Contract', 'Internship', 'Freelance'];
   }
 
   getCandidatesByStage(stage: string): Candidate[] {

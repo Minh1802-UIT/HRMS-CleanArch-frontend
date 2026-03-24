@@ -59,7 +59,17 @@ export const NAV_CONFIG: NavGroup[] = [
   {
     title: 'Talent',
     items: [
-      { label: 'Performance', icon: 'trending_up',  route: '/performance', activePage: 'performance', roles: ['Admin', 'HR', 'Manager'] },
+      {
+        label: 'Performance',
+        icon: 'trending_up',
+        roles: ['Admin', 'HR', 'Manager'],
+        children: [
+          { label: 'Overview', icon: 'person', route: '/performance', activePage: 'performance' },
+          { label: 'Dashboard', icon: 'dashboard', route: '/performance/management', activePage: 'performance-management', roles: ['Admin', 'HR', 'Manager'] },
+          { label: 'Analytics', icon: 'analytics', route: '/performance/analytics', activePage: 'performance-analytics', roles: ['Admin', 'HR'] },
+          { label: 'PIP', icon: 'medical_services', route: '/performance/pip', activePage: 'performance-pip', roles: ['Admin', 'HR', 'Manager'] },
+        ],
+      },
       { label: 'Recruitment', icon: 'work_outline', route: '/recruitment', activePage: 'recruitment', roles: ['Admin', 'HR'] },
     ],
   },
@@ -95,6 +105,9 @@ export const ROUTE_MAP: Record<string, string> = {
   approvals: '/approvals',
   'leave-reports': '/admin/leave-reports',
   performance: '/performance',
+  'performance-management': '/performance/management',
+  'performance-analytics': '/performance/analytics',
+  'performance-pip': '/performance/pip',
   recruitment: '/recruitment',
   payroll: '/payroll',
   'user-management': '/system/users',

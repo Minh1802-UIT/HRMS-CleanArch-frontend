@@ -41,7 +41,10 @@ export class AddCandidateComponent implements OnInit {
       jobVacancyId: [this.editCandidate?.jobVacancyId || '', Validators.required],
       status: [this.editCandidate?.status || 'New', Validators.required],
       resumeUrl: [this.editCandidate?.resumeUrl || '', Validators.required],
-      appliedDate: [this.editCandidate?.appliedDate ? new Date(this.editCandidate.appliedDate).toISOString().substring(0, 10) : new Date().toISOString().substring(0, 10), Validators.required]
+      appliedDate: [this.editCandidate?.appliedDate ? new Date(this.editCandidate.appliedDate).toISOString().substring(0, 10) : new Date().toISOString().substring(0, 10), Validators.required],
+      experience: [this.editCandidate?.experience?.join('\n') || ''],
+      education: [this.editCandidate?.education?.join('\n') || ''],
+      notes: [this.editCandidate?.notes?.join('\n') || '']
     });
   }
 
@@ -100,7 +103,10 @@ export class AddCandidateComponent implements OnInit {
       jobVacancyId: formValue.jobVacancyId,
       status: formValue.status,
       resumeUrl: formValue.resumeUrl,
-      appliedDate: new Date(formValue.appliedDate).toISOString()
+      appliedDate: new Date(formValue.appliedDate).toISOString(),
+      experience: formValue.experience ? formValue.experience.split('\n').map((r: string) => r.trim()).filter((r: string) => r.length > 0) : [],
+      education: formValue.education ? formValue.education.split('\n').map((r: string) => r.trim()).filter((r: string) => r.length > 0) : [],
+      notes: formValue.notes ? formValue.notes.split('\n').map((r: string) => r.trim()).filter((r: string) => r.length > 0) : []
     };
 
     if (this.isEditMode && this.editCandidate) {

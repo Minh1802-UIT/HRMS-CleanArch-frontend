@@ -60,7 +60,18 @@ export const routes: Routes = [
       // Navigation aliases
       { path: 'time-tracking', redirectTo: 'attendance', pathMatch: 'full' },
       { path: 'tasks', redirectTo: 'approvals', pathMatch: 'full' },
+
+      // Performance — personal view
       { path: 'performance', loadComponent: () => import('./features/performance/pages/performance/performance.component').then(m => m.PerformanceComponent), canActivate: [roleGuard], data: { roles: ['Admin', 'HR', 'Manager'], activePage: 'performance' } },
+
+      // Performance — HR/Manager management dashboard
+      { path: 'performance/management', loadComponent: () => import('./features/performance/pages/performance-management/performance-management.component').then(m => m.PerformanceManagementComponent), canActivate: [roleGuard], data: { roles: ['Admin', 'HR', 'Manager'], activePage: 'performance-management' } },
+
+      // Performance — Analytics dashboard
+      { path: 'performance/analytics', loadComponent: () => import('./features/performance/pages/performance-analytics/performance-analytics.component').then(m => m.PerformanceAnalyticsComponent), canActivate: [roleGuard], data: { roles: ['Admin', 'HR'], activePage: 'performance-analytics' } },
+
+      // Performance — PIP management
+      { path: 'performance/pip', loadComponent: () => import('./features/performance/pages/performance-pip/performance-pip.component').then(m => m.PerformancePipComponent), canActivate: [roleGuard], data: { roles: ['Admin', 'HR', 'Manager'], activePage: 'performance-pip' } },
 
       { path: 'employees/:id', loadComponent: () => import('./features/employee/pages/employee-profile/employee-profile.component').then(m => m.EmployeeProfileComponent), canActivate: [roleGuard], data: { roles: ['Admin', 'HR', 'Manager'], activePage: 'employees' } },
       { path: 'profile', loadComponent: () => import('./features/employee/pages/employee-profile/employee-profile.component').then(m => m.EmployeeProfileComponent), canActivate: [authGuard], data: { activePage: 'profile' } },
