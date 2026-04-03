@@ -52,6 +52,6 @@ const runtimeApiUrl =
 export const environment = {
   production: true,
   // TODO: load from environment variable at build/deploy time
-  apiUrl: runtimeApiUrl ?? 'https://your-production-api.com/api',
+  apiUrl: runtimeApiUrl ?? 'https://hrms-backend-api-n0bq.onrender.com/api',
   csp: prodCsp
 };
