@@ -19,30 +19,6 @@
     <div class="px-8 py-10 mx-auto max-w-4xl">
       <form [formGroup]="candidateForm" class="space-y-6">
         
-        <!-- AI Auto-fill Banner -->
-        <div class="p-4 mb-6 rounded-xl border border-violet-200 bg-violet-50 dark:bg-violet-900/10 dark:border-violet-900/30 flex flex-col sm:flex-row gap-4 justify-between items-center shadow-sm">
-          <div>
-            <h3 class="text-sm font-bold text-violet-900 dark:text-violet-100 flex items-center gap-2">
-              <span class="text-xl material-symbols-outlined text-violet-600 dark:text-violet-400">auto_awesome</span>
-              Extract Data from CV
-            </h3>
-            <p class="text-xs font-medium text-violet-700 dark:text-violet-300 mt-1">
-              Upload a PDF resume. Our AI will automatically fill in the candidate's details for you.
-            </p>
-          </div>
-          <div>
-            <input type="file" id="cvUploader" class="hidden" accept=".pdf" (change)="onFileSelected($event)" />
-            <label for="cvUploader" class="cursor-pointer flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-bold text-white bg-violet-600 rounded-lg shadow-md transition-all hover:bg-violet-700 hover:shadow-lg" [class.opacity-50]="isParsing" [class.cursor-not-allowed]="isParsing" [class.pointer-events-none]="isParsing">
-              @if (isParsing) {
-                <span class="material-symbols-outlined animate-spin text-lg">sync</span>
-              } @else {
-                <span class="material-symbols-outlined text-lg">upload_file</span>
-              }
-              {{ isParsing ? 'Parsing with AI...' : 'Auto-fill with AI' }}
-            </label>
-          </div>
-        </div>
-
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="space-y-2 col-span-2 md:col-span-1">
             <label class="block text-sm font-semibold text-zinc-900 dark:text-zinc-100">Full Name <span class="text-red-500">*</span></label>

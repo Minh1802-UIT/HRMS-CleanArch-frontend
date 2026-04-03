@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRe
 import { NgClass, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute } from '@angular/router';
+import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { LoggerService } from '@core/services/logger.service';
@@ -77,6 +78,8 @@ interface CandidateDetail {
   aiScore?: number;
   aiMatchingSummary?: string;
   extractedSkills?: string;
+  resumeUrl?: string;
+  safeResumeUrl?: SafeResourceUrl;
   experience: Experience[];
   education: Education[];
   timeline: TimelineEvent[];
@@ -134,7 +137,8 @@ export class CandidateDetailComponent implements OnInit, OnDestroy {
     private recruitmentService: RecruitmentService,
     private departmentService: DepartmentService,
     private positionService: PositionService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit() {
@@ -197,6 +201,8 @@ export class CandidateDetailComponent implements OnInit, OnDestroy {
               ],
               notes: [],
               activities: [],
+              resumeUrl: apiCandidate.resumeUrl,
+              safeResumeUrl: apiCandidate.resumeUrl ? this.sanitizer.bypassSecurityTrustResourceUrl(apiCandidate.resumeUrl) : undefined,
               documents: apiCandidate.resumeUrl
                 ? [{ name: 'Resume', size: '', type: 'pdf', url: apiCandidate.resumeUrl }]
                 : [],
