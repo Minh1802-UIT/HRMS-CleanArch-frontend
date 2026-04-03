@@ -169,7 +169,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
 
     this.confirmService.confirm({
       title: 'Send Reset Email',
-      message: `Send a password reset email to <strong>${user.email}</strong>?`,
+      message: `Send a password reset email to ${user.email}?`,
       type: 'info',
       confirmLabel: 'Send Email'
     }).pipe(takeUntil(this.destroy$)).subscribe(ok => {

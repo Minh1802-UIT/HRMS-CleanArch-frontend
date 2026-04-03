@@ -197,7 +197,7 @@ export class LeaveApprovalComponent implements OnInit, OnDestroy {
   approve(req: LeaveRequest) {
       this.confirmService.confirm({
         title: 'Approve Request',
-        message: 'Are you sure you want to <strong>approve</strong> this leave request?',
+        message: 'Are you sure you want to approve this leave request?',
         type: 'success',
         confirmLabel: 'Approve'
       }).subscribe(ok => {

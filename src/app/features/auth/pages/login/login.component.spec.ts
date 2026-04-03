@@ -1,8 +1,9 @@
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick, flush } from '@angular/core/testing';
 import { LoginComponent } from './login.component';
 import { AuthService } from '@core/services/auth.service';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
 import { LoggerService } from '@core/services/logger.service';
+import { ToastService } from '@core/services/toast.service';
 import { Router, ActivatedRoute, UrlTree } from '@angular/router';
 import { of, throwError, EMPTY } from 'rxjs';
 import { provideAnimations } from '@angular/platform-browser/animations';
@@ -15,6 +16,7 @@ describe('LoginComponent', () => {
   let mockAuthService: jasmine.SpyObj<AuthService>;
   let mockErrorHandler: jasmine.SpyObj<ErrorHandlerService>;
   let mockLogger: jasmine.SpyObj<LoggerService>;
+  let mockToastService: jasmine.SpyObj<ToastService>;
   let routerSpy: jasmine.SpyObj<Router>;
 
   const mockLoginResponse = {
@@ -39,6 +41,9 @@ describe('LoginComponent', () => {
       'showSuccess', 'handleHttpError', 'handleError', 'showError'
     ]);
     mockLogger = jasmine.createSpyObj('LoggerService', ['error', 'warn', 'info', 'debug']);
+    mockToastService = jasmine.createSpyObj('ToastService', [
+      'showSuccess', 'showError', 'showInfo', 'showWarn'
+    ]);
     routerSpy = jasmine.createSpyObj('Router', ['navigate', 'createUrlTree', 'serializeUrl'], {
       events: EMPTY,
       routerState: { root: {} }
@@ -54,6 +59,7 @@ describe('LoginComponent', () => {
         { provide: AuthService, useValue: mockAuthService },
         { provide: ErrorHandlerService, useValue: mockErrorHandler },
         { provide: LoggerService, useValue: mockLogger },
+        { provide: ToastService, useValue: mockToastService },
         { provide: Router, useValue: routerSpy },
         { provide: ActivatedRoute, useValue: { params: of({}), queryParams: of({}), snapshot: { paramMap: { get: () => null } } } },
         MessageService,
@@ -100,6 +106,7 @@ describe('LoginComponent', () => {
     tick();
 
     expect(mockAuthService.login).toHaveBeenCalledWith({ username: 'admin', password: 'Admin@123' });
+    flush();
   }));
 
   it('should navigate to /dashboard on successful login', fakeAsync(() => {
@@ -108,6 +115,7 @@ describe('LoginComponent', () => {
     tick();
 
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/dashboard']);
+    flush();
   }));
 
   it('should show success toast on successful login', fakeAsync(() => {
@@ -115,7 +123,8 @@ describe('LoginComponent', () => {
     component.onSubmit();
     tick();
 
-    expect(mockErrorHandler.showSuccess).toHaveBeenCalledWith('Welcome back!', 'Login successful');
+    expect(mockToastService.showSuccess).toHaveBeenCalledWith('Login successful', 'Welcome back!');
+    flush();
   }));
 
   it('should set isLoading to false after login completes', fakeAsync(() => {
@@ -124,6 +133,7 @@ describe('LoginComponent', () => {
     tick();
 
     expect(component.isLoading).toBeFalse();
+    flush();
   }));
 
   it('should handle login error: call handleHttpError and set errorMessage', fakeAsync(() => {
@@ -138,6 +148,7 @@ describe('LoginComponent', () => {
     expect(mockErrorHandler.handleHttpError).toHaveBeenCalledWith(jasmine.objectContaining({ status: 401, error: { message: 'Invalid credentials' } }), 'Login');
     expect(component.errorMessage).toBe('Invalid credentials');
     expect(component.isLoading).toBeFalse();
+    flush();
   }));
 
   it('should fall back to generic error message when error has no message', fakeAsync(() => {
@@ -148,6 +159,7 @@ describe('LoginComponent', () => {
     tick();
 
     expect(component.errorMessage).toBe('Invalid credentials or server error');
+    flush();
   }));
 
   it('should set isLoading to true during login', () => {

@@ -13,7 +13,7 @@ interface CspConfig {
 
 const prodCsp: CspConfig = {
   'default-src': "'self'",
-  'script-src': "'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live",
+  'script-src': "'self' https://vercel.live",
   'style-src': "'self' 'unsafe-inline' https://fonts.googleapis.com",
   'font-src': "'self' https://fonts.gstatic.com data: https://*.vercel.app",
   'img-src':
@@ -44,9 +44,14 @@ const prodCsp: CspConfig = {
  * the CSP from this config to the <meta> tag at runtime, overriding the
  * static index.html placeholder.
  */
+const runtimeApiUrl =
+  typeof window !== 'undefined'
+    ? (window as any).__env?.PRODUCTION_API_URL
+    : undefined;
+
 export const environment = {
   production: true,
   // TODO: load from environment variable at build/deploy time
-  apiUrl: 'https://hrms-backend-api-n0bq.onrender.com/api',
+  apiUrl: runtimeApiUrl ?? 'https://your-production-api.com/api',
   csp: prodCsp
 };

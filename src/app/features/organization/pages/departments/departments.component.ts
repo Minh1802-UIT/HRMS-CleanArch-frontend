@@ -64,7 +64,7 @@ export class DepartmentsComponent implements OnInit, OnDestroy {
       departmentId: ['', Validators.required],
       salaryMin: [0, [Validators.required, Validators.min(0)]],
       salaryMax: [0, [Validators.required, Validators.min(0)]],
-      currency: ['USD', Validators.required]
+      currency: ['VND', Validators.required]
     });
   }
 
@@ -172,7 +172,7 @@ export class DepartmentsComponent implements OnInit, OnDestroy {
     if (!dept.id) return;
     this.confirmService.confirm({
       title: 'Delete Department',
-      message: `Are you sure you want to delete <strong>${dept.name}</strong>? This action cannot be undone.`,
+      message: `Are you sure you want to delete ${dept.name}? This action cannot be undone.`,
       type: 'danger',
       confirmLabel: 'Delete'
     }).pipe(takeUntil(this.destroy$)).subscribe(ok => {
@@ -222,12 +222,12 @@ export class DepartmentsComponent implements OnInit, OnDestroy {
         departmentId: pos.departmentId,
         salaryMin: pos.salaryRange?.min,
         salaryMax: pos.salaryRange?.max,
-        currency: pos.salaryRange?.currency || 'USD'
+        currency: pos.salaryRange?.currency || 'VND'
       });
     } else {
       this.posForm.reset({
         departmentId: this.selectedDepartment?.id,
-        currency: 'USD'
+        currency: 'VND'
       });
     }
   }
@@ -283,7 +283,7 @@ export class DepartmentsComponent implements OnInit, OnDestroy {
       if(!pos.id) return;
       this.confirmService.confirm({
         title: 'Delete Position',
-        message: `Are you sure you want to delete <strong>${pos.title}</strong>? This action cannot be undone.`,
+        message: `Are you sure you want to delete ${pos.title}? This action cannot be undone.`,
         type: 'danger',
         confirmLabel: 'Delete'
       }).pipe(takeUntil(this.destroy$)).subscribe(ok => {

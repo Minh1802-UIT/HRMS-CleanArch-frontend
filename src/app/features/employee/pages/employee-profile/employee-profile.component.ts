@@ -319,7 +319,7 @@ export class EmployeeProfileComponent implements OnInit, OnDestroy {
   deleteEmployee() {
     this.confirmService.confirm({
       title: 'Delete Employee',
-      message: `Are you sure you want to delete <strong>${this.employee?.fullName}</strong>? This action cannot be undone.`,
+      message: `Are you sure you want to delete ${this.employee?.fullName}? This action cannot be undone.`,
       type: 'danger',
       confirmLabel: 'Delete'
     }).subscribe(ok => {

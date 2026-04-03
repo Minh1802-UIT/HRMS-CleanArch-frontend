@@ -5,6 +5,7 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
 import { LoggerService } from '@core/services/logger.service';
+import { ToastService } from '@core/services/toast.service';
 import { Subject } from 'rxjs';
 import { finalize, takeUntil, timeout } from 'rxjs/operators';
 
@@ -28,6 +29,7 @@ export class LoginComponent implements OnDestroy {
     private authService: AuthService,
     private router: Router,
     private errorHandler: ErrorHandlerService,
+    private toastService: ToastService,
     private logger: LoggerService,
     private cdr: ChangeDetectorRef
   ) {
@@ -59,10 +61,10 @@ export class LoginComponent implements OnDestroy {
       next: () => {
         const user = this.authService.currentUserValue;
         if (user?.mustChangePassword) {
-          this.errorHandler.showSuccess('Welcome! Please set a new password to continue.', 'First Login');
+          this.toastService.showSuccess('First Login', 'Welcome! Please set a new password to continue.');
           this.router.navigate(['/change-password']);
         } else {
-          this.errorHandler.showSuccess('Welcome back!', 'Login successful');
+          this.toastService.showSuccess('Login successful', 'Welcome back!');
           this.router.navigate(['/dashboard']);
         }
         this.cdr.markForCheck();

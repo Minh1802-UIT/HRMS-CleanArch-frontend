@@ -183,7 +183,7 @@ export class PayrollComponent implements OnInit, OnDestroy {
   private confirmAndCalculate(): void {
     this.confirmService.confirm({
       title: 'Calculate Payroll',
-      message: `Are you sure you want to run the payroll calculation for <strong>${this.titlePeriod}</strong>?<br/>This will overwrite any existing Draft calculations for this period.`,
+      message: `Are you sure you want to run the payroll calculation for ${this.titlePeriod}?\nThis will overwrite any existing Draft calculations for this period.`,
       type: 'warning',
       confirmLabel: 'Calculate Now'
     }).pipe(takeUntil(this.destroy$)).subscribe(ok => {
@@ -210,7 +210,7 @@ export class PayrollComponent implements OnInit, OnDestroy {
   private confirmAndApprove(record: PayrollRecord): void {
     this.confirmService.confirm({
       title: 'Approve Payroll',
-      message: `Approve the payroll calculation for <strong>${record.employeeName}</strong>?`,
+      message: `Approve the payroll calculation for ${record.employeeName}?`,
       type: 'info',
       confirmLabel: 'Approve'
     }).pipe(takeUntil(this.destroy$)).subscribe(ok => {
@@ -244,7 +244,7 @@ export class PayrollComponent implements OnInit, OnDestroy {
   private confirmAndMarkPaid(record: PayrollRecord): void {
     this.confirmService.confirm({
       title: 'Confirm Payment',
-      message: `Mark the payroll record for <strong>${record.employeeName}</strong> as Paid?`,
+      message: `Mark the payroll record for ${record.employeeName} as Paid?`,
       type: 'info',
       confirmLabel: 'Confirm'
     }).pipe(takeUntil(this.destroy$)).subscribe(ok => {

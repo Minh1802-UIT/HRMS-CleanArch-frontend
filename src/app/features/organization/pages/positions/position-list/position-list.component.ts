@@ -209,7 +209,7 @@ export class PositionListComponent implements OnInit, OnDestroy {
   deletePosition(pos: PositionTreeNode) {
     this.confirmService.confirm({
       title: 'Delete Position',
-      message: `Are you sure you want to delete <strong>${pos.title}</strong>? This action cannot be undone.`,
+      message: `Are you sure you want to delete ${pos.title}? This action cannot be undone.`,
       type: 'danger',
       confirmLabel: 'Delete'
     }).subscribe(ok => {

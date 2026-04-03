@@ -1,5 +1,6 @@
-import { Injectable, signal, Signal, WritableSignal } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Injectable, signal, WritableSignal, inject, Injector } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { DepartmentService } from './department.service';
 import { Department } from '../models/department.model';
@@ -21,6 +22,7 @@ export class MasterDataService {
   private departmentsSignal: WritableSignal<Department[]> = signal([]);
   private positionsSignal: WritableSignal<Position[]> = signal([]);
   private leaveTypesSignal: WritableSignal<LeaveType[]> = signal([]);
+  private readonly injector = inject(Injector);
 
   // Public readonly signals
   public readonly departments = this.departmentsSignal.asReadonly();
@@ -92,7 +94,7 @@ export class MasterDataService {
     if (!this.departmentsLoaded && !this.departmentsLoading) {
       this.fetchDepartments();
     }
-    return of(this.departmentsSignal());
+    return toObservable(this.departmentsSignal, { injector: this.injector });
   }
 
   /**
@@ -103,7 +105,7 @@ export class MasterDataService {
     if (!this.positionsLoaded && !this.positionsLoading) {
       this.fetchPositions();
     }
-    return of(this.positionsSignal());
+    return toObservable(this.positionsSignal, { injector: this.injector });
   }
 
   /**
@@ -114,7 +116,7 @@ export class MasterDataService {
     if (!this.leaveTypesLoaded && !this.leaveTypesLoading) {
       this.fetchLeaveTypes();
     }
-    return of(this.leaveTypesSignal());
+    return toObservable(this.leaveTypesSignal, { injector: this.injector });
   }
 
   // ========================================
