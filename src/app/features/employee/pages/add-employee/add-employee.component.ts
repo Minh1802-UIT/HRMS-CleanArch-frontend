@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Output, EventEmitter, Input, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, Output, EventEmitter, Input, ChangeDetectionStrategy, ChangeDetectorRef, HostBinding } from '@angular/core';
 
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -42,6 +42,8 @@ export class AddEmployeeComponent implements OnInit, OnDestroy {
   @Input() initialStep: number = 1;
   @Output() close = new EventEmitter<void>();
   @Output() employeeAdded = new EventEmitter<void>();
+
+  @HostBinding('class') class = 'block h-full w-full';
 
   get isEditMode(): boolean {
     return !!this.employeeId;
