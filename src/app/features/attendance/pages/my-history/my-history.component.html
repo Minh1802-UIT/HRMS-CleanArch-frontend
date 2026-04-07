@@ -377,57 +377,40 @@
                   </td>
                   <!-- Check-Out -->
                   <td class="px-5 py-3 whitespace-nowrap">
-                    @if (log.checkOutTime) {
-                      <span
-                        class="font-mono font-bold text-zinc-600 dark:text-zinc-300"
-                      >
-                        {{ formatTime(log.checkOutTime) }}
-                      </span>
-                    } @else if (needsMissingPunchExplanation(log)) {
-                      <!-- Missing checkout or can compensate: show explain button -->
-                      @if (getExplanationForLog(log); as exp) {
-                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold border"
-                          [ngClass]="exp.status === 'Approved' ? 'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-700'
-                                    : exp.status === 'Rejected' ? 'bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-700'
-                                    : 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-700'">
-                          <span class="material-symbols-outlined text-xs">{{ exp.status === 'Approved' ? 'check_circle' : exp.status === 'Rejected' ? 'cancel' : 'hourglass_empty' }}</span>
-                          {{ exp.status }}
+                    <div class="flex items-center gap-2">
+                      @if (log.checkOutTime) {
+                        <span class="font-mono font-bold text-zinc-600 dark:text-zinc-300">
+                          {{ formatTime(log.checkOutTime) }}
                         </span>
                       } @else {
-                        <button
-                          type="button"
-                          (click)="openExplanationModal(log)"
-                          title="Gửi giải trình / Dùng giờ bù"
-                          class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold border bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-700 hover:bg-amber-200 dark:hover:bg-amber-800/40 transition-colors"
-                        >
-                          <span class="material-symbols-outlined text-xs">edit_note</span>
-                          Giải trình
-                        </button>
+                        <span class="text-zinc-300 dark:text-zinc-600">-/-</span>
                       }
-                    } @else if (canCompensate(log)) {
-                      <!-- Short on hours, can compensate -->
-                      @if (getExplanationForLog(log); as exp) {
-                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold border"
-                          [ngClass]="exp.status === 'Approved' ? 'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-700'
-                                    : exp.status === 'Rejected' ? 'bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-700'
-                                    : 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-700'">
-                          <span class="material-symbols-outlined text-xs">{{ exp.status === 'Approved' ? 'check_circle' : exp.status === 'Rejected' ? 'cancel' : 'hourglass_empty' }}</span>
-                          {{ exp.status }}
-                        </span>
-                      } @else {
-                        <button
-                          type="button"
-                          (click)="openExplanationModal(log)"
-                          title="Dùng giờ bù"
-                          class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold border bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-700 hover:bg-blue-200 dark:hover:bg-blue-800/40 transition-colors"
-                        >
-                          <span class="material-symbols-outlined text-xs">more_time</span>
-                          Dùng giờ bù
-                        </button>
+
+                      @if (needsMissingPunchExplanation(log) || canCompensate(log)) {
+                        @if (getExplanationForLog(log); as exp) {
+                          <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold border"
+                            [ngClass]="exp.status === 'Approved' ? 'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-700'
+                                      : exp.status === 'Rejected' ? 'bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-700'
+                                      : 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-700'">
+                            <span class="material-symbols-outlined text-xs">{{ exp.status === 'Approved' ? 'check_circle' : exp.status === 'Rejected' ? 'cancel' : 'hourglass_empty' }}</span>
+                            {{ exp.status }}
+                          </span>
+                        } @else {
+                          <button
+                            type="button"
+                            (click)="openExplanationModal(log)"
+                            [title]="canCompensate(log) && !needsMissingPunchExplanation(log) ? 'Dùng giờ bù' : 'Gửi giải trình / Dùng giờ bù'"
+                            class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold border transition-colors"
+                            [ngClass]="canCompensate(log) && !needsMissingPunchExplanation(log) ? 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-700 hover:bg-blue-200 dark:hover:bg-blue-800/40' : 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-700 hover:bg-amber-200 dark:hover:bg-amber-800/40'"
+                          >
+                            <span class="material-symbols-outlined text-xs">
+                              {{ canCompensate(log) && !needsMissingPunchExplanation(log) ? 'more_time' : 'edit_note' }}
+                            </span>
+                            {{ canCompensate(log) && !needsMissingPunchExplanation(log) ? 'Bù giờ' : 'Giải trình' }}
+                          </button>
+                        }
                       }
-                    } @else {
-                      <span class="text-zinc-300 dark:text-zinc-600">-/-</span>
-                    }
+                    </div>
                   </td>
                   <!-- Working Hours -->
                   <td class="px-5 py-3">
@@ -439,7 +422,9 @@
                           {{ log.workingHours | number: '1.1-1' }}
                         </span>
                         @if (log.overtimeHours > 0) {
-                          <span class="text-xs text-blue-500">+{{ log.overtimeHours | number: '1.1-1' }}h OT</span>
+                          <span class="text-xs font-medium text-blue-500">+{{ log.overtimeHours | number: '1.1-1' }}h OT</span>
+                        } @else if (log.workingHours < 8 && log.checkOutTime) {
+                          <span class="text-xs font-medium text-amber-500">Thiếu {{ (8 - log.workingHours) | number: '1.1-1' }}h</span>
                         }
                       </div>
                     }
