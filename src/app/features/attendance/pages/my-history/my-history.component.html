@@ -24,7 +24,7 @@
   </div>
 
   <!-- Stats Cards -->
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+  <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
     <!-- Present -->
     <div
       class="glass-panel rounded-2xl p-4 flex flex-col items-center text-center gap-2"
@@ -109,6 +109,26 @@
           {{ stats.explanations }}
         </p>
         <p class="text-xs text-zinc-400 mt-0.5">Explanation/Approved</p>
+      </div>
+    </div>
+    <!-- Compensatory Bank -->
+    <div
+      class="glass-panel rounded-2xl p-4 flex flex-col items-center text-center gap-2"
+    >
+      <div
+        class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center"
+      >
+        <span class="material-symbols-outlined text-blue-500 dark:text-blue-400"
+          >account_balance</span
+        >
+      </div>
+      <div>
+        <p
+          class="text-2xl font-black text-zinc-900 dark:text-white leading-none"
+        >
+          {{ report?.availableCompensatoryHours || 0 }}h
+        </p>
+        <p class="text-xs text-zinc-400 mt-0.5">Giờ bù khả dụng</p>
       </div>
     </div>
   </div>
@@ -364,7 +384,7 @@
                         {{ formatTime(log.checkOutTime) }}
                       </span>
                     } @else if (needsMissingPunchExplanation(log)) {
-                      <!-- Missing checkout: show explain button -->
+                      <!-- Missing checkout or can compensate: show explain button -->
                       @if (getExplanationForLog(log); as exp) {
                         <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold border"
                           [ngClass]="exp.status === 'Approved' ? 'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-700'
@@ -377,11 +397,32 @@
                         <button
                           type="button"
                           (click)="openExplanationModal(log)"
-                          title="Gửi giải trình quên check-out"
+                          title="Gửi giải trình / Dùng giờ bù"
                           class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold border bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-700 hover:bg-amber-200 dark:hover:bg-amber-800/40 transition-colors"
                         >
                           <span class="material-symbols-outlined text-xs">edit_note</span>
                           Giải trình
+                        </button>
+                      }
+                    } @else if (canCompensate(log)) {
+                      <!-- Short on hours, can compensate -->
+                      @if (getExplanationForLog(log); as exp) {
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold border"
+                          [ngClass]="exp.status === 'Approved' ? 'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-700'
+                                    : exp.status === 'Rejected' ? 'bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-700'
+                                    : 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-700'">
+                          <span class="material-symbols-outlined text-xs">{{ exp.status === 'Approved' ? 'check_circle' : exp.status === 'Rejected' ? 'cancel' : 'hourglass_empty' }}</span>
+                          {{ exp.status }}
+                        </span>
+                      } @else {
+                        <button
+                          type="button"
+                          (click)="openExplanationModal(log)"
+                          title="Dùng giờ bù"
+                          class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold border bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-700 hover:bg-blue-200 dark:hover:bg-blue-800/40 transition-colors"
+                        >
+                          <span class="material-symbols-outlined text-xs">more_time</span>
+                          Dùng giờ bù
                         </button>
                       }
                     } @else {
@@ -444,7 +485,7 @@
         <div>
           <h3 class="text-base font-black text-zinc-900 dark:text-white">Gửi Giải Trình</h3>
           <p class="text-xs text-zinc-500 dark:text-zinc-400">
-            Ngày {{ explanationLog.date | date: 'dd/MM/yyyy' }} · Quên check-out
+            Ngày {{ explanationLog.date | date: 'dd/MM/yyyy' }}
           </p>
         </div>
         <button type="button" (click)="closeExplanationModal()"
@@ -453,22 +494,53 @@
         </button>
       </div>
 
+      <!-- Type Selector -->
+      <div class="mb-4">
+        <label class="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Loại giải trình</label>
+        <div class="flex gap-4 items-center mb-2">
+          <label class="flex items-center gap-2 text-sm cursor-pointer" [class.opacity-50]="!needsMissingPunchExplanation(explanationLog)">
+            <input type="radio" name="explanationType" [(ngModel)]="explanationType" [value]="0" [disabled]="!needsMissingPunchExplanation(explanationLog)" class="accent-amber-500 w-4 h-4" />
+            <span>Quên chấm công</span>
+          </label>
+          <label class="flex items-center gap-2 text-sm cursor-pointer" [class.opacity-50]="!canCompensate(explanationLog)">
+            <input type="radio" name="explanationType" [(ngModel)]="explanationType" [value]="1" [disabled]="!canCompensate(explanationLog)" class="accent-amber-500 w-4 h-4" />
+            <span>Dùng giờ bù</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Compensatory Hours input -->
+      @if (explanationType === 1) {
+        <div class="mb-4">
+          <label class="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">
+            Số giờ dùng bù (Tối đa 2h) <span class="text-red-500">*</span>
+          </label>
+          <input type="number" [(ngModel)]="requestedCompHours" min="0.5" max="2" step="0.5"
+            class="w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-sm px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-amber-400" />
+          <p class="text-xs text-zinc-500 mt-1">Giờ bù khả dụng hiện tại: <span class="font-bold text-blue-500">{{ report?.availableCompensatoryHours || 0 }}h</span></p>
+        </div>
+      }
+
       <!-- Info banner -->
       <div class="rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/40 p-3 mb-4 text-xs text-amber-700 dark:text-amber-300">
-        <span class="font-bold">Lưu ý:</span> Nếu được phê duyệt, hệ thống sẽ tự động tính ngày này là đủ công (8 giờ).
-        Nếu bị từ chối, ngày này sẽ giữ nguyên là 0 giờ.
+        <span class="font-bold">Lưu ý:</span> 
+        @if (explanationType === 0) {
+          Nếu được duyệt, ngày này là đủ công (8 giờ).
+        } @else {
+          Hệ thống sẽ trừ quỹ giờ dự trữ của bạn.
+        }
       </div>
 
       <!-- Reason textarea -->
       <div class="mb-5">
         <label class="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">
-          Lý do giải trình <span class="text-red-500">*</span>
+          Lý do <span class="text-red-500">*</span>
         </label>
         <textarea
           [(ngModel)]="explanationReason"
-          rows="4"
+          rows="3"
           maxlength="500"
-          placeholder="Vui lòng mô tả lý do bạn quên check-out ngày hôm đó..."
+          placeholder="Mô tả chi tiết..."
           class="w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-sm text-zinc-800 dark:text-zinc-100 px-3 py-2.5 resize-none focus:outline-none focus:ring-2 focus:ring-amber-400 placeholder:text-zinc-400"
         ></textarea>
         <p class="text-right text-xs text-zinc-400 mt-1">{{ explanationReason.length }}/500</p>

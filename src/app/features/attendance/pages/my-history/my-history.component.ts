@@ -51,6 +51,8 @@ export class MyHistoryComponent implements OnInit, OnDestroy {
   showExplanationModal = false;
   explanationLog: DailyLogEntry | null = null;   // the day being explained
   explanationReason = '';
+  explanationType = 0; // 0 = Missing Punch, 1 = Compensatory Time
+  requestedCompHours = 0;
   submittingExplanation = false;
   myExplanations: AttendanceExplanation[] = [];
 
@@ -270,6 +272,13 @@ export class MyHistoryComponent implements OnInit, OnDestroy {
     return !!log.checkInTime && !log.checkOutTime && logDate < today;
   }
 
+  canCompensate(log: DailyLogEntry): boolean {
+    if (log.isWeekend || log.isHoliday) return false;
+    if (!this.report || this.report.availableCompensatoryHours <= 0) return false;
+    // Prevent compensating beyond standard 8 hours or if already sufficient
+    return log.workingHours < 8;
+  }
+
   /** Returns the explanation for a given log date, if any */
   getExplanationForLog(log: DailyLogEntry): AttendanceExplanation | undefined {
     return this.myExplanations.find(e => {
@@ -282,6 +291,8 @@ export class MyHistoryComponent implements OnInit, OnDestroy {
   openExplanationModal(log: DailyLogEntry): void {
     this.explanationLog = log;
     this.explanationReason = '';
+    this.explanationType = this.needsMissingPunchExplanation(log) ? 0 : 1;
+    this.requestedCompHours = 0;
     this.showExplanationModal = true;
     this.cdr.markForCheck();
   }
@@ -290,6 +301,8 @@ export class MyHistoryComponent implements OnInit, OnDestroy {
     this.showExplanationModal = false;
     this.explanationLog = null;
     this.explanationReason = '';
+    this.explanationType = 0;
+    this.requestedCompHours = 0;
     this.cdr.markForCheck();
   }
 
@@ -299,7 +312,16 @@ export class MyHistoryComponent implements OnInit, OnDestroy {
     this.cdr.markForCheck();
 
     const workDate = new Date(this.explanationLog.date);
-    this.explanationService.submit(workDate, this.explanationReason.trim())
+
+    if (this.explanationType === 1) {
+      if (this.requestedCompHours <= 0 || this.requestedCompHours > 2) {
+        this.toast.showError('Lỗi', 'Giờ bù phải lớn hơn 0 và không vượt quá 2 giờ.');
+        this.submittingExplanation = false;
+        return;
+      }
+    }
+
+    this.explanationService.submit(workDate, this.explanationReason.trim(), this.explanationType, this.requestedCompHours)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (result) => {

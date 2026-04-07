@@ -295,6 +295,16 @@
           </div>
 
           <div class="bg-zinc-50 dark:bg-zinc-900/60 rounded-xl p-3 border border-zinc-200 dark:border-zinc-800">
+            <p class="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1">Type</p>
+            <p class="text-sm font-semibold text-zinc-800 dark:text-zinc-100">
+              {{ selectedItem.type === 'CompensatoryTime' ? 'Bù Giờ' : 'Quên Chấm Công' }}
+              @if (selectedItem.type === 'CompensatoryTime') {
+                <span class="text-xs text-blue-500 font-bold ml-1">({{ selectedItem.requestedCompHours }}h)</span>
+              }
+            </p>
+          </div>
+
+          <div class="bg-zinc-50 dark:bg-zinc-900/60 rounded-xl p-3 border border-zinc-200 dark:border-zinc-800">
             <p class="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1">Submitted On</p>
             <p class="text-sm font-semibold text-zinc-800 dark:text-zinc-100">{{ formatDateTime(selectedItem.createdAt) }}</p>
           </div>

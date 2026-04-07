@@ -37,6 +37,10 @@ export interface MonthlyAttendanceReport {
   totalPresent: number;
   totalLate: number;
   totalWorkingHours: number;
+  totalOvertime: number;
+  availableCompensatoryHours: number;
+  usedCompensatoryHours: number;
+  pendingCompensatoryHours: number;
   logs: DailyLogEntry[];
 }
 

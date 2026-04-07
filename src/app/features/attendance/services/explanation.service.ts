@@ -17,11 +17,15 @@ export interface AttendanceExplanation {
   reviewNote?: string;
   reviewedAt?: string;
   createdAt: string;
+  type: string;
+  requestedCompHours: number;
 }
 
 export interface SubmitExplanationRequest {
   workDate: string;   // ISO date string
   reason: string;
+  type: number;
+  requestedCompHours: number;
 }
 
 export interface ReviewExplanationRequest {
@@ -38,11 +42,13 @@ export class ExplanationService {
     private logger: LoggerService
   ) {}
 
-  /** Employee submits an explanation for a forgotten check-out day */
-  submit(workDate: Date, reason: string): Observable<AttendanceExplanation> {
+  /** Employee submits an explanation for a forgotten check-out day or compensatory time */
+  submit(workDate: Date, reason: string, type: number = 0, requestedCompHours: number = 0): Observable<AttendanceExplanation> {
     const body: SubmitExplanationRequest = {
       workDate: workDate.toISOString(),
-      reason
+      reason,
+      type,
+      requestedCompHours
     };
     return this.http
       .post<ApiResponse<AttendanceExplanation>>(this.apiUrl, body)
