@@ -171,8 +171,9 @@
           />
           <span
             class="text-xs font-medium text-zinc-700 dark:text-zinc-200 max-w-[80px] truncate hidden sm:block"
+            [title]="user.fullName || user.username"
           >
-            {{ user.username }}
+            {{ user.fullName || user.username }}
           </span>
           <span class="material-symbols-outlined text-zinc-400 dark:text-zinc-500 text-[16px]">
             expand_more
@@ -187,8 +188,8 @@
             class="bg-white dark:bg-[#0a0a0f] border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl py-1 animate-fade-in text-left"
           >
             <div class="px-4 py-2.5 border-b border-zinc-200 dark:border-zinc-800 mb-1">
-              <p class="text-xs font-bold text-zinc-900 dark:text-white truncate">
-                {{ user.username }}
+              <p class="text-xs font-bold text-zinc-900 dark:text-white truncate" [title]="user.fullName || user.username">
+                {{ user.fullName || user.username }}
               </p>
               <p class="text-[10px] text-zinc-500 truncate">{{ user.email }}</p>
             </div>
