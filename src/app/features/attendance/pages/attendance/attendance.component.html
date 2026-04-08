@@ -87,6 +87,8 @@
           type="date"
           [ngModel]="selectedDate | date: 'yyyy-MM-dd'"
           (ngModelChange)="onDateChange($event)"
+          aria-label="Select date"
+          title="Select date"
           class="w-full px-4 py-2.5 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-sm text-zinc-900 dark:text-white focus:ring-1 focus:ring-violet-500 focus:border-violet-500 outline-none"
         />
       </div>
@@ -106,6 +108,7 @@
         <select
           [(ngModel)]="selectedStatusFilter"
           (ngModelChange)="onFilterChange()"
+          aria-label="Filter by status"
           class="w-full px-4 py-2.5 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-sm text-zinc-900 dark:text-white focus:ring-1 focus:ring-violet-500 focus:border-violet-500 outline-none appearance-none cursor-pointer"
         >
           @for (opt of statusOptions; track opt.value) {
@@ -258,6 +261,7 @@
                   <div class="flex gap-3 items-center">
                     <img
                       [src]="record.employee.avatar"
+                      alt=""
                       class="w-9 h-9 rounded-full border border-zinc-200 dark:border-zinc-700 object-cover"
                       onerror="this.onerror=null;this.src='assets/images/defaults/avatar-1.png'"
                     />
