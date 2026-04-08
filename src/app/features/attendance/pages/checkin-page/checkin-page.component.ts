@@ -40,6 +40,7 @@ interface CheckInPoint {
   name: string;
   address?: string;
   distance: string | null;
+  distanceMeters: number | null;
   lat?: number;
   lng?: number;
   radiusMeters: number;
@@ -144,6 +145,7 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
         radiusMeters: o.radiusMeters,
         isRemote: o.isRemote,
         distance: null,
+        distanceMeters: null,
       }));
       this.officesLoading = false;
       this.calculateDistances();
@@ -363,9 +365,14 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
   calculateDistances(): void {
     if (!this.userLat || !this.userLng) return;
     this.checkInPoints = this.checkInPoints.map((p) => {
-      if (!p.lat || !p.lng) return { ...p, distance: 'N/A' };
-      const d = this.haversine(this.userLat!, this.userLng!, p.lat, p.lng);
-      return { ...p, distance: d < 1 ? `${Math.round(d * 1000)} m` : `${d.toFixed(1)} km` };
+      if (!p.lat || !p.lng) return { ...p, distance: 'N/A', distanceMeters: null };
+      const dKm = this.haversine(this.userLat!, this.userLng!, p.lat, p.lng);
+      const dMeters = Math.round(dKm * 1000);
+      return {
+        ...p,
+        distanceMeters: dMeters,
+        distance: dKm < 1 ? `${dMeters} m` : `${dKm.toFixed(1)} km`,
+      };
     });
   }
 
@@ -720,5 +727,19 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getSelectedPoint(): CheckInPoint | undefined {
     return this.checkInPoints.find((p) => p.id === this.selectedPointId);
+  }
+
+  /** Check if the selected point is a physical office and user is outside its geofence */
+  isOutsideGeofence(): boolean {
+    const point = this.getSelectedPoint();
+    if (!point || point.isRemote || point.distanceMeters == null) return false;
+    return point.distanceMeters > point.radiusMeters;
+  }
+
+  /** Check if user is inside the selected office's geofence */
+  isInsideGeofence(): boolean {
+    const point = this.getSelectedPoint();
+    if (!point || point.isRemote || point.distanceMeters == null) return false;
+    return point.distanceMeters <= point.radiusMeters;
   }
 }

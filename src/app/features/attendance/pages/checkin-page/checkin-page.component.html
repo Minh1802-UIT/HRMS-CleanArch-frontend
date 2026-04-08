@@ -353,8 +353,23 @@
                       <span class="px-1.5 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 text-[10px] font-bold rounded-full">{{ point.radiusMeters }}m</span>
                     }
                   </div>
-                  <p class="text-xs text-zinc-400">
-                    {{ point.isRemote ? 'Remote / Work from home' : ('Distance: ' + (point.distance ?? 'N/A')) }}
+                  <p class="text-xs" [ngClass]="!point.isRemote && point.distanceMeters != null && point.distanceMeters > point.radiusMeters
+                    ? 'text-red-500 font-bold' : 'text-zinc-400'">
+                    @if (point.isRemote) {
+                      Remote / Work from home
+                    } @else if (point.distanceMeters != null && point.distanceMeters <= point.radiusMeters) {
+                      <span class="flex items-center gap-1">
+                        <span class="material-symbols-outlined text-xs text-green-500">check_circle</span>
+                        {{ point.distance }} — In range
+                      </span>
+                    } @else if (point.distanceMeters != null && point.distanceMeters > point.radiusMeters) {
+                      <span class="flex items-center gap-1">
+                        <span class="material-symbols-outlined text-xs text-red-500">warning</span>
+                        {{ point.distance }} — Out of range (max {{ point.radiusMeters }}m)
+                      </span>
+                    } @else {
+                      Distance: {{ point.distance ?? 'N/A' }}
+                    }
                   </p>
                 </div>
                 @if (selectedPointId === point.id) {
@@ -366,6 +381,28 @@
               </button>
             }
           </div>
+
+          <!-- Geofence warning -->
+          @if (isOutsideGeofence()) {
+            <div class="flex items-start gap-3 mt-4 px-4 py-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/40 rounded-xl">
+              <span class="material-symbols-outlined text-xl text-amber-500 shrink-0 mt-0.5">warning</span>
+              <div>
+                <p class="text-sm font-bold text-amber-700 dark:text-amber-400">Ngoài vùng cho phép</p>
+                <p class="text-xs text-amber-600 dark:text-amber-300 mt-0.5">
+                  Bạn đang cách {{ getSelectedPoint()?.name }} khoảng <strong>{{ getSelectedPoint()?.distance }}</strong> (giới hạn: {{ getSelectedPoint()?.radiusMeters }}m).
+                  Bạn vẫn có thể check-in nhưng Trust Score sẽ bị giảm.
+                </p>
+              </div>
+            </div>
+          }
+          @if (isInsideGeofence()) {
+            <div class="flex items-center gap-2 mt-4 px-4 py-2.5 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700/40 rounded-xl">
+              <span class="material-symbols-outlined text-lg text-green-500">check_circle</span>
+              <p class="text-sm font-bold text-green-700 dark:text-green-400">
+                Trong vùng cho phép ({{ getSelectedPoint()?.distance }})
+              </p>
+            </div>
+          }
 
           <!-- Next button -->
           <div class="flex justify-end mt-6">
