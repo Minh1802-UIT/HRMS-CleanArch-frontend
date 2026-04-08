@@ -66,8 +66,10 @@ export class ExplanationReviewComponent implements OnInit, OnDestroy {
 
   approve(item: AttendanceExplanation): void {
     this.confirm.confirm({
-      title: 'Approve Explanation',
-      message: `Are you sure you want to approve the explanation for ${item.employeeName ?? item.employeeId} on ${new Date(item.workDate).toLocaleDateString('en-GB')}? The system will automatically update that day to full attendance (8 hours).`,
+      title: item.type === 'CompensatoryTime' ? 'Approve Compensatory Time' : 'Approve Explanation',
+      message: item.type === 'CompensatoryTime'
+        ? `Approve compensatory time request for ${item.employeeName ?? item.employeeId} on ${new Date(item.workDate).toLocaleDateString('en-GB')}? System will add ${item.requestedCompHours}h (capped at 8h standard) to that day.`
+        : `Are you sure you want to approve the explanation for ${item.employeeName ?? item.employeeId} on ${new Date(item.workDate).toLocaleDateString('en-GB')}? The system will automatically update that day to full attendance (8 hours).`,
       confirmLabel: 'Approve',
       cancelLabel: 'Cancel',
       type: 'success',
@@ -131,5 +133,21 @@ export class ExplanationReviewComponent implements OnInit, OnDestroy {
           this.cdr.markForCheck();
         }
       });
+  }
+
+  // ── Type helpers ─────────────────────────────────────────────────────────
+
+  getTypeLabel(type: string): string {
+    return type === 'CompensatoryTime' ? 'Bù Giờ' : 'Quên Chấm Công';
+  }
+
+  getTypeIcon(type: string): string {
+    return type === 'CompensatoryTime' ? 'update' : 'fingerprint';
+  }
+
+  getTypeClass(type: string): string {
+    return type === 'CompensatoryTime'
+      ? 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-700'
+      : 'bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-900/30 dark:text-orange-400 dark:border-orange-700';
   }
 }

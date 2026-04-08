@@ -18,6 +18,7 @@ import { ToastService } from '@core/services/toast.service';
 import { LoggerService } from '@core/services/logger.service';
 
 type StatusFilter = '' | 'Pending' | 'Approved' | 'Rejected';
+type TypeFilter = '' | 'MissingPunch' | 'CompensatoryTime';
 
 @Component({
   selector: 'app-my-explanations',
@@ -42,10 +43,18 @@ export class MyExplanationsComponent implements OnInit, OnDestroy {
   /** Status filter */
   selectedStatus: StatusFilter = '';
   readonly statusOptions: { value: StatusFilter; label: string }[] = [
-    { value: '', label: 'All' },
+    { value: '', label: 'All Status' },
     { value: 'Pending', label: 'Pending' },
     { value: 'Approved', label: 'Approved' },
     { value: 'Rejected', label: 'Rejected' },
+  ];
+
+  /** Type filter */
+  selectedType: TypeFilter = '';
+  readonly typeOptions: { value: TypeFilter; label: string }[] = [
+    { value: '', label: 'All Types' },
+    { value: 'MissingPunch', label: 'Quên Chấm Công' },
+    { value: 'CompensatoryTime', label: 'Bù Giờ' },
   ];
 
   /** Month stats */
@@ -165,9 +174,10 @@ export class MyExplanationsComponent implements OnInit, OnDestroy {
   // ── Filtered rows ────────────────────────────────────────────────────────
 
   get filteredItems(): AttendanceExplanation[] {
-    const month = this.currentMonthItems();
-    if (!this.selectedStatus) return month;
-    return month.filter(e => e.status === this.selectedStatus);
+    let items = this.currentMonthItems();
+    if (this.selectedStatus) items = items.filter(e => e.status === this.selectedStatus);
+    if (this.selectedType) items = items.filter(e => e.type === this.selectedType);
+    return items;
   }
 
   // ── Detail drawer ────────────────────────────────────────────────────────
@@ -209,6 +219,20 @@ export class MyExplanationsComponent implements OnInit, OnDestroy {
       case 'Rejected': return 'cancel';
       default:         return 'help';
     }
+  }
+
+  getTypeLabel(type: string): string {
+    return type === 'CompensatoryTime' ? 'Bù Giờ' : 'Quên Chấm Công';
+  }
+
+  getTypeIcon(type: string): string {
+    return type === 'CompensatoryTime' ? 'update' : 'fingerprint';
+  }
+
+  getTypeClass(type: string): string {
+    return type === 'CompensatoryTime'
+      ? 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-700'
+      : 'bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-900/30 dark:text-orange-400 dark:border-orange-700';
   }
 
   formatDate(iso: string | undefined): string {

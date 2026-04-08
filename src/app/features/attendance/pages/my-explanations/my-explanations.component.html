@@ -71,6 +71,19 @@
       </div>
 
       <div class="flex items-center gap-3 flex-wrap">
+        <!-- Type filter -->
+        <div class="relative">
+          <select
+            [(ngModel)]="selectedType"
+            class="appearance-none pl-3 pr-8 py-1.5 text-xs font-semibold rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-amber-400 cursor-pointer"
+          >
+            @for (opt of typeOptions; track opt.value) {
+              <option [value]="opt.value">{{ opt.label }}</option>
+            }
+          </select>
+          <span class="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 material-symbols-outlined text-sm text-zinc-400">expand_more</span>
+        </div>
+
         <!-- Status filter -->
         <div class="relative">
           <select
@@ -121,6 +134,7 @@
             <tr class="text-left border-b border-zinc-200 dark:border-zinc-800">
               <th scope="col" class="px-6 py-3 text-[10px] font-black uppercase tracking-wider text-zinc-400">#</th>
               <th scope="col" class="px-6 py-3 text-[10px] font-black uppercase tracking-wider text-zinc-400">Work Date</th>
+              <th scope="col" class="px-6 py-3 text-[10px] font-black uppercase tracking-wider text-zinc-400">Type</th>
               <th scope="col" class="px-6 py-3 text-[10px] font-black uppercase tracking-wider text-zinc-400">Reason</th>
               <th scope="col" class="px-6 py-3 text-[10px] font-black uppercase tracking-wider text-zinc-400">Status</th>
               <th scope="col" class="px-6 py-3 text-[10px] font-black uppercase tracking-wider text-zinc-400">Reviewed By</th>
@@ -131,7 +145,7 @@
           <tbody>
             @if (filteredItems.length === 0) {
               <tr>
-                <td colspan="7" class="px-6 py-16 text-center">
+                <td colspan="8" class="px-6 py-16 text-center">
                   <div class="flex flex-col items-center gap-3 text-zinc-400">
                     <span class="material-symbols-outlined text-4xl opacity-40">inbox</span>
                     <p class="text-sm">No explanations found for this month.</p>
@@ -150,6 +164,20 @@
                   <!-- Work date -->
                   <td class="px-6 py-3">
                     <span class="font-semibold text-zinc-800 dark:text-zinc-100">{{ formatDate(item.workDate) }}</span>
+                  </td>
+
+                  <!-- Type badge -->
+                  <td class="px-6 py-3">
+                    <span
+                      class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold border"
+                      [ngClass]="getTypeClass(item.type)"
+                    >
+                      <span class="material-symbols-outlined text-xs leading-none" style="font-size:12px">{{ getTypeIcon(item.type) }}</span>
+                      {{ getTypeLabel(item.type) }}
+                    </span>
+                    @if (item.type === 'CompensatoryTime' && item.requestedCompHours > 0) {
+                      <p class="text-[10px] text-blue-500 font-bold mt-0.5">{{ item.requestedCompHours }}h bù</p>
+                    }
                   </td>
 
                   <!-- Reason preview -->
