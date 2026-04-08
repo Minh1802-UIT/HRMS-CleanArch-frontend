@@ -13,8 +13,8 @@ export class FaceDetectionService {
   private modelsLoaded = false;
   private loading = false;
 
-  /** CDN base URL for face-api.js model weights */
-  private readonly MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.12/model';
+  /** Local path to model weights (avoids CSP issues with external CDN) */
+  private readonly MODEL_URL = '/assets/models/face-api';
 
   /**
    * Load required models. Safe to call multiple times — only loads once.
