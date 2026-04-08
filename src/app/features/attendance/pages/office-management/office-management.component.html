@@ -162,7 +162,7 @@
   <!-- Office Modal -->
   @if (showOfficeModal) {
     <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" (click)="closeOfficeModal()">
-      <div class="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-700 shadow-2xl w-full max-w-lg mx-4 p-6" (click)="$event.stopPropagation()">
+      <div class="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-700 shadow-2xl w-full max-w-2xl mx-4 p-6 max-h-[90vh] overflow-y-auto" (click)="$event.stopPropagation()">
         <h3 class="text-lg font-black text-zinc-900 dark:text-white mb-4">
           {{ editingOfficeId ? 'Edit Office' : 'New Office' }}
         </h3>
@@ -179,25 +179,50 @@
 
           <div class="flex items-center gap-3">
             <label class="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" [(ngModel)]="officeForm.isRemote" class="w-4 h-4 rounded border-zinc-300 text-blue-500 focus:ring-blue-500">
+              <input type="checkbox" [(ngModel)]="officeForm.isRemote" (ngModelChange)="onRemoteToggle()" class="w-4 h-4 rounded border-zinc-300 text-blue-500 focus:ring-blue-500">
               <span class="text-sm font-bold text-zinc-700 dark:text-zinc-200">Remote / WFH Point</span>
             </label>
           </div>
 
           @if (!officeForm.isRemote) {
-            <div class="grid grid-cols-2 gap-3">
+            <!-- Map Picker -->
+            <div class="rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-700">
+              <div class="flex items-center justify-between px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border-b border-zinc-200 dark:border-zinc-700">
+                <div class="flex items-center gap-2 text-xs font-bold text-zinc-500 dark:text-zinc-400">
+                  <span class="material-symbols-outlined text-sm">map</span>
+                  Click on map or drag marker to set location
+                </div>
+                <button type="button" (click)="useMyLocation()" [disabled]="gettingLocation"
+                  class="flex items-center gap-1 px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold rounded-lg transition-all disabled:opacity-50">
+                  @if (gettingLocation) {
+                    <span class="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                  } @else {
+                    <span class="material-symbols-outlined text-xs">my_location</span>
+                  }
+                  My Location
+                </button>
+              </div>
+              <div id="office-map-picker" class="w-full h-[280px]"></div>
+            </div>
+
+            <!-- Coordinates + Radius -->
+            <div class="grid grid-cols-3 gap-3">
               <div>
                 <label class="block text-xs font-bold text-zinc-500 dark:text-zinc-400 mb-1">Latitude</label>
-                <input [(ngModel)]="officeForm.latitude" type="number" step="0.0001" placeholder="10.7769" class="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm font-mono focus:outline-none focus:ring-2 focus:ring-green-500">
+                <input [(ngModel)]="officeForm.latitude" (ngModelChange)="onCoordsChanged()" type="number" step="0.0001" placeholder="10.7769" class="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm font-mono focus:outline-none focus:ring-2 focus:ring-green-500">
               </div>
               <div>
                 <label class="block text-xs font-bold text-zinc-500 dark:text-zinc-400 mb-1">Longitude</label>
-                <input [(ngModel)]="officeForm.longitude" type="number" step="0.0001" placeholder="106.7009" class="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm font-mono focus:outline-none focus:ring-2 focus:ring-green-500">
+                <input [(ngModel)]="officeForm.longitude" (ngModelChange)="onCoordsChanged()" type="number" step="0.0001" placeholder="106.7009" class="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm font-mono focus:outline-none focus:ring-2 focus:ring-green-500">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-zinc-500 dark:text-zinc-400 mb-1">Radius (m)</label>
+                <input [(ngModel)]="officeForm.radiusMeters" (ngModelChange)="onCoordsChanged()" type="number" min="50" max="5000" placeholder="500" class="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
               </div>
             </div>
-            <div>
-              <label class="block text-xs font-bold text-zinc-500 dark:text-zinc-400 mb-1">Geofence Radius (meters)</label>
-              <input [(ngModel)]="officeForm.radiusMeters" type="number" min="50" max="5000" placeholder="500" class="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+
+            <div class="rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700/40 p-3 text-xs text-green-700 dark:text-green-300">
+              <span class="font-bold">Tip:</span> Click trên bản đồ hoặc kéo marker để chọn vị trí chính xác. Vòng tròn xanh hiển thị phạm vi geofence.
             </div>
           }
         </div>

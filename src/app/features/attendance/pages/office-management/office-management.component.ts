@@ -2,6 +2,7 @@ import {
   Component,
   OnInit,
   OnDestroy,
+  AfterViewChecked,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
 } from '@angular/core';
@@ -61,7 +62,7 @@ interface WfhForm {
   styleUrl: './office-management.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class OfficeManagementComponent implements OnInit, OnDestroy {
+export class OfficeManagementComponent implements OnInit, OnDestroy, AfterViewChecked {
   private destroy$ = new Subject<void>();
   private apiUrl = `${environment.apiUrl}/attendance`;
 
@@ -75,6 +76,14 @@ export class OfficeManagementComponent implements OnInit, OnDestroy {
   editingOfficeId: string | null = null;
   officeForm: OfficeForm = this.emptyOfficeForm();
   savingOffice = false;
+
+  // ── Map Picker ──
+  private pickerMap: L.Map | null = null;
+  private pickerMarker: L.Marker | null = null;
+  private pickerCircle: L.CircleMarker | null = null;
+  private pickerGeofence: L.Circle | null = null;
+  private mapInitialized = false;
+  gettingLocation = false;
 
   // ── WFH ──
   wfhApprovals: WfhApproval[] = [];
@@ -98,6 +107,13 @@ export class OfficeManagementComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    this.destroyPickerMap();
+  }
+
+  ngAfterViewChecked(): void {
+    if (this.showOfficeModal && !this.officeForm.isRemote && !this.mapInitialized) {
+      this.initPickerMap();
+    }
   }
 
   // ═══════════════════════════════════════════════════════════════════════
@@ -137,6 +153,7 @@ export class OfficeManagementComponent implements OnInit, OnDestroy {
 
   closeOfficeModal(): void {
     this.showOfficeModal = false;
+    this.destroyPickerMap();
     this.cdr.markForCheck();
   }
 
@@ -182,6 +199,132 @@ export class OfficeManagementComponent implements OnInit, OnDestroy {
 
   private emptyOfficeForm(): OfficeForm {
     return { name: '', address: '', latitude: 10.7769, longitude: 106.7009, radiusMeters: 500, isRemote: false, isActive: true };
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════
+  //  MAP PICKER
+  // ═══════════════════════════════════════════════════════════════════════
+
+  private initPickerMap(): void {
+    const container = document.getElementById('office-map-picker');
+    if (!container || this.pickerMap) return;
+    this.mapInitialized = true;
+
+    const lat = this.officeForm.latitude || 10.7769;
+    const lng = this.officeForm.longitude || 106.7009;
+
+    this.pickerMap = L.map(container, {
+      center: [lat, lng],
+      zoom: 15,
+      zoomControl: true,
+    });
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap',
+    }).addTo(this.pickerMap);
+
+    // Initial marker + geofence
+    this.updateMapMarker(lat, lng);
+
+    // Click to set location
+    this.pickerMap.on('click', (e: L.LeafletMouseEvent) => {
+      this.officeForm.latitude = Math.round(e.latlng.lat * 10000) / 10000;
+      this.officeForm.longitude = Math.round(e.latlng.lng * 10000) / 10000;
+      this.updateMapMarker(e.latlng.lat, e.latlng.lng);
+      this.cdr.markForCheck();
+    });
+
+    // Fix map rendering after modal animation
+    setTimeout(() => this.pickerMap?.invalidateSize(), 200);
+  }
+
+  private updateMapMarker(lat: number, lng: number): void {
+    if (!this.pickerMap) return;
+
+    // Remove old
+    if (this.pickerMarker) this.pickerMap.removeLayer(this.pickerMarker);
+    if (this.pickerGeofence) this.pickerMap.removeLayer(this.pickerGeofence);
+
+    // Geofence circle
+    this.pickerGeofence = L.circle([lat, lng], {
+      radius: this.officeForm.radiusMeters || 500,
+      color: '#22c55e',
+      fillColor: '#22c55e',
+      fillOpacity: 0.12,
+      weight: 2,
+    }).addTo(this.pickerMap);
+
+    // Marker
+    this.pickerMarker = L.marker([lat, lng], { draggable: true })
+      .addTo(this.pickerMap)
+      .bindPopup(`${lat.toFixed(4)}, ${lng.toFixed(4)}`)
+      .openPopup();
+
+    // Drag to reposition
+    this.pickerMarker.on('dragend', () => {
+      const pos = this.pickerMarker!.getLatLng();
+      this.officeForm.latitude = Math.round(pos.lat * 10000) / 10000;
+      this.officeForm.longitude = Math.round(pos.lng * 10000) / 10000;
+      this.updateMapMarker(pos.lat, pos.lng);
+      this.cdr.markForCheck();
+    });
+  }
+
+  private destroyPickerMap(): void {
+    if (this.pickerMap) {
+      this.pickerMap.remove();
+      this.pickerMap = null;
+      this.pickerMarker = null;
+      this.pickerGeofence = null;
+    }
+    this.mapInitialized = false;
+  }
+
+  /** Sync map when user manually types lat/lng or radius */
+  onCoordsChanged(): void {
+    if (this.pickerMap && this.officeForm.latitude && this.officeForm.longitude) {
+      const lat = this.officeForm.latitude;
+      const lng = this.officeForm.longitude;
+      this.pickerMap.setView([lat, lng], this.pickerMap.getZoom());
+      this.updateMapMarker(lat, lng);
+    }
+  }
+
+  /** Use browser geolocation */
+  useMyLocation(): void {
+    if (!navigator.geolocation) {
+      this.toast.showError('Error', 'Geolocation not supported by your browser.');
+      return;
+    }
+    this.gettingLocation = true;
+    this.cdr.markForCheck();
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        this.officeForm.latitude = Math.round(pos.coords.latitude * 10000) / 10000;
+        this.officeForm.longitude = Math.round(pos.coords.longitude * 10000) / 10000;
+        if (this.pickerMap) {
+          this.pickerMap.setView([pos.coords.latitude, pos.coords.longitude], 16);
+          this.updateMapMarker(pos.coords.latitude, pos.coords.longitude);
+        }
+        this.gettingLocation = false;
+        this.cdr.markForCheck();
+      },
+      (err) => {
+        this.toast.showError('Location Error', err.message);
+        this.gettingLocation = false;
+        this.cdr.markForCheck();
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  }
+
+  /** Toggle remote: destroy/init map accordingly */
+  onRemoteToggle(): void {
+    if (this.officeForm.isRemote) {
+      this.destroyPickerMap();
+    }
+    // Map will re-init via afterViewChecked when isRemote=false
   }
 
   // ═══════════════════════════════════════════════════════════════════════
