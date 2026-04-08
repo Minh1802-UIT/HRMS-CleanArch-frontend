@@ -15,9 +15,13 @@ import { RouterModule } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import * as L from 'leaflet';
+import { HttpClient } from '@angular/common/http';
 import { MyAttendanceService, TodayAttendanceStatus, OfficeLocation } from '@features/attendance/services/my-attendance.service';
 import { ToastService } from '@core/services/toast.service';
 import { LoggerService } from '@core/services/logger.service';
+import { FaceDetectionService } from '@core/services/face-detection.service';
+import { environment } from '@env/environment';
+import { ApiResponse } from '@core/models/api-response';
 
 // Fix Leaflet default marker icon path (broken by webpack)
 const iconDefault = L.icon({
@@ -77,6 +81,7 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
   locationError: string | null = null;
   locationLoading = false;
   private geofenceCircles: L.Circle[] = [];
+  private officeMarkers: L.Marker[] = [];
 
   // Step 2: Webcam selfie
   faceCaptured = false;
@@ -86,6 +91,11 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
   cameraLoading = false;
   cameraError: string | null = null;
   cameraActive = false;                   // true while <video> is live
+
+  // Step 2b: Face recognition
+  faceEmbedding: number[] | null = null;
+  faceVerifying = false;
+  faceMatchResult: { matched: boolean; similarity: number; reason?: string } | null = null;
 
   // Processing
   loading = false;
@@ -108,6 +118,8 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
     readonly cdr: ChangeDetectorRef,
     private ngZone: NgZone,
     private appRef: ApplicationRef,
+    private faceService: FaceDetectionService,
+    private http: HttpClient,
   ) {}
 
   ngOnInit(): void {
@@ -135,7 +147,12 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
       }));
       this.officesLoading = false;
       this.calculateDistances();
-      this.drawGeofenceCircles();
+      // Draw geofence + office markers (map may or may not be ready)
+      if (this.map) {
+        this.drawGeofenceCircles();
+        this.drawOfficeMarkers();
+        this.fitMapBounds();
+      }
       this.cdr.markForCheck();
     });
   }
@@ -158,6 +175,49 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
       circle.bindTooltip(p.name, { permanent: false, direction: 'top' });
       this.geofenceCircles.push(circle);
     });
+  }
+
+  private drawOfficeMarkers(): void {
+    if (!this.map) return;
+    // Remove old markers
+    this.officeMarkers.forEach(m => m.remove());
+    this.officeMarkers = [];
+    // Draw marker for each physical office
+    this.checkInPoints.filter(p => !p.isRemote && p.lat && p.lng).forEach(p => {
+      const officeIcon = L.divIcon({
+        className: '',
+        html: `<div style="display:flex;align-items:center;gap:4px">
+          <div style="width:14px;height:14px;border-radius:50%;background:#ef4444;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.3)"></div>
+          <span style="background:#fff;padding:1px 6px;border-radius:6px;font-size:10px;font-weight:800;color:#1f2937;box-shadow:0 1px 4px rgba(0,0,0,0.15);white-space:nowrap">${p.name}</span>
+        </div>`,
+        iconSize: [0, 0],
+        iconAnchor: [7, 7],
+      });
+      const marker = L.marker([p.lat!, p.lng!], { icon: officeIcon })
+        .addTo(this.map!)
+        .bindPopup(`<strong>${p.name}</strong><br><small>${p.address || ''}</small><br><small>Radius: ${p.radiusMeters}m</small>`);
+      this.officeMarkers.push(marker);
+    });
+  }
+
+  /** Auto-zoom to fit user location + all offices on screen */
+  private fitMapBounds(): void {
+    if (!this.map) return;
+    const points: L.LatLngExpression[] = [];
+    // Add user
+    if (this.userLat && this.userLng) {
+      points.push([this.userLat, this.userLng]);
+    }
+    // Add offices
+    this.checkInPoints.filter(p => !p.isRemote && p.lat && p.lng).forEach(p => {
+      points.push([p.lat!, p.lng!]);
+    });
+    if (points.length >= 2) {
+      const bounds = L.latLngBounds(points);
+      this.map.fitBounds(bounds, { padding: [40, 40], maxZoom: 16 });
+    } else if (points.length === 1) {
+      this.map.setView(points[0], 15);
+    }
   }
 
   private loadTodayStatus(): void {
@@ -221,6 +281,13 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.userLat && this.userLng) {
       this.placeUserMarker(this.userLat, this.userLng);
     }
+
+    // Draw offices if already loaded (race condition fix)
+    if (this.checkInPoints.length > 0) {
+      this.drawGeofenceCircles();
+      this.drawOfficeMarkers();
+      this.fitMapBounds();
+    }
   }
 
   private placeUserMarker(lat: number, lng: number): void {
@@ -243,7 +310,8 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
           .openPopup();
       }
 
-      this.map.setView([lat, lng], 15);
+      // Fit to show user + offices (not just zoom on user)
+      this.fitMapBounds();
     } catch (e) {
       // Map or pane not ready — silently ignore
     }
@@ -275,6 +343,7 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
           if (this.isDestroyed) return;
           if (this.map) {
             this.placeUserMarker(this.userLat!, this.userLng!);
+            this.fitMapBounds();
           } else {
             // Map not yet initialized, it will pick up coords in initMap
             setTimeout(() => { if (!this.isDestroyed) this.initMap(); }, 200);
@@ -312,6 +381,20 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   selectPoint(id: string): void {
     this.selectedPointId = id;
+    // Pan map to selected office
+    const point = this.checkInPoints.find(p => p.id === id);
+    if (point && point.lat && point.lng && this.map) {
+      // If user location exists, fit both; otherwise just pan to office
+      if (this.userLat && this.userLng) {
+        const bounds = L.latLngBounds(
+          [this.userLat, this.userLng],
+          [point.lat, point.lng]
+        );
+        this.map.fitBounds(bounds, { padding: [50, 50], maxZoom: 16 });
+      } else {
+        this.map.setView([point.lat, point.lng], 15);
+      }
+    }
     this.cdr.markForCheck();
   }
 
@@ -455,7 +538,7 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.finalizeCapture();
   }
 
-  private finalizeCapture(): void {
+  private async finalizeCapture(): Promise<void> {
     const video = this.videoEl?.nativeElement;
     const canvas = this.canvasEl?.nativeElement;
     if (!video || !canvas) return;
@@ -467,14 +550,64 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
     canvas.height = video.videoHeight || 480;
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     this.capturedPhoto = canvas.toDataURL('image/jpeg', 0.85);
+
+    // Extract face embedding (non-blocking)
+    try {
+      const embedding = await this.faceService.extractEmbedding(canvas);
+      if (embedding) {
+        this.faceEmbedding = this.faceService.embeddingToArray(embedding);
+        this.logger.info('Face embedding extracted', { dim: embedding.length });
+      } else {
+        this.faceEmbedding = null;
+        this.logger.warn('No face detected in selfie — embedding unavailable');
+      }
+    } catch (err) {
+      this.faceEmbedding = null;
+      this.logger.warn('Face embedding extraction failed', err);
+    }
+
     this.stopCamera();
     this.faceCaptured = true;
     this.cdr.markForCheck();
+
+    // Verify face against registered embedding (async, non-blocking)
+    if (this.faceEmbedding) {
+      this.verifyFace();
+    }
+  }
+
+  private verifyFace(): void {
+    if (!this.faceEmbedding) return;
+    this.faceVerifying = true;
+    this.cdr.markForCheck();
+
+    this.http.post<ApiResponse<{ matched: boolean; similarity: number; reason?: string }>>(
+      `${environment.apiUrl}/attendance/face/verify`,
+      { embedding: this.faceEmbedding }
+    ).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res) => {
+        this.faceMatchResult = res.data ?? null;
+        this.faceVerifying = false;
+        if (res.data?.matched) {
+          this.logger.info('Face verified', res.data);
+        } else {
+          this.logger.warn('Face mismatch or not registered', res.data);
+        }
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.faceVerifying = false;
+        this.faceMatchResult = null;
+        this.cdr.markForCheck();
+      }
+    });
   }
 
   retakePhoto(): void {
     this.capturedPhoto = null;
     this.faceCaptured = false;
+    this.faceEmbedding = null;
+    this.faceMatchResult = null;
     this.startCamera();
   }
 
@@ -579,6 +712,8 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.faceCaptured = false;
     this.skipFace = false;
     this.capturedPhoto = null;
+    this.faceEmbedding = null;
+    this.faceMatchResult = null;
     setTimeout(() => this.map?.invalidateSize(), 150);
     this.cdr.markForCheck();
   }

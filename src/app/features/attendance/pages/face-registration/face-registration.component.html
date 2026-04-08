@@ -1,0 +1,175 @@
+<div class="max-w-[800px] mx-auto">
+  <!-- Header -->
+  <div class="mb-6">
+    <p class="label-overline text-blue-600 mb-1">Attendance Verification</p>
+    <h1 class="text-2xl font-black tracking-tight text-zinc-900 dark:text-white">
+      Face Registration
+    </h1>
+    <p class="text-sm text-zinc-500 mt-1">Đăng ký khuôn mặt để xác thực khi chấm công. HR/Admin sẽ duyệt sau khi đăng ký.</p>
+  </div>
+
+  <!-- Status Card -->
+  @if (statusLoading) {
+    <div class="flex items-center justify-center py-12">
+      <div class="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  } @else {
+    <div class="glass-panel rounded-2xl border border-zinc-100 dark:border-zinc-800 p-6 mb-6">
+      <div class="flex items-center gap-4">
+        <!-- Thumbnail / Avatar -->
+        <div class="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 overflow-hidden"
+          [ngClass]="faceStatus.registered
+            ? faceStatus.status === 'Approved' ? 'bg-green-100 dark:bg-green-900/30' : faceStatus.status === 'Pending' ? 'bg-amber-100 dark:bg-amber-900/30' : 'bg-red-100 dark:bg-red-900/30'
+            : 'bg-zinc-100 dark:bg-zinc-800'">
+          @if (faceStatus.photoThumbnail) {
+            <img [src]="faceStatus.photoThumbnail" alt="Registered face" class="w-full h-full object-cover">
+          } @else {
+            <span class="material-symbols-outlined text-2xl text-zinc-400">face</span>
+          }
+        </div>
+
+        <div class="flex-1">
+          @if (!faceStatus.registered) {
+            <p class="text-sm font-bold text-zinc-800 dark:text-white">Chưa đăng ký</p>
+            <p class="text-xs text-zinc-500">Bạn chưa đăng ký khuôn mặt. Bấm nút bên dưới để bắt đầu.</p>
+          } @else if (faceStatus.status === 'Pending') {
+            <div class="flex items-center gap-2">
+              <p class="text-sm font-bold text-amber-600 dark:text-amber-400">Đang chờ duyệt</p>
+              <span class="px-2 py-0.5 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-[10px] font-bold rounded-full">PENDING</span>
+            </div>
+            <p class="text-xs text-zinc-500">Đã đăng ký, đang chờ HR/Admin phê duyệt.</p>
+          } @else if (faceStatus.status === 'Approved') {
+            <div class="flex items-center gap-2">
+              <p class="text-sm font-bold text-green-600 dark:text-green-400">Đã được duyệt</p>
+              <span class="px-2 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-[10px] font-bold rounded-full">APPROVED</span>
+            </div>
+            <p class="text-xs text-zinc-500">Khuôn mặt của bạn đã được xác nhận và sẽ dùng khi check-in.</p>
+          } @else if (faceStatus.status === 'Rejected') {
+            <div class="flex items-center gap-2">
+              <p class="text-sm font-bold text-red-600 dark:text-red-400">Bị từ chối</p>
+              <span class="px-2 py-0.5 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 text-[10px] font-bold rounded-full">REJECTED</span>
+            </div>
+            <p class="text-xs text-zinc-500">
+              {{ faceStatus.rejectionReason || 'Lý do: không rõ' }}. Bạn có thể đăng ký lại.
+            </p>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Registration Panel (only show if not registered or rejected) -->
+    @if (!faceStatus.registered || faceStatus.status === 'Rejected') {
+      <div class="glass-panel rounded-2xl border border-zinc-100 dark:border-zinc-800 overflow-hidden">
+        <div class="px-6 py-4 border-b border-zinc-100 dark:border-zinc-800">
+          <h2 class="text-sm font-black text-zinc-800 dark:text-white">Đăng ký khuôn mặt</h2>
+          <p class="text-xs text-zinc-500 mt-0.5">Không đeo kính, đảm bảo ánh sáng tốt, nhìn thẳng vào camera.</p>
+        </div>
+
+        <div class="p-6">
+          <!-- Step 1: Load models -->
+          @if (!modelsLoaded) {
+            <div class="flex flex-col items-center gap-4 py-8">
+              <span class="material-symbols-outlined text-5xl text-blue-500">face_retouching_natural</span>
+              <p class="text-sm text-zinc-600 dark:text-zinc-300 text-center">
+                Cần tải model nhận diện khuôn mặt (~6MB, chỉ tải 1 lần).
+              </p>
+              <button (click)="loadModelsAndStartCamera()" [disabled]="modelsLoading"
+                class="flex items-center gap-2 px-6 py-2.5 bg-blue-500 hover:bg-blue-600 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-blue-500/20 disabled:opacity-50">
+                @if (modelsLoading) {
+                  <span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                  Đang tải models…
+                } @else {
+                  <span class="material-symbols-outlined text-base">download</span>
+                  Bắt đầu
+                }
+              </button>
+            </div>
+          }
+
+          <!-- Step 2: Camera + Detection -->
+          @if (modelsLoaded && !capturedPhoto) {
+            <div class="flex flex-col items-center gap-4">
+              @if (cameraActive) {
+                <div class="relative w-full max-w-[480px] rounded-xl overflow-hidden border-2 border-blue-200 dark:border-blue-700">
+                  <video #videoEl autoplay muted playsinline
+                    class="w-full h-auto mirror"></video>
+                  <canvas #canvasEl class="hidden"></canvas>
+                </div>
+              } @else if (cameraError) {
+                <div class="text-center py-8">
+                  <span class="material-symbols-outlined text-4xl text-red-400">videocam_off</span>
+                  <p class="text-sm text-red-500 mt-2">{{ cameraError }}</p>
+                </div>
+              }
+
+              <!-- Detection status -->
+              @if (detectionMessage) {
+                <div class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold"
+                  [ngClass]="faceDetected ? 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400'
+                            : 'bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400'">
+                  <span class="material-symbols-outlined text-sm">{{ faceDetected ? 'check_circle' : 'warning' }}</span>
+                  {{ detectionMessage }}
+                </div>
+              }
+
+              @if (cameraActive) {
+                <button (click)="detectAndCapture()" [disabled]="detecting"
+                  class="flex items-center gap-2 px-6 py-2.5 bg-green-500 hover:bg-green-600 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-green-500/20 disabled:opacity-50 disabled:cursor-wait">
+                  @if (detecting) {
+                    <span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                    Đang nhận diện…
+                  } @else {
+                    <span class="material-symbols-outlined text-base">face_retouching_natural</span>
+                    Chụp & Nhận diện
+                  }
+                </button>
+              }
+            </div>
+          }
+
+          <!-- Step 3: Review captured photo -->
+          @if (capturedPhoto) {
+            <div class="flex flex-col items-center gap-4">
+              <div class="relative w-full max-w-[480px] rounded-xl overflow-hidden border-2 border-green-300 dark:border-green-700">
+                <img [src]="capturedPhoto" alt="Captured selfie" class="w-full h-auto">
+                <div class="absolute top-3 right-3 flex items-center gap-1 px-3 py-1 bg-green-500 text-white text-xs font-bold rounded-full">
+                  <span class="material-symbols-outlined text-xs">check_circle</span>
+                  Face detected
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3">
+                <button (click)="retake()"
+                  class="flex items-center gap-1.5 px-4 py-2 bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 text-sm font-bold rounded-xl hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all">
+                  <span class="material-symbols-outlined text-base">refresh</span>
+                  Chụp lại
+                </button>
+                <button (click)="submitRegistration()" [disabled]="submitting"
+                  class="flex items-center gap-2 px-6 py-2.5 bg-blue-500 hover:bg-blue-600 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-blue-500/20 disabled:opacity-50">
+                  @if (submitting) {
+                    <span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                    Đang gửi…
+                  } @else {
+                    <span class="material-symbols-outlined text-base">send</span>
+                    Gửi đăng ký
+                  }
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Tips -->
+      <div class="mt-4 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700/40 p-4 text-xs text-blue-700 dark:text-blue-300 space-y-1">
+        <p class="font-bold flex items-center gap-1"><span class="material-symbols-outlined text-sm">tips_and_updates</span> Hướng dẫn chụp ảnh tốt:</p>
+        <ul class="list-disc pl-4 space-y-0.5">
+          <li>Không đeo kính, khẩu trang, mũ</li>
+          <li>Nhìn thẳng vào camera, giữ khuôn mặt ở trung tâm</li>
+          <li>Đảm bảo ánh sáng đủ sáng, tránh ngược sáng</li>
+          <li>Nền phía sau đơn giản</li>
+        </ul>
+      </div>
+    }
+  }
+</div>

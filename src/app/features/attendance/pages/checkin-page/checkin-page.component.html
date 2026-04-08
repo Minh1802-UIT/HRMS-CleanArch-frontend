@@ -247,13 +247,53 @@
             }
           </div>
 
-          <!-- Coords indicator -->
-          <div class="flex items-center gap-1.5 text-xs text-zinc-400 mb-4">
-            <span class="material-symbols-outlined text-base">my_location</span>
-            <span
-              >{{ (userLat | number: "1.6-6") ?? "0.000000" }},
-              {{ (userLng | number: "1.6-6") ?? "0.000000" }}</span
-            >
+          <!-- Location info + legend -->
+          <div class="flex items-start justify-between mb-4 gap-4">
+            <!-- User coordinates -->
+            <div class="flex flex-col gap-1">
+              <div class="flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400">
+                <span class="w-2.5 h-2.5 rounded-full bg-green-500 shrink-0"></span>
+                <span class="font-bold">You:</span>
+                <span class="font-mono">
+                  {{ (userLat | number: "1.6-6") ?? "—" }},
+                  {{ (userLng | number: "1.6-6") ?? "—" }}
+                </span>
+              </div>
+              @if (selectedPointId) {
+                @for (point of checkInPoints; track point.id) {
+                  @if (point.id === selectedPointId && !point.isRemote) {
+                    <div class="flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400">
+                      <span class="w-2.5 h-2.5 rounded-full bg-red-500 shrink-0"></span>
+                      <span class="font-bold">{{ point.name }}:</span>
+                      <span class="font-mono">
+                        {{ (point.lat | number: "1.6-6") }},
+                        {{ (point.lng | number: "1.6-6") }}
+                      </span>
+                    </div>
+                    <div class="flex items-center gap-1.5 text-xs ml-4">
+                      <span class="material-symbols-outlined text-sm text-blue-500">straighten</span>
+                      <span class="font-bold" [ngClass]="point.distance && point.distance.includes('m') && !point.distance.includes('km')
+                        ? 'text-green-600 dark:text-green-400' : 'text-amber-600 dark:text-amber-400'">
+                        {{ point.distance ?? 'N/A' }}
+                      </span>
+                      <span class="text-zinc-400">/ radius {{ point.radiusMeters }}m</span>
+                    </div>
+                  }
+                }
+              }
+            </div>
+            <!-- Legend -->
+            <div class="flex flex-col gap-1 text-[10px] text-zinc-400 shrink-0">
+              <div class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-green-500"></span> You
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-red-500"></span> Office
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full border border-dashed border-green-500 bg-green-500/10"></span> Geofence
+              </div>
+            </div>
           </div>
 
           <!-- Check-in points -->
@@ -543,6 +583,35 @@
                 </div>
               } @else {
                 <span class="font-bold text-zinc-400">Skipped</span>
+              }
+            </div>
+            <div class="border-t border-zinc-200 dark:border-zinc-700"></div>
+            <!-- Face Verification -->
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-zinc-500 dark:text-zinc-400">Face ID</span>
+              @if (faceVerifying) {
+                <div class="flex items-center gap-2">
+                  <span class="w-3 h-3 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></span>
+                  <span class="text-xs font-bold text-blue-500">Verifying…</span>
+                </div>
+              } @else if (faceMatchResult) {
+                @if (faceMatchResult.matched) {
+                  <div class="flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-sm text-green-500">verified_user</span>
+                    <span class="text-xs font-bold text-green-600 dark:text-green-400">Verified ({{ (faceMatchResult.similarity * 100).toFixed(0) }}%)</span>
+                  </div>
+                } @else if (faceMatchResult.reason === 'NO_FACE_REGISTERED') {
+                  <span class="text-xs font-bold text-zinc-400">Not registered</span>
+                } @else {
+                  <div class="flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-sm text-amber-500">gpp_maybe</span>
+                    <span class="text-xs font-bold text-amber-600 dark:text-amber-400">Mismatch ({{ (faceMatchResult.similarity * 100).toFixed(0) }}%)</span>
+                  </div>
+                }
+              } @else if (skipFace) {
+                <span class="text-xs font-bold text-zinc-400">Skipped</span>
+              } @else {
+                <span class="text-xs font-bold text-zinc-400">—</span>
               }
             </div>
             <div class="border-t border-zinc-200 dark:border-zinc-700"></div>
