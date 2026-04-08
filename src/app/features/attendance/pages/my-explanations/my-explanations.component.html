@@ -75,6 +75,7 @@
         <div class="relative">
           <select
             [(ngModel)]="selectedType"
+            aria-label="Filter by type"
             class="appearance-none pl-3 pr-8 py-1.5 text-xs font-semibold rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-amber-400 cursor-pointer"
           >
             @for (opt of typeOptions; track opt.value) {
@@ -88,6 +89,7 @@
         <div class="relative">
           <select
             [(ngModel)]="selectedStatus"
+            aria-label="Filter by status"
             class="appearance-none pl-3 pr-8 py-1.5 text-xs font-semibold rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-amber-400 cursor-pointer"
           >
             @for (opt of statusOptions; track opt.value) {

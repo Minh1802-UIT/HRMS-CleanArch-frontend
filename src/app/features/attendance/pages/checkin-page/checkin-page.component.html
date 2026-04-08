@@ -26,27 +26,29 @@
   </div>
 
   <!-- Tab: Location / QR -->
-  <div class="flex gap-2 mb-6" role="tablist" aria-label="Check-in method">
-    <button
-      type="button"
-      role="tab"
-      aria-selected="true"
-      class="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold border transition-all bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 border-green-200 dark:border-green-700"
-    >
-      <span class="material-symbols-outlined text-base" aria-hidden="true">location_on</span>
-      Location
-    </button>
-    <button
-      type="button"
-      role="tab"
-      aria-selected="false"
-      disabled
-      title="QR check-in coming soon"
-      class="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold border border-zinc-200 dark:border-zinc-700 text-zinc-400 dark:text-zinc-500 cursor-not-allowed"
-    >
-      <span class="material-symbols-outlined text-base" aria-hidden="true">qr_code_2</span>
-      QR
-    </button>
+  <div class="flex gap-2 mb-6">
+    <div role="tablist" aria-label="Check-in method" class="flex gap-2">
+      <button
+        type="button"
+        role="tab"
+        aria-selected="true"
+        class="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold border transition-all bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 border-green-200 dark:border-green-700"
+      >
+        <span class="material-symbols-outlined text-base" aria-hidden="true">location_on</span>
+        Location
+      </button>
+      <button
+        type="button"
+        role="tab"
+        aria-selected="false"
+        disabled
+        title="QR check-in coming soon"
+        class="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold border border-zinc-200 dark:border-zinc-700 text-zinc-400 dark:text-zinc-500 cursor-not-allowed"
+      >
+        <span class="material-symbols-outlined text-base" aria-hidden="true">qr_code_2</span>
+        QR
+      </button>
+    </div>
     <div class="ml-auto flex items-center gap-2">
       <!-- Status badge shown while loading -->
       @if (todayStatusLoading) {
@@ -259,12 +261,27 @@
             <h3 class="text-sm font-black text-zinc-800 dark:text-white">
               Available check-in points
             </h3>
-            <span
-              class="flex items-center justify-center w-5 h-5 bg-green-500 text-white text-xs font-black rounded-full"
-            >
-              {{ checkInPoints.length }}
-            </span>
+            @if (officesLoading) {
+              <span class="text-xs text-zinc-400 flex items-center gap-1">
+                <span class="w-3 h-3 border border-zinc-400 border-t-transparent rounded-full animate-spin inline-block"></span>
+                Loading…
+              </span>
+            } @else {
+              <span
+                class="flex items-center justify-center w-5 h-5 bg-green-500 text-white text-xs font-black rounded-full"
+              >
+                {{ checkInPoints.length }}
+              </span>
+            }
           </div>
+
+          @if (!officesLoading && checkInPoints.length === 0) {
+            <div class="flex flex-col items-center gap-2 py-6 text-center">
+              <span class="material-symbols-outlined text-3xl text-zinc-400">location_off</span>
+              <p class="text-sm text-zinc-500 dark:text-zinc-400">No check-in points configured.<br>Contact your administrator.</p>
+            </div>
+          }
+
           <div class="space-y-2">
             @for (point of checkInPoints; track point.id) {
               <button
@@ -281,16 +298,23 @@
                   [ngClass]="
                     selectedPointId === point.id
                       ? 'bg-green-500'
-                      : 'bg-zinc-300 dark:bg-zinc-600'
+                      : point.isRemote ? 'bg-blue-400' : 'bg-zinc-300 dark:bg-zinc-600'
                   "
                 >
                 </span>
                 <div class="flex-1 min-w-0">
-                  <p class="text-sm font-bold text-zinc-800 dark:text-white">
-                    {{ point.name }}
-                  </p>
+                  <div class="flex items-center gap-2">
+                    <p class="text-sm font-bold text-zinc-800 dark:text-white">
+                      {{ point.name }}
+                    </p>
+                    @if (point.isRemote) {
+                      <span class="px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-[10px] font-bold rounded-full">WFH</span>
+                    } @else {
+                      <span class="px-1.5 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 text-[10px] font-bold rounded-full">{{ point.radiusMeters }}m</span>
+                    }
+                  </div>
                   <p class="text-xs text-zinc-400">
-                    Distance: {{ point.distance ?? "N/A" }}
+                    {{ point.isRemote ? 'Remote / Work from home' : ('Distance: ' + (point.distance ?? 'N/A')) }}
                   </p>
                 </div>
                 @if (selectedPointId === point.id) {
@@ -414,13 +438,35 @@
             }
             @if (cameraActive && !capturedPhoto) {
               <button (click)="capturePhoto()"
-                class="flex items-center gap-2 px-6 py-2.5 bg-green-500 hover:bg-green-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-green-500/20 transition-all">
-                <span class="material-symbols-outlined text-base">photo_camera</span>
-                Capture
+                [disabled]="livenessStatus === 'scanning'"
+                class="flex items-center gap-2 px-6 py-2.5 bg-green-500 hover:bg-green-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-green-500/20 transition-all disabled:opacity-60 disabled:cursor-wait">
+                @if (livenessStatus === 'scanning') {
+                  <span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                  Scanning…
+                } @else {
+                  <span class="material-symbols-outlined text-base">photo_camera</span>
+                  Capture
+                }
               </button>
             }
           </div>
 
+          <!-- Liveness Status -->
+          @if (livenessStatus !== 'idle') {
+            <div class="flex items-center gap-2 justify-center mt-3 px-4 py-2 rounded-xl text-xs font-bold"
+              [ngClass]="livenessStatus === 'scanning' ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                        : livenessStatus === 'pass' ? 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400'
+                        : 'bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400'">
+              @if (livenessStatus === 'scanning') {
+                <span class="w-3 h-3 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></span>
+              } @else if (livenessStatus === 'pass') {
+                <span class="material-symbols-outlined text-sm">verified_user</span>
+              } @else {
+                <span class="material-symbols-outlined text-sm">gpp_maybe</span>
+              }
+              {{ livenessMessage }}
+            </div>
+          }
           <div class="flex justify-between mt-6 gap-3">
             <button
               (click)="goBack()"

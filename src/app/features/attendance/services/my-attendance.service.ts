@@ -29,6 +29,12 @@ export interface DailyLogEntry {
   overtimeHours: number;
   isWeekend: boolean;
   isHoliday: boolean;
+  /** Trust Score (0-100, -1 = N/A). */
+  trustScore: number;
+  /** "High" | "Medium" | "Low" | "" */
+  trustLevel: string;
+  /** Warning codes from verification, e.g. ["GPS_OUTSIDE_GEOFENCE", "NO_PHOTO"] */
+  verificationWarnings: string[];
 }
 
 export interface MonthlyAttendanceReport {
@@ -58,6 +64,18 @@ export interface CheckInRequest {
   deviceId?: string;
   latitude?: number;
   longitude?: number;
+  checkInPointId?: string;
+}
+
+export interface OfficeLocation {
+  id: string;
+  name: string;
+  address?: string;
+  latitude: number;
+  longitude: number;
+  radiusMeters: number;
+  isRemote: boolean;
+  isActive: boolean;
 }
 
 export interface TodayAttendanceStatus {
@@ -86,6 +104,19 @@ export class MyAttendanceService {
           this.logger.error('MyAttendanceService: getTodayStatus failed', err);
           // On error, return a safe default so the page still renders
           return of({ hasCheckedIn: false, hasCheckedOut: false, checkInTime: null, checkOutTime: null });
+        })
+      );
+  }
+
+  /** Load active office locations (check-in points) from backend */
+  getOffices(): Observable<OfficeLocation[]> {
+    return this.http
+      .get<ApiResponse<OfficeLocation[]>>(`${this.apiUrl}/offices`)
+      .pipe(
+        map(res => res.data ?? []),
+        catchError(err => {
+          this.logger.error('MyAttendanceService: getOffices failed', err);
+          return of([]);
         })
       );
   }

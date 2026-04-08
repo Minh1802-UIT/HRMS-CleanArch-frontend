@@ -1,4 +1,4 @@
-﻿import {
+import {
   Component,
   OnInit,
   OnDestroy,
@@ -15,7 +15,7 @@ import { RouterModule } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import * as L from 'leaflet';
-import { MyAttendanceService, TodayAttendanceStatus } from '@features/attendance/services/my-attendance.service';
+import { MyAttendanceService, TodayAttendanceStatus, OfficeLocation } from '@features/attendance/services/my-attendance.service';
 import { ToastService } from '@core/services/toast.service';
 import { LoggerService } from '@core/services/logger.service';
 
@@ -38,6 +38,8 @@ interface CheckInPoint {
   distance: string | null;
   lat?: number;
   lng?: number;
+  radiusMeters: number;
+  isRemote: boolean;
 }
 
 type Step = 1 | 2 | 3;
@@ -66,17 +68,15 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
   private mapInitialized = false;
   private isDestroyed = false;
 
-  // Step 1: Location
-  checkInPoints: CheckInPoint[] = [
-    { id: 'hq',      name: 'HQ Office',      address: 'Main Headquarters',  distance: null },
-    { id: 'branch1', name: 'Branch Office 1', address: 'Branch 1 location',  distance: null },
-    { id: 'remote',  name: 'Remote / Home',  address: 'Work from home',      distance: null },
-  ];
+  // Step 1: Location — loaded from API
+  checkInPoints: CheckInPoint[] = [];
+  officesLoading = true;
   selectedPointId: string | null = null;
   userLat: number | null = null;
   userLng: number | null = null;
   locationError: string | null = null;
   locationLoading = false;
+  private geofenceCircles: L.Circle[] = [];
 
   // Step 2: Webcam selfie
   faceCaptured = false;
@@ -117,6 +117,47 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
     }, 1000);
     this.detectLocation();
     this.loadTodayStatus();
+    this.loadOfficeLocations();
+  }
+
+  private loadOfficeLocations(): void {
+    this.officesLoading = true;
+    this.myAttendanceService.getOffices().pipe(takeUntil(this.destroy$)).subscribe(offices => {
+      this.checkInPoints = offices.map(o => ({
+        id: o.id,
+        name: o.name,
+        address: o.address,
+        lat: o.isRemote ? undefined : o.latitude,
+        lng: o.isRemote ? undefined : o.longitude,
+        radiusMeters: o.radiusMeters,
+        isRemote: o.isRemote,
+        distance: null,
+      }));
+      this.officesLoading = false;
+      this.calculateDistances();
+      this.drawGeofenceCircles();
+      this.cdr.markForCheck();
+    });
+  }
+
+  private drawGeofenceCircles(): void {
+    if (!this.map) return;
+    // Remove old circles
+    this.geofenceCircles.forEach(c => c.remove());
+    this.geofenceCircles = [];
+    // Draw new ones for physical offices
+    this.checkInPoints.filter(p => !p.isRemote && p.lat && p.lng).forEach(p => {
+      const circle = L.circle([p.lat!, p.lng!], {
+        radius: p.radiusMeters,
+        color: '#22c55e',
+        fillColor: '#22c55e',
+        fillOpacity: 0.08,
+        weight: 2,
+        dashArray: '6 4',
+      }).addTo(this.map!);
+      circle.bindTooltip(p.name, { permanent: false, direction: 'top' });
+      this.geofenceCircles.push(circle);
+    });
   }
 
   private loadTodayStatus(): void {
@@ -309,16 +350,121 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  // ── Liveness Detection ──────────────────────────────────────────────────────
+  livenessStatus: 'idle' | 'scanning' | 'pass' | 'fail' = 'idle';
+  livenessMessage = '';
+  private capturedFrames: ImageData[] = [];
+
   capturePhoto(): void {
+    // Start multi-frame liveness scan
+    this.livenessStatus = 'scanning';
+    this.livenessMessage = 'Analyzing liveness… hold still & face camera';
+    this.capturedFrames = [];
+    this.cdr.markForCheck();
+
+    // Capture 3 frames at 500ms intervals
+    this.captureFrameSequence(3, 500).then(frames => {
+      if (frames.length < 2) {
+        this.finishCapture(false, 'Could not capture enough frames');
+        return;
+      }
+
+      // 1. Brightness check on the last frame
+      const lastFrame = frames[frames.length - 1];
+      const avgBrightness = this.getAvgBrightness(lastFrame);
+      if (avgBrightness < 40) {
+        this.finishCapture(false, 'Image too dark — ensure proper lighting');
+        return;
+      }
+
+      // 2. Motion check: compare first and last frames
+      const motionScore = this.computeMotionScore(frames[0], frames[frames.length - 1]);
+
+      // 3. Variance check: ensure frames aren't all identical (possible photo replay)
+      if (motionScore < 2.0) {
+        // Less than 2% pixel change → likely a static photo
+        this.livenessStatus = 'fail';
+        this.livenessMessage = '⚠ Low motion detected — this may be a static image. Proceeding anyway.';
+        this.logger.warn('Liveness: low motion score', { motionScore, avgBrightness });
+      } else {
+        this.livenessStatus = 'pass';
+        this.livenessMessage = '✓ Liveness check passed';
+      }
+
+      // Always capture the photo regardless (non-blocking)
+      this.finalizeCapture();
+    });
+  }
+
+  private async captureFrameSequence(count: number, intervalMs: number): Promise<ImageData[]> {
+    const frames: ImageData[] = [];
+    const video = this.videoEl?.nativeElement;
+    const canvas = this.canvasEl?.nativeElement;
+    if (!video || !canvas) return frames;
+
+    const w = video.videoWidth || 640;
+    const h = video.videoHeight || 480;
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return frames;
+
+    for (let i = 0; i < count; i++) {
+      ctx.drawImage(video, 0, 0, w, h);
+      frames.push(ctx.getImageData(0, 0, w, h));
+      if (i < count - 1) {
+        await new Promise(r => setTimeout(r, intervalMs));
+      }
+    }
+    return frames;
+  }
+
+  private getAvgBrightness(frame: ImageData): number {
+    const data = frame.data;
+    let total = 0;
+    const pixelCount = data.length / 4;
+    for (let i = 0; i < data.length; i += 4) {
+      // Luminance formula
+      total += 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+    }
+    return total / pixelCount;
+  }
+
+  private computeMotionScore(frame1: ImageData, frame2: ImageData): number {
+    const d1 = frame1.data;
+    const d2 = frame2.data;
+    const len = Math.min(d1.length, d2.length);
+    let diffPixels = 0;
+    const threshold = 30; // per-channel diff threshold
+    const pixelCount = len / 4;
+
+    for (let i = 0; i < len; i += 4) {
+      const rDiff = Math.abs(d1[i] - d2[i]);
+      const gDiff = Math.abs(d1[i + 1] - d2[i + 1]);
+      const bDiff = Math.abs(d1[i + 2] - d2[i + 2]);
+      if (rDiff > threshold || gDiff > threshold || bDiff > threshold) {
+        diffPixels++;
+      }
+    }
+    return (diffPixels / pixelCount) * 100;
+  }
+
+  private finishCapture(success: boolean, message: string): void {
+    this.livenessStatus = success ? 'pass' : 'fail';
+    this.livenessMessage = message;
+    this.finalizeCapture();
+  }
+
+  private finalizeCapture(): void {
     const video = this.videoEl?.nativeElement;
     const canvas = this.canvasEl?.nativeElement;
     if (!video || !canvas) return;
 
-    canvas.width  = video.videoWidth  || 640;
-    canvas.height = video.videoHeight || 480;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    canvas.width = video.videoWidth || 640;
+    canvas.height = video.videoHeight || 480;
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     this.capturedPhoto = canvas.toDataURL('image/jpeg', 0.85);
     this.stopCamera();
@@ -392,6 +538,7 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
       latitude: this.userLat ?? undefined,
       longitude: this.userLng ?? undefined,
       photoBase64: this.capturedPhoto ?? undefined,
+      checkInPointId: this.selectedPointId ?? undefined,
     };
     const action$ =
       this.checkType === 'CheckIn'

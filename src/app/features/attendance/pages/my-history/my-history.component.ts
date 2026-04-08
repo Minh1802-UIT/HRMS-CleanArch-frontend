@@ -234,6 +234,38 @@ export class MyHistoryComponent implements OnInit, OnDestroy {
     return 'score-zero';
   }
 
+  // ── Trust Score badge helpers ──────────────────────────────────────────────
+  getTrustBadgeClass(log: DailyLogEntry): string {
+    if (log.trustScore < 0) return '';
+    if (log.trustScore >= 80) return 'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-700';
+    if (log.trustScore >= 40) return 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-700';
+    return 'bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-700';
+  }
+
+  getTrustDotClass(log: DailyLogEntry): string {
+    if (log.trustScore >= 80) return 'bg-green-500';
+    if (log.trustScore >= 40) return 'bg-amber-500';
+    return 'bg-red-500';
+  }
+
+  getTrustIcon(log: DailyLogEntry): string {
+    if (log.trustScore >= 80) return 'verified_user';
+    if (log.trustScore >= 40) return 'gpp_maybe';
+    return 'gpp_bad';
+  }
+
+  getWarningLabel(code: string): string {
+    const labels: Record<string, string> = {
+      'GPS_UNAVAILABLE': 'No GPS',
+      'GPS_OUTSIDE_GEOFENCE': 'Outside geofence',
+      'GPS_MISMATCH': 'GPS mismatch',
+      'NO_PHOTO': 'No selfie',
+      'IMPOSSIBLE_TRAVEL': 'Impossible travel',
+      'WFH_NOT_APPROVED': 'WFH not approved',
+    };
+    return labels[code] || code;
+  }
+
   formatTime(iso: string | null): string {
     if (!iso) return '-/-';
     try {

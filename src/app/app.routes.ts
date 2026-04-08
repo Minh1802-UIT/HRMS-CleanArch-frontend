@@ -45,6 +45,7 @@ export const routes: Routes = [
       { path: 'attendance/my-explanations', loadComponent: () => import('./features/attendance/pages/my-explanations/my-explanations.component').then(m => m.MyExplanationsComponent), canActivate: [authGuard], data: { activePage: 'my-explanations' } },
       { path: 'attendance/explanations', loadComponent: () => import('./features/attendance/pages/explanation-review/explanation-review.component').then(m => m.ExplanationReviewComponent), canActivate: [roleGuard], data: { roles: ['Admin', 'HR', 'Manager'], activePage: 'attendance' } },
       { path: 'attendance/overtime-schedule', loadComponent: () => import('./features/attendance/pages/overtime-schedule/overtime-schedule.component').then(m => m.OvertimeScheduleComponent), canActivate: [roleGuard], data: { roles: ['Admin', 'HR'], activePage: 'overtime-schedule' } },
+      { path: 'attendance/offices', loadComponent: () => import('./features/attendance/pages/office-management/office-management.component').then(m => m.OfficeManagementComponent), canActivate: [roleGuard], data: { roles: ['Admin', 'HR'], activePage: 'office-management' } },
 
       { path: 'departments', loadComponent: () => import('./features/organization/pages/departments/departments.component').then(m => m.DepartmentsComponent), canActivate: [roleGuard], data: { roles: ['Admin', 'HR'], activePage: 'departments' } },
 

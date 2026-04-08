@@ -1,0 +1,251 @@
+<div class="max-w-[1600px] mx-auto">
+  <!-- Header -->
+  <div class="mb-6">
+    <p class="label-overline text-green-600 mb-1">Administration</p>
+    <h1 class="text-2xl font-black tracking-tight text-zinc-900 dark:text-white">
+      Office & WFH Management
+    </h1>
+  </div>
+
+  <!-- Tabs -->
+  <div class="flex gap-2 mb-6">
+    <button
+      (click)="activeTab = 'offices'; cdr.markForCheck()"
+      class="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold border transition-all"
+      [ngClass]="activeTab === 'offices'
+        ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 border-green-200 dark:border-green-700'
+        : 'bg-white dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:border-green-400'"
+    >
+      <span class="material-symbols-outlined text-base">location_on</span>
+      Offices
+      <span class="ml-1 px-1.5 py-0.5 text-[10px] font-black rounded-full bg-green-500 text-white">{{ offices.length }}</span>
+    </button>
+    <button
+      (click)="activeTab = 'wfh'; cdr.markForCheck()"
+      class="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold border transition-all"
+      [ngClass]="activeTab === 'wfh'
+        ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-700'
+        : 'bg-white dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:border-blue-400'"
+    >
+      <span class="material-symbols-outlined text-base">home_work</span>
+      WFH Approvals
+      <span class="ml-1 px-1.5 py-0.5 text-[10px] font-black rounded-full bg-blue-500 text-white">{{ wfhApprovals.length }}</span>
+    </button>
+  </div>
+
+  <!-- ═══ OFFICES TAB ═══ -->
+  @if (activeTab === 'offices') {
+    <div class="glass-panel rounded-2xl border border-zinc-100 dark:border-zinc-800 overflow-hidden">
+      <!-- Toolbar -->
+      <div class="flex items-center justify-between p-4 border-b border-zinc-100 dark:border-zinc-800">
+        <h2 class="text-sm font-black text-zinc-800 dark:text-white">Check-in Points</h2>
+        <button (click)="openCreateOffice()" class="flex items-center gap-1.5 px-4 py-2 bg-green-500 hover:bg-green-600 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-green-500/20">
+          <span class="material-symbols-outlined text-base">add</span>
+          Add Office
+        </button>
+      </div>
+
+      @if (officesLoading) {
+        <div class="flex items-center justify-center py-12">
+          <div class="w-8 h-8 border-2 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      } @else if (offices.length === 0) {
+        <div class="flex flex-col items-center gap-3 py-12 text-center">
+          <span class="material-symbols-outlined text-4xl text-zinc-400">location_off</span>
+          <p class="text-sm text-zinc-500">No offices configured yet.</p>
+        </div>
+      } @else {
+        <div class="divide-y divide-zinc-100 dark:divide-zinc-800">
+          @for (office of offices; track office.id) {
+            <div class="flex items-center gap-4 px-5 py-4 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                [ngClass]="office.isRemote ? 'bg-blue-100 dark:bg-blue-900/30' : 'bg-green-100 dark:bg-green-900/30'">
+                <span class="material-symbols-outlined text-lg"
+                  [ngClass]="office.isRemote ? 'text-blue-500' : 'text-green-500'">
+                  {{ office.isRemote ? 'home_work' : 'apartment' }}
+                </span>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2">
+                  <p class="text-sm font-bold text-zinc-800 dark:text-white">{{ office.name }}</p>
+                  @if (office.isRemote) {
+                    <span class="px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-[10px] font-bold rounded-full">WFH</span>
+                  } @else {
+                    <span class="px-1.5 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 text-[10px] font-bold rounded-full">{{ office.radiusMeters }}m</span>
+                  }
+                </div>
+                <p class="text-xs text-zinc-400 truncate">{{ office.address || 'No address' }}</p>
+                @if (!office.isRemote) {
+                  <p class="text-[10px] text-zinc-400 font-mono">{{ office.latitude | number:'1.4-4' }}, {{ office.longitude | number:'1.4-4' }}</p>
+                }
+              </div>
+              <div class="flex items-center gap-2 shrink-0">
+                <button (click)="openEditOffice(office)" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors" title="Edit">
+                  <span class="material-symbols-outlined text-sm text-zinc-500">edit</span>
+                </button>
+                <button (click)="deleteOffice(office.id)" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors" title="Delete">
+                  <span class="material-symbols-outlined text-sm text-red-500">delete</span>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ═══ WFH TAB ═══ -->
+  @if (activeTab === 'wfh') {
+    <div class="glass-panel rounded-2xl border border-zinc-100 dark:border-zinc-800 overflow-hidden">
+      <div class="flex items-center justify-between p-4 border-b border-zinc-100 dark:border-zinc-800">
+        <h2 class="text-sm font-black text-zinc-800 dark:text-white">WFH Approvals</h2>
+        <button (click)="openCreateWfh()" class="flex items-center gap-1.5 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-blue-500/20">
+          <span class="material-symbols-outlined text-base">add</span>
+          Add Approval
+        </button>
+      </div>
+
+      @if (wfhLoading) {
+        <div class="flex items-center justify-center py-12">
+          <div class="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      } @else if (wfhApprovals.length === 0) {
+        <div class="flex flex-col items-center gap-3 py-12 text-center">
+          <span class="material-symbols-outlined text-4xl text-zinc-400">event_busy</span>
+          <p class="text-sm text-zinc-500">No WFH approvals yet.</p>
+        </div>
+      } @else {
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="text-left text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+                <th class="px-5 py-3">Employee ID</th>
+                <th class="px-5 py-3">From</th>
+                <th class="px-5 py-3">To</th>
+                <th class="px-5 py-3">Reason</th>
+                <th class="px-5 py-3">Status</th>
+                <th class="px-5 py-3 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
+              @for (wfh of wfhApprovals; track wfh.id) {
+                <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
+                  <td class="px-5 py-3 font-mono font-bold text-zinc-800 dark:text-white text-xs">{{ wfh.employeeId }}</td>
+                  <td class="px-5 py-3 text-zinc-600 dark:text-zinc-300">{{ formatDate(wfh.fromDate) }}</td>
+                  <td class="px-5 py-3 text-zinc-600 dark:text-zinc-300">{{ formatDate(wfh.toDate) }}</td>
+                  <td class="px-5 py-3 text-zinc-500 dark:text-zinc-400 max-w-[200px] truncate">{{ wfh.reason || '-' }}</td>
+                  <td class="px-5 py-3">
+                    @if (wfh.isActive) {
+                      <span class="px-2 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-bold rounded-full">Active</span>
+                    } @else {
+                      <span class="px-2 py-0.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 text-xs font-bold rounded-full">Revoked</span>
+                    }
+                  </td>
+                  <td class="px-5 py-3 text-right">
+                    @if (wfh.isActive) {
+                      <button (click)="revokeWfh(wfh.id)" class="text-xs font-bold text-red-500 hover:text-red-600 transition-colors">
+                        Revoke
+                      </button>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ═══ MODALS ═══ -->
+
+  <!-- Office Modal -->
+  @if (showOfficeModal) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" (click)="closeOfficeModal()">
+      <div class="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-700 shadow-2xl w-full max-w-lg mx-4 p-6" (click)="$event.stopPropagation()">
+        <h3 class="text-lg font-black text-zinc-900 dark:text-white mb-4">
+          {{ editingOfficeId ? 'Edit Office' : 'New Office' }}
+        </h3>
+
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-zinc-500 dark:text-zinc-400 mb-1">Name *</label>
+            <input [(ngModel)]="officeForm.name" class="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="e.g. HQ Office">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-zinc-500 dark:text-zinc-400 mb-1">Address</label>
+            <input [(ngModel)]="officeForm.address" class="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="e.g. 123 Main St">
+          </div>
+
+          <div class="flex items-center gap-3">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" [(ngModel)]="officeForm.isRemote" class="w-4 h-4 rounded border-zinc-300 text-blue-500 focus:ring-blue-500">
+              <span class="text-sm font-bold text-zinc-700 dark:text-zinc-200">Remote / WFH Point</span>
+            </label>
+          </div>
+
+          @if (!officeForm.isRemote) {
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-bold text-zinc-500 dark:text-zinc-400 mb-1">Latitude</label>
+                <input [(ngModel)]="officeForm.latitude" type="number" step="0.0001" placeholder="10.7769" class="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm font-mono focus:outline-none focus:ring-2 focus:ring-green-500">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-zinc-500 dark:text-zinc-400 mb-1">Longitude</label>
+                <input [(ngModel)]="officeForm.longitude" type="number" step="0.0001" placeholder="106.7009" class="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm font-mono focus:outline-none focus:ring-2 focus:ring-green-500">
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-zinc-500 dark:text-zinc-400 mb-1">Geofence Radius (meters)</label>
+              <input [(ngModel)]="officeForm.radiusMeters" type="number" min="50" max="5000" placeholder="500" class="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+            </div>
+          }
+        </div>
+
+        <div class="flex justify-end gap-3 mt-6">
+          <button (click)="closeOfficeModal()" class="px-5 py-2.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 text-sm font-bold rounded-xl hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all">Cancel</button>
+          <button (click)="saveOffice()" [disabled]="savingOffice || !officeForm.name.trim()" class="px-5 py-2.5 bg-green-500 hover:bg-green-600 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-green-500/20 disabled:opacity-40 disabled:cursor-not-allowed">
+            {{ savingOffice ? 'Saving…' : editingOfficeId ? 'Update' : 'Create' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- WFH Modal -->
+  @if (showWfhModal) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" (click)="closeWfhModal()">
+      <div class="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-700 shadow-2xl w-full max-w-lg mx-4 p-6" (click)="$event.stopPropagation()">
+        <h3 class="text-lg font-black text-zinc-900 dark:text-white mb-4">New WFH Approval</h3>
+
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-zinc-500 dark:text-zinc-400 mb-1">Employee ID *</label>
+            <input [(ngModel)]="wfhForm.employeeId" class="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter employee ID">
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-zinc-500 dark:text-zinc-400 mb-1">From Date *</label>
+              <input [(ngModel)]="wfhForm.fromDate" type="date" placeholder="yyyy-mm-dd" class="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-zinc-500 dark:text-zinc-400 mb-1">To Date *</label>
+              <input [(ngModel)]="wfhForm.toDate" type="date" placeholder="yyyy-mm-dd" class="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-zinc-500 dark:text-zinc-400 mb-1">Reason</label>
+            <textarea [(ngModel)]="wfhForm.reason" rows="2" class="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" placeholder="Optional reason"></textarea>
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-3 mt-6">
+          <button (click)="closeWfhModal()" class="px-5 py-2.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 text-sm font-bold rounded-xl hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all">Cancel</button>
+          <button (click)="saveWfh()" [disabled]="savingWfh || !wfhForm.employeeId.trim() || !wfhForm.fromDate || !wfhForm.toDate" class="px-5 py-2.5 bg-blue-500 hover:bg-blue-600 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-blue-500/20 disabled:opacity-40 disabled:cursor-not-allowed">
+            {{ savingWfh ? 'Saving…' : 'Approve WFH' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>
