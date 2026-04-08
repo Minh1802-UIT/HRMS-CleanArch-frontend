@@ -20,6 +20,9 @@ export interface AttendanceRecord {
   checkOut: string;
   workingHours: number;
   status: AttendanceStatus;
+  trustScore?: number;
+  trustLevel?: string;
+  verificationWarnings?: string[];
 }
 
 export interface DailyStats {

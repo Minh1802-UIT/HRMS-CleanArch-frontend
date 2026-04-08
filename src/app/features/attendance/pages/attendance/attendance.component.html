@@ -1,4 +1,4 @@
-﻿<div class="max-w-[1600px] mx-auto">
+<div class="max-w-[1600px] mx-auto">
   <!-- Page Header -->
   <div
     class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4"
@@ -160,6 +160,11 @@
               >
                 Status
               </th>
+              <th
+                class="px-6 py-3.5 label-overline text-zinc-500 dark:text-zinc-400"
+              >
+                Trust Score
+              </th>
             </tr>
           </thead>
           <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
@@ -189,9 +194,7 @@
                   <div class="skeleton w-20 h-6 rounded-full"></div>
                 </td>
                 <td class="px-6 py-4">
-                  <div
-                    class="skeleton skeleton-button ml-auto w-8 h-8 rounded-lg"
-                  ></div>
+                  <div class="skeleton w-16 h-6 rounded-full"></div>
                 </td>
               </tr>
             }
@@ -290,6 +293,36 @@
                   >
                     {{ record.status }}
                   </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  @if (record.trustScore != null && record.trustScore !== -1) {
+                    <div class="flex items-center gap-2 group/tooltip relative">
+                      <div class="flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-bold"
+                          [ngClass]="record.trustScore >= 80 ? 'bg-green-100 text-green-700' :
+                                    record.trustScore >= 50 ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'">
+                        <span class="material-symbols-outlined text-[14px]">
+                          {{ record.trustScore >= 80 ? 'verified_user' : (record.trustScore >= 50 ? 'warning' : 'gpp_bad') }}
+                        </span>
+                        {{ record.trustScore }}%
+                      </div>
+
+                      <!-- Tooltip for Verification Warnings -->
+                      @if (record.verificationWarnings && record.verificationWarnings.length > 0) {
+                        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max max-w-xs p-2 bg-zinc-800 text-white text-[11px] rounded shadow-xl opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all z-10 whitespace-normal">
+                          <p class="font-bold mb-1 border-b border-zinc-700 pb-1">Warnings:</p>
+                          <ul class="list-disc pl-4 space-y-0.5">
+                            @for (warn of record.verificationWarnings; track warn) {
+                              <li>{{ warn }}</li>
+                            }
+                          </ul>
+                          <!-- little triangle -->
+                          <div class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-zinc-800 rotate-45"></div>
+                        </div>
+                      }
+                    </div>
+                  } @else {
+                    <span class="text-xs text-zinc-400">—</span>
+                  }
                 </td>
               </tr>
             }

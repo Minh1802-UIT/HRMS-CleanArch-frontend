@@ -20,6 +20,9 @@ interface AttendanceRawDto {
   checkOut?: string;
   workingHours: number;
   status?: string;
+  trustScore?: number;
+  trustLevel?: string;
+  verificationWarnings?: string[];
 }
 
 @Injectable({
@@ -50,7 +53,10 @@ export class AttendanceService {
                 checkIn: dto.checkIn ? new Date(dto.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-',
                 checkOut: dto.checkOut ? new Date(dto.checkOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-',
                 workingHours: dto.workingHours,
-                status: (dto.status || AttendanceStatus.Absent) as AttendanceStatus
+                status: (dto.status || AttendanceStatus.Absent) as AttendanceStatus,
+                trustScore: dto.trustScore,
+                trustLevel: dto.trustLevel,
+                verificationWarnings: dto.verificationWarnings || []
             }));
 
             return {
