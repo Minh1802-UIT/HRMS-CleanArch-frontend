@@ -386,7 +386,7 @@
                         <span class="text-zinc-300 dark:text-zinc-600">-/-</span>
                       }
 
-                      @if (needsMissingPunchExplanation(log) || canCompensate(log)) {
+                      @if (needsMissingPunchExplanation(log) || canCompensate(log) || hasLowTrustScore(log)) {
                         @if (getExplanationForLog(log); as exp) {
                           <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold border"
                             [ngClass]="exp.status === 'Approved' ? 'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-700'
@@ -399,14 +399,14 @@
                           <button
                             type="button"
                             (click)="openExplanationModal(log)"
-                            [title]="canCompensate(log) && !needsMissingPunchExplanation(log) ? 'Dùng giờ bù' : 'Gửi giải trình / Dùng giờ bù'"
+                            [title]="hasLowTrustScore(log) && !needsMissingPunchExplanation(log) && !canCompensate(log) ? 'Giải trình ngoại lệ GPS/Khuôn mặt' : canCompensate(log) && !needsMissingPunchExplanation(log) ? 'Dùng giờ bù' : 'Gửi giải trình / Dùng giờ bù'"
                             class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold border transition-colors"
-                            [ngClass]="canCompensate(log) && !needsMissingPunchExplanation(log) ? 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-700 hover:bg-blue-200 dark:hover:bg-blue-800/40' : 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-700 hover:bg-amber-200 dark:hover:bg-amber-800/40'"
+                            [ngClass]="hasLowTrustScore(log) && !needsMissingPunchExplanation(log) && !canCompensate(log) ? 'bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-700 hover:bg-red-200 dark:hover:bg-red-800/40' : canCompensate(log) && !needsMissingPunchExplanation(log) ? 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-700 hover:bg-blue-200 dark:hover:bg-blue-800/40' : 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-700 hover:bg-amber-200 dark:hover:bg-amber-800/40'"
                           >
                             <span class="material-symbols-outlined text-xs">
-                              {{ canCompensate(log) && !needsMissingPunchExplanation(log) ? 'more_time' : 'edit_note' }}
+                              {{ hasLowTrustScore(log) && !needsMissingPunchExplanation(log) && !canCompensate(log) ? 'gpp_bad' : canCompensate(log) && !needsMissingPunchExplanation(log) ? 'more_time' : 'edit_note' }}
                             </span>
-                            {{ canCompensate(log) && !needsMissingPunchExplanation(log) ? 'Bù giờ' : 'Giải trình' }}
+                            {{ hasLowTrustScore(log) && !needsMissingPunchExplanation(log) && !canCompensate(log) ? 'Ngoại lệ' : canCompensate(log) && !needsMissingPunchExplanation(log) ? 'Bù giờ' : 'Giải trình' }}
                           </button>
                         }
                       }
@@ -493,7 +493,7 @@
       <!-- Type Selector -->
       <div class="mb-4">
         <label class="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">Loại giải trình</label>
-        <div class="flex gap-4 items-center mb-2">
+        <div class="flex flex-wrap gap-4 items-center mb-2">
           <label class="flex items-center gap-2 text-sm cursor-pointer" [class.opacity-50]="!needsMissingPunchExplanation(explanationLog)">
             <input type="radio" name="explanationType" [(ngModel)]="explanationType" [value]="0" [disabled]="!needsMissingPunchExplanation(explanationLog)" class="accent-amber-500 w-4 h-4" />
             <span>Quên chấm công</span>
@@ -501,6 +501,13 @@
           <label class="flex items-center gap-2 text-sm cursor-pointer" [class.opacity-50]="!canCompensate(explanationLog)">
             <input type="radio" name="explanationType" [(ngModel)]="explanationType" [value]="1" [disabled]="!canCompensate(explanationLog)" class="accent-amber-500 w-4 h-4" />
             <span>Dùng giờ bù</span>
+          </label>
+          <label class="flex items-center gap-2 text-sm cursor-pointer" [class.opacity-50]="!hasLowTrustScore(explanationLog)">
+            <input type="radio" name="explanationType" [(ngModel)]="explanationType" [value]="2" [disabled]="!hasLowTrustScore(explanationLog)" class="accent-red-500 w-4 h-4" />
+            <span class="flex items-center gap-1">
+              <span class="material-symbols-outlined text-[14px] text-red-500">gpp_bad</span>
+              Ngoại lệ GPS/Khuôn mặt
+            </span>
           </label>
         </div>
       </div>
@@ -517,14 +524,32 @@
         </div>
       }
 
+      <!-- Exception warnings display -->
+      @if (explanationType === 2 && explanationLog) {
+        <div class="mb-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700/40 p-3 text-xs text-red-700 dark:text-red-300">
+          <p class="font-bold mb-1 flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">warning</span>
+            Cảnh báo xác thực ngày {{ explanationLog.date | date:'dd/MM/yyyy' }}:
+          </p>
+          <ul class="list-disc pl-4 space-y-0.5">
+            @for (w of explanationLog.verificationWarnings; track w) {
+              <li>{{ w }}</li>
+            }
+          </ul>
+          <p class="mt-1 text-[10px] opacity-70">Trust Score hiện tại: <span class="font-bold">{{ explanationLog.trustScore }}</span>/100</p>
+        </div>
+      }
+
       <!-- Info banner -->
       <div class="rounded-xl border p-3 mb-4 text-xs"
-           [ngClass]="explanationType === 1 && monthCompensatoryCount >= 5 ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-700/40 text-red-700 dark:text-red-300' : 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-700/40 text-amber-700 dark:text-amber-300'">
+           [ngClass]="(explanationType === 1 && monthCompensatoryCount >= 5) || explanationType === 2 ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-700/40 text-red-700 dark:text-red-300' : 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-700/40 text-amber-700 dark:text-amber-300'">
         <span class="font-bold">Lưu ý:</span> 
         @if (explanationType === 0) {
           Nếu được duyệt, ngày này là đủ công (8 giờ).
-        } @else {
+        } @else if (explanationType === 1) {
           Hệ thống sẽ trừ quỹ giờ dự trữ. Bạn đã đăng ký <span class="font-bold border-b border-current">{{ monthCompensatoryCount }}/5</span> đơn bù giờ trong tháng.
+        } @else {
+          Nếu được duyệt, Trust Score sẽ được khôi phục về <span class="font-bold">100 điểm</span> và các cảnh báo xác thực sẽ được xóa.
         }
       </div>
 

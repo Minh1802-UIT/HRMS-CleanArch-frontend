@@ -319,6 +319,12 @@ export class MyHistoryComponent implements OnInit, OnDestroy {
     return log.workingHours < 8;
   }
 
+  /** True when trust score is below threshold (< 80) and needs exception explanation */
+  hasLowTrustScore(log: DailyLogEntry): boolean {
+    if (log.isWeekend || log.isHoliday) return false;
+    return log.trustScore >= 0 && log.trustScore < 80;
+  }
+
   /** Returns the explanation for a given log date, if any */
   getExplanationForLog(log: DailyLogEntry): AttendanceExplanation | undefined {
     return this.myExplanations.find(e => {
@@ -331,7 +337,14 @@ export class MyHistoryComponent implements OnInit, OnDestroy {
   openExplanationModal(log: DailyLogEntry): void {
     this.explanationLog = log;
     this.explanationReason = '';
-    this.explanationType = this.needsMissingPunchExplanation(log) ? 0 : 1;
+    // Default to the most relevant type
+    if (this.needsMissingPunchExplanation(log)) {
+      this.explanationType = 0; // Missing Punch
+    } else if (this.hasLowTrustScore(log)) {
+      this.explanationType = 2; // Exception
+    } else {
+      this.explanationType = 1; // Compensatory Time
+    }
     this.requestedCompHours = 0;
     this.showExplanationModal = true;
     this.cdr.markForCheck();

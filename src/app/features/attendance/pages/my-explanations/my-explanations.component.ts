@@ -18,7 +18,7 @@ import { ToastService } from '@core/services/toast.service';
 import { LoggerService } from '@core/services/logger.service';
 
 type StatusFilter = '' | 'Pending' | 'Approved' | 'Rejected';
-type TypeFilter = '' | 'MissingPunch' | 'CompensatoryTime';
+type TypeFilter = '' | 'MissingPunch' | 'CompensatoryTime' | 'Exception';
 
 @Component({
   selector: 'app-my-explanations',
@@ -55,6 +55,7 @@ export class MyExplanationsComponent implements OnInit, OnDestroy {
     { value: '', label: 'All Types' },
     { value: 'MissingPunch', label: 'Quên Chấm Công' },
     { value: 'CompensatoryTime', label: 'Bù Giờ' },
+    { value: 'Exception', label: 'Ngoại Lệ GPS/Mặt' },
   ];
 
   /** Month stats */

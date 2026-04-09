@@ -66,9 +66,13 @@ export class ExplanationReviewComponent implements OnInit, OnDestroy {
 
   approve(item: AttendanceExplanation): void {
     this.confirm.confirm({
-      title: item.type === 'CompensatoryTime' ? 'Approve Compensatory Time' : 'Approve Explanation',
+      title: item.type === 'CompensatoryTime' ? 'Approve Compensatory Time' 
+           : item.type === 'Exception' ? 'Approve Exception' 
+           : 'Approve Explanation',
       message: item.type === 'CompensatoryTime'
         ? `Approve compensatory time request for ${item.employeeName ?? item.employeeId} on ${new Date(item.workDate).toLocaleDateString('en-GB')}? System will add ${item.requestedCompHours}h (capped at 8h standard) to that day.`
+        : item.type === 'Exception'
+        ? `Approve trust-score exception for ${item.employeeName ?? item.employeeId} on ${new Date(item.workDate).toLocaleDateString('en-GB')}? The system will reset Trust Score to 100 and clear verification warnings.`
         : `Are you sure you want to approve the explanation for ${item.employeeName ?? item.employeeId} on ${new Date(item.workDate).toLocaleDateString('en-GB')}? The system will automatically update that day to full attendance (8 hours).`,
       confirmLabel: 'Approve',
       cancelLabel: 'Cancel',
@@ -138,16 +142,22 @@ export class ExplanationReviewComponent implements OnInit, OnDestroy {
   // ── Type helpers ─────────────────────────────────────────────────────────
 
   getTypeLabel(type: string): string {
-    return type === 'CompensatoryTime' ? 'Bù Giờ' : 'Quên Chấm Công';
+    if (type === 'CompensatoryTime') return 'Bù Giờ';
+    if (type === 'Exception') return 'Ngoại Lệ GPS/Mặt';
+    return 'Quên Chấm Công';
   }
 
   getTypeIcon(type: string): string {
-    return type === 'CompensatoryTime' ? 'update' : 'fingerprint';
+    if (type === 'CompensatoryTime') return 'update';
+    if (type === 'Exception') return 'gpp_bad';
+    return 'fingerprint';
   }
 
   getTypeClass(type: string): string {
-    return type === 'CompensatoryTime'
-      ? 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-700'
-      : 'bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-900/30 dark:text-orange-400 dark:border-orange-700';
+    if (type === 'CompensatoryTime')
+      return 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-700';
+    if (type === 'Exception')
+      return 'bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-700';
+    return 'bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-900/30 dark:text-orange-400 dark:border-orange-700';
   }
 }

@@ -229,6 +229,29 @@ export class FaceRegistrationComponent implements OnInit, OnDestroy {
     });
   }
 
+  // ════════════════ REVOKE ════════════════
+
+  revokeRegistration(): void {
+    if (!confirm('Bạn có chắc chắn muốn huỷ đăng ký khuôn mặt hiện tại? Bạn sẽ không thể check-in cho đến khi đăng ký mới được duyệt.')) return;
+
+    this.statusLoading = true;
+    this.cdr.markForCheck();
+
+    this.http.delete<ApiResponse<any>>(`${this.apiUrl}/my-registration`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res) => {
+          this.toast.showSuccess('Revoked', res.message || 'Face registration revoked.');
+          this.loadMyStatus(); // reload status
+        },
+        error: (err) => {
+          this.toast.showError('Error', err?.error?.message || 'Failed to revoke registration.');
+          this.statusLoading = false;
+          this.cdr.markForCheck();
+        }
+      });
+  }
+
   private createThumbnail(dataUrl: string, size: number): string {
     const canvas = document.createElement('canvas');
     canvas.width = size;
