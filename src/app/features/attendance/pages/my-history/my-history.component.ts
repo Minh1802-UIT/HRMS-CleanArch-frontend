@@ -285,6 +285,14 @@ export class MyHistoryComponent implements OnInit, OnDestroy {
   }
 
   // ── Explanation modal ──────────────────────────────────────────────────────
+  
+  get monthCompensatoryCount(): number {
+    const [mmStr] = this.selectedMonth.split('-');
+    return this.myExplanations.filter(e => {
+      const d = new Date(e.workDate);
+      return e.type === 'CompensatoryTime' && String(d.getMonth() + 1).padStart(2, '0') === mmStr && e.status !== 'Rejected';
+    }).length;
+  }
 
   /**
    * True when this log row should offer a "Giải trình" button.
@@ -348,6 +356,11 @@ export class MyHistoryComponent implements OnInit, OnDestroy {
     if (this.explanationType === 1) {
       if (this.requestedCompHours <= 0 || this.requestedCompHours > 2) {
         this.toast.showError('Lỗi', 'Giờ bù phải lớn hơn 0 và không vượt quá 2 giờ.');
+        this.submittingExplanation = false;
+        return;
+      }
+      if (this.monthCompensatoryCount >= 5) {
+        this.toast.showError('Lỗi', 'Bạn đã đạt mốc 5/5 đơn bù giờ trong tháng này.');
         this.submittingExplanation = false;
         return;
       }
