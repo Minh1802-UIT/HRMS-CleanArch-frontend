@@ -87,6 +87,7 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
   // Step 2: Webcam selfie
   faceCaptured = false;
   skipFace = false;
+  isExtractingFace = false;
   capturedPhoto: string | null = null;    // base64 data URI
   cameraStream: MediaStream | null = null;
   cameraLoading = false;
@@ -481,7 +482,7 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
         this.livenessMessage = '✓ Liveness check passed';
       }
 
-      // Always capture the photo regardless (non-blocking)
+      // Always capture the photo regardless
       this.finalizeCapture();
     });
   }
@@ -550,15 +551,25 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
     const canvas = this.canvasEl?.nativeElement;
     if (!video || !canvas) return;
 
+    this.isExtractingFace = true;
+    this.cdr.markForCheck();
+
     const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    if (!ctx) {
+      this.isExtractingFace = false;
+      return;
+    }
 
     canvas.width = video.videoWidth || 640;
     canvas.height = video.videoHeight || 480;
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     this.capturedPhoto = canvas.toDataURL('image/jpeg', 0.85);
 
-    // Extract face embedding (non-blocking)
+    // Stop camera immediately after snapshot
+    this.stopCamera();
+    this.faceCaptured = true;
+
+    // Extract face embedding
     try {
       const embedding = await this.faceService.extractEmbedding(canvas);
       if (embedding) {
@@ -572,42 +583,40 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
       this.faceEmbedding = null;
       this.logger.warn('Face embedding extraction failed', err);
     }
-
-    this.stopCamera();
-    this.faceCaptured = true;
+    
+    this.isExtractingFace = false;
     this.cdr.markForCheck();
 
-    // Verify face against registered embedding (async, non-blocking)
+    // Verify face against registered embedding
     if (this.faceEmbedding) {
-      this.verifyFace();
+      await this.verifyFace();
     }
   }
 
-  private verifyFace(): void {
+  private async verifyFace(): Promise<void> {
     if (!this.faceEmbedding) return;
     this.faceVerifying = true;
     this.cdr.markForCheck();
 
-    this.http.post<ApiResponse<{ matched: boolean; similarity: number; reason?: string }>>(
-      `${environment.apiUrl}/attendance/face/verify`,
-      { embedding: this.faceEmbedding }
-    ).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res) => {
-        this.faceMatchResult = res.data ?? null;
-        this.faceVerifying = false;
-        if (res.data?.matched) {
-          this.logger.info('Face verified', res.data);
-        } else {
-          this.logger.warn('Face mismatch or not registered', res.data);
-        }
-        this.cdr.markForCheck();
-      },
-      error: () => {
-        this.faceVerifying = false;
-        this.faceMatchResult = null;
-        this.cdr.markForCheck();
+    try {
+      const res = await this.http.post<ApiResponse<{ matched: boolean; similarity: number; reason?: string }>>(
+        `${environment.apiUrl}/attendance/face/verify`,
+        { embedding: this.faceEmbedding }
+      ).toPromise();
+
+      this.faceMatchResult = res?.data ?? null;
+      if (res?.data?.matched) {
+        this.logger.info('Face verified', res.data);
+      } else {
+        this.logger.warn('Face mismatch or not registered', res?.data);
       }
-    });
+    } catch (err) {
+      this.faceMatchResult = null;
+      this.logger.error('Face verify request failed', err);
+    } finally {
+      this.faceVerifying = false;
+      this.cdr.markForCheck();
+    }
   }
 
   retakePhoto(): void {
@@ -644,9 +653,13 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.cdr.markForCheck();
   }
 
-  captureAndContinue(): void {
+  async captureAndContinue(): Promise<void> {
     if (!this.capturedPhoto && this.cameraActive) {
-      this.capturePhoto();
+      this.livenessStatus = 'scanning';
+      this.livenessMessage = 'Analyzing liveness...';
+      this.cdr.markForCheck();
+      // Directly await finalization without liveness sequence if user clicked directly
+      await this.finalizeCapture();
     }
     this.stopCamera();
     this.currentStep = 3;
@@ -671,6 +684,11 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   submitCheckIn(): void {
+    if (this.isExtractingFace || this.faceVerifying) {
+      this.toast.showError('Please wait', 'Face extraction or verification in progress...');
+      return;
+    }
+
     this.loading = true;
     const req = {
       type: this.checkType,
