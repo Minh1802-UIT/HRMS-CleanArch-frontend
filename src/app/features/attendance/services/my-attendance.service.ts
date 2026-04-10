@@ -65,6 +65,7 @@ export interface CheckInRequest {
   latitude?: number;
   longitude?: number;
   photoBase64?: string;
+  faceEmbedding?: number[];
   checkInPointId?: string;
 }
 

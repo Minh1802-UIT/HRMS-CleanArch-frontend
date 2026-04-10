@@ -678,6 +678,7 @@ export class CheckinPageComponent implements OnInit, AfterViewInit, OnDestroy {
       latitude: this.userLat ?? undefined,
       longitude: this.userLng ?? undefined,
       photoBase64: this.capturedPhoto ?? undefined,
+      faceEmbedding: this.faceEmbedding ?? undefined,
       checkInPointId: this.selectedPointId ?? undefined,
     };
     const action$ =
