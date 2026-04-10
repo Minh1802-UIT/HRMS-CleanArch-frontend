@@ -10,8 +10,15 @@
 
   <!-- Status Card -->
   @if (statusLoading) {
-    <div class="flex items-center justify-center py-12">
-      <div class="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+    <!-- Skeleton Banner -->
+    <div class="glass-panel rounded-2xl border border-zinc-100 dark:border-zinc-800 p-6 mb-6 animate-pulse">
+      <div class="flex items-center gap-4">
+        <div class="w-16 h-16 rounded-2xl skeleton shrink-0"></div>
+        <div class="flex-1 space-y-3">
+          <div class="h-4 w-32 skeleton rounded"></div>
+          <div class="h-3 w-48 skeleton rounded"></div>
+        </div>
+      </div>
     </div>
   } @else {
     <div class="glass-panel rounded-2xl border border-zinc-100 dark:border-zinc-800 p-6 mb-6">
@@ -58,9 +65,14 @@
               <p class="text-sm font-bold text-red-600 dark:text-red-400">Bị từ chối</p>
               <span class="px-2 py-0.5 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 text-[10px] font-bold rounded-full">REJECTED</span>
             </div>
-            <p class="text-xs text-zinc-500">
+            <p class="text-xs text-zinc-500 mt-1">
               {{ faceStatus.rejectionReason || 'Lý do: không rõ' }}. Bạn có thể đăng ký lại.
             </p>
+            <button type="button" (click)="revokeRegistration()" [disabled]="statusLoading"
+              class="mt-3 flex items-center justify-center gap-1.5 px-3 py-1.5 bg-zinc-100 text-zinc-700 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700 text-xs font-bold rounded-lg transition-colors disabled:opacity-50 border border-zinc-200 dark:border-zinc-700 w-full sm:w-auto">
+              <span class="material-symbols-outlined text-[14px]">refresh</span>
+              Quét lại khuôn mặt
+            </button>
           }
         </div>
       </div>
@@ -75,39 +87,50 @@
         </div>
 
         <div class="p-6">
-          <!-- Step 1: Load models -->
+          <!-- Step 1: Loading Models -->
           @if (!modelsLoaded) {
-            <div class="flex flex-col items-center gap-4 py-8">
-              <span class="material-symbols-outlined text-5xl text-blue-500">face_retouching_natural</span>
-              <p class="text-sm text-zinc-600 dark:text-zinc-300 text-center">
-                Cần tải model nhận diện khuôn mặt (~6MB, chỉ tải 1 lần).
+            <div class="flex flex-col items-center gap-4 py-8 animate-slide-up">
+              <span class="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></span>
+              <p class="text-sm font-bold text-zinc-600 dark:text-zinc-300 text-center">
+                Đang khởi động Camera & AI nhận diện…
               </p>
-              <button (click)="loadModelsAndStartCamera()" [disabled]="modelsLoading"
-                class="flex items-center gap-2 px-6 py-2.5 bg-blue-500 hover:bg-blue-600 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-blue-500/20 disabled:opacity-50">
-                @if (modelsLoading) {
-                  <span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                  Đang tải models…
-                } @else {
-                  <span class="material-symbols-outlined text-base">download</span>
-                  Bắt đầu
-                }
-              </button>
             </div>
           }
 
           <!-- Step 2: Camera + Detection -->
           @if (modelsLoaded && !capturedPhoto) {
-            <div class="flex flex-col items-center gap-4">
+            <div class="flex flex-col items-center gap-4 animate-slide-up">
               @if (cameraActive) {
-                <div class="relative w-full max-w-[480px] rounded-xl overflow-hidden border-2 border-blue-200 dark:border-blue-700">
+                <div class="relative w-full max-w-[480px] rounded-xl overflow-hidden shadow-lg shadow-black/10 dark:shadow-black/40">
                   <video #videoEl autoplay muted playsinline
                     class="w-full h-auto mirror"></video>
                   <canvas #canvasEl class="hidden"></canvas>
+
+                  <!-- Scanner Reticle -->
+                  <div class="scanner-reticle" [ngClass]="liveFaceDetected ? 'locked' : 'searching'"></div>
+                  
+                  <!-- Live Tips Overlay -->
+                  @if (!liveFaceDetected) {
+                    <div class="absolute bottom-4 left-0 right-0 text-center pointer-events-none">
+                      <span class="inline-block px-3 py-1 bg-black/60 backdrop-blur-sm text-white text-xs font-bold rounded-full">
+                        Vui lòng để trọn khuôn mặt vào khung
+                      </span>
+                    </div>
+                  } @else {
+                     <div class="absolute bottom-4 left-0 right-0 text-center pointer-events-none">
+                      <span class="inline-block px-3 py-1 bg-green-500 text-white text-xs font-bold rounded-full shadow-lg">
+                        Đã khóa mục tiêu. Sẵn sàng chụp!
+                      </span>
+                    </div>
+                  }
                 </div>
               } @else if (cameraError) {
                 <div class="text-center py-8">
                   <span class="material-symbols-outlined text-4xl text-red-400">videocam_off</span>
                   <p class="text-sm text-red-500 mt-2">{{ cameraError }}</p>
+                  <button (click)="startCamera()" class="mt-4 px-4 py-2 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 text-xs font-bold rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700">
+                    Thử lại
+                  </button>
                 </div>
               }
 
@@ -126,10 +149,10 @@
                   class="flex items-center gap-2 px-6 py-2.5 bg-green-500 hover:bg-green-600 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-green-500/20 disabled:opacity-50 disabled:cursor-wait">
                   @if (detecting) {
                     <span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                    Đang nhận diện…
+                    Đang quét hình học…
                   } @else {
-                    <span class="material-symbols-outlined text-base">face_retouching_natural</span>
-                    Chụp & Nhận diện
+                    <span class="material-symbols-outlined text-base">camera</span>
+                    Chụp & Đăng Ký
                   }
                 </button>
               }
@@ -138,12 +161,12 @@
 
           <!-- Step 3: Review captured photo -->
           @if (capturedPhoto) {
-            <div class="flex flex-col items-center gap-4">
-              <div class="relative w-full max-w-[480px] rounded-xl overflow-hidden border-2 border-green-300 dark:border-green-700">
-                <img [src]="capturedPhoto" alt="Captured selfie" class="w-full h-auto">
-                <div class="absolute top-3 right-3 flex items-center gap-1 px-3 py-1 bg-green-500 text-white text-xs font-bold rounded-full">
-                  <span class="material-symbols-outlined text-xs">check_circle</span>
-                  Face detected
+            <div class="flex flex-col items-center gap-4 animate-slide-up">
+              <div class="relative w-full max-w-[480px] rounded-xl overflow-hidden border-2 border-green-500 shadow-xl shadow-green-500/20">
+                <img [src]="capturedPhoto" alt="Captured selfie" class="w-full h-auto mirror">
+                <div class="absolute top-3 right-3 flex items-center gap-1.5 px-3 py-1.5 bg-green-500 text-white text-xs font-bold rounded-full shadow-lg">
+                  <span class="material-symbols-outlined text-sm">check_circle</span>
+                  Face Captured
                 </div>
               </div>
 

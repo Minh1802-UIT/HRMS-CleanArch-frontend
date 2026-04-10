@@ -52,6 +52,7 @@ export class FaceRegistrationComponent implements OnInit, OnDestroy {
   submitting = false;
 
   // Detection guide
+  liveFaceDetected = false;
   detectionMessage = '';
 
   constructor(
@@ -82,11 +83,16 @@ export class FaceRegistrationComponent implements OnInit, OnDestroy {
           this.faceStatus = res.data ?? { registered: false };
           this.statusLoading = false;
           this.cdr.markForCheck();
+          
+          if (!this.faceStatus.registered || this.faceStatus.status === 'Rejected') {
+            this.loadModelsAndStartCamera();
+          }
         },
         error: () => {
           this.faceStatus = { registered: false };
           this.statusLoading = false;
           this.cdr.markForCheck();
+          this.loadModelsAndStartCamera();
         }
       });
   }
@@ -130,7 +136,10 @@ export class FaceRegistrationComponent implements OnInit, OnDestroy {
       const video = this.videoEl?.nativeElement;
       if (video && this.cameraStream) {
         video.srcObject = this.cameraStream;
-        video.onloadedmetadata = () => video.play().catch(() => {});
+        video.onloadedmetadata = () => {
+          video.play().catch(() => {});
+          this.runLiveDetectionLoop();
+        };
       }
     } catch (err) {
       this.cameraError = (err as DOMException).name === 'NotAllowedError'
@@ -146,6 +155,23 @@ export class FaceRegistrationComponent implements OnInit, OnDestroy {
       this.cameraStream = null;
     }
     this.cameraActive = false;
+    this.liveFaceDetected = false;
+  }
+
+  private async runLiveDetectionLoop(): Promise<void> {
+    if (!this.cameraActive || !this.modelsLoaded) return;
+    const video = this.videoEl?.nativeElement;
+    if (!video || video.paused || video.ended) return;
+
+    try {
+      const result = await this.faceService.detectFace(video);
+      this.liveFaceDetected = !!result;
+      this.cdr.markForCheck();
+    } catch {}
+
+    if (this.cameraActive) {
+      setTimeout(() => this.runLiveDetectionLoop(), 400); // Poll every 400ms
+    }
   }
 
   // ════════════════ DETECT & CAPTURE ════════════════

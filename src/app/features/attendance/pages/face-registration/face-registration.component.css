@@ -14,3 +14,102 @@
 .mirror {
   transform: scaleX(-1);
 }
+
+/* Animations */
+@keyframes slide-up {
+  0% { opacity: 0; transform: translateY(15px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Scanner Reticle */
+.scanner-reticle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 240px;
+  border-radius: 20px;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.4);
+}
+
+.scanner-reticle::before,
+.scanner-reticle::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  pointer-events: none;
+}
+
+.scanner-reticle::before {
+  /* 4 Corners border */
+  background: 
+    linear-gradient(to right, currentColor 4px, transparent 4px) 0 0,
+    linear-gradient(to right, currentColor 4px, transparent 4px) 0 100%,
+    linear-gradient(to left, currentColor 4px, transparent 4px) 100% 0,
+    linear-gradient(to left, currentColor 4px, transparent 4px) 100% 100%,
+    linear-gradient(to bottom, currentColor 4px, transparent 4px) 0 0,
+    linear-gradient(to bottom, currentColor 4px, transparent 4px) 100% 0,
+    linear-gradient(to top, currentColor 4px, transparent 4px) 0 100%,
+    linear-gradient(to top, currentColor 4px, transparent 4px) 100% 100%;
+  background-repeat: no-repeat;
+  background-size: 32px 32px;
+  color: rgba(255, 255, 255, 0.8);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 4px;
+}
+
+.scanner-reticle.searching {
+  animation: pulse-reticle 2s infinite ease-in-out;
+}
+
+.scanner-reticle.locked {
+  transform: translate(-50%, -50%) scale(1.05);
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6);
+}
+
+.scanner-reticle.locked::before {
+  color: #22c55e; /* green-500 */
+}
+
+@keyframes pulse-reticle {
+  0%, 100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.4; transform: translate(-50%, -50%) scale(1.02); }
+}
+
+/* Skeleton */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(228, 228, 231, 0.5) 25%,
+    rgba(212, 212, 216, 0.8) 50%,
+    rgba(228, 228, 231, 0.5) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 0.5rem;
+}
+
+.dark .skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(63, 63, 70, 0.5) 25%,
+    rgba(82, 82, 91, 0.8) 50%,
+    rgba(63, 63, 70, 0.5) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
